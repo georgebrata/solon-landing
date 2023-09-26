@@ -19,9 +19,13 @@ a {
   text-decoration: none;
 }
 
+footer a:hover {
+  text-decoration: underline;
+}
+
 a:hover {
   color: #73c5eb;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 h1,
@@ -1477,6 +1481,18 @@ section {
   font-weight: 600;
   margin-bottom: 5px;
   color: #37517e;
+}
+
+.contact .info a {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #37517e;
+  text-decoration: none;
+}
+
+.contact .info a:hover {
+  text-decoration: underline;
 }
 
 .contact .info p {
