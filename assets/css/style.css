@@ -661,6 +661,7 @@ section {
   font-weight: 400;
   font-size: 34px;
   color: #37517e;
+  margin-bottom: 1rem;
 }
 
 .why-us .content h4 {
@@ -765,7 +766,7 @@ section {
   }
 
   .why-us .content {
-    padding-top: 30px;
+    padding: 1rem 2rem;
   }
 
   .why-us .accordion-list {
