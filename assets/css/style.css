@@ -1886,3 +1886,7 @@ section {
     padding-top: 4px;
   }
 }
+
+.hover-no-underline:hover {
+  text-decoration: none;
+}
