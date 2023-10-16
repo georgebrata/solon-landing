@@ -21,7 +21,8 @@
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://solon-agency.ro/" />
   <meta property="twitter:title" content="Solon | Agenție digitală pentru avocați" />
-  <meta property="twitter:description" content="Servicii digitale de calitate pentru profesioniști din domeniul juridic." />
+  <meta property="twitter:description"
+    content="Servicii digitale de calitate pentru profesioniști din domeniul juridic." />
   <meta property="twitter:image" content="https://i.ibb.co/hsVVHJ8/solon-servicii-digitale-avocati-cluj-napoca.png" />
 
   <!-- Favicons -->
@@ -29,7 +30,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/img/favicon/favicon-16x16.png">
   <link rel="manifest" href="./assets/img/favicon/site.webmanifest">
-  <link rel="mask-icon" href="./assets/img/favicon/safari-pinned-tab.svg" color="#03170c">
+  <link rel="mask-icon" href="./assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
 
@@ -52,17 +53,17 @@
 
   <!-- Hotjar Tracking Code for https://solon-agency.ro -->
   <script>
-    (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:3691390,hjsv:6};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    (function (h, o, t, j, a, r) {
+      h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+      h._hjSettings = { hjid: 3691390, hjsv: 6 };
+      a = o.getElementsByTagName('head')[0];
+      r = o.createElement('script'); r.async = 1;
+      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+      a.appendChild(r);
+    })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
   </script>
 
-  
+
 </head>
 
 <body>
@@ -71,41 +72,43 @@
   <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center">
 
-      <h1 class="logo me-auto"><a href="." class="hover-no-underline">SOLON</a></h1>
+      <h1 class="logo me-auto"><a href="." class="hover-no-underline">
+        <img src="./assets/img/solon-logo.png" height="35" style="margin-bottom: 10px;"/>
+        SOLON</a></h1>
 
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto active" href="#hero">Acasă</a></li>
-          <li><a class="nav-link scrollto" href="#servicii">Servicii</a></li>
           <li><a class="nav-link   scrollto" href="#portofoliu">Portofoliu</a></li>
-          <li><a class="nav-link scrollto" href="#echipa">Echipă</a></li>
           <li class="dropdown"><a href="#servicii"><span>Servicii</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               <li class="dropdown"><a href="#servicii"><span>Branding</span> <i class="bi bi-chevron-right"></i></a>
                 <ul>
-                  <li><a href="#servicii">Logo</a></li>
-                  <li><a href="#servicii">Identitate vizuală</a></li>
-                  <li><a href="#servicii">Servicii foto</a></li>
+                  <li><a href="#pricing">Conturare logo</a></li>
+                  <li><a href="#pricing">Manual de brand</a></li>
+                  <li><a href="#pricing">Servicii foto</a></li>
+                  <li><a href="#pricing">Papetărie personalizată</a></li>
                 </ul>
               </li>
               <li class="dropdown"><a href="#servicii"><span>Development</span> <i class="bi bi-chevron-right"></i></a>
                 <ul>
-                  <li><a href="#servicii">Website</a></li>
-                  <li><a href="#servicii">iOS</a></li>
-                  <li><a href="#servicii">Android</a></li>
-                  <li><a href="#servicii">QA</a></li>
+                  <li><a href="#pricing">Website</a></li>
+                  <li><a href="#pricing">iOS</a></li>
+                  <li><a href="#pricing">Android</a></li>
+                  <li><a href="#pricing">QA</a></li>
                 </ul>
               </li>
-              <li class="dropdown"><a href="#"><span>Marketing</span> <i class="bi bi-chevron-right"></i></a>
+              <li class="dropdown"><a href="#servicii"><span>Marketing</span> <i class="bi bi-chevron-right"></i></a>
                 <ul>
-                  <li><a href="#servicii">SEO</a></li>
-                  <li><a href="#servicii">Google MyBusiness</a></li>
-                  <li><a href="#servicii">Social Media</a></li>
+                  <li><a href="#pricing">Optimizare SEO</a></li>
+                  <li><a href="#pricing">Google MyBusiness</a></li>
+                  <li><a href="#pricing">Social Media</a></li>
                 </ul>
               </li>
               <li><a href="#servicii">Consultanță tehnică</a></li>
             </ul>
           </li>
+          <li><a class="nav-link scrollto" href="#echipa">Echipă</a></li>
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
           <li><a class="getstarted scrollto" href="#contact">Cere ofertă</a></li>
         </ul>
@@ -345,7 +348,8 @@
                       class="bx bx-chevron-up icon-close"></i></a>
                   <div id="accordion-list-1" class="collapse show" data-bs-parent=".accordion-list">
                     <p>
-                      Am pus bazele SOLON în 2023, după câteva proiecte finalizate cu succes și feedback deosebit din partea clienților actuali.
+                      Am pus bazele SOLON în 2023, după câteva proiecte finalizate cu succes și feedback deosebit din
+                      partea clienților actuali.
                     </p>
                   </div>
                 </li>
@@ -356,7 +360,8 @@
                       class="bx bx-chevron-up icon-close"></i></a>
                   <div id="accordion-list-2" class="collapse" data-bs-parent=".accordion-list">
                     <p>
-                      Oferim o gamă variată de servicii de branding precum conturarea unui logo, elaborarea unui manual de brand și o selecție premium de papetărie / birotică personalizate.
+                      Oferim o gamă variată de servicii de branding precum conturarea unui logo, elaborarea unui manual
+                      de brand și o selecție premium de papetărie / birotică personalizate.
                     </p>
                   </div>
                 </li>
@@ -367,7 +372,9 @@
                       class="bx bx-chevron-up icon-close"></i></a>
                   <div id="accordion-list-3" class="collapse" data-bs-parent=".accordion-list">
                     <p>
-                      Serviciile noastre de SEO, Google MyBusiness și Social Media (Facebook, Instagram, LinkedIn) te fac vizibil într-o era digitală aglomerată. Noi ne putem ocupa atât de crearea unei strategii de marketing personalizate cât și gestionarea conținutului afacerii tale pe orice platformă socială.
+                      Serviciile noastre de SEO, Google MyBusiness și Social Media (Facebook, Instagram, LinkedIn) te
+                      fac vizibil într-o era digitală aglomerată. Noi ne putem ocupa atât de crearea unei strategii de
+                      marketing personalizate cât și gestionarea conținutului afacerii tale pe orice platformă socială.
                     </p>
                   </div>
                 </li>
@@ -409,7 +416,8 @@
               <p>Branding, Website</p>
               <!-- <a href="assets/img/portfolio/marinau.jpg" data-gallery="portfolioGallery"
                 class="portfolio-lightbox preview-link" title="Marinău și Asociații"><i class="bx bx-plus"></i></a> -->
-              <a href="https://marinausiasociatii.ro/" target="_blank" class="details-link" title="Detalii"><i class="bx bx-link"></i></a>
+              <a href="https://marinausiasociatii.ro/" target="_blank" class="details-link" title="Detalii"><i
+                  class="bx bx-link"></i></a>
             </div>
           </div>
 
@@ -428,87 +436,6 @@
 
       </div>
     </section><!-- End Portfolio Section -->
-
-    <!-- ======= Team Section ======= -->
-    <section id="echipa" class="team section-bg">
-      <div class="container" data-aos="fade-up">
-
-        <div class="section-title">
-          <h2>Echipa</h2>
-          <p></p>
-        </div>
-
-        <div class="row mb-4">
-
-          <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="100">
-            <div class="member d-flex align-items-center">
-              <div class="pic"><img src="assets/img/team/eduard.png" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Eduard Man</h4>
-                <span>Marketing</span>
-                <!-- <p>Aut maiores voluptates amet et quis praesentium qui senda para</p> -->
-                <div class="social">
-                  <a href="https://www.facebook.com/eduard.man3" class="hover-no-underline"><i class="ri-facebook-fill"></i></a>
-                  <a href="https://www.linkedin.com/in/eduardman/" class="hover-no-underline"> <i class="ri-linkedin-box-fill"></i> </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="200">
-            <div class="member d-flex align-items-center">
-              <div class="pic"><img src="assets/img/team/dan.png" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Dan Marinau</h4>
-                <span>Development</span>
-                <!-- <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p> -->
-                <div class="social">
-                  <a href="https://www.facebook.com/marinau.dan" class="hover-no-underline"><i class="ri-facebook-fill"></i></a>
-                  <a href="https://www.instagram.com/marinaudan/" class="hover-no-underline"><i class="ri-instagram-fill"></i></a>
-                  <a href="https://www.linkedin.com/in/dan-alexandru-marinau-139084108/" class="hover-no-underline"> <i class="ri-linkedin-box-fill"></i> </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6 mt-4" data-aos="zoom-in" data-aos-delay="300">
-            <div class="member d-flex align-items-center">
-              <div class="pic"><img src="assets/img/team/oana.png" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Oana-Maria Vacariu</h4>
-                <span>Consultanță</span>
-                <!-- <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p> -->
-                <div class="social">
-                  <a href="https://www.facebook.com/oana.maria.908347" class="hover-no-underline"><i class="ri-facebook-fill"></i></a>
-                  <a href="https://www.instagram.com/oanamaria.vacariu/" class="hover-no-underline"><i class="ri-instagram-fill"></i></a>
-                  <a href="https://www.linkedin.com/in/oana-maria-vacariu-560321193/" class="hover-no-underline"> <i class="ri-linkedin-box-fill"></i> </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6 mt-4" data-aos="zoom-in" data-aos-delay="400">
-            <div class="member d-flex align-items-center">
-              <div class="pic"><img src="assets/img/team/george.jpeg" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Brata George</h4>
-                <span>Development</span>
-                <!-- <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p> -->
-                <div class="social">
-                  <a href="https://twitter.com/bratageorge" class="hover-no-underline"><i class="ri-twitter-fill"></i></a>
-                  <a href="https://www.facebook.com/gebrata" class="hover-no-underline"><i class="ri-facebook-fill"></i></a>
-                  <a href="https://www.instagram.com/georgebrata.ro/" class="hover-no-underline"><i class="ri-instagram-fill"></i></a>
-                  <a href="https://www.linkedin.com/in/george-brata/" class="hover-no-underline"> <i class="ri-linkedin-box-fill"></i> </a>
-                  <a href="https://github.com/georgebrata" class="hover-no-underline"> <i class="ri-github-fill"></i> </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section><!-- End Team Section -->
 
     <!-- ======= Pricing Section ======= -->
     <section id="pricing" class="pricing">
@@ -603,7 +530,8 @@
           </div>
           <div class="col-lg-12 cta-btn-container text-center contact-phone">
             <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
-            <form target="_blank" action="https://formsubmit.co/9ebbd66697cd43604688b79b67dac8ed" method="POST" style="width: 100%;">
+            <form target="_blank" action="https://formsubmit.co/9ebbd66697cd43604688b79b67dac8ed" method="POST"
+              style="width: 100%;">
               <input type="phone" placeholder="0777 777 777" name="phone" required>
               <input type="submit" value="Vreau să fiu sunat 📞">
               <input type="hidden" name="_next" value="https://solon-agency.ro/telefon">
@@ -735,6 +663,102 @@
     </section> -->
     <!-- End Frequently Asked Questions Section -->
 
+
+    <!-- ======= Team Section ======= -->
+    <section id="echipa" class="team section-bg">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Echipa</h2>
+          <p></p>
+        </div>
+
+        <div class="row mb-4">
+
+          <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="100">
+            <div class="member d-flex align-items-center">
+              <div class="pic"><img src="assets/img/team/eduard.png" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Eduard Man</h4>
+                <span>Marketing</span>
+                <!-- <p>Aut maiores voluptates amet et quis praesentium qui senda para</p> -->
+                <div class="social">
+                  <a href="https://www.facebook.com/eduard.man3" class="hover-no-underline"><i
+                      class="ri-facebook-fill"></i></a>
+                  <a href="https://www.linkedin.com/in/eduardman/" class="hover-no-underline"> <i
+                      class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="200">
+            <div class="member d-flex align-items-center">
+              <div class="pic"><img src="assets/img/team/dan.png" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Dan Marinau</h4>
+                <span>Development</span>
+                <!-- <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p> -->
+                <div class="social">
+                  <a href="https://www.facebook.com/marinau.dan" class="hover-no-underline"><i
+                      class="ri-facebook-fill"></i></a>
+                  <a href="https://www.instagram.com/marinaudan/" class="hover-no-underline"><i
+                      class="ri-instagram-fill"></i></a>
+                  <a href="https://www.linkedin.com/in/dan-alexandru-marinau-139084108/" class="hover-no-underline"> <i
+                      class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="member d-flex align-items-center">
+              <div class="pic"><img src="assets/img/team/oana.png" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Oana-Maria Vacariu</h4>
+                <span>Consultanță</span>
+                <!-- <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p> -->
+                <div class="social">
+                  <a href="https://www.facebook.com/oana.maria.908347" class="hover-no-underline"><i
+                      class="ri-facebook-fill"></i></a>
+                  <a href="https://www.instagram.com/oanamaria.vacariu/" class="hover-no-underline"><i
+                      class="ri-instagram-fill"></i></a>
+                  <a href="https://www.linkedin.com/in/oana-maria-vacariu-560321193/" class="hover-no-underline"> <i
+                      class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4" data-aos="zoom-in" data-aos-delay="400">
+            <div class="member d-flex align-items-center">
+              <div class="pic"><img src="assets/img/team/george.jpeg" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Brata George</h4>
+                <span>Development</span>
+                <!-- <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p> -->
+                <div class="social">
+                  <a href="https://twitter.com/bratageorge" class="hover-no-underline"><i
+                      class="ri-twitter-fill"></i></a>
+                  <a href="https://www.facebook.com/gebrata" class="hover-no-underline"><i
+                      class="ri-facebook-fill"></i></a>
+                  <a href="https://www.instagram.com/georgebrata.ro/" class="hover-no-underline"><i
+                      class="ri-instagram-fill"></i></a>
+                  <a href="https://www.linkedin.com/in/george-brata/" class="hover-no-underline"> <i
+                      class="ri-linkedin-box-fill"></i> </a>
+                  <a href="https://github.com/georgebrata" class="hover-no-underline"> <i class="ri-github-fill"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
@@ -775,7 +799,8 @@
 
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
             <!-- <form action="forms/contact.php" method="post" role="form" class="php-email-form"> -->
-            <form target="_blank" action="https://formsubmit.co/9ebbd66697cd43604688b79b67dac8ed" method="POST" role="form" class="php-email-form">
+            <form target="_blank" action="https://formsubmit.co/9ebbd66697cd43604688b79b67dac8ed" method="POST"
+              role="form" class="php-email-form">
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="name">Nume</label>
@@ -853,6 +878,7 @@
           <div class="col-lg-6 footer-links"></div>
 
           <div class="col-lg-3 col-md-6 footer-contact">
+            <img src="./assets/img/solon-logo-dark.png" height="100" />
             <h3>SOLON</h3>
             <p>
               Piața Cipariu, nr. 9 <br>
@@ -879,7 +905,7 @@
         SOLON &copy; 2023
       </div>
       <div class="credits">
-        Creat cu ❤️ de <a href="https://georgebrata.ro/">George</a>
+        Creat cu ❤️ de <a class="font-tertiary" href="https://georgebrata.ro/">George</a>
       </div>
     </div>
   </footer><!-- End Footer -->
