@@ -28,6 +28,10 @@ a {
   text-decoration: none;
 }
 
+.color-primary {
+  color: var(--primary);
+}
+
 footer a:hover {
   text-decoration: underline;
 }
@@ -1831,7 +1835,8 @@ section {
 
 #footer .footer-top .footer-links ul i {
   padding-right: 2px;
-  color: var(--tertiary);
+  margin-right: 2px;
+  color: var(--primary);
   font-size: 18px;
   line-height: 1;
 }
