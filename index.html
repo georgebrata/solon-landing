@@ -50,6 +50,7 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/toggle.css" rel="stylesheet">
 
   <!-- Hotjar Tracking Code for https://solon-agency.ro -->
   <script>
@@ -447,11 +448,41 @@
         </div>
 
         <div class="row">
+          <div class="col-10 offset-1">
+            <div class="pricing-toggle-container">
+              <!-- <h5>Hosting Renewal</h5> -->
+              <div class="toggle-container">
+                <div class="switch-toggle well">
+                  <input id="monthly" name="term" type="radio" value="monthly" checked>
+                  <label id="montly-btn" for="monthly">Lunar</label>
+                  <input id="yearly" name="term" type="radio" value="yearly">
+                  <label id="anual-btn" for="yearly">Anual (-20%)</label>
+                  <a class="btn btn-toggle"></a>
+                </div>
+              </div>
+              <!-- <h5>Website Design Package</h5>
+              <div class="toggle-container">
+                <div class="switch-toggle well">
+                  <input id="page-landing" name="pages" type="radio" value="landing" checked>
+                  <label for="page-landing">Landing</label>
+                  <input id="page-ten" name="pages" type="radio" value="premium">
+                  <label for="page-ten">Premium</label>
+                  <input id="page-fifteen" name="pages" type="radio" value="premiumplus">
+                  <label for="page-fifteen">Premium+</label>
+                  <a class="btn btn-primary"></a>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="row">
 
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
             <div class="box text-center">
               <h3>BRONZE</h3>
-              <h4><sup>€</sup>99/lună<span>Social Media</span></h4>
+              <h4><sup>€</sup><span id="price-bronze">99/lună</span>
+                <span class="details">Social Media</span>
+              </h4>
               <ul>
                 <li><i class="bx bx-check"></i> Strategie Social Media </li>
                 <li><i class="bx bx-check"></i> Mentenanță 1 profil Social Media </li>
@@ -459,14 +490,15 @@
                 <li class="na"><i class="bx bx-x"></i> <span>Branding</span></li>
                 <li class="na"><i class="bx bx-x"></i> <span>Implementare website</span></li>
               </ul>
-              <a href="https://buy.stripe.com/eVaaIFc6p7CN1cA3cc" target="_blank" class="buy-btn">Alege BRONZE</a>
+              <a href="https://buy.stripe.com/eVaaIFc6p7CN1cA3cc" target="_blank" id="link-bronze" class="buy-btn">Alege BRONZE</a>
             </div>
           </div>
 
           <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="200">
             <div class="box featured text-center">
               <h3>SILVER</h3>
-              <h4><sup>€</sup>199/lună<span>Branding • Social Media</span></h4>
+              <h4><sup>€</sup><span id="price-silver">199/lună</span>
+                <span class="details">Branding • Social Media</span></h4>
               <ul>
                 <li><i class="bx bx-check"></i> Strategie Social Media </li>
                 <li><i class="bx bx-check"></i> Mentenanță 2 profile Social Media </li>
@@ -479,14 +511,16 @@
 
                 <li class="na"><i class="bx bx-x"></i> <span>Implementare website</span></li>
               </ul>
-              <a href="" target="_blank" class="buy-btn">Începe acum</a>
+              <a href="" target="_blank" class="buy-btn" id="link-silver">Începe acum</a>
             </div>
           </div>
 
           <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
             <div class="box text-center">
               <h3>GOLD</h3>
-              <h4><sup>€</sup>399/lună<span>Branding • Website • Social Media</span></h4>
+              <h4><sup>€</sup><span id="price-gold">399/lună</span>
+                <span class="details">Branding • Website • Social Media</span>
+              </h4>
               <ul>
                 <li><i class="bx bx-check"></i> Strategie holistică Marketing </li>
                 <li><i class="bx bx-check"></i> Mentenanță 3 profile Social Media </li>
@@ -508,7 +542,7 @@
                 <li><i class="bx bx-check"></i> Analytics website </li>
                 <li><i class="bx bx-check"></i> Audit securitate website </li>
               </ul>
-              <a href="" target="_blank" class="buy-btn">Alege GOLD</a>
+              <a href="" target="_blank" class="buy-btn" id="link-gold">Alege GOLD</a>
             </div>
           </div>
 
@@ -896,7 +930,7 @@
         </div>
         <div class="row">
           <div class="text-center">
-            <img src="./assets/img/anpc-sal.png" height="60" />
+            <a href="https://anpc.ro/"><img src="./assets/img/anpc-sal.png" alt="ANPC - Protectia consumatorului" height="60" /></a>
           </div>
         </div>
 
@@ -930,7 +964,8 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/links-active-state.js"></script>
+  <script src="assets/js/price-toggle.js"></script>
+  <!-- <script src="assets/js/links-active-state.js"></script> -->
 
 </body>
 

@@ -15,6 +15,9 @@
   --tertiary-darker: #d7c996;
   --tertiary-darkeeer: #c3ae61;
 }
+
+@import url('./toggle.css');
+
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
@@ -1260,7 +1263,7 @@ section {
   font-size: 28px;
 }
 
-.pricing h4 span {
+.pricing h4 span.details {
   color: var(--tertiary-darker);
   font-size: 18px;
   display: block;
