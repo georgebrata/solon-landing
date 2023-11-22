@@ -34,6 +34,9 @@ a {
 .color-primary {
   color: var(--primary);
 }
+.color-tertiary {
+  color: var(--tertiary);
+}
 
 footer a:hover {
   text-decoration: underline;
@@ -428,7 +431,7 @@ h6 {
   font-size: 24px;
 }
 
-#hero .btn-get-started {
+.btn-get-started {
   font-family: "Jost", sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -440,10 +443,12 @@ h6 {
   margin: 10px 0 0 0;
   color: var(--primary);
   background: var(--tertiary);
+  cursor: pointer;
 }
 
-#hero .btn-get-started:hover {
+.btn-get-started:hover {
   background: #d7c996;
+  color: var(--primary);
 }
 
 #hero .btn-watch-video {

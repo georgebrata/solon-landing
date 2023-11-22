@@ -19,9 +19,9 @@
         select('#price-silver').textContent = '199/lună';
         select('#price-gold').textContent = '399/lună';
 
-        select('#link-bronze').href = 'https://buy.stripe.com/eVaaIFc6p7CN1cA3cc';
-        select('#link-silver').href = '';
-        select('#link-gold').href = '';
+        select('#link-bronze').href = 'https://buy.stripe.com/eVa4gI8jaagyb16dQV';
+        select('#link-silver').href = 'https://buy.stripe.com/28o8wY1UMcoG1qwaEH';
+        select('#link-gold').href = 'https://buy.stripe.com/cN2cNeczqewO9X29AB';
     }
 
     function clickAnnual() {
@@ -29,9 +29,9 @@
         select('#price-silver').textContent = '1,911/an';
         select('#price-gold').textContent = '3,831/an';
 
-        select('#link-bronze').href = 'https://buy.stripe.com/bIY041c6p4qB1cA5kl';
-        select('#link-silver').href = '';
-        select('#link-gold').href = '';
+        select('#link-bronze').href = 'https://buy.stripe.com/4gw00sari60i0msfZ2';
+        select('#link-silver').href = 'https://buy.stripe.com/6oEfZq42UdsK4CIfZ0';
+        select('#link-gold').href = 'https://buy.stripe.com/bIYfZqczq9cud9e3cc';
     }
 
     window.addEventListener('load', () => {
