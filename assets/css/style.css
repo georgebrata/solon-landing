@@ -675,7 +675,7 @@ section {
 # Why Us
 --------------------------------------------------------------*/
 .why-us .content {
-  padding: 60px 100px 0 100px;
+  padding: 60px 100px 0 200px;
 }
 
 .why-us .content h3 {
@@ -703,7 +703,7 @@ section {
 }
 
 .why-us .accordion-list {
-  padding: 0 100px 60px 100px;
+  padding: 0 100px 60px 200px;
 }
 
 .why-us .accordion-list ul {
@@ -804,6 +804,10 @@ section {
 /*--------------------------------------------------------------
 # Skills
 --------------------------------------------------------------*/
+.skills .content {
+  padding: 0 100px 60px 100px;
+}
+
 .skills .content h3 {
   font-weight: 700;
   font-size: 32px;
@@ -928,7 +932,7 @@ section {
 # Cta
 --------------------------------------------------------------*/
 .cta {
-  background: linear-gradient(#03170C, rgba(40, 58, 90, 0.9)), url("../img/cta-bg.jpg") fixed center center;
+  background: linear-gradient(var(--primary), rgba(40, 58, 90, 0.9)), url("../img/cta-bg.jpg") fixed center center;
   background-size: cover;
   padding: 120px 0;
 }
@@ -1804,6 +1808,9 @@ section {
 #footer .footer-top .footer-contact {
   margin-bottom: 30px;
 }
+#footer .footer-top .footer-contact img {
+  margin-left: 8px;
+}
 
 #footer .footer-top .footer-contact h3 {
   font-size: 28px;
@@ -1816,7 +1823,6 @@ section {
 }
 
 #footer .footer-top .footer-contact p {
-  font-size: 14px;
   line-height: 24px;
   margin-bottom: 0;
   font-family: "Jost", sans-serif;
@@ -1824,7 +1830,6 @@ section {
 }
 
 #footer .footer-top h4 {
-  font-size: 16px;
   font-weight: bold;
   color: var(--primary);
   position: relative;
@@ -1869,6 +1874,23 @@ section {
 #footer .footer-top .footer-links ul a:hover {
   text-decoration: underline;
   color: var(--primary);
+}
+
+@media (max-width: 991px) {
+  #footer .footer-top .footer-links {
+    text-align: center;
+  }
+
+  #footer .footer-top .footer-links ul li {
+    justify-content: center;
+  }
+
+  #footer .footer-top .footer-contact {
+    text-align: center;
+  }
+  #footer .footer-top .footer-contact img {
+    margin-left: 0;
+  }
 }
 
 #footer .footer-top .social-links a {
