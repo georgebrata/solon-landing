@@ -39,6 +39,8 @@
         let monthlyPricing = select('#montly-btn')
         anualPricing.addEventListener('click', clickAnnual)
         monthlyPricing.addEventListener('click', clickMonthly)
+
+        clickMonthly();
     });
   
   })()
