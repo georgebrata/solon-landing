@@ -442,13 +442,14 @@ h6 {
   transition: 0.5s;
   margin: 10px 0 0 0;
   color: var(--primary);
-  background: var(--tertiary);
+  background: var(--tertiary-darker);
   cursor: pointer;
 }
 
 .btn-get-started:hover {
-  background: #d7c996;
+  background: var(--tertiary-darkeeer);
   color: var(--primary);
+  text-decoration: underline !important;
 }
 
 #hero .btn-watch-video {
@@ -675,7 +676,7 @@ section {
 # Why Us
 --------------------------------------------------------------*/
 .why-us .content {
-  padding: 60px 100px 0 200px;
+  padding: 60px 100px 0 100px;
 }
 
 .why-us .content h3 {
@@ -703,7 +704,13 @@ section {
 }
 
 .why-us .accordion-list {
-  padding: 0 100px 60px 200px;
+  padding: 0 100px 60px 100px;
+}
+
+.img-80 {
+  max-width: 80%;
+  height: auto;
+  margin: 0 auto;
 }
 
 .why-us .accordion-list ul {
@@ -791,7 +798,7 @@ section {
   }
 
   .why-us .accordion-list {
-    padding-bottom: 30px;
+    padding: 1rem 2rem 2rem 2rem;
   }
 }
 
@@ -805,7 +812,7 @@ section {
 # Skills
 --------------------------------------------------------------*/
 .skills .content {
-  padding: 0 100px 60px 100px;
+  padding: 0 100px 60px 30px;
 }
 
 .skills .content h3 {
@@ -932,7 +939,7 @@ section {
 # Cta
 --------------------------------------------------------------*/
 .cta {
-  background: linear-gradient(var(--primary), rgba(40, 58, 90, 0.9)), url("../img/cta-bg.jpg") fixed center center;
+  background: linear-gradient(var(--primary), rgba(40, 58, 90, 0.9)), url("../img/servicii-digitale-complete-pentru-avocati-solon.jpg") fixed center center;
   background-size: cover;
   padding: 120px 0;
 }
@@ -1952,4 +1959,46 @@ section {
 
 .hover-no-underline:hover {
   text-decoration: none;
+}
+
+.calendar {
+  width: 80%;
+}
+
+.calendar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 2rem;
+}
+
+.schedule-wrapper {
+  display: flex; 
+  justify-content:center; 
+  margin: 3rem;
+}
+
+.schedule-title {
+  width: 75%;
+  text-align: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .calendar {
+      width: 100%;
+  }
+
+  .calendar-wrapper {
+      margin: 0 2rem;
+  }
+  .schedule-wrapper {
+    margin: 2rem;
+  }
+  .schedule-title {
+    width: 95%;
+  }
+}
+
+#hero canvas {
+  position: absolute !important;
+  height: 100vh;
 }
