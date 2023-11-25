@@ -711,6 +711,7 @@ section {
   max-width: 80%;
   height: auto;
   margin: 0 auto;
+  margin-left: 10%;
 }
 
 .why-us .accordion-list ul {
@@ -1642,10 +1643,6 @@ section {
   animation: animate-loading 1s linear infinite;
 }
 
-.contact .php-email-form .form-group {
-  margin-bottom: 20px;
-}
-
 .contact .php-email-form label {
   padding-bottom: 8px;
 }
@@ -2002,3 +1999,46 @@ section {
   position: absolute !important;
   height: 100vh;
 }
+
+.typeahead {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.typeahead input {
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  padding-left: 10px;
+}
+
+.typeahead .suggestions {
+  position: absolute;
+  top: 66px;
+  background: #fff;
+  /* border: lightgray 0.5px solid; */
+  width: 100%;
+  background-color: var(--tertiary);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.typeahead ul {
+  list-style: none;
+  display: none;
+  /* max-height: 150px; */
+  margin: 0;
+  padding: 0;
+  padding: 8px 12px;
+  background-color: var(--tertiary);
+}
+
+.typeahead ul.has-suggestions {
+  display: block;
+}
+
+.typeahead input:focus, .typeahead input:focus-visible {
+  border-color: var(--tertiary);
+  outline: none;
+}
+
