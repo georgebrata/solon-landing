@@ -414,7 +414,7 @@ h6 {
 }
 
 #hero .container {
-  padding-top: 72px;
+  padding-top: 160px;
 }
 
 #hero h1 {
@@ -516,7 +516,7 @@ h6 {
 
 @media (max-width: 575px) {
   #hero .hero-img img {
-    width: 80%;
+    width: 100%;
   }
 
   #hero .btn-get-started {
@@ -541,6 +541,10 @@ h6 {
 section {
   padding: 60px 0;
   overflow: hidden;
+}
+
+section#hero {
+  padding: 60px 0 0 0;
 }
 
 .section-bg {
