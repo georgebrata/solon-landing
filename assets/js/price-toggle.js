@@ -29,9 +29,9 @@
         select('#price-silver').textContent = '1,999/an';
         select('#price-gold').textContent = '3,799/an';
 
-        select('#link-bronze').href = 'https://buy.stripe.com/4gw00sari60i0msfZ2';
-        select('#link-silver').href = 'https://buy.stripe.com/6oEfZq42UdsK4CIfZ0';
-        select('#link-gold').href = 'https://buy.stripe.com/bIYfZqczq9cud9e3cc';
+        select('#link-bronze').href = 'https://buy.stripe.com/7sI00sfLC88qb1614c';
+        select('#link-silver').href = 'https://buy.stripe.com/dR6aF60QI60iedi5kr';
+        select('#link-gold').href = 'https://buy.stripe.com/cN214wbvm4We3yEbIO';
     }
 
     window.addEventListener('load', () => {
