@@ -360,7 +360,7 @@ h6 {
 .navbar-mobile a:hover,
 .navbar-mobile .active,
 .navbar-mobile li:hover>a {
-  color: var(--tertiary);
+  color: var(--secondary);
 }
 
 .navbar-mobile .getstarted,
@@ -795,7 +795,7 @@ section {
   }
 
   .why-us .content {
-    padding: 1rem 2rem;
+    padding: 1rem 3rem;
   }
 
   .why-us .accordion-list {
@@ -890,7 +890,7 @@ section {
 
 @media (max-width: 768px) {
   .services .icon-box {
-    width: 90vw;
+    width: 100%;
   }
 }
 
@@ -1287,7 +1287,7 @@ section {
 }
 
 .pricing ul {
-  padding: 20px 0;
+  padding: 1.5rem 0;
   list-style: none;
   color: #999;
   text-align: left;
