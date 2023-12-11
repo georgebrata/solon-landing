@@ -1871,7 +1871,7 @@ section {
 }
 
 #footer .footer-top .footer-links ul a {
-  color: #777777;
+  color: var(--primary);
   transition: 0.3s;
   display: inline-block;
   line-height: 1;
@@ -1879,7 +1879,7 @@ section {
 
 #footer .footer-top .footer-links ul a:hover {
   text-decoration: underline;
-  color: var(--primary);
+  color: var(--tertiary-darkeeer);
 }
 
 @media (max-width: 991px) {
