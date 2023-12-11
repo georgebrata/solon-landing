@@ -1383,7 +1383,7 @@ section {
   text-align: left;
 }
 
-.contact-phone form input[type=phone] {
+.contact-phone form input[type=tel] {
   border: 0;
   padding: 4px 8px;
   width: calc(100% - 100px);
@@ -1420,6 +1420,7 @@ section {
 .faq .faq-list ul {
   padding: 0;
   list-style: none;
+  width: 100%;
 }
 
 .faq .faq-list li+li {
@@ -1427,7 +1428,7 @@ section {
 }
 
 .faq .faq-list li {
-  padding: 20px;
+  padding: 10px 20px;
   background: #fff;
   border-radius: 4px;
   position: relative;
@@ -1450,7 +1451,11 @@ section {
   position: absolute;
   right: 0;
   left: 20px;
-  color: var(--tertiary);
+  color: var(--primary);
+}
+
+.faq .faq-list a.collapse {
+  color: var(--primary);
 }
 
 .faq .faq-list .icon-show,
@@ -1473,10 +1478,6 @@ section {
 .faq .faq-list a.collapsed {
   color: var(--primary);
   transition: 0.3s;
-}
-
-.faq .faq-list a.collapsed:hover {
-  color: var(--tertiary);
 }
 
 .faq .faq-list a.collapsed .icon-show {
@@ -1813,11 +1814,11 @@ section {
   margin-bottom: 30px;
 }
 #footer .footer-top .footer-contact img {
-  margin-left: 8px;
+  /* margin-left: 8px; */
 }
 
 #footer .footer-top .footer-contact h3 {
-  font-size: 28px;
+  font-size: 24px;
   margin: 0 0 10px 0;
   padding: 2px 0 2px 0;
   line-height: 1;
@@ -1828,6 +1829,7 @@ section {
 
 #footer .footer-top .footer-contact p {
   line-height: 24px;
+  font-size: 1rem;
   margin-bottom: 0;
   font-family: "Jost", sans-serif;
   color: #5e5e5e;
@@ -2042,3 +2044,64 @@ section {
   outline: none;
 }
 
+/* LOADING */
+#loading {
+  display: block;
+}
+#faq.hidden {
+  display: none;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lds-ripple {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid var(--primary);
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  4.9% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  5% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 72px;
+    height: 72px;
+    opacity: 0;
+  }
+}
+#loading.hidden {
+  display: none;
+}

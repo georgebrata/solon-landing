@@ -13,7 +13,6 @@
       }
     }
 
-
     function clickMonthly() {
         select('#price-bronze').textContent = '99/lună';
         select('#price-silver').textContent = '199/lună';
