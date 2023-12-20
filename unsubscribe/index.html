@@ -6,23 +6,26 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <!-- Primary Meta Tags -->
-  <title>Te sunăm noi | SOLON - Agenție digitală pentru avocați</title>
-  <meta name="title" content="Te sunăm noi | SOLON - Agenție digitală pentru avocați" />
-  <meta name="description" content="Un consultant tehnic SOLON te va apela curând 📞" />
-  <link rel="canonical" href="https://solon.agency/telefon" />
+  <title>Abonare newsletter | SOLON - Agenție digitală pentru avocați</title>
+  <meta name="title" content="Abonare newsletter | SOLON - Agenție digitală pentru avocați" />
+  <meta name="description"
+    content="Abonare cu success la noutăți pe email ✅ | SOLON - Servicii digitale complete pentru domeniul juridic" />
+  <link rel="canonical" href="https://solon.agency/abonare" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://solon.agency/" />
-  <meta property="og:title" content="Te sunăm noi | SOLON - Agenție digitală pentru avocați" />
-  <meta property="og:description" content="Un consultant tehnic SOLON te va apela curând 📞" />
+  <meta property="og:title" content="Abonare newsletter | Agenție digitală pentru avocați SOLON" />
+  <meta property="og:description"
+    content="Abonare cu success la noutăți pe email ✅ | SOLON - Servicii digitale complete pentru domeniul juridic" />
   <meta property="og:image" content="https://i.ibb.co/hsVVHJ8/solon-servicii-digitale-avocati-cluj-napoca.png" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://solon.agency/" />
-  <meta property="twitter:title" content="Te sunăm noi | SOLON - Agenție digitală pentru avocați" />
-  <meta property="twitter:description" content="Un consultant tehnic SOLON te va apela curând 📞" />
+  <meta property="twitter:title" content="Abonare newsletter | Agenție digitală pentru avocați SOLON" />
+  <meta property="twitter:description"
+    content="Abonare cu success la noutăți pe email ✅ | SOLON - Servicii digitale complete pentru domeniul juridic" />
   <meta property="twitter:image" content="https://i.ibb.co/hsVVHJ8/solon-servicii-digitale-avocati-cluj-napoca.png" />
 
   <!-- Favicons -->
@@ -62,9 +65,11 @@
       a.appendChild(r);
     })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
   </script>
+  
   <!-- counter.dev -->
   <script src="https://cdn.counter.dev/script.js" data-id="ff166071-96fa-4244-9aac-e4e84fc8ccf7"
     data-utcoffset="2"></script>
+
 </head>
 
 <body>
@@ -73,9 +78,7 @@
   <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center">
 
-      <h1 class="logo me-auto"><a href="../" class="hover-no-underline">
-          <img src="../../assets/img/solon-logo.png" height="30" style="margin-bottom: 8px;" />
-          SOLON</a></h1>
+      <h1 class="logo me-auto"><a href="../" class="hover-no-underline">SOLON</a></h1>
 
       <nav id="navbar" class="navbar">
         <ul>
@@ -90,19 +93,43 @@
   </header><!-- End Header -->
 
   <!-- ======= Hero Section ======= -->
-  <section id="hero" class="d-flex align-items-center fireworks">
+  <section id="hero" class="d-flex align-items-center fireworks" style="height: 30vh;">
 
     <div class="container">
       <div class="row">
         <div
-          class="col-lg-8 offset-lg-2 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1 text-center"
+          class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-12 text-center d-flex flex-column justify-content-center pt-4 pt-lg-0"
           data-aos="fade-up" data-aos-delay="200">
-          <h1 class="mb-0">Un consultant tehnic SOLON te va apela curând 📞</h1>
+          <h1 class="mb-0">Dezabonare</h1>
         </div>
       </div>
     </div>
 
   </section><!-- End Hero -->
+
+    <!-- ======= Phone Call Section ======= -->
+    <section id="cta" class="cta">
+    <div class="container" data-aos="zoom-in">
+
+        <div class="row">
+        <div class="col-lg-12 text-center text-lg-start">
+            <h3>Vrei să nu te mai contactăm?</h3>
+            <p> Lasa adresa ta de email mai jos și nu te vom mai contacta. </p>
+        </div>
+        <div class="col-lg-12 cta-btn-container text-center contact-phone">
+            <form target="_blank" action="https://formsubmit.co/george@solon.agency" method="POST" style="width: 100%;">
+                <input type="email" id="email" placeholder="" name="email" required>
+                <input type="submit" value="Dezabonare">
+                <input type="hidden" name="_next" value="https://solon.agency/">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="text" name="_honey" style="display:none">
+            </form>
+        </div>
+        </div>
+
+    </div>
+    </section>
+    <!-- End Phone Call Section -->
 
   <!-- ======= Footer ======= -->
   <footer id="footer">
@@ -188,12 +215,20 @@
     const container = document.querySelector('.fireworks')
     const fireworks = new Fireworks.default(container)
         // fireworks.start()
+
+    // Get the value of the email parameter from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+
+    // Fill the input field with the retrieved email value
+    document.getElementById('email').value = email;
   </script>
   <style>
     #hero canvas {
       position: absolute !important;
     }
   </style>
+
 </body>
 
 </html>

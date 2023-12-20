@@ -1389,6 +1389,12 @@ section {
   width: calc(100% - 100px);
   outline: none;
 }
+.contact-phone form input[type=email] {
+  border: 0;
+  padding: 4px 8px;
+  width: calc(100% - 100px);
+  outline: none;
+}
 
 .contact-phone form input[type=submit] {
   position: absolute;
