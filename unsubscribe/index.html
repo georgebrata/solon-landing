@@ -77,7 +77,9 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
-    gtag('config', 'G-H41D7KCWHX');
+    gtag('config', 'G-H41D7KCWHX', {
+            'currency': 'EURO'
+        });
   </script>
 </head>
 
@@ -87,7 +89,9 @@
   <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center">
 
-      <h1 class="logo me-auto"><a href="../" class="hover-no-underline">SOLON</a></h1>
+      <h1 class="logo me-auto"><a href="../" class="hover-no-underline">
+        <img src="../assets/img/solon-logo.png" height="30" style="margin-bottom: 8px;" />
+        SOLON</a></h1>
 
       <nav id="navbar" class="navbar">
         <ul>
@@ -129,7 +133,7 @@
             <form target="_blank" action="https://formsubmit.co/george@solon.agency" method="POST" style="width: 100%;">
                 <input type="email" id="email" placeholder="" name="email" required>
                 <input type="submit" value="Dezabonare">
-                <input type="hidden" name="_next" value="https://solon.agency/">
+                <input type="hidden" name="_next" value="https://solon.agency/unsubscribe/success">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="text" name="_honey" style="display:none">
             </form>
@@ -228,6 +232,11 @@
     // Get the value of the email parameter from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get('email');
+
+    // Fill the input field with the retrieved email value
+    document.getElementById('email').value = email;
+
+    const succes = urlParams.get('success');
 
     // Fill the input field with the retrieved email value
     document.getElementById('email').value = email;
