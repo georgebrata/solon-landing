@@ -1939,6 +1939,7 @@ section {
 #footer .credits {
   float: right;
   font-size: 13px;
+  margin-right: 20px;
 }
 
 #footer .credits a {
