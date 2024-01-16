@@ -681,9 +681,13 @@ section {
 
 .why-us .content h3 {
   font-weight: 400;
-  font-size: 34px;
+  font-size: 32px;
   color: var(--primary);
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 25px;
+  }
 }
 
 .why-us .content h4 {
@@ -795,11 +799,11 @@ section {
   }
 
   .why-us .content {
-    padding: 1rem 3rem;
+    padding: 1.1rem;
   }
 
   .why-us .accordion-list {
-    padding: 1rem 2rem 2rem 2rem;
+    padding: 0;
   }
 }
 
@@ -813,7 +817,7 @@ section {
 # Skills
 --------------------------------------------------------------*/
 .skills .content {
-  padding: 0 100px 60px 30px;
+  padding: 0 3rem 2rem 2rem;
 }
 
 .skills .content h3 {
@@ -1337,9 +1341,17 @@ section {
   background: var(--tertiary-darker);
   color: var(--primary);
 }
-
 .pricing .featured {
   border-top-color: var(--tertiary);
+}
+.pricing .featured.bronze {
+  border-top-color: #CD7F32;
+}
+.pricing .featured.silver {
+  border-top-color: #C0C0C0;
+}
+.pricing .featured.gold {
+  border-top-color: #FFD700;
 }
 
 .pricing .featured .buy-btn {
@@ -1824,7 +1836,7 @@ section {
 }
 
 #footer .footer-top .footer-contact h3 {
-  font-size: 24px;
+  font-size: 20px;
   margin: 0 0 10px 0;
   padding: 2px 0 2px 0;
   line-height: 1;
@@ -1936,6 +1948,24 @@ section {
   float: left;
 }
 
+.circuits-img {
+  position: absolute;
+  width: 3.14rem;
+}
+.circuits-img.down {
+  display: block;
+  top: 0;
+  right: 2px;
+  @media (max-width: 810px) {
+    display: none;
+  }
+}
+.circuits-img.up {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+}
 #footer .credits {
   float: right;
   font-size: 13px;
