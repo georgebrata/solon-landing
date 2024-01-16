@@ -1337,6 +1337,9 @@ section {
   border: 1px solid var(--tertiary);
 }
 
+.mr-1 {
+  margin-right: 1rem;
+}
 .pricing .buy-btn:hover {
   background: var(--tertiary-darker);
   color: var(--primary);
@@ -1950,12 +1953,12 @@ section {
 
 .circuits-img {
   position: absolute;
-  width: 3.14rem;
+  width: 4.5rem;
 }
 .circuits-img.down {
   display: block;
   top: 0;
-  right: 2px;
+  right: -10px;
   @media (max-width: 810px) {
     display: none;
   }
@@ -1963,7 +1966,7 @@ section {
 .circuits-img.up {
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: -5px;
   z-index: 9999;
 }
 #footer .credits {
