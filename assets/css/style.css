@@ -444,7 +444,7 @@ h6 {
   border-radius: 50px;
   transition: 0.5s;
   margin: 10px 0 0 0;
-  color: var(--primary);
+  color: var(--primary) !important;
   background: var(--tertiary-darker);
   cursor: pointer;
 }
