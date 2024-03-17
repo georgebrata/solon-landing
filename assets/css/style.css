@@ -509,6 +509,9 @@ h6 {
 }
 
 @media (max-width: 768px) {
+  .hide-sm {
+    display: none;
+  }
   #hero h1 {
     font-size: 28px;
     line-height: 36px;
