@@ -489,6 +489,10 @@ h6 {
   animation: up-down-small 2s ease-in-out infinite alternate-reverse both;
 }
 
+.animated-large {
+  animation: up-down-large 2s ease-in-out infinite alternate-reverse both;
+}
+
 @media (max-width: 991px) {
   #hero {
     height: 100vh;
@@ -556,6 +560,16 @@ h6 {
 
   100% {
     transform: translateY(-3px);
+  }
+}
+
+@keyframes up-down-large {
+  0% {
+    transform: translateY(6px);
+  }
+
+  100% {
+    transform: translateY(-6px);
   }
 }
 
