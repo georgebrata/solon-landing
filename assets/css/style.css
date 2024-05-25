@@ -1031,6 +1031,62 @@ section {
 }
 
 /*--------------------------------------------------------------
+# Blog
+--------------------------------------------------------------*/
+
+.blog .box {
+  padding: 20px 40px 30px 40px;
+  box-shadow: 0 3px 20px -2px rgba(20, 45, 100, 0.1);
+  background: #fff;
+  height: 100%;
+  border-top: 4px solid #fff;
+  border-radius: 5px;
+}
+
+.blog .box h4, .blog .box p {
+  text-align: left;
+}
+
+.blog h3 {
+  font-weight: 500;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.blog h4 {
+  font-size: 28px;
+  color: var(--primary);
+  font-weight: 400;
+  font-family: "Jost", sans-serif;
+  margin-bottom: 20px;
+}
+
+.blog h4 sup {
+  font-size: 28px;
+}
+
+.blog h4 span.details {
+  color: var(--tertiary-darkeeer);
+  font-size: 18px;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .blog .box {
+    max-width: 80%;
+    margin: 0 auto 30px auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .blog .box {
+    max-width: 100%;
+    margin: 0 auto 30px auto;
+  }
+}
+
+/*--------------------------------------------------------------
 # Portfolio
 --------------------------------------------------------------*/
 .portfolio #portfolio-flters {
