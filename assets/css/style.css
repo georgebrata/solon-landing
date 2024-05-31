@@ -624,6 +624,7 @@ section {
 
 .section-title p {
   margin-bottom: 0;
+  text-align: center !important;
 }
 
 /*--------------------------------------------------------------
@@ -1070,6 +1071,19 @@ section {
   color: var(--tertiary-darkeeer);
   font-size: 18px;
   display: block;
+}
+
+.fulltext-page {
+  max-width: 75%; 
+  margin: 0 auto;
+}
+
+.fulltext-page p {
+  text-align: justify;
+}
+.fulltext-page ul {
+  padding-left: 6rem;
+  padding-right: 2rem;
 }
 
 @media (max-width: 767px) {
