@@ -428,8 +428,17 @@ h6 {
   color: #fff;
 }
 
+@keyframes marquee {
+  0% { background-position: 0; }
+  100% { background-position: -1000px; }
+}
+
+.animate {
+  animation: marquee 5s infinite linear;
+}
+
 #hero h2 {
-  color: rgba(255, 255, 255, 0.6);
+  color: #fff;
   margin-bottom: 50px;
   font-size: 24px;
 }
@@ -1676,6 +1685,16 @@ section {
   background: #fff;
   width: 100%;
   box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.1);
+}
+.contact iframe {
+  width: 100%;
+  height: 890px;
+  overflow: hidden;
+  scroll-margin-bottom: 100px;
+}
+
+.footerBarContent-FG6O1 {
+  display: none;
 }
 
 .contact .info i {
