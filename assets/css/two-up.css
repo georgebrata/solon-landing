@@ -1,0 +1,41 @@
+  
+article.two-up {
+    max-width: 60rem;
+    margin: auto;
+    margin-top: 0;
+}
+
+.websites-info {
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+}
+
+two-up {
+    overflow: hidden;
+}
+
+two-up img {
+    max-width: 100%;
+    width: 100%;
+}
+
+two-up {
+    /* Color of the track & thumb */
+    --accent-colour: #03170C;
+    /* Or you can set the two independently: */
+    --track-color: white;
+    --thumb-color: #03170C;
+    /* Background of the thumb */
+    --thumb-background: yellow;
+    /* Size of the thumb */
+    --thumb-size: 31px;
+    /* Thickness of the bar */
+    --bar-size: 3px;
+    /* Touch-thickness of the bar */
+    --bar-touch-size: 20px;
+}
+  
