@@ -11,10 +11,10 @@ Optional: use [http-server]([url](https://github.com/http-party/http-server)) fo
 
 
 ## Features
-Responsive design
-Mailchimp Integration - multiple audiences (phone, contact, newsletter)
-Stripe Integration
-Wordpress Blog support (but different domain)
-FAQ section with dinamic content from Google Sheets
+- Responsive design
+- Mailchimp Integration - multiple audiences (phone, contact, newsletter)
+- Stripe Integration
+- Wordpress Blog support (but different domain)
+- FAQ section with dinamic content from Google Sheets
 
 
