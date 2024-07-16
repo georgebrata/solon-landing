@@ -940,6 +940,10 @@ section {
   width: 45vw;
 }
 
+#servicii2 .icon-box {
+  text-align: left;
+}
+
 @media (max-width: 768px) {
   .services .icon-box {
     width: 100%;
