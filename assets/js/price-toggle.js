@@ -16,7 +16,7 @@
     function clickMonthly() {
         select('#price-bronze').textContent = '99/lună';
         select('#price-silver').textContent = '199/lună';
-        select('#price-gold').textContent = '349/lună';
+        select('#price-gold').textContent = '399/lună';
 
         select('#link-bronze').href = 'https://buy.stripe.com/eVa4gI8jaagyb16dQV';
         select('#link-silver').href = 'https://buy.stripe.com/28o8wY1UMcoG1qwaEH';
