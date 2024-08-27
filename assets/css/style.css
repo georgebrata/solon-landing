@@ -2133,6 +2133,12 @@ section {
   color: #fff;
 }
 
+#footer .footer-logos {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
 #footer .copyright {
   float: left;
 }
