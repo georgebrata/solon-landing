@@ -28,7 +28,7 @@ jobs:
       - name: deploy
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
-          server: ftp.solon-agency.ro
-          username: deploy@solon-agency.ro
+          server: ftp.solon.agency
+          username: deploy@solon.agency	
           password: ${{secrets.FTP_PASSWORD}}
           local-dir: ./
