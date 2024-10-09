@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download PDF</title>
+</head>
+<body>
+    <h1>Your download should start automatically...</h1>
+
+    <script>
+        window.onload = function() {
+            const link = document.createElement('a');
+            link.href = '../assets/pdfs/oferta-solon-agentia-digitala-avocati.pdf';  // Path to your PDF file
+            link.setAttribute('download', 'oferta.pdf');  // Sets the download attribute to suggest a filename
+            link.style.display = 'none';  // Hide the link
+            document.body.appendChild(link);
+            link.click();  // Programmatically click the link
+            document.body.removeChild(link);  // Remove the link after download starts
+        };
+    </script>
+</body>
+</html>
