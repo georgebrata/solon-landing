@@ -253,7 +253,7 @@ h6 {
   font-size: 14px;
   text-transform: none;
   font-weight: 500;
-  color: #0c3c53;
+  color: var(--primary);
 }
 
 .navbar .dropdown ul a i {
@@ -363,7 +363,7 @@ h6 {
 .navbar-mobile a:hover,
 .navbar-mobile .active,
 .navbar-mobile li:hover>a {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .navbar-mobile .getstarted,
@@ -394,12 +394,6 @@ h6 {
 
 .navbar-mobile .dropdown ul a i {
   font-size: 12px;
-}
-
-.navbar-mobile .dropdown ul a:hover,
-.navbar-mobile .dropdown ul .active:hover,
-.navbar-mobile .dropdown ul li:hover>a {
-  color: var(--tertiary);
 }
 
 .navbar-mobile .dropdown>.dropdown-active {
@@ -999,6 +993,8 @@ section {
   background: linear-gradient(var(--primary), rgba(40, 58, 90, 0.9)), url("../img/servicii-digitale-complete-pentru-avocati-solon.jpg") fixed center center;
   background-size: cover;
   padding: 120px 0;
+  position: relative;
+  margin-top: -70px;
 }
 
 .cta h3 {
@@ -1044,6 +1040,71 @@ section {
   }
 }
 
+
+/*--------------------------------------------------------------
+# Testimonials
+--------------------------------------------------------------*/
+
+.testimonials .box {
+  padding: 20px 40px 30px 40px;
+  box-shadow: 0 3px 20px -2px rgba(20, 45, 100, 0.1);
+  background: #fff;
+  height: 100%;
+  border-top: 4px solid #fff;
+  border-radius: 5px;
+}
+
+.testimonials .box h4, .testimonials .box p {
+  text-align: left;
+}
+
+.testimonials h3 {
+  font-weight: 500;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.testimonials .member-info p {
+  font-style: italic;
+}
+
+.testimonials.team .member .pic {
+  width: 300px;
+}
+
+.testimonials h4 {
+  font-size: 28px;
+  color: var(--primary);
+  font-weight: 400;
+  font-family: "Jost", sans-serif;
+  margin-bottom: 20px;
+}
+
+.testimonials h4 sup {
+  font-size: 28px;
+}
+
+.testimonials h4 span.details {
+  color: var(--tertiary-darkeeer);
+  font-size: 18px;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .testimonials .box {
+    max-width: 80%;
+    margin: 0 auto 30px auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .testimonials .box {
+    max-width: 100%;
+    margin: 0 auto 30px auto;
+  }
+}
+
 /*--------------------------------------------------------------
 # Blog
 --------------------------------------------------------------*/
@@ -1056,6 +1117,11 @@ section {
   border-top: 4px solid #fff;
   border-radius: 5px;
 }
+
+.blog .box:hover {
+  box-shadow: 0 9px 60px -2px rgba(20, 45, 100, 0.1);
+}
+
 
 .blog .box h4, .blog .box p {
   text-align: left;
@@ -1692,7 +1758,7 @@ section {
 }
 .contact iframe {
   width: 100%;
-  height: 890px;
+  height: 970px;
   overflow: hidden;
   scroll-margin-bottom: 100px;
 }
@@ -1885,6 +1951,18 @@ section {
   100% {
     transform: rotate(360deg);
   } 
+}
+/*--------------------------------------------------------------
+# Blockquote
+--------------------------------------------------------------*/
+
+.blockquote {
+  margin-bottom: 1rem;
+  font-size: var(--bs-body-font-size);
+  font-style: italic;
+}
+.blockquote-footer cite {
+  font-style: normal;
 }
 
 /*--------------------------------------------------------------
