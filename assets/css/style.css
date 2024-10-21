@@ -718,7 +718,7 @@ section {
 # Why Us
 --------------------------------------------------------------*/
 .why-us .content {
-  padding: 60px 100px 0 100px;
+  padding: 60px 60px 0 60px;
 }
 
 .why-us .content h3 {
@@ -750,7 +750,7 @@ section {
 }
 
 .why-us .accordion-list {
-  padding: 0 100px 60px 100px;
+  padding: 0 60px 60px 60px;
 }
 
 .img-80 {
@@ -841,7 +841,7 @@ section {
   }
 
   .why-us .content {
-    padding: 1.1rem;
+    padding: 0;
   }
 
   .why-us .accordion-list {
@@ -1056,6 +1056,10 @@ section {
 
 .testimonials .box h4, .testimonials .box p {
   text-align: left;
+}
+
+.testimonials .blockquote p {
+  font-size: 1.25rem;
 }
 
 .testimonials h3 {
@@ -1396,7 +1400,7 @@ section {
 
 .team .member p {
   margin: 10px 0 0 0;
-  font-size: 14px;
+  /* font-size: 14px; */
 }
 
 .team .member .social {
@@ -2168,14 +2172,6 @@ section {
 }
 
 @media (max-width: 991px) {
-  #footer .footer-top .footer-links {
-    text-align: center;
-  }
-
-  #footer .footer-top .footer-links ul li {
-    justify-content: center;
-  }
-
   #footer .footer-top .footer-contact {
     text-align: center;
   }
@@ -2236,7 +2232,7 @@ section {
 .circuits-img.up {
   position: fixed;
   bottom: 0;
-  left: -5px;
+  left: -15px;
   z-index: 9999;
 }
 #footer .credits {
@@ -2292,6 +2288,14 @@ section {
 }
 
 @media only screen and (max-width: 600px) {
+  #footer .footer-top .footer-links {
+    text-align: center;
+  }
+
+  #footer .footer-top .footer-links ul li {
+    justify-content: center;
+  }
+
   .calendar {
       width: 100%;
   }

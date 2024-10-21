@@ -18,9 +18,9 @@
         select('#price-silver').textContent = '199/lună';
         select('#price-gold').textContent = '349/lună';
 
-        select('#link-bronze').href = 'https://buy.stripe.com/eVa4gI8jaagyb16dQV';
-        select('#link-silver').href = 'https://buy.stripe.com/28o8wY1UMcoG1qwaEH';
-        select('#link-gold').href = 'https://buy.stripe.com/cN2cNeczqewO9X29AB';
+        select('#link-bronze').href = 'https://buy.stripe.com/14kbJ767n5X58xOeUU';
+        select('#link-silver').href = 'https://buy.stripe.com/14k6oNfHX5X5dS89AB';
+        select('#link-gold').href = 'https://buy.stripe.com/7sI6oN0N3gBJ5lCcMO';
     }
 
     function clickAnnual() {
