@@ -1,0 +1,5 @@
+# Update sitemap.xml lastmod timestamp
+node scripts/update-sitemap.js
+
+# Add sitemap.xml to the commit
+git add sitemap.xml
