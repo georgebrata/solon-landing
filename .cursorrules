@@ -1,0 +1,247 @@
+# ======================================================================
+# .cursorrules — HTML5/CSS3/Vanilla JavaScript Website Project
+# ======================================================================
+#
+# These rules steer Cursor's code suggestions, refactors, and chat answers
+# for a high-performance, SEO-optimized website built with standard web technologies.
+# Write rules in plain English; Cursor treats each bullet/paragraph as a
+# high-priority instruction. Be opinionated but pragmatic.
+#
+# ------------------------------------------------------------------------
+# GLOBAL DIRECTIVES
+# ------------------------------------------------------------------------
+You are an expert front-end engineer specializing in HTML5, CSS3, and Vanilla JavaScript.
+Always produce:
+• Semantic HTML5 markup with proper accessibility attributes.
+• Modern CSS3 with custom properties, flexbox, and grid layouts.
+• Vanilla JavaScript (ES6+) with no external dependencies unless necessary.
+• Performance-optimized code that prioritizes Core Web Vitals.
+• SEO-friendly markup with proper meta tags and structured data.
+
+Keep code clean, concise, and maintainable. Prefer clarity, then performance, then cleverness.
+
+# ------------------------------------------------------------------------
+# CORE PATTERNS & TECHNOLOGIES
+# ------------------------------------------------------------------------
+HTML5:
+  – Use semantic elements: <header>, <nav>, <main>, <section>, <article>, <aside>, <footer>.
+  – Include proper ARIA attributes for accessibility: aria-label, aria-describedby, role.
+  – Implement structured data (JSON-LD) for better SEO.
+  – Always include viewport meta tag and canonical URLs.
+  – Use proper heading hierarchy (h1 → h2 → h3, no skipping levels).
+
+CSS3:
+  – Use CSS custom properties (CSS variables) for consistent theming.
+  – Prefer flexbox and CSS Grid over float-based layouts.
+  – Implement mobile-first responsive design with media queries.
+  – Use CSS animations and transitions for smooth interactions.
+  – Optimize for performance: minimize repaints and reflows.
+
+JavaScript:
+  – Write modern ES6+ code with const/let, arrow functions, template literals.
+  – Use event delegation for better performance with dynamic content.
+  – Implement lazy loading for images and non-critical resources.
+  – Use Intersection Observer API for scroll-based animations.
+  – Debounce/throttle expensive operations (scroll, resize, input).
+
+Performance & SEO:
+  – Minimize HTTP requests by combining and minifying assets.
+  – Use WebP images with fallbacks for better compression.
+  – Implement proper caching headers and CDN optimization.
+  – Ensure Core Web Vitals compliance (LCP < 2.5s, FID < 100ms, CLS < 0.1).
+  – Use preload, prefetch, and preconnect for critical resources.
+
+# ------------------------------------------------------------------------
+# PROJECT-SPECIFIC PATTERNS
+# ------------------------------------------------------------------------
+File Structure:
+  – Maintain existing directory structure: assets/css/, assets/js/, assets/img/.
+  – Keep vendor libraries in assets/vendor/ directory.
+  – Use relative paths for internal assets, absolute for external.
+  – Follow existing naming conventions: kebab-case for files, PascalCase for classes.
+
+Design Consistency:
+  – Preserve existing color scheme: --primary: #03170C, --secondary: #3E5C76, --tertiary: #F0EBD8.
+  – Maintain Bootstrap 5.3.2 integration with custom CSS overrides.
+  – Keep existing typography: Open Sans, Jost, Poppins font families.
+  – Preserve current spacing, border-radius, and shadow patterns.
+
+JavaScript Patterns:
+  – Follow existing utility functions: select(), on(), onscroll(), scrollto().
+  – Use IIFE (Immediately Invoked Function Expression) for module isolation.
+  – Implement proper error handling with try-catch blocks.
+  – Use modern async/await patterns for API calls.
+
+# ------------------------------------------------------------------------
+# SITEMAP MANAGEMENT
+# ------------------------------------------------------------------------
+After editing any HTML page:
+  – Update sitemap.xml with current timestamp for the modified page.
+  – Use the existing update-sitemap.js script pattern.
+  – Maintain proper URL structure: https://solon.agency/path/
+  – Set appropriate priority levels: 1.00 for homepage, 0.80 for main pages, 0.50 for legal pages.
+
+# ------------------------------------------------------------------------
+# SEO OPTIMIZATION
+# ------------------------------------------------------------------------
+Meta Tags:
+  – Include comprehensive meta tags: title, description, keywords.
+  – Implement Open Graph tags for social media sharing.
+  – Add Twitter Card meta tags for better social previews.
+  – Include canonical URLs to prevent duplicate content issues.
+
+Structured Data:
+  – Implement JSON-LD structured data for business information.
+  – Add breadcrumb navigation with structured data.
+  – Include FAQ schema for FAQ sections.
+  – Use LocalBusiness schema for contact information.
+
+Performance:
+  – Optimize images: use WebP format with JPEG/PNG fallbacks.
+  – Implement critical CSS inlining for above-the-fold content.
+  – Use resource hints: preload, prefetch, preconnect.
+  – Minimize and compress all assets.
+
+# ------------------------------------------------------------------------
+# ACCESSIBILITY REQUIREMENTS
+# ------------------------------------------------------------------------
+WCAG 2.1 AA Compliance:
+  – Ensure color contrast ratio ≥ 4.5:1 for normal text, 3:1 for large text.
+  – Provide alt text for all images, including decorative images (empty alt="").
+  – Implement keyboard navigation for all interactive elements.
+  – Use proper heading hierarchy and skip links.
+  – Include ARIA labels for complex UI components.
+
+# ------------------------------------------------------------------------
+# CODE QUALITY STANDARDS
+# ------------------------------------------------------------------------
+HTML:
+  – Validate HTML5 markup with W3C validator.
+  – Use semantic elements instead of generic divs where appropriate.
+  – Include proper lang attribute on html element.
+  – Ensure all forms have proper labels and validation.
+
+CSS:
+  – Use BEM methodology for CSS class naming: .block__element--modifier.
+  – Organize CSS with logical sections: variables, base, components, utilities.
+  – Use CSS custom properties for consistent theming.
+  – Implement responsive design with mobile-first approach.
+
+JavaScript:
+  – Use strict mode: "use strict".
+  – Implement proper error handling and user feedback.
+  – Use modern JavaScript features: destructuring, spread operator, async/await.
+  – Write self-documenting code with clear variable and function names.
+
+# ------------------------------------------------------------------------
+# DON'Ts
+# ------------------------------------------------------------------------
+✗ Do not use inline styles or JavaScript (except for critical CSS).
+✗ Avoid external dependencies unless absolutely necessary.
+✗ Don't use deprecated HTML elements or attributes.
+✗ Never skip heading levels in the document structure.
+✗ Avoid using !important in CSS unless absolutely necessary.
+✗ Don't use table-based layouts for non-tabular data.
+✗ Never leave console.log statements in production code.
+
+# ------------------------------------------------------------------------
+# EXAMPLES
+# ------------------------------------------------------------------------
+HTML5 Semantic Structure:
+```html
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="https://solon.agency/page/">
+  <title>Page Title | Solon Agency</title>
+  <meta name="description" content="Page description for SEO">
+</head>
+<body>
+  <header role="banner">
+    <nav role="navigation" aria-label="Main navigation">
+      <!-- Navigation content -->
+    </nav>
+  </header>
+  <main role="main">
+    <section aria-labelledby="section-heading">
+      <h1 id="section-heading">Section Title</h1>
+      <!-- Section content -->
+    </section>
+  </main>
+  <footer role="contentinfo">
+    <!-- Footer content -->
+  </footer>
+</body>
+</html>
+```
+
+CSS3 with Custom Properties:
+```css
+:root {
+  --primary: #03170C;
+  --secondary: #3E5C76;
+  --spacing-unit: 1rem;
+  --border-radius: 0.375rem;
+}
+
+.component {
+  background-color: var(--primary);
+  padding: calc(var(--spacing-unit) * 2);
+  border-radius: var(--border-radius);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-unit);
+}
+```
+
+Vanilla JavaScript ES6+:
+```javascript
+(function() {
+  "use strict";
+  
+  const select = (el, all = false) => {
+    el = el.trim();
+    return all ? [...document.querySelectorAll(el)] : document.querySelector(el);
+  };
+  
+  const on = (type, el, listener, all = false) => {
+    const selectEl = select(el, all);
+    if (selectEl) {
+      if (all) {
+        selectEl.forEach(e => e.addEventListener(type, listener));
+      } else {
+        selectEl.addEventListener(type, listener);
+      }
+    }
+  };
+  
+  // Lazy loading implementation
+  const lazyImages = select('img[data-src]', true);
+  const imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.classList.remove('lazy');
+        imageObserver.unobserve(img);
+      }
+    });
+  });
+  
+  lazyImages.forEach(img => imageObserver.observe(img));
+})();
+```
+
+# ------------------------------------------------------------------------
+# SITEMAP UPDATE WORKFLOW
+# ------------------------------------------------------------------------
+After editing any HTML page:
+1. Update the page content with proper SEO meta tags
+2. Run the sitemap update script: `node scripts/update-sitemap.js`
+3. Verify the sitemap.xml contains the updated timestamp
+4. Test the page for Core Web Vitals compliance
+5. Validate HTML markup and accessibility standards
+
+Remember: This is a performance-focused, SEO-optimized website. Every change should maintain or improve these aspects while preserving the existing design and user experience.
