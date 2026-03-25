@@ -1376,11 +1376,31 @@ section {
 .team .member .pic {
   overflow: hidden;
   width: 180px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .team .member .pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: ease-in-out 0.3s;
+}
+
+/* Intrinsic dimensions from width/height attributes; keeps aspect ratio with CSS width */
+img[width][height] {
+  height: auto;
+}
+
+.team .member .pic img[width][height] {
+  height: 100%;
+}
+
+/* Case study thumbnails (16:9 rasters) */
+.portfolio .portfolio-item .portfolio-img img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .team .member:hover {
@@ -2238,6 +2258,28 @@ section {
   display: flex;
   justify-content: center;
   gap: 2rem;
+}
+
+#footer .footer-logos a img {
+  height: 60px;
+  width: auto;
+}
+
+a.preview-link:focus-visible,
+a.details-link:focus-visible,
+.back-to-top:focus-visible {
+  outline: 2px solid var(--tertiary-darkeeer);
+  outline-offset: 3px;
+}
+
+.portfolio .portfolio-info h4 a {
+  color: inherit;
+}
+
+.portfolio .portfolio-info h4 a:focus-visible {
+  outline: 2px solid var(--tertiary-darkeeer);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 #footer .copyright {

@@ -38,6 +38,11 @@
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
 
+  <!-- LCP: responsive hero image -->
+  <link rel="preload" as="image" type="image/png"
+    imagesrcset="assets/img/responsive/hero-img-400w.png 400w, assets/img/responsive/hero-img-520w.png 520w, assets/img/responsive/hero-img-780w.png 780w"
+    imagesizes="(max-width: 575px) 80vw, (max-width: 991px) 70vw, 456px" />
+
   <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
@@ -91,7 +96,7 @@
     fbq('init', '400022442507673');
     fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none"
+  <noscript><img alt="" height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=400022442507673&ev=PageView&noscript=1" /></noscript>
   <!-- End Meta Pixel Code -->
 
@@ -131,9 +136,9 @@
   <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center">
 
-      <h2 class="logo me-auto"><a href="." class="hover-no-underline">
-          <img src="./assets/img/solon-logo.png" height="30" style="margin-bottom: 8px;" />
-          SOLON</a></h2>
+      <h2 class="logo me-auto"><a href="." class="hover-no-underline" aria-label="SOLON — pagina principală">
+          <img alt="" src="./assets/img/solon-logo.png" width="250" height="250" style="height: 30px; width: auto; margin-bottom: 8px;" />
+          <span aria-hidden="true">SOLON</span></a></h2>
 
       <nav id="navbar" class="navbar">
         <ul>
@@ -226,7 +231,11 @@
           </div>
         </div>
         <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
-          <img src="assets/img/hero-img.png" class="img-80 animated" alt="">
+          <img src="assets/img/responsive/hero-img-780w.png"
+            srcset="assets/img/responsive/hero-img-400w.png 400w, assets/img/responsive/hero-img-520w.png 520w, assets/img/responsive/hero-img-780w.png 780w"
+            sizes="(max-width: 575px) 80vw, (max-width: 991px) 70vw, 456px" width="780" height="646"
+            class="img-80 animated" alt="SOLON — agenție digitală pentru avocați" fetchpriority="high"
+            decoding="async" />
         </div>
       </div>
     </div>
@@ -376,7 +385,10 @@
 
         <div class="row">
           <div class="col-lg-6 d-flex align-items-center" data-aos="fade-right" data-aos-delay="100">
-            <img src="assets/img/skills.png" class="img-80" alt="">
+            <img src="assets/img/responsive/skills-1024w.png"
+              srcset="assets/img/responsive/skills-400w.png 400w, assets/img/responsive/skills-640w.png 640w, assets/img/responsive/skills-1024w.png 1024w"
+              sizes="(max-width: 991px) 100vw, 456px" width="1024" height="630" class="img-80"
+              alt="Servicii digitale pentru avocați și organizații juridice" loading="lazy" decoding="async" />
           </div>
           <div class="col-lg-6 pt-4 pt-lg-0 px-lg-5 content" data-aos="fade-left" data-aos-delay="100">
             <h2 class="mt-4">Digitalizare juridică</h2>
@@ -539,71 +551,78 @@
 
           <div class="col-lg-3 col-md-3 portfolio-item filter-branding filter-website" data-aos="fade-up"
             data-aos-delay="100">
-            <a href="https://solon.agency/studii-de-caz/marinau-si-asociatii/" target="_blank">
-
-              <div class="portfolio-img"><img src="assets/img/portfolio/marinau-case-study.png" width="500"
-                  class="img-fluid" alt="Marinău și Asociații | Proiect digitalizare juridica"></div>
-              <div class="portfolio-info">
-                <h3>Marinău și Asociații</h3>
-                <p>Branding, Website</p>
-
-                <a href="https://marinausiasociatii.ro/" target="_blank" class="preview-link" title="Website"><i
-                    class="bx bx-link"></i></a>
-                <a href="https://solon.agency/studii-de-caz/marinau-si-asociatii/" target="_blank" class="details-link"
-                  title="Studiu de caz"><i class="bx bx-right-arrow-alt"></i></a>
-              </div>
-            </a>
+            <div class="portfolio-img">
+              <a href="https://solon.agency/studii-de-caz/marinau-si-asociatii/" target="_blank" rel="noopener noreferrer"
+                aria-label="Studiu de caz: Marinău și Asociații (se deschide în tab nou)"><img
+                  src="assets/img/responsive/marinau-case-study-960w.png"
+                  srcset="assets/img/responsive/marinau-case-study-480w.png 480w, assets/img/responsive/marinau-case-study-960w.png 960w, assets/img/responsive/marinau-case-study-1440w.png 1440w, assets/img/responsive/marinau-case-study-1920w.png 1920w"
+                  sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 300px" width="1920" height="1080"
+                  class="img-fluid" alt="" loading="lazy" decoding="async" /></a>
+            </div>
+            <div class="portfolio-info">
+              <h3>Marinău și Asociații</h3>
+              <p>Branding, Website</p>
+              <a href="https://marinausiasociatii.ro/" target="_blank" rel="noopener noreferrer" class="preview-link"
+                aria-label="Website-ul societății Marinău și Asociații (se deschide în tab nou)"><i class="bx bx-link"
+                  aria-hidden="true"></i></a>
+            </div>
           </div>
 
           <div class="col-lg-3 col-md-3 portfolio-item filter-branding filter-marketing filter-website"
             data-aos="fade-up" data-aos-delay="200">
-            <a href="https://solon.agency/studii-de-caz/avocat-sebastian-nagy/" target="_blank">
-              <div class="portfolio-img"><img src="assets/img/portfolio/nagy-case-study.png" width="500"
-                  class="img-fluid" alt="Avocat Sebastian Nagy | Proiect digitalizare juridica">
-              </div>
-              <div class="portfolio-info">
-                <h3>Avocat Sebastian Nagy</h3>
-                <p>Branding, Marketing, Website</p>
-                <a href="https://avocat-nagy-cluj.ro/" target="_blank" class="preview-link" title="Website"><i
-                    class="bx bx-link"></i></a>
-                <a href="https://solon.agency/studii-de-caz/avocat-sebastian-nagy/" target="_blank" class="details-link"
-                  title="Studiu de caz"><i class="bx bx-right-arrow-alt"></i></a>
-              </div>
-            </a>
+            <div class="portfolio-img">
+              <a href="https://solon.agency/studii-de-caz/avocat-sebastian-nagy/" target="_blank" rel="noopener noreferrer"
+                aria-label="Studiu de caz: Avocat Sebastian Nagy (se deschide în tab nou)"><img
+                  src="assets/img/responsive/nagy-case-study-960w.png"
+                  srcset="assets/img/responsive/nagy-case-study-480w.png 480w, assets/img/responsive/nagy-case-study-960w.png 960w, assets/img/responsive/nagy-case-study-1440w.png 1440w, assets/img/responsive/nagy-case-study-1920w.png 1920w"
+                  sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 300px" width="1920" height="1080"
+                  class="img-fluid" alt="" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="portfolio-info">
+              <h3>Avocat Sebastian Nagy</h3>
+              <p>Branding, Marketing, Website</p>
+              <a href="https://avocat-nagy-cluj.ro/" target="_blank" rel="noopener noreferrer" class="preview-link"
+                aria-label="Website cabinet Avocat Sebastian Nagy, Avocat Cluj-Napoca (se deschide în tab nou)"><i
+                  class="bx bx-link" aria-hidden="true"></i></a>
+            </div>
           </div>
 
           <div class="col-lg-3 col-md-3 portfolio-item filter-branding filter-marketing filter-website"
             data-aos="fade-up" data-aos-delay="400">
-            <a href="https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/" target="_blank">
-              <div class="portfolio-img"><img src="assets/img/portfolio/dumitrescu-case-study.png" width="500"
-                  class="img-fluid" alt="Avocat Dumitrescu Alexandru | Proiect digitalizare cabinet de avocat">
-              </div>
-              <div class="portfolio-info">
-                <h3>Avocat Dumitrescu Alexandru</h3>
-                <!-- <p>Branding, Marketing, Website</p> -->
-                <a href="https://avocat-alexdumitrescu.ro/" target="_blank" class="preview-link" title="Website"><i
-                    class="bx bx-link"></i></a>
-                <a href="https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/" target="_blank"
-                  class="details-link" title="Studiu de caz"><i class="bx bx-right-arrow-alt"></i></a>
-              </div>
-            </a>
+            <div class="portfolio-img">
+              <a href="https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/" target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Studiu de caz: Avocat Dumitrescu Alexandru (se deschide în tab nou)"><img
+                  src="assets/img/responsive/dumitrescu-case-study-960w.png"
+                  srcset="assets/img/responsive/dumitrescu-case-study-480w.png 480w, assets/img/responsive/dumitrescu-case-study-960w.png 960w, assets/img/responsive/dumitrescu-case-study-1440w.png 1440w, assets/img/responsive/dumitrescu-case-study-1920w.png 1920w"
+                  sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 300px" width="1920" height="1080"
+                  class="img-fluid" alt="" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="portfolio-info">
+              <h3>Avocat Dumitrescu Alexandru</h3>
+              <!-- <p>Branding, Marketing, Website</p> -->
+              <a href="https://avocat-alexdumitrescu.ro/" target="_blank" rel="noopener noreferrer" class="preview-link"
+                aria-label="Website cabinet Avocat Dumitrescu Alexandru, Turda (se deschide în tab nou)"><i
+                  class="bx bx-link" aria-hidden="true"></i></a>
+            </div>
           </div>
 
           <div class="col-lg-3 col-md-3 portfolio-item filter-branding filter-marketing filter-website"
             data-aos="fade-up" data-aos-delay="800">
-            <a href="https://solon.agency/studii-de-caz/tslaw/" target="_blank">
-              <div class="portfolio-img"><img src="assets/img/portfolio/tslaw-case-study.png" width="500"
-                  class="img-fluid" alt="Ioana Niște - Cabinet de avocat | Proiect digitalizare cabinet de avocat">
-              </div>
-              <div class="portfolio-info">
-                <h3>Ioana Niște - Cabinet de avocat</h3>
-                <!-- <p>Branding, Development, Marketing</p> -->
-                <a href="https://avocat-alexdumitrescu.ro/" target="_blank" class="preview-link" title="Website"><i
-                    class="bx bx-link"></i></a>
-                <a href="https://solon.agency/studii-de-caz/tslaw/" target="_blank"
-                  class="details-link" title="Studiu de caz"><i class="bx bx-right-arrow-alt"></i></a>
-              </div>
-            </a>
+            <div class="portfolio-img">
+              <a href="https://solon.agency/studii-de-caz/tslaw/" target="_blank" rel="noopener noreferrer"
+                aria-label="Studiu de caz: TSLaw (se deschide în tab nou)"><img
+                  src="assets/img/responsive/tslaw-case-study-960w.png"
+                  srcset="assets/img/responsive/tslaw-case-study-480w.png 480w, assets/img/responsive/tslaw-case-study-960w.png 960w, assets/img/responsive/tslaw-case-study-1440w.png 1440w, assets/img/responsive/tslaw-case-study-1920w.png 1920w"
+                  sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 300px" width="1920" height="1080"
+                  class="img-fluid" alt="" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="portfolio-info">
+              <h3>Ioana Niște - Cabinet de avocat</h3>
+              <!-- <p>Branding, Development, Marketing</p> -->
+              <a href="https://tslaw.ro/" target="_blank" rel="noopener noreferrer" class="preview-link"
+                aria-label="Website TSLaw (se deschide în tab nou)"><i class="bx bx-link" aria-hidden="true"></i></a>
+            </div>
           </div>
 
         </div>
@@ -641,8 +660,9 @@
                   <div class="col-sm-12 offset-md-2 col-md-8 offset-lg-3 col-lg-6 mb-3 mt-4">
                     <div class="member d-flex align-items-start">
                       <div class="pic">
-                        <img src="assets/img/team/dumitrescu2.png" class="img-fluid" width="200"
-                          alt="Avocat Dumitrescu Alexandru din Turda - review pentru SOLON, agentia digitala pentru avocati">
+                        <img src="assets/img/team/dumitrescu2.png" class="img-fluid" width="432" height="456"
+                          alt="Avocat Dumitrescu Alexandru din Turda - review pentru SOLON, agentia digitala pentru avocati"
+                          loading="lazy" decoding="async" />
                       </div>
                       <div class="member-info">
                         <h3>Avocat Dumitrescu Alexandru</h3>
@@ -670,8 +690,9 @@
                   <div class="col-sm-12 offset-md-2 col-md-8 offset-lg-3 col-lg-6 mb-3 mt-4">
                     <div class="member d-flex align-items-start">
                       <div class="pic">
-                        <img src="assets/img/team/mihai.png" class="img-fluid" width="200"
-                          alt="Avocat Mihai Marinau - review SOLON, agentia digitala pentru avocati">
+                        <img src="assets/img/team/mihai.png" class="img-fluid" width="443" height="427"
+                          alt="Avocat Mihai Marinau - review SOLON, agentia digitala pentru avocati" loading="lazy"
+                          decoding="async" />
                       </div>
                       <div class="member-info">
                         <h3>Avocat Marinău Mihai</h3>
@@ -700,8 +721,9 @@
                   <div class="col-md-12 offset-lg-2 col-lg-8 mb-3 mt-4">
                     <div class="member h-8 d-flex align-items-start">
                       <div class="pic">
-                        <img src="assets/img/team/sebi.png" class="img-fluid" width="200"
-                          alt="Avocat Sebastian Nagy - review SOLON, agentia digitala pentru avocati">
+                        <img src="assets/img/team/sebi.png" class="img-fluid" width="716" height="748"
+                          alt="Avocat Sebastian Nagy - review SOLON, agentia digitala pentru avocati" loading="lazy"
+                          decoding="async" />
                       </div>
                       <div class="member-info">
                         <h3>Avocat Nagy Sebastian</h3>
@@ -763,8 +785,8 @@
 
           <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="200">
             <div class="member d-flex align-items-center">
-              <div class="pic"><img src="assets/img/team/dan.png" class="img-fluid" width="200"
-                  alt="Dan Marinău | Data Engineer SOLON"></div>
+              <div class="pic"><img src="assets/img/team/dan.png" class="img-fluid" width="964" height="1036"
+                  alt="Dan Marinău | Data Engineer SOLON" loading="lazy" decoding="async"></div>
               <div class="member-info">
                 <h3>Dan Marinău</h3>
                 <span>Data Engineer</span>
@@ -801,8 +823,8 @@
 
           <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="400">
             <div class="member d-flex align-items-center">
-              <div class="pic"><img src="assets/img/team/george.jpeg" class="img-fluid" width="200"
-                  alt="George Brata | Developer SOLON"></div>
+              <div class="pic"><img src="assets/img/team/george.jpeg" class="img-fluid" width="640" height="853"
+                  alt="George Brata | Developer SOLON" loading="lazy" decoding="async"></div>
               <div class="member-info">
                 <h3>Brata George</h3>
                 <span>Web Developer</span>
@@ -1232,27 +1254,28 @@
           </div>
 
           <div class="col-lg-3 col-md-12 footer-contact">
-            <img src="./assets/img/solon-logo-dark.png" height="70" />
+            <img alt="SOLON" src="./assets/img/solon-logo-dark.png" height="70" />
             <h3>SOLON</h3>
             <p>
               <!-- <strong>Telefon:</strong>  -->
-              <a class="color-primary" href="tel:+40754041070" title="Dan">0754 041 070</a><br>
-              <a class="color-primary" href="tel:+40774431127" title="George">0774 431 127</a><br>
+              <a class="color-primary" href="tel:+40754041070">0754 041 070<span class="visually-hidden">, contact
+                  Dan</span></a><br>
+              <a class="color-primary" href="tel:+40774431127">0774 431 127<span class="visually-hidden">, contact
+                  George</span></a><br>
               <!-- <strong>Email:</strong>  -->
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
             </p>
             <!-- <div class="social-links mt-3">
-              <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+              <a href="#" class="facebook" aria-label="Facebook SOLON (în curând)"><i class="bx bxl-facebook" aria-hidden="true"></i></a>
+              <a href="#" class="instagram" aria-label="Instagram SOLON (în curând)"><i class="bx bxl-instagram" aria-hidden="true"></i></a>
+              <a href="#" class="linkedin" aria-label="LinkedIn SOLON (în curând)"><i class="bx bxl-linkedin" aria-hidden="true"></i></a>
             </div> -->
           </div>
 
         </div>
         <div class="row">
           <div class="footer-logos">
-            <a href="https://anpc.ro/"><img src="./assets/img/anpc-sal.png" alt="ANPC - Protectia consumatorului"
-                height="60" /></a>
+            <a href="https://anpc.ro/" aria-label="ANPC — Soluționarea alternativă a litigiilor (legătură externă)"><img src="./assets/img/anpc-sal.png" alt="" width="500" height="124" decoding="async" /></a>
             <script src="https://mny.ro/npId.js?p=143413" type="text/javascript" data-version="orizontal"
               data-contrast-color="#ffffff"></script>
           </div>
@@ -1264,7 +1287,7 @@
     <div class="container footer-bottom clearfix">
       <div class="copyright">
         <img src="./assets/img/circuits-up.png" alt="" class="circuits-img up" />
-        <img src="./assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
+        <img alt="SOLON" src="./assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
         <!-- &copy; Copyright <strong><span>SOLON</span></strong>. Toate drepturile rezervate. -->
         <b>SOLON</b> &copy; 2025
       </div>
@@ -1277,8 +1300,8 @@
   <!-- End Footer -->
 
   <div id="preloader"></div>
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-      class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    aria-label="Înapoi la începutul paginii"><i class="bi bi-arrow-up-short" aria-hidden="true"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/aos/aos.js"></script>
