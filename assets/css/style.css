@@ -447,7 +447,7 @@ h6 {
   display: block;
   font-size: 24px;
   line-height: 30px;
-  margin-bottom: 50px;
+  margin-bottom: 5px;
   font-weight: 400;
 }
 
@@ -545,7 +545,7 @@ h6 {
   #hero .hero-subtitle {
     font-size: 18px;
     line-height: 24px;
-    margin-bottom: 30px;
+    margin-bottom: 5px;
   }
 
   #hero .hero-img img {
