@@ -1,0 +1,12 @@
+{
+  "name": "solon-landing",
+  "private": true,
+  "scripts": {
+    "minify": "node scripts/minify-assets.js",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "terser": "^5.37.0"
+  }
+}

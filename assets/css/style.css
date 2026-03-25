@@ -1008,7 +1008,7 @@ section {
 # Cta
 --------------------------------------------------------------*/
 .cta {
-  background: linear-gradient(var(--primary), rgba(40, 58, 90, 0.9)), url("../img/servicii-digitale-complete-pentru-avocati-solon.jpg") fixed center center;
+  background: linear-gradient(var(--primary), rgba(40, 58, 90, 0.9)), url("../img/servicii-digitale-complete-pentru-avocati-solon.webp") fixed center center;
   background-size: cover;
   padding: 120px 0;
   position: relative;

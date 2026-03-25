@@ -1,0 +1,54 @@
+#!/bin/sh
+# Regenerate minified CSS/JS, update sitemap lastmod, stage generated files.
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# Git hooks run without a login shell, so PATH often omits Homebrew / nvm / fnm (npm: not found).
+ensure_node_tools() {
+  if command -v npm >/dev/null 2>&1 && command -v node >/dev/null 2>&1; then
+    return 0
+  fi
+  export PATH="/opt/homebrew/bin:/opt/homebrew/opt/node/bin:/usr/local/bin:/usr/local/opt/node/bin:${PATH:-}"
+  if [ -s "${HOME}/.nvm/nvm.sh" ]; then
+    # shellcheck disable=SC1090
+    . "${HOME}/.nvm/nvm.sh"
+  fi
+  if [ -f "${HOME}/.asdf/asdf.sh" ]; then
+    # shellcheck disable=SC1090
+    . "${HOME}/.asdf/asdf.sh"
+  fi
+  if command -v fnm >/dev/null 2>&1; then
+    eval "$(fnm env 2>/dev/null)" || true
+  fi
+  if [ -d "${HOME}/.volta/bin" ]; then
+    export PATH="${HOME}/.volta/bin:${PATH}"
+  fi
+  if command -v npm >/dev/null 2>&1 && command -v node >/dev/null 2>&1; then
+    return 0
+  fi
+  echo "pre-commit: npm/node not found. Install Node.js or open a terminal where \`npm\` works and ensure PATH includes it (Homebrew, nvm, fnm, Volta)." >&2
+  exit 1
+}
+
+ensure_node_tools
+
+if [ ! -f package.json ]; then
+  exit 0
+fi
+
+if [ ! -d node_modules ]; then
+  echo "solon-landing: installing npm dependencies (first run)..."
+  npm install
+fi
+
+npm run minify
+
+for f in assets/css/*.min.css assets/js/*.min.js; do
+  if [ -f "$f" ]; then
+    git add "$f"
+  fi
+done
+
+node scripts/update-sitemap.js
+git add sitemap.xml
