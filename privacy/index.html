@@ -40,7 +40,7 @@
 
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap"
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
@@ -287,13 +287,14 @@
                       <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
                       
                       <form action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=b3fd62ff7a&amp;f_id=0023f8e6f0" method="POST" style="width: 100%;">
-                        <input type="email" name="EMAIL" class="required email" id="mce-EMAIL" required="" value="undefined@gmail.com" style="display:none;">        
-                        <input type="tel" name="PHONE" class="REQ_CSS" id="mce-PHONE" value="" placeholder="07......">
+                        <input type="email" name="EMAIL" class="required email" required="" value="undefined@gmail.com" style="display:none;" aria-hidden="true" tabindex="-1">
+                        <label for="mce-PHONE" class="form-label visually-hidden">Număr de telefon pentru contact telefonic</label>
+                        <input type="tel" name="PHONE" class="REQ_CSS" id="mce-PHONE" value="" placeholder="07......" autocomplete="tel">
           
                         <div aria-hidden="true" style="position: absolute; left: -5000px;">
                           <input type="text" name="b_8cfcf6d7f1f80308125058838_b3fd62ff7a" tabindex="-1" value="">
                         </div>
-                          <input type="submit" name="subscribe" id="mc-embedded-subscribe" class="button" value="Vreau să fiu sunat 📞">
+                          <input type="submit" name="subscribe" id="mc-embedded-subscribe-cta" class="button" value="Vreau să fiu sunat 📞">
                       </form>
                     </div>
                   </div>
