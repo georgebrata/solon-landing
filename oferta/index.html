@@ -1,24 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Ofertă</title>
-</head>
-<body>
-    <h1>Your download should start automatically...</h1>
+<html lang="ro">
 
-    <script>
-        window.onload = function() {
-            const link = document.createElement('a');
-            link.href = '../assets/pdfs/oferta-solon-agentia-digitala-avocati.pdf';  // Path to your PDF file
-            link.setAttribute('download', 'oferta-solon-agentia-digitala-avocati.pdf');  // Sets the download attribute to suggest a filename
-            link.style.display = 'none';  // Hide the link
-            document.body.appendChild(link);
-            link.click();  // Programmatically click the link
-            document.body.removeChild(link);  // Remove the link after download starts
-        };
-    </script>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Descarcă oferta SOLON PDF | SOLON - pentru avocați</title>
+  <meta name="title" content="Descarcă oferta SOLON PDF | SOLON - pentru avocați" />
+  <meta name="description"
+    content="Descarcă oferta SOLON în format PDF și vezi cum te ajutăm cu branding, website, SEO și marketing pentru avocați, plus pașii de implementare." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://solon.agency/oferta" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://solon.agency/oferta" />
+  <meta property="og:title" content="Descarcă oferta SOLON PDF | SOLON - pentru avocați" />
+  <meta property="og:description"
+    content="Descarcă oferta SOLON în format PDF și vezi cum te ajutăm cu branding, website, SEO și marketing pentru avocați, plus pașii de implementare." />
+  <meta property="og:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://solon.agency/oferta" />
+  <meta property="twitter:title" content="Descarcă oferta SOLON PDF | SOLON - pentru avocați" />
+  <meta property="twitter:description"
+    content="Descarcă oferta SOLON în format PDF și vezi cum te ajutăm cu branding, website, SEO și marketing pentru avocați, plus pașii de implementare." />
+  <meta property="twitter:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+</head>
+
+<body>
+  <h1>Descarcarea începe automat...</h1>
+
+  <script>
+    window.onload = function () {
+      const link = document.createElement('a');
+      link.href = '../assets/pdfs/oferta-solon-agentia-digitala-avocati.pdf';
+      link.setAttribute('download', 'oferta-solon-agentia-digitala-avocati.pdf');
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  </script>
 </body>
+
 </html>

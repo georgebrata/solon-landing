@@ -437,6 +437,23 @@ h6 {
   font-size: 24px;
 }
 
+/* Hero title is a single H1 with two lines (subtitle + main) */
+#hero .hero-title {
+  display: block;
+}
+
+#hero .hero-subtitle {
+  display: block;
+  font-size: 24px;
+  line-height: 30px;
+  margin-bottom: 50px;
+  font-weight: 400;
+}
+
+#hero .hero-title-main {
+  font-weight: 700;
+}
+
 .btn-get-started {
   font-family: "Jost", sans-serif;
   font-weight: 500;
@@ -524,7 +541,7 @@ h6 {
     line-height: 36px;
   }
 
-  #hero h2 {
+  #hero .hero-subtitle {
     font-size: 18px;
     line-height: 24px;
     margin-bottom: 30px;
@@ -721,7 +738,7 @@ section {
   padding: 60px 60px 0 60px;
 }
 
-.why-us .content h3 {
+.why-us .content h2 {
   font-weight: 400;
   font-size: 32px;
   color: var(--primary);
@@ -862,7 +879,7 @@ section {
   padding: 0 3rem 2rem 2rem;
 }
 
-.skills .content h3 {
+.skills .content h2 {
   font-weight: 700;
   font-size: 32px;
   color: var(--primary);
@@ -957,13 +974,13 @@ section {
   color: var(--primary);
 }
 
-.services .icon-box h4 {
+.services .icon-box h3 {
   font-weight: 500;
   margin-bottom: 15px;
   font-size: 24px;
 }
 
-.services .icon-box h4 a {
+.services .icon-box h3 a {
   color: var(--primary);
   transition: ease-in-out 0.3s;
 }
@@ -978,11 +995,11 @@ section {
   transform: translateY(-10px);
 }
 
-.services .icon-box:hover h4 a {
+.services .icon-box:hover h3 a {
   color: var(--primary);
 }
 
-.services .icon-box:hover h4 .icon i {
+.services .icon-box:hover h3 .icon i {
   color: var(--primary);
 }
 
@@ -997,6 +1014,7 @@ section {
   margin-top: -70px;
 }
 
+.cta h2,
 .cta h3 {
   color: #fff;
   font-size: 28px;
@@ -1054,7 +1072,7 @@ section {
   border-radius: 5px;
 }
 
-.testimonials .box h4, .testimonials .box p {
+.testimonials .box h3, .testimonials .box p {
   text-align: left;
 }
 
@@ -1077,7 +1095,7 @@ section {
   width: 300px;
 }
 
-.testimonials h4 {
+.testimonials h3 {
   font-size: 28px;
   color: var(--primary);
   font-weight: 400;
@@ -1085,11 +1103,11 @@ section {
   margin-bottom: 20px;
 }
 
-.testimonials h4 sup {
+.testimonials h3 sup {
   font-size: 28px;
 }
 
-.testimonials h4 span.details {
+.testimonials h3 span.details {
   color: var(--tertiary-darkeeer);
   font-size: 18px;
   display: block;
@@ -1127,7 +1145,7 @@ section {
 }
 
 
-.blog .box h4, .blog .box p {
+.blog .box h3, .blog .box p {
   text-align: left;
 }
 
@@ -1138,7 +1156,7 @@ section {
   color: var(--primary);
 }
 
-.blog h4 {
+.blog .box h3 {
   font-size: 28px;
   color: var(--primary);
   font-weight: 400;
@@ -1146,11 +1164,11 @@ section {
   margin-bottom: 20px;
 }
 
-.blog h4 sup {
+.blog .box h3 sup {
   font-size: 28px;
 }
 
-.blog h4 span.details {
+.blog .box h3 span.details {
   color: var(--tertiary-darkeeer);
   font-size: 18px;
   display: block;
@@ -1236,7 +1254,7 @@ section {
   padding: 10px 15px;
 }
 
-.portfolio .portfolio-item .portfolio-info h4 {
+.portfolio .portfolio-item .portfolio-info h3 {
   font-size: 18px;
   color: #fff;
   font-weight: 600;
@@ -1373,7 +1391,7 @@ section {
   padding-left: 30px;
 }
 
-.team .member h4 {
+.team .member h3 {
   font-weight: 700;
   margin-bottom: 5px;
   font-size: 20px;
@@ -2049,6 +2067,7 @@ section {
   color: #444444;
 }
 
+#footer .footer-newsletter h3,
 #footer .footer-newsletter h4 {
   font-size: 24px;
   margin: 0 0 20px 0;
@@ -2112,9 +2131,6 @@ section {
 #footer .footer-top .footer-contact {
   margin-bottom: 30px;
 }
-#footer .footer-top .footer-contact img {
-  /* margin-left: 8px; */
-}
 
 #footer .footer-top .footer-contact h3 {
   font-size: 20px;
@@ -2134,6 +2150,7 @@ section {
   color: #5e5e5e;
 }
 
+#footer .footer-top h3,
 #footer .footer-top h4 {
   font-weight: bold;
   color: var(--primary);
