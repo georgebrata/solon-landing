@@ -669,6 +669,7 @@ section {
 .clients img {
   max-width: 100%;
   max-height: 40px;
+  box-sizing: content-box;
   transition: all 0.4s ease-in-out;
   display: inline-block;
   padding: 15px 0;
