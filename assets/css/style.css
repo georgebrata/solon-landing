@@ -158,10 +158,15 @@ h6 {
 
 #header .logo a {
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 #header .logo img {
   max-height: 30px;
+  width: auto;
+  margin-bottom: 8px;
 }
 
 /*--------------------------------------------------------------
