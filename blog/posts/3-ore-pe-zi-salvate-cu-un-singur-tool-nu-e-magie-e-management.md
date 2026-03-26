@@ -5,7 +5,7 @@ slug: "3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management"
 description: "Câștigă până la 3 ore pe zi fără să lucrezi mai mult. Descoperă cum un tool de management juridic îți organizează munca și reduce sarcinile repetitive."
 read_time: 3
 categories: ["automatizări", "digitalizare"]
-tags: ["digitalizare avocatură", "management juridic", "optimizarea timpului"]
+tags: ["digitalizare", "management", "optimizare"]
 ---
 
 Câștigă până la 3 ore pe zi fără să lucrezi mai mult. Află cum un singur tool de management juridic te poate ajuta să-ți organizezi mai bine munca, să reduci sarcinile repetitive și să recâștigi controlul asupra timpului tău ca avocat.
