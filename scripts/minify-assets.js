@@ -10,6 +10,7 @@ const root = path.join(__dirname, "..");
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
 const cssFiles = ["toggle.css", "two-up.css"];
 const jsFiles = [
+  "dynamic-year.js",
   "meta-pixel.js",
   "main.js",
   "price-toggle.js",

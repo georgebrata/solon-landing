@@ -15,6 +15,7 @@
   --tertiary-darker: #d7c996;
   --tertiary-darkeeer: #c3ae61;
   --white: #fff;
+  
 
   --swiper-theme-color: #03170C;
 }
@@ -611,7 +612,7 @@ section {
   padding-bottom: 30px;
 }
 
-.section-title h2 {
+.section-title h2, .section-title h1 {
   font-size: 32px;
   font-weight: bold;
   text-transform: uppercase;
@@ -621,7 +622,7 @@ section {
   color: var(--primary);
 }
 
-.section-title h2::before {
+.section-title h2::before, .section-title h1::before {
   content: "";
   position: absolute;
   display: block;
@@ -632,7 +633,7 @@ section {
   left: calc(50% - 60px);
 }
 
-.section-title h2::after {
+.section-title h2::after, .section-title h1::after {
   content: "";
   position: absolute;
   display: block;
@@ -1835,7 +1836,7 @@ img[width][height] {
 }
 .contact iframe {
   width: 100%;
-  height: 970px;
+  height: 950px;
   overflow: hidden;
   scroll-margin-bottom: 100px;
 }

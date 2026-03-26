@@ -55,9 +55,6 @@
 
   <style>
     /* Ensure the header is visible on blog pages */
-    #header.header-inner-pages {
-      background: rgba(40, 58, 90, 0.9);
-    }
     .breadcrumbs {
       margin-top: 70px;
     }
@@ -114,6 +111,7 @@
           <div class="col-lg-6 col-sm-6 footer-links">
             <h3>Linkuri utile</h3>
             <ul>
+              <li> <a href="/blog/">Blog juridic</a></li>
               <li> <a target="_blank" href="../../terms">Termeni și condiții</a></li>
               <li> <a target="_blank" href="../../cookies">Politica cookie</a></li>
               <li> <a target="_blank" href="../../privacy">Politică de confidențialitate</a></li>
@@ -124,7 +122,6 @@
             <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
             <h3>SOLON</h3>
             <p>
-              <a class="color-primary" href="tel:+40754041070">0754 041 070</a><br>
               <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
             </p>
@@ -136,7 +133,7 @@
 
     <div class="container footer-bottom clearfix">
       <div class="copyright">
-        <b>SOLON</b> &copy; 2025
+        <b>SOLON</b> &copy; <span data-current-year></span>
       </div>
       <div class="credits">
         Servicii digitale complete pentru mediul juridic
@@ -159,6 +156,7 @@
 
   <!-- Template Main JS File -->
   <script src="../../assets/js/main.min.js"></script>
+  <script src="../../assets/js/dynamic-year.min.js"></script>
   {{scripts}}
 </body>
 

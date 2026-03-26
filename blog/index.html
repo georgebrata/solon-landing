@@ -55,9 +55,6 @@
 
   <style>
     /* Ensure the header is visible on blog pages */
-    #header.header-inner-pages {
-      background: rgba(40, 58, 90, 0.9);
-    }
     .breadcrumbs {
       margin-top: 70px;
     }
@@ -89,40 +86,55 @@
   </header><!-- End Header -->
 
   <main id="main">
-    <section class="breadcrumbs">
+    <section class="breadcrumbs blog-hero">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2>Blog</h2>
-      <ol>
-        <li><a href="../">Home</a></li>
-        <li>Blog</li>
-      </ol>
+    <div class="section-title mt-5 mb-0">
+      <h1 class="visually-hidden">Blog</h1>
+      <h2>STUDII DE CAZ</h2>
+      <p class="px-lg-5">Simbioza între creativitate, tehnologie și justiție se remarcă în toate proiectele noastre.</p>
+      <p class="px-lg-5">Vezi mai jos cum am implementat digitalizarea pentru alți avocați,</p>
     </div>
   </div>
 </section>
 
-<section id="blog-list" class="blog-list">
+<section id="blog-list" class="blog-list portfolio pt-0">
   <div class="container" data-aos="fade-up">
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="blog-search">
-          <input type="text" id="blog-search-input" placeholder="Caută articole sau filtrează după tag..." class="form-control">
-        </div>
-      </div>
+    <div class="blog-search visually-hidden" role="search">
+      <input type="text" id="blog-search-input" placeholder="Caută articole sau filtrează după tag..." class="form-control" aria-label="Caută articole sau filtrează după tag...">
     </div>
+    <ul id="portfolio-flters" class="d-flex justify-content-center p-0 blog-filters" data-aos="fade-up" data-aos-delay="100">
+      <li data-tag="all" class="filter-active">Toate <span class="blog-filter-count">(2)</span></li>
+<li data-tag="digitalizare">digitalizare <span class="blog-filter-count">(1)</span></li>
+<li data-tag="digitalizare avocatură">digitalizare avocatură <span class="blog-filter-count">(1)</span></li>
+<li data-tag="legaltech">legaltech <span class="blog-filter-count">(1)</span></li>
+<li data-tag="management juridic">management juridic <span class="blog-filter-count">(1)</span></li>
+<li data-tag="optimizarea timpului">optimizarea timpului <span class="blog-filter-count">(1)</span></li>
+<li data-tag="viitor">viitor <span class="blog-filter-count">(1)</span></li>
+    </ul>
     <div class="row" id="blog-posts-container">
-
+      
       <div class="col-lg-4 mb-4 post-card" data-tags="digitalizare,legaltech,viitor" data-title="transformarea digitală a birourilor de avocatură în 2026">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h5 class="card-title"><a href="transformarea-digitala-2026/index.html">Transformarea Digitală a Birourilor de Avocatură în 2026</a></h5>
-            <p class="card-text text-muted small mb-2">2026-03-26 • 1 min read</p>
+            <p class="card-text text-muted small mb-2">2026-03-26 • lectură de 1 min</p>
             <p class="card-text">Cum tehnologia și inteligența artificială redefinesc practica juridică modernă.</p>
             <div class="mt-2"><span class="badge rounded-pill bg-light text-dark me-1">#digitalizare</span><span class="badge rounded-pill bg-light text-dark me-1">#legaltech</span><span class="badge rounded-pill bg-light text-dark me-1">#viitor</span></div>
           </div>
         </div>
       </div>
-
+    
+      <div class="col-lg-4 mb-4 post-card" data-tags="digitalizare avocatură,management juridic,optimizarea timpului" data-title="3 ore pe zi salvate cu un singur tool. nu e magie, e management.">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title"><a href="3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management/index.html">3 ore pe zi salvate cu un singur tool. Nu e magie, e management.</a></h5>
+            <p class="card-text text-muted small mb-2">2025-03-31 • lectură de 3 min</p>
+            <p class="card-text">Câștigă până la 3 ore pe zi fără să lucrezi mai mult. Descoperă cum un tool de management juridic îți organizează munca și reduce sarcinile repetitive.</p>
+            <div class="mt-2"><span class="badge rounded-pill bg-light text-dark me-1">#digitalizare avocatură</span><span class="badge rounded-pill bg-light text-dark me-1">#management juridic</span><span class="badge rounded-pill bg-light text-dark me-1">#optimizarea timpului</span></div>
+          </div>
+        </div>
+      </div>
+    
     </div>
   </div>
 </section>
@@ -151,6 +163,7 @@
           <div class="col-lg-6 col-sm-6 footer-links">
             <h3>Linkuri utile</h3>
             <ul>
+              <li> <a href="/blog/">Blog juridic</a></li>
               <li> <a target="_blank" href="../../terms">Termeni și condiții</a></li>
               <li> <a target="_blank" href="../../cookies">Politica cookie</a></li>
               <li> <a target="_blank" href="../../privacy">Politică de confidențialitate</a></li>
@@ -161,7 +174,6 @@
             <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
             <h3>SOLON</h3>
             <p>
-              <a class="color-primary" href="tel:+40754041070">0754 041 070</a><br>
               <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
             </p>
@@ -173,7 +185,7 @@
 
     <div class="container footer-bottom clearfix">
       <div class="copyright">
-        <b>SOLON</b> &copy; 2025
+        <b>SOLON</b> &copy; <span data-current-year></span>
       </div>
       <div class="credits">
         Servicii digitale complete pentru mediul juridic
@@ -196,6 +208,7 @@
 
   <!-- Template Main JS File -->
   <script src="../../assets/js/main.min.js"></script>
+  <script src="../../assets/js/dynamic-year.min.js"></script>
   <script src="../assets/js/blog-search.js"></script>
 </body>
 

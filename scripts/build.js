@@ -39,9 +39,31 @@ function parseMarkdown(filePath) {
   return { frontmatter, content };
 }
 
-function generatePostHTML(post) {
+function formatRecentDate(dateString) {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function generateRecentPostsHTML(posts, currentSlug, limit = 5) {
+  const ordered = posts
+    .filter(post => post.frontmatter.slug !== currentSlug)
+    .slice(0, limit);
+
+  const recent = ordered.length ? ordered : posts.slice(0, limit);
+
+  return recent.map(post => {
+    const { title, date, slug } = post.frontmatter;
+    return `<li><a href="../${slug}/index.html">${title}</a> ${formatRecentDate(date)}</li>`;
+  }).join('\n');
+}
+
+function generatePostHTML(post, posts) {
   const { frontmatter, content } = post;
-  const htmlContent = marked(content);
+  const htmlContent = marked.parse(content)
+    // Keep only one document H1 (the template's .entry-title).
+    .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+  const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
 
   const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../#${tag}">${tag}</a></li>`).join('');
 
@@ -50,6 +72,7 @@ function generatePostHTML(post) {
     .replace(/{{date}}/g, frontmatter.date)
     .replace(/{{read_time}}/g, frontmatter.read_time)
     .replace(/{{tags_html}}/g, tagsHtml)
+    .replace(/{{recent_posts_html}}/g, recentPostsHtml)
     .replace(/{{content}}/g, htmlContent);
 
   return layoutTemplate
@@ -61,15 +84,35 @@ function generatePostHTML(post) {
 }
 
 function generateListHTML(posts) {
+  const tagCounts = new Map();
+  posts.forEach(post => {
+    const tags = Array.isArray(post.frontmatter.tags) ? post.frontmatter.tags : [];
+    tags.forEach(tag => {
+      const normalized = String(tag).trim().toLowerCase();
+      if (!normalized) return;
+      tagCounts.set(normalized, (tagCounts.get(normalized) || 0) + 1);
+    });
+  });
+
+  const totalPosts = posts.length;
+  const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => a[0].localeCompare(b[0], 'ro'));
+  const filtersHtml = [
+    `<li data-tag="all" class="filter-active">Toate <span class="blog-filter-count">(${totalPosts})</span></li>`,
+    ...sortedTags.map(([tag, count]) => `<li data-tag="${tag}">${tag} <span class="blog-filter-count">(${count})</span></li>`)
+  ].join('\n');
+
   const postsHtml = posts.map(post => {
     const { frontmatter } = post;
+    const normalizedTags = (Array.isArray(frontmatter.tags) ? frontmatter.tags : [])
+      .map(tag => String(tag).trim().toLowerCase())
+      .filter(Boolean);
     const tagsHtml = frontmatter.tags.map(tag => `<span class="badge rounded-pill bg-light text-dark me-1">#${tag}</span>`).join('');
     return `
-      <div class="col-lg-4 mb-4 post-card" data-tags="${frontmatter.tags.join(',').toLowerCase()}" data-title="${frontmatter.title.toLowerCase()}">
+      <div class="col-lg-4 mb-4 post-card" data-tags="${normalizedTags.join(',')}" data-title="${frontmatter.title.toLowerCase()}">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h5 class="card-title"><a href="${frontmatter.slug}/index.html">${frontmatter.title}</a></h5>
-            <p class="card-text text-muted small mb-2">${frontmatter.date} • ${frontmatter.read_time} min read</p>
+            <p class="card-text text-muted small mb-2">${frontmatter.date} • lectură de ${frontmatter.read_time} min</p>
             <p class="card-text">${frontmatter.description}</p>
             <div class="mt-2">${tagsHtml}</div>
           </div>
@@ -78,7 +121,9 @@ function generateListHTML(posts) {
     `;
   }).join('');
 
-  const listBody = listTemplate.replace(/{{posts_html}}/g, postsHtml);
+  const listBody = listTemplate
+    .replace(/{{filters_html}}/g, filtersHtml)
+    .replace(/{{posts_html}}/g, postsHtml);
 
   return layoutTemplate
     .replace(/{{title}}/g, 'Blog')
@@ -102,7 +147,7 @@ function build() {
     const postDir = path.join(OUTPUT_DIR, post.frontmatter.slug);
     if (!fs.existsSync(postDir)) fs.mkdirSync(postDir, { recursive: true });
 
-    const html = generatePostHTML(post);
+    const html = generatePostHTML(post, posts);
     fs.writeFileSync(path.join(postDir, 'index.html'), html);
     console.log(`Generated: /blog/${post.frontmatter.slug}/index.html`);
   });
