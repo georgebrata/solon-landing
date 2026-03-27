@@ -179,7 +179,7 @@
 
 .blog-sidebar {
   position: fixed;
-  top: 120px;
+  top: 130px;
   right: 20px;
   overflow-y: auto;
   border: 1px solid rgba(0, 0, 0, 0.08);
