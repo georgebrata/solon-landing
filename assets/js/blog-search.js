@@ -57,7 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
 
+    const applyQueryParam = () => {
+      const queryParams = new URLSearchParams(window.location.search);
+      const q = (queryParams.get('q') || '').toLowerCase().trim();
+      if (q) {
+        searchInput.value = q;
+      }
+    };
+
     window.addEventListener('hashchange', handleHashChange);
+    applyQueryParam();
     searchInput.dispatchEvent(new Event('input'));
     handleHashChange();
   }

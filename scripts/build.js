@@ -80,7 +80,7 @@ function generatePostHTML(post, posts) {
     .replace(/{{description}}/g, frontmatter.description)
     .replace(/{{slug}}/g, frontmatter.slug)
     .replace(/{{body}}/g, postHtml)
-    .replace(/{{scripts}}/g, '');
+    .replace(/{{scripts}}/g, '<script src="../../assets/js/blog-sidebar.js"></script>');
 }
 
 function generateListHTML(posts) {
