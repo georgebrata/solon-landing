@@ -80,3 +80,8 @@ Avocații care doresc să fie mai eficienți pot beneficia de automatizări inte
 Un avocat bine organizat este un avocat care are timp pentru el însuși. Cu ajutorul unui calendar digital precum Google Calendar poți transforma haosul unei zile aglomerate la muncă într-o simfonie de colaborare și zâmbete. Dacă dorești să mergi dincolo de simpla utilizare a Google Calendar, echipa noastră de la SOLON este aici să te ajute prin soluțiile personalizate de digitalizare pentru avocați, inclusiv integrarea și automatizarea Google Calendar în activitatea ta profesională. Contactează-ne astăzi pentru a descoperi cum îți putem optimiza activitatea profesională. Ia controlul asupra timpului tău și lasă-l să lucreze în favoarea ta!
 
 **Începe astăzi!**
+
+## Citește și
+
+- [Cum să folosești Gmail ca avocat](/blog/cum-sa-folosesti-gmail-ca-avocat/)
+- [Automatizarea proceselor juridice: când și cum este utilă?](/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/)
