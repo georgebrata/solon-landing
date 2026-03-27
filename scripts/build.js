@@ -54,7 +54,7 @@ function generateRecentPostsHTML(posts, currentSlug, limit = 5) {
 
   return recent.map(post => {
     const { title, date, slug } = post.frontmatter;
-    return `<li><a href="../${slug}/">${title}</a> ${formatRecentDate(date)}</li>`;
+    return `<li><a href="../${slug}/">${title}</a>, ${formatRecentDate(date)}</li>`;
   }).join('\n');
 }
 
