@@ -77,13 +77,39 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
+    const findRequestedTagFromUrl = (queryParams, hashTag) => {
+      const explicitTag = (queryParams.get('tag') || '').toLowerCase().trim();
+      if (explicitTag) return explicitTag;
+      if (hashTag) return hashTag;
+
+      const availableTags = new Set(
+        filterButtons
+          .map(button => (button.getAttribute('data-tag') || '').toLowerCase().trim())
+          .filter(Boolean)
+      );
+
+      for (const [key, value] of queryParams.entries()) {
+        const normalizedKey = key.toLowerCase().trim();
+        const normalizedValue = String(value || '').toLowerCase().trim();
+
+        if (availableTags.has(normalizedKey)) {
+          return normalizedKey;
+        }
+
+        if (normalizedValue && availableTags.has(normalizedValue)) {
+          return normalizedValue;
+        }
+      }
+
+      return '';
+    };
+
     const hydrateStateFromUrl = () => {
       isHydratingState = true;
       const queryParams = new URLSearchParams(window.location.search);
       const q = (queryParams.get('q') || '').toLowerCase().trim();
-      const tagParam = (queryParams.get('tag') || '').toLowerCase().trim();
       const hashTag = window.location.hash.substring(1).toLowerCase().trim();
-      const requestedTag = tagParam || hashTag;
+      const requestedTag = findRequestedTagFromUrl(queryParams, hashTag);
 
       setActiveTag('all');
 

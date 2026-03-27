@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!sidebar) return;
 
   const recentList = sidebar.querySelector('[data-blog-sidebar-recent]');
-  // const tagsList = sidebar.querySelector('[data-blog-sidebar-tags]');
+  const tagsList = sidebar.querySelector('[data-blog-sidebar-tags]');
   const searchForm = sidebar.querySelector('[data-blog-sidebar-search]');
   const searchInput = document.getElementById('blog-sidebar-search-input');
 
@@ -106,12 +106,12 @@ document.addEventListener('DOMContentLoaded', function() {
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ro'))
       .slice(0, 8);
 
-    // tagsList.innerHTML = '';
-    // topTags.forEach(([tag, count]) => {
-    //   tagsList.appendChild(
-    //     createListItem(`../#${encodeURIComponent(tag)}`, `#${tag}`, `${count} articole`)
-    //   );
-    // });
+    tagsList.innerHTML = '';
+    topTags.forEach(([tag, count]) => {
+      tagsList.appendChild(
+        createListItem(`../?tag=${encodeURIComponent(tag)}`, `{tag}`, `${count} articole`)
+      );
+    });
   };
 
   fetchPosts()

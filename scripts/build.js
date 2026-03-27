@@ -42,7 +42,7 @@ function parseMarkdown(filePath) {
 function formatRecentDate(dateString) {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return dateString;
-  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return date.toLocaleDateString('ro-RO', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
 function generateRecentPostsHTML(posts, currentSlug, limit = 5) {
@@ -54,7 +54,7 @@ function generateRecentPostsHTML(posts, currentSlug, limit = 5) {
 
   return recent.map(post => {
     const { title, date, slug } = post.frontmatter;
-    return `<li><a href="../${slug}/index.html">${title}</a> ${formatRecentDate(date)}</li>`;
+    return `<li><a href="../${slug}/">${title}</a> ${formatRecentDate(date)}</li>`;
   }).join('\n');
 }
 
@@ -65,7 +65,7 @@ function generatePostHTML(post, posts) {
     .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
 
-  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../#${tag}">${tag}</a></li>`).join('');
+  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../?tag=${tag}">${tag}</a></li>`).join('');
 
   let postHtml = postTemplate
     .replace(/{{title}}/g, frontmatter.title)
@@ -112,7 +112,7 @@ function generateListHTML(posts) {
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h5 class="card-title"><a href="${frontmatter.slug}/">${frontmatter.title}</a></h5>
-            <p class="card-text text-muted small mb-2">${frontmatter.date} • lectură de ${frontmatter.read_time} min</p>
+            <p class="card-text text-muted small mb-2">${frontmatter.date} • ${frontmatter.read_time} min</p>
             <p class="card-text">${frontmatter.description}</p>
             <div class="mt-2">${tagsHtml}</div>
           </div>
