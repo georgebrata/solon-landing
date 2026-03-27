@@ -78,7 +78,7 @@
 }
 
 .blog-post {
-  padding: 120px 0 80px 0;
+  padding: 0;
 }
 
 #header.header-inner-pages {
@@ -90,12 +90,12 @@
   font-weight: bold;
   padding: 0;
   margin: 0 0 20px 0;
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .entry-meta {
   margin-bottom: 20px;
-  color: var(--secondary-light);
+  color: var(--secondary);
 }
 
 .entry-meta ul {
@@ -178,9 +178,9 @@
 }
 
 .blog-sidebar {
-  position: sticky;
-  top: 110px;
-  max-height: calc(100vh - 130px);
+  position: fixed;
+  top: 140px;
+  right: 10px;
   overflow-y: auto;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 8px;

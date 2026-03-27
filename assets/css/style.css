@@ -1220,7 +1220,7 @@ section {
 
 @media (max-width: 767px) {
   .blog .box {
-    max-width: 80%;
+    max-width: 95%;
     margin: 0 auto 30px auto;
   }
 }

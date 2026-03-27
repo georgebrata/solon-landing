@@ -29,8 +29,3 @@ Un birou de avocatură modern în 2026 are o prezență digitală integrată. De
 ## Concluzie
 
 Viitorul este aici. Avocații care adoptă tehnologia astăzi vor fi liderii de mâine. Echipa **SOLON** este aici pentru a vă ajuta în această călătorie.
-
-## Citește și
-
-- [Automatizarea proceselor juridice: când și cum este utilă?](/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/)
-- [Importanța Securității Cibernetice în Practica Avocaturii Digitale](/blog/importanta-securitatii-cibernetice-practica-avocaturii-digitale/)

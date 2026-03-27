@@ -59,6 +59,34 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.min.css" rel="stylesheet">
+  <style>
+    @media (max-width: 767.98px) {
+      #testimonials .testimonial-member {
+        flex-direction: column;
+        align-items: center !important;
+        text-align: center;
+        padding: 1.25rem 1rem;
+      }
+
+      #testimonials .testimonial-member .pic {
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto 1rem;
+      }
+
+      #testimonials .testimonial-member .member-info {
+        width: 100%;
+      }
+
+      #testimonials .testimonial-member .blockquote {
+        margin-bottom: 0;
+      }
+
+      #testimonials .testimonial-member .blockquote p {
+        margin: 0;
+      }
+    }
+  </style>
 
   <!-- Hotjar Tracking Code for SOLON -->
   <script>
@@ -400,11 +428,11 @@
           <div class="col-lg-7 d-flex flex-column justify-content-center align-items-stretch  order-2 order-lg-1">
 
             <div class="content">
-              <h2>Partener în călătoria ta către <br class="d-none d-xl-block" />
+              <h2 class="p-4">Partener în călătoria ta către <br class="d-none d-xl-block" />
 
                 <strong>excelența digitală</strong>
               </h2>
-              <p class="pb-4">
+              <p class="p-4">
                 Alături de SOLON, mediul online devine un aliat puternic în dezvoltarea ta profesională. Serviciile
                 noastre premium sunt gândite pentru avocați care își doresc un brand digital de excepție și soluții
                 inteligente personalizate. Te însoțim pe drumul tău spre excelența digitală, astfel încât biroul tău de
@@ -592,12 +620,12 @@
         </div>
 
         <div class="container">
-          <div id="carousel" class="carousel slide" data-bs-ride="carousel">
+          <div id="testimonials-carousel" class="carousel slide testimonial-carousel" data-bs-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item">
                 <div class="row">
                   <div class="col-sm-12 offset-md-2 col-md-8 offset-lg-3 col-lg-6 mb-3 mt-4">
-                    <div class="member d-flex align-items-start">
+                    <div class="member testimonial-member d-flex align-items-start">
                       <div class="pic">
                         <img src="assets/img/team/dumitrescu2.png" class="img-fluid" width="432" height="456"
                           alt="Avocat Dumitrescu Alexandru din Turda - review pentru SOLON, agentia digitala pentru avocati"
@@ -627,7 +655,7 @@
               <div class="carousel-item">
                 <div class="row">
                   <div class="col-sm-12 offset-md-2 col-md-8 offset-lg-3 col-lg-6 mb-3 mt-4">
-                    <div class="member d-flex align-items-start">
+                    <div class="member testimonial-member d-flex align-items-start">
                       <div class="pic">
                         <img src="assets/img/team/mihai.png" class="img-fluid" width="443" height="427"
                           alt="Avocat Mihai Marinau - review SOLON, agentia digitala pentru avocati" loading="lazy"
@@ -658,7 +686,7 @@
               <div class="carousel-item active">
                 <div class="row">
                   <div class="col-md-12 offset-lg-2 col-lg-8 mb-3 mt-4">
-                    <div class="member h-8 d-flex align-items-start">
+                    <div class="member testimonial-member h-8 d-flex align-items-start">
                       <div class="pic">
                         <img src="assets/img/team/sebi.png" class="img-fluid" width="716" height="748"
                           alt="Avocat Sebastian Nagy - review SOLON, agentia digitala pentru avocati" loading="lazy"
@@ -671,7 +699,7 @@
                           <!-- <p>
                                   <i class="bx bxs-quote-right"></i> Doresc să transmit mulțumiri echipei Solon pentru profesionalismul și dedicația cu care au gestionat proiectul de creare a site-ului meu profesional. Colaborare cu membrii acesteia a fost una remarcabilă, echipa fiind  mereu deschisă, promptă și extrem de receptivă la toate solicitările și cerințele mele. Am fost impresionat de modul în care au reușit să înțeleagă specificul activității mele și să transpună viziunea mea într-un design curat, profesional și funcțional.
                                 </p> -->
-                          <p style="margin-top: 28px;margin-bottom: 80px;">
+                          <p class="testimonial-quote">
                             <i class="bx bxs-quote-right"></i> Performanțele site-ului creat sunt cu adevărat
                             impresionante. Viteza de încărcare excelentă, navigarea intuitivă și adaptabilitatea pe
                             diverse dispozitive mobile sunt câteva dintre punctele forte ale acestuia.
@@ -803,12 +831,12 @@
 
           <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
             <div class="box featured">
-              <h3><a href="https://blog.solon.agency/dreptul-intr-o-lume-conectata/" target="blank">
+              <h3><a href="https://solon.agency/blog/dreptul-intr-o-lume-conectata/" target="blank">
                   Dreptul într-o lume conectată. Cum pot beneficia profesioniștii dreptului de pe urma rețelelor de
                   socializare</a></h3>
               <p>Avocații, în special, au început să recunoască potențialul uriaș al platformelor de socializare în
                 consolidarea prezenței lor online și ... </p>
-              <a href="https://blog.solon.agency/dreptul-intr-o-lume-conectata/" target="blank" class="buy-btn">Citește
+              <a href="https://solon.agency/blog/dreptul-intr-o-lume-conectata/" target="blank" class="buy-btn">Citește
                 tot
                 articolul →</a>
             </div>
@@ -816,11 +844,11 @@
 
           <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
             <div class="box featured">
-              <h3><a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
+              <h3><a href="https://solon.agency/blog/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
                   Smart Legal. Inteligența artificială poate crește performanța firmelor de avocatură</a></h3>
               <p>Progresele tehnologice rapide continua să revoluționeze atât modul în care trăim, cât si modul în care
                 lucrăm. Integrarea tehnologiilor ... </p>
-              <a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank"
+              <a href="https://solon.agency/blog/inteligenta-artificiala-in-domeniul-juridic/" target="blank"
                 class="buy-btn">Citește tot articolul →</a>
             </div>
           </div>
@@ -838,29 +866,23 @@
           <h2>Blog</h2>
         </div>
 
-        <div id="carousel" class="carousel slide" data-bs-ride="carousel">
+        <div id="blog-carousel" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-inner">
+            <!-- BLOG_CAROUSEL_ITEMS_START -->
             <div class="carousel-item active">
               <div class="row">
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
                   <div class="box featured">
-                    <h3><a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
-                        Ghid de bune practici privind publicitatea avocatului și a formelor de exercitare a
-                        profesiei</a></h3>
-                    <p>Toate informațiile necesare pentru a respecta regulile legale și etice, asigurând în același timp
-                      o promovare eficientă și corectă ... </p>
-                    <a href="https://blog.solon.agency/ghid-publicitate-avocat/" target="blank" class="buy-btn">Citește
-                      tot articolul →</a>
+                    <h3><a href="https://solon.agency/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/" target="_blank" rel="noopener noreferrer">Automatizarea Proceselor Juridice: Când și Cum Este Utilă?</a></h3>
+                    <p>Ce înseamnă automatizarea proceselor juridice, când aduce cel mai mult valoare și pașii practici pentru implementare — fără a înlocui expertiza avocatului.</p>
+                    <a href="https://solon.agency/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>
                   </div>
                 </div>
                 <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
                   <div class="box featured">
-                    <h3><a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
-                        Importanța crucială a recenziilor online pentru avocați</a></h3>
-                    <p>Recenziile ajută enorm consolidarea încrederii în brandul de avocat prezentat prin dovada socială
-                      (aka social proof), transparența și expertiză demonstrată .. </p>
-                    <a href="https://blog.solon.agency/recenzii-online-pentru-avocati/" target="blank"
-                      class="buy-btn">Citește tot articolul →</a>
+                    <h3><a href="https://solon.agency/blog/cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati/" target="_blank" rel="noopener noreferrer">Cum sa alegi un furnizor de servicii de digitalizare pentru o societate de avocati?</a></h3>
+                    <p>Află cum să alegi inteligent furnizorul de software și consultantul de digitalizare pentru societatea ta de avocați, astfel încât să câștigi eficiență real...</p>
+                    <a href="https://solon.agency/blog/cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati/" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>
                   </div>
                 </div>
               </div>
@@ -869,56 +891,39 @@
               <div class="row">
                 <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
                   <div class="box featured">
-                    <h3><a href="https://blog.solon.agency/dreptul-intr-o-lume-conectata/" target="blank">
-                        Dreptul într-o lume conectată. Cum pot beneficia profesioniștii dreptului de pe urma rețelelor
-                        de
-                        socializare</a></h3>
-                    <p>Avocații, în special, au început să recunoască potențialul uriaș al platformelor de socializare
-                      în
-                      consolidarea prezenței lor online și ... </p>
-                    <a href="https://blog.solon.agency/dreptul-intr-o-lume-conectata/" target="blank"
-                      class="buy-btn">Citește
-                      tot
-                      articolul →</a>
+                    <h3><a href="https://solon.agency/blog/cum-sa-folosesti-gmail-ca-avocat/" target="_blank" rel="noopener noreferrer">Cum să folosești Gmail ca avocat</a></h3>
+                    <p>Ghid practic pentru avocați: cum folosești Gmail eficient, sigur și organizat prin filtre, etichete, șabloane, aliasuri, delegare, căutare avansată și auto...</p>
+                    <a href="https://solon.agency/blog/cum-sa-folosesti-gmail-ca-avocat/" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>
                   </div>
                 </div>
                 <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
                   <div class="box featured">
-                    <h3><a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
-                        Smart Legal. Inteligența artificială poate crește performanța firmelor de avocatură</a></h3>
-                    <p>Progresele tehnologice rapide continua să revoluționeze atât modul în care trăim, cât si modul în
-                      care
-                      lucrăm. Integrarea tehnologiilor ... </p>
-                    <a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank"
-                      class="buy-btn">Citește tot articolul →</a>
+                    <h3><a href="https://solon.agency/blog/cum-sa-folosesti-google-calendar-eficient-ca-avocat/" target="_blank" rel="noopener noreferrer">Cum să folosești Google Calendar eficient ca avocat</a></h3>
+                    <p>Ghid practic: Google Calendar pentru cabinete de avocatură — calendare multiple, invitații, documente, Maps, Find a time, sloturi și automatizări cu Zapier...</p>
+                    <a href="https://solon.agency/blog/cum-sa-folosesti-google-calendar-eficient-ca-avocat/" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>
                   </div>
                 </div>
               </div>
             </div>
             <div class="carousel-item">
               <div class="row">
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
                   <div class="box featured">
-                    <h3><a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
-                        Smart Contracts și Blockchain: Avantaje și Provocări Legale</a></h3>
-                    <p>Tehnologia blockchain și smart contracts transformă rapid domeniul juridic, oferind avocaților
-                      oportunități de eficientizare, dar și provocări juridice semnificative în ... </p>
-                    <a href="https://blog.solon.agency/blockchain-smart-contracts-juridic/" target="blank"
-                      class="buy-btn">Citește tot articolul →</a>
+                    <h3><a href="https://solon.agency/blog/importanta-securitatii-cibernetice-practica-avocaturii-digitale/" target="_blank" rel="noopener noreferrer">Importanța Securității Cibernetice în Practica Avocaturii Digitale</a></h3>
+                    <p>Ghid aplicabil pentru protejarea datelor juridice: 2FA/MFA, control acces, criptare, backup, GDPR și plan de răspuns la incidente.</p>
+                    <a href="https://solon.agency/blog/importanta-securitatii-cibernetice-practica-avocaturii-digitale/" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>
                   </div>
                 </div>
                 <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
                   <div class="box featured">
-                    <h3><a href="https://blog.solon.agency/inteligenta-artificiala-in-domeniul-juridic/" target="blank">
-                        Optimizarea Google My Business pentru afacerea ta juridică</a></h3>
-                    <p>Acest instrument vă permite să controlați modul în care afacerea dumneavoastră apare în căutările
-                      Google, pe hărțile Google și în Google Shopping .. </p>
-                    <a href="https://blog.solon.agency/optimizare-google-mybusiness-pentru-avocati/" target="blank"
-                      class="buy-btn">Citește tot articolul →</a>
+                    <h3><a href="https://solon.agency/blog/servicii-seo-profesionale-juridice/" target="_blank" rel="noopener noreferrer">Servicii SEO profesionale juridice</a></h3>
+                    <p>Ghid complet SEO pentru avocați: bune practici, integrări, tool-uri, AI, tactici locale și pași practici pentru mai multe contacte relevante.</p>
+                    <a href="https://solon.agency/blog/servicii-seo-profesionale-juridice/" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>
                   </div>
                 </div>
               </div>
             </div>
+          <!-- BLOG_CAROUSEL_ITEMS_END -->
           </div>
         </div>
 

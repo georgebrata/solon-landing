@@ -61,8 +61,3 @@ Un alt aspect esențial al securității digitale este transparența și comunic
 ## Concluzie
 
 Prin adoptarea unei strategii complete de securitate cibernetică, cabinetele de avocatură nu doar că își protejează datele și conformitatea cu reglementările legale, dar demonstrează și un angajament puternic față de confidențialitatea și siguranța clienților lor, consolidându-și astfel poziția într-un mediu juridic din ce în ce mai digitalizat.
-
-## Citește și
-
-- [Cum să folosești Gmail ca avocat](/blog/cum-sa-folosesti-gmail-ca-avocat/)
-- [Transformarea Digitală a Birourilor de Avocatură în 2026](/blog/transformarea-digitala-2026/)

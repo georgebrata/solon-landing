@@ -134,8 +134,3 @@ Iar dacă vrei ca digitalizarea să fie dublată de vizibilitate și creștere c
 Pe lângă optimizarea internă, o societate de avocați performantă are nevoie și de prezență online puternică. Dacă vrei să transformi expertiza juridică în cereri concrete de consultanță, discută cu noi despre **consultanță SEO juridică**.
 
 Te ajutăm cu audit SEO, strategie de conținut juridic, optimizare tehnică și plan de creștere adaptat pieței locale.
-
-## Citește și
-
-- [Servicii SEO profesionale juridice](/blog/servicii-seo-profesionale-juridice/)
-- [Automatizarea proceselor juridice: când și cum este utilă?](/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/)
