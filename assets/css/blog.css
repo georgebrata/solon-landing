@@ -173,9 +173,15 @@
   border-radius: 4px;
 }
 
+.blog-post aside[aria-label="Sidebar blog"] {
+  align-self: flex-start;
+}
+
 .blog-sidebar {
   position: sticky;
   top: 110px;
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 8px;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);

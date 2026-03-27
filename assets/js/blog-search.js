@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (searchInput && postsContainer) {
     const postCards = Array.from(postsContainer.getElementsByClassName('post-card'));
     let activeTag = 'all';
+    let isHydratingState = false;
 
     const applyFilters = (query) => {
       postCards.forEach(card => {
@@ -25,49 +26,93 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     };
 
+    const updateUrlParams = () => {
+      if (isHydratingState) return;
+      const url = new URL(window.location.href);
+      const query = searchInput.value.toLowerCase().trim();
+
+      if (query) {
+        url.searchParams.set('q', query);
+      } else {
+        url.searchParams.delete('q');
+      }
+
+      if (activeTag !== 'all') {
+        url.searchParams.set('tag', activeTag);
+      } else {
+        url.searchParams.delete('tag');
+      }
+
+      const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+      const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+      if (nextUrl !== currentUrl) {
+        window.history.replaceState({}, '', nextUrl);
+      }
+    };
+
+    const setActiveTag = (selectedTag) => {
+      activeTag = selectedTag;
+      filterButtons.forEach(item => {
+        const itemTag = (item.getAttribute('data-tag') || 'all').toLowerCase();
+        item.classList.toggle('filter-active', itemTag === selectedTag);
+      });
+    };
+
     searchInput.addEventListener('input', function(e) {
       const query = e.target.value.toLowerCase().trim();
       applyFilters(query);
+      updateUrlParams();
     });
 
     if (filterButtons.length) {
       filterButtons.forEach(button => {
         button.addEventListener('click', function() {
           const selected = (button.getAttribute('data-tag') || 'all').toLowerCase();
-          activeTag = selected;
-          filterButtons.forEach(item => item.classList.remove('filter-active'));
-          button.classList.add('filter-active');
+          setActiveTag(selected);
           const query = searchInput.value.toLowerCase().trim();
           applyFilters(query);
+          updateUrlParams();
         });
       });
     }
 
-    // Check for hash in URL for initial filtering (e.g., /blog/#tag)
-    const handleHashChange = () => {
-      const hash = window.location.hash.substring(1).toLowerCase();
-      if (hash) {
-        const tagMatch = filterButtons.find(button => (button.getAttribute('data-tag') || '').toLowerCase() === hash);
-        if (tagMatch) {
-          tagMatch.click();
-        } else {
-          searchInput.value = hash;
-          searchInput.dispatchEvent(new Event('input'));
-        }
-      }
-    };
-
-    const applyQueryParam = () => {
+    const hydrateStateFromUrl = () => {
+      isHydratingState = true;
       const queryParams = new URLSearchParams(window.location.search);
       const q = (queryParams.get('q') || '').toLowerCase().trim();
+      const tagParam = (queryParams.get('tag') || '').toLowerCase().trim();
+      const hashTag = window.location.hash.substring(1).toLowerCase().trim();
+      const requestedTag = tagParam || hashTag;
+
+      setActiveTag('all');
+
       if (q) {
         searchInput.value = q;
+      } else {
+        searchInput.value = '';
       }
+
+      if (requestedTag) {
+        const hasMatchingTag = filterButtons.some(button => {
+          const buttonTag = (button.getAttribute('data-tag') || '').toLowerCase();
+          return buttonTag === requestedTag;
+        });
+
+        if (hasMatchingTag) {
+          setActiveTag(requestedTag);
+        } else if (!q) {
+          searchInput.value = requestedTag;
+        }
+      }
+
+      applyFilters(searchInput.value.toLowerCase().trim());
+      isHydratingState = false;
+      updateUrlParams();
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    applyQueryParam();
-    searchInput.dispatchEvent(new Event('input'));
-    handleHashChange();
+    window.addEventListener('popstate', hydrateStateFromUrl);
+    window.addEventListener('hashchange', hydrateStateFromUrl);
+    hydrateStateFromUrl();
   }
 });

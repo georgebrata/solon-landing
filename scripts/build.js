@@ -111,7 +111,7 @@ function generateListHTML(posts) {
       <div class="col-lg-4 mb-4 post-card" data-tags="${normalizedTags.join(',')}" data-title="${frontmatter.title.toLowerCase()}">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
-            <h5 class="card-title"><a href="${frontmatter.slug}/index.html">${frontmatter.title}</a></h5>
+            <h5 class="card-title"><a href="${frontmatter.slug}/">${frontmatter.title}</a></h5>
             <p class="card-text text-muted small mb-2">${frontmatter.date} • lectură de ${frontmatter.read_time} min</p>
             <p class="card-text">${frontmatter.description}</p>
             <div class="mt-2">${tagsHtml}</div>
@@ -121,7 +121,19 @@ function generateListHTML(posts) {
     `;
   }).join('');
 
-  const listBody = listTemplate
+  const indexRedirectScript = `
+    <script>
+      (function() {
+        var path = window.location.pathname;
+        if (path.endsWith('/index.html')) {
+          var cleanPath = path.slice(0, -'index.html'.length);
+          window.location.replace(cleanPath + window.location.search + window.location.hash);
+        }
+      })();
+    </script>
+  `;
+
+  const listBody = indexRedirectScript + listTemplate
     .replace(/{{filters_html}}/g, filtersHtml)
     .replace(/{{posts_html}}/g, postsHtml);
 
@@ -160,7 +172,7 @@ function build() {
   // Generate posts.json for client-side use
   const postsJson = posts.map(p => ({
     ...p.frontmatter,
-    url: `${p.frontmatter.slug}/index.html`
+    url: `${p.frontmatter.slug}/`
   }));
   fs.writeFileSync(path.join(OUTPUT_DIR, 'posts.json'), JSON.stringify(postsJson, null, 2));
   console.log('Generated: /blog/posts.json');

@@ -2,7 +2,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://solon.agency/</loc>
-        <lastmod>2026-03-27T06:26:55.028Z</lastmod>
+        <lastmod>2026-03-27T07:55:40.993Z</lastmod>
         <priority>1.00</priority>
     </url>
     <url>
@@ -64,5 +64,55 @@
         <loc>https://solon.agency/mesaj-trimis</loc>
         <lastmod>2024-10-10T09:09:27+00:00</lastmod>
         <priority>0.30</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/cum-sa-folosesti-gmail-ca-avocat/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/cum-sa-folosesti-google-calendar-eficient-ca-avocat/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/importanta-securitatii-cibernetice-practica-avocaturii-digitale/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/servicii-seo-profesionale-juridice/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/tendinte-actuale-branding-profesionisti-juridic/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/transformarea-digitala-2026/</loc>
+        <lastmod>2026-03-27T07:58:45.810Z</lastmod>
+        <priority>0.80</priority>
     </url>
 </urlset>
