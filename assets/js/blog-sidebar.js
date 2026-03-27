@@ -3,6 +3,7 @@
  * Visible from tablet and desktop only via CSS.
  */
 document.addEventListener('DOMContentLoaded', function() {
+  const sidebarMenu = document.querySelector('aside.blog-sidebar');
   const sidebar = document.querySelector('[data-blog-sidebar]');
   if (!sidebar) return;
 
@@ -59,8 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const scrollDepth = maxScrollable > 0 ? window.scrollY / maxScrollable : 0;
     const shouldHide = scrollDepth >= 0.8;
 
-    sidebar.style.display = shouldHide ? 'none' : '';
-    sidebar.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+    // sidebar.style.display = shouldHide ? 'none' : '';
+    sidebarMenu.style.display = shouldHide ? 'none' : '';
+    sidebarMenu.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
   };
 
   const onScroll = () => {
