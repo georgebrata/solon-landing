@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const shouldHide = scrollDepth >= 0.8;
 
     // sidebar.style.display = shouldHide ? 'none' : '';
-    sidebarMenu.style.display = shouldHide ? 'none' : '';
+    sidebarMenu.style.visibility = shouldHide ? 'hidden' : 'visible';
     sidebarMenu.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
   };
 
