@@ -1,5 +1,82 @@
 [
   {
+    "title": "Automatizarea Proceselor Juridice: Când și Cum Este Utilă?",
+    "date": "2026-03-27",
+    "slug": "automatizarea-proceselor-juridice-cand-si-cum-este-utila",
+    "description": "Ce înseamnă automatizarea proceselor juridice, când aduce cel mai mult valoare și pașii practici pentru implementare — fără a înlocui expertiza avocatului.",
+    "read_time": 2,
+    "categories": [
+      "automatizări",
+      "digitalizare"
+    ],
+    "tags": [
+      "automatizări",
+      "digitalizare",
+      "avocați",
+      "legaltech",
+      "tehnologie"
+    ],
+    "url": "automatizarea-proceselor-juridice-cand-si-cum-este-utila/index.html"
+  },
+  {
+    "title": "Cum să folosești Gmail ca avocat",
+    "date": "2026-03-27",
+    "slug": "cum-sa-folosesti-gmail-ca-avocat",
+    "description": "Ghid practic pentru avocați: cum folosești Gmail eficient, sigur și organizat prin filtre, etichete, șabloane, aliasuri, delegare, căutare avansată și automatizări.",
+    "read_time": 6,
+    "categories": [
+      "automatizări",
+      "digitalizare",
+      "productivitate"
+    ],
+    "tags": [
+      "gmail",
+      "avocați",
+      "productivitate",
+      "automatizări",
+      "comunicare"
+    ],
+    "url": "cum-sa-folosesti-gmail-ca-avocat/index.html"
+  },
+  {
+    "title": "Cum să folosești Google Calendar eficient ca avocat",
+    "date": "2026-03-27",
+    "slug": "cum-sa-folosesti-google-calendar-eficient-ca-avocat",
+    "description": "Ghid practic: Google Calendar pentru cabinete de avocatură — calendare multiple, invitații, documente, Maps, Find a time, sloturi și automatizări cu Zapier sau Relay.app.",
+    "read_time": 4,
+    "categories": [
+      "automatizări",
+      "calendar",
+      "digitalizare"
+    ],
+    "tags": [
+      "automatizări",
+      "calendar",
+      "digitalizare",
+      "avocați",
+      "google calendar"
+    ],
+    "url": "cum-sa-folosesti-google-calendar-eficient-ca-avocat/index.html"
+  },
+  {
+    "title": "Importanța Securității Cibernetice în Practica Avocaturii Digitale",
+    "date": "2026-03-27",
+    "slug": "importanta-securitatii-cibernetice-practica-avocaturii-digitale",
+    "description": "Ghid aplicabil pentru protejarea datelor juridice: 2FA/MFA, control acces, criptare, backup, GDPR și plan de răspuns la incidente.",
+    "read_time": 5,
+    "categories": [
+      "securitate",
+      "digitalizare"
+    ],
+    "tags": [
+      "securitate",
+      "GDPR",
+      "digitalizare",
+      "legaltech"
+    ],
+    "url": "importanta-securitatii-cibernetice-practica-avocaturii-digitale/index.html"
+  },
+  {
     "title": "Transformarea Digitală a Birourilor de Avocatură în 2026",
     "date": "2026-03-26",
     "slug": "transformarea-digitala-2026",
@@ -28,5 +105,22 @@
       "optimizare"
     ],
     "url": "3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management/index.html"
+  },
+  {
+    "title": "Tendințe actuale în branding pentru profesioniștii din domeniul juridic",
+    "date": "2025-02-07",
+    "slug": "tendinte-actuale-branding-profesionisti-juridic",
+    "description": "Branding juridic: digitalizare, identitate vizuală modernă și storytelling autentic pentru încredere și vizibilitate online.",
+    "read_time": 3,
+    "categories": [
+      "digitalizare",
+      "social media"
+    ],
+    "tags": [
+      "branding",
+      "digitalizare",
+      "seo"
+    ],
+    "url": "tendinte-actuale-branding-profesionisti-juridic/index.html"
   }
 ]

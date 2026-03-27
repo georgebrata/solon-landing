@@ -14,6 +14,12 @@ Pentru un avocat, timpul nu e doar o resursă - e diferența dintre control și 
 
 Realitatea e simplă: există softuri care pot salva până la 3 ore pe zi din volumul tău de muncă. Nu e o exagerare. E rezultatul unei organizări mai bune.
 
+<div class="row justify-content-center my-4">
+  <div class="col-6">
+    <img src="../../assets/img/undraw_personal-website_kz7a.png" alt="Ilustrație: website personal și organizare digitală pentru cabinetul de avocatură" class="img-fluid" loading="lazy" decoding="async" />
+  </div>
+</div>
+
 ![Ilustrație managementul timpului pentru avocați](../../assets/img/undraw_time-management_fedt.png)
 
 ## Unde pierzi, de fapt, timpul?
