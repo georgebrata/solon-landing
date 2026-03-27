@@ -189,6 +189,9 @@
   background: #fff;
 }
 
+.blog-sidebar-widget {
+  padding: 0;
+}
 .blog-sidebar-widget + .blog-sidebar-widget {
   margin-top: 24px;
 }
