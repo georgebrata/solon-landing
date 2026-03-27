@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const topTags = Array.from(tagCounts.entries())
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ro'))
-      .slice(0, 8);
+      .slice(0, 4);
 
     tagsList.innerHTML = '';
     topTags.forEach(([tag, count]) => {
