@@ -1,6 +1,6 @@
 ---
 title: "Cum sa alegi un furnizor de servicii de digitalizare pentru o societate de avocati?"
-date: "2026-03-27"
+date: "2026-03-25"
 slug: "cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati"
 description: "Află cum să alegi inteligent furnizorul de software și consultantul de digitalizare pentru societatea ta de avocați, astfel încât să câștigi eficiență reală, nu doar promisiuni."
 read_time: 4

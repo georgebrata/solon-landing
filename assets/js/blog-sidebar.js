@@ -51,6 +51,31 @@ document.addEventListener('DOMContentLoaded', function() {
     return item;
   };
 
+  // Hide the sidebar after the reader crosses 80% scroll depth.
+  let scrollTicking = false;
+  const toggleSidebarByScrollDepth = () => {
+    const doc = document.documentElement;
+    const maxScrollable = doc.scrollHeight - doc.clientHeight;
+    const scrollDepth = maxScrollable > 0 ? window.scrollY / maxScrollable : 0;
+    const shouldHide = scrollDepth >= 0.8;
+
+    sidebar.style.display = shouldHide ? 'none' : '';
+    sidebar.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+  };
+
+  const onScroll = () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    window.requestAnimationFrame(() => {
+      toggleSidebarByScrollDepth();
+      scrollTicking = false;
+    });
+  };
+
+  toggleSidebarByScrollDepth();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+
   const renderSidebar = (posts) => {
     if (!Array.isArray(posts)) return;
 

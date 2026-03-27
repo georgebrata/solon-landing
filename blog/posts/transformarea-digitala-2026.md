@@ -1,6 +1,6 @@
 ---
 title: "Transformarea Digitală a Birourilor de Avocatură în 2026"
-date: "2026-03-26"
+date: "2026-01-18"
 slug: "transformarea-digitala-2026"
 description: "Cum tehnologia și inteligența artificială redefinesc practica juridică modernă."
 tags: ["digitalizare", "legaltech", "viitor"]

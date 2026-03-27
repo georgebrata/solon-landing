@@ -1,6 +1,6 @@
 ---
 title: "Cum să folosești Google Calendar eficient ca avocat"
-date: "2026-03-27"
+date: "2026-03-23"
 slug: "cum-sa-folosesti-google-calendar-eficient-ca-avocat"
 description: "Ghid practic: Google Calendar pentru cabinete de avocatură — calendare multiple, invitații, documente, Maps, Find a time, sloturi și automatizări cu Zapier sau Relay.app."
 read_time: 4

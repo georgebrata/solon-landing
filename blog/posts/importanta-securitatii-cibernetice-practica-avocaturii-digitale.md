@@ -1,6 +1,6 @@
 ---
 title: "Importanța Securității Cibernetice în Practica Avocaturii Digitale"
-date: "2026-03-27"
+date: "2026-03-22"
 slug: "importanta-securitatii-cibernetice-practica-avocaturii-digitale"
 description: "Ghid aplicabil pentru protejarea datelor juridice: 2FA/MFA, control acces, criptare, backup, GDPR și plan de răspuns la incidente."
 read_time: 5

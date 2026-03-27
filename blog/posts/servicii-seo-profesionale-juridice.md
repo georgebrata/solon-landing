@@ -1,6 +1,6 @@
 ---
 title: "Servicii SEO profesionale juridice"
-date: "2026-03-27"
+date: "2026-03-21"
 slug: "servicii-seo-profesionale-juridice"
 description: "Ghid complet SEO pentru avocați: bune practici, integrări, tool-uri, AI, tactici locale și pași practici pentru mai multe contacte relevante."
 read_time: 8
