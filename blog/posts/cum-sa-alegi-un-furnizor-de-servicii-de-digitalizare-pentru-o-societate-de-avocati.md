@@ -120,7 +120,7 @@ Fără ținte clare (de exemplu: -20% timp administrativ, +15% ore facturabile, 
 - Rulează un **pilot de 30-60 de zile** cu o echipă reprezentativă.
 - Numește un **project owner intern** cu autoritate clară.
 - Documentează procesele în **proceduri scurte și aplicabile**.
-- Programează **ședințe lunare de optimizare** cu furnizorul.
+- Programează **ședințe recurente de optimizare** cu furnizorul.
 - Măsoară constant: timp economisit, termene respectate, ore facturabile, viteză de răspuns către client.
 
 ## Concluzie: alege parteneri, nu doar tool-uri
