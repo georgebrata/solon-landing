@@ -2354,7 +2354,7 @@ a.details-link:focus-visible,
   color: var(--tertiary);
 }
 
-.portfolio .portfolio-info h4 a:hover {
+.portfolio .portfolio-info h4 a:hover, .portfolio .portfolio-info h3:hover {
   text-decoration: underline;
 }
 
