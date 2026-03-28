@@ -44,6 +44,13 @@ fi
 
 npm run minify
 
+# Build the blog
+node scripts/build.js
+git add blog/
+
+node scripts/update-homepage-blog-carousel.js
+git add index.html
+
 for f in assets/css/*.min.css assets/js/*.min.js; do
   if [ -f "$f" ]; then
     git add "$f"

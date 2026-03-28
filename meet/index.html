@@ -99,15 +99,14 @@
     <header id="header" class="fixed-top ">
         <div class="container d-flex align-items-center">
 
-            <h1 class="logo me-auto">
+            <div class="logo me-auto">
 
-                <a href="../" class="hover-no-underline" aria-label="SOLON — pagina principală"><img alt="" src="../assets/img/solon-logo.png" height="80" style="margin-bottom: 8px;" /><span aria-hidden="true">SOLON</span></a>
-            </h1>
+                <a href="../" class="hover-no-underline" aria-label="SOLON — pagina principală"><img alt="" src="../assets/img/solon-logo.png" height="80" /><span aria-hidden="true">SOLON</span></a></div>
 
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link scrollto" href="../../">Acasă</a></li>
-                    <!-- <li><a class="nav-link" target="_blank" href="https://blog.solon.agency">Blog</a></li> -->
+                    <!-- <li><a class="nav-link" target="_blank" href="https://solon.agency/blog">Blog</a></li> -->
                     <!-- <li><a class="nav-link scrollto" href="#servicii">Servicii</a></li> -->
                     <!-- <li><a class="getstarted scrollto" href="/oferta">Cere ofertă</a></li> -->
                 </ul>
@@ -136,7 +135,7 @@
         <iframe class="calendar"
             title="Programare întâlnire cu SOLON — calendar Google"
             src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0nT1yiG8eCAvdU3RBJGxy94-fxOxKUwIAPbZe91XWI1wN6wgVSrpC0PGkc1m7pYQCfMqj49ifS?gv=true"
-            style="border: 0" width="80%" height="950" frameborder="0" style="margin: 0 auto;"></iframe>
+            style="border: 0" width="80%" height="1250" frameborder="0" style="margin: 0 auto;"></iframe>
         <!-- end Google Calendar Appointment Scheduling -->
     </main>
 
@@ -164,6 +163,7 @@
                     <div class="col-lg-6 footer-links">
                         <h4>Linkuri utile</h4>
                         <ul>
+                            <li> <a href="/blog/">Blog</a></li>
                             <li> <a target="_blank" href="../terms/">Termeni și condiții</a></li>
                             <li> <a target="_blank" href="../cookies">Politica cookie</a></li>
                             <li> <a target="_blank" href="../privacy">Politică de confidențialitate</a></li>
@@ -175,7 +175,6 @@
                         <h3>SOLON</h3>
                         <p>
                             <!-- <strong>Telefon:</strong>  -->
-                            <a class="color-primary" href="tel:+40754041070" title="Dan">0754 041 070</a><br>
                             <a class="color-primary" href="tel:+40774431127" title="George">0774 431 127</a><br>
                             <!-- <strong>Email:</strong>  -->
                             <a class="color-primary" href="mailto:contact@solon.agency"
@@ -204,7 +203,7 @@
             <div class="copyright">
                 <!-- &copy; Copyright <strong><span>SOLON</span></strong>. Toate drepturile rezervate. -->
                 <img alt="SOLON" src="../assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
-                <b>SOLON</b> &copy; 2024
+                <b>SOLON</b> &copy; <span data-current-year></span>
             </div>
             <div class="credits">
                 Servicii digitale complete pentru mediul juridic
@@ -228,6 +227,7 @@
 
     <!-- Template Main JS File -->
     <script src="../assets/js/main.min.js"></script>
+    <script src="../assets/js/dynamic-year.min.js"></script>
 
     <!-- FIREWORKS.js -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
