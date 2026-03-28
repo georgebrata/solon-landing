@@ -1365,6 +1365,24 @@ section {
   opacity: 1;
 }
 
+/* Related case studies block (bottom of individual case study pages) */
+.related-case-studies.portfolio {
+  background: #fff;
+  /* padding-top: 60px; */
+  padding-bottom: 50px;
+  margin-bottom: 50px;
+}
+
+.related-case-studies .related-case-studies__lead {
+  color: var(--secondary);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.related-case-studies.portfolio .portfolio-item {
+  position: relative;
+}
+
 /*--------------------------------------------------------------
 # Portfolio Details
 --------------------------------------------------------------*/
@@ -2351,11 +2369,12 @@ a.details-link:focus-visible,
 }
 
 .portfolio .portfolio-info h4 a {
-  color: var(--tertiary);
+  color: white;
 }
 
 .portfolio .portfolio-info h4 a:hover, .portfolio .portfolio-info h3:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .portfolio .portfolio-info h4 a:focus-visible {
