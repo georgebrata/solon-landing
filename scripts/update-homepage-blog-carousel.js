@@ -29,6 +29,21 @@ const makeExcerpt = (description, maxLength = 155) => {
   return `${normalized.slice(0, maxLength).trim()}...`;
 };
 
+/** Matches scripts/build.js / blog listing: tags as array, or comma-separated string in YAML */
+const normalizeTags = (raw) => {
+  if (raw == null) return [];
+  if (Array.isArray(raw)) {
+    return raw.map((t) => String(t).trim()).filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    return raw
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+};
+
 const parseMarkdownFrontmatter = (filePath) => {
   const raw = fs.readFileSync(filePath, "utf8");
   const match = raw.match(/^---\r?\n([\s\S]+?)\r?\n---\r?\n?/);
@@ -42,23 +57,58 @@ const parseMarkdownFrontmatter = (filePath) => {
     title: String(frontmatter.title).trim(),
     description: makeExcerpt(frontmatter.description || ""),
     date: normalizeDate(frontmatter.date),
+    tags: normalizeTags(frontmatter.tags),
   };
 };
 
-const renderCard = (post, delay) => {
-  const safeTitle = escapeHtml(post.title);
-  const safeDescription = escapeHtml(post.description);
-  const url = `${BLOG_BASE_URL}/${encodeURI(post.slug)}/`;
+/**
+ * Renders tag chips; links use the same `tag` query param as assets/js/blog-search.js.
+ */
+const renderTagsBlock = (tags) => {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return "";
+  }
 
-  return [
-    `                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="${delay}" data-aos="zoom-in">`,
-    '                  <div class="box featured">',
-    `                    <h3><a href="${url}" target="_blank" rel="noopener noreferrer">${safeTitle}</a></h3>`,
-    `                    <p>${safeDescription}</p>`,
-    `                    <a href="${url}" target="_blank" rel="noopener noreferrer" class="buy-btn">Citește tot articolul →</a>`,
-    "                  </div>",
-    "                </div>",
-  ].join("\n");
+  const links = tags
+    .map((rawTag) => {
+      const labelText = String(rawTag).trim();
+      if (!labelText) return "";
+      const tagParam = labelText.toLowerCase();
+      const href = `/blog/?tag=${encodeURIComponent(tagParam)}`;
+      const label = escapeHtml(labelText);
+      return `                      <a href="${href}" class="badge badge-tag me-1">${label}</a>`;
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (!links) {
+    return "";
+  }
+
+  return `                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+${links}
+                    </div>`;
+};
+
+const renderCard = (post, delay) => {
+  const title = escapeHtml(post.title);
+  const description = escapeHtml(post.description);
+  const articleUrl = `${BLOG_BASE_URL}/${encodeURI(post.slug)}/`;
+  const tagsHtml = renderTagsBlock(post.tags);
+
+  const boxInner = [
+    `                    <h3 class="blog-carousel-title"><a href="${articleUrl}" target="_blank" rel="noopener noreferrer">${title}</a></h3>`,
+    `                    <p>${description}</p>`,
+    tagsHtml,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return `                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="${delay}" data-aos="zoom-in">
+                  <div class="box featured">
+${boxInner}
+                  </div>
+                </div>`;
 };
 
 const renderSlides = (posts) => {

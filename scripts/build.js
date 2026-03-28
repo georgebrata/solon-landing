@@ -7,6 +7,20 @@ const POSTS_DIR = path.join(__dirname, '../blog/posts');
 const OUTPUT_DIR = path.join(__dirname, '../blog');
 const TEMPLATES_DIR = path.join(__dirname, '../templates');
 
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function escapeAttr(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;');
+}
+
 // Ensure output directories exist
 if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -106,16 +120,30 @@ function generateListHTML(posts) {
     const normalizedTags = (Array.isArray(frontmatter.tags) ? frontmatter.tags : [])
       .map(tag => String(tag).trim().toLowerCase())
       .filter(Boolean);
-    const tagsHtml = frontmatter.tags.map(tag => `<span class="badge rounded-pill bg-light text-dark me-1">#${tag}</span>`).join('');
+    const rawTags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [];
+    const tagLinks = rawTags
+      .map((tag) => {
+        const label = String(tag).trim();
+        if (!label) return '';
+        const tagParam = label.toLowerCase();
+        const href = `/blog/?tag=${encodeURIComponent(tagParam)}`;
+        return `                      <a href="${href}" class="badge badge-tag me-1">${escapeHtml(label)}</a>`;
+      })
+      .filter(Boolean)
+      .join('\n');
+    const tagsBlock = tagLinks
+      ? `                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+${tagLinks}
+                    </div>`
+      : '';
+    const titleLower = escapeAttr(frontmatter.title.toLowerCase());
     return `
-      <div class="col-lg-4 mb-4 post-card" data-tags="${normalizedTags.join(',')}" data-title="${frontmatter.title.toLowerCase()}">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title"><a href="${frontmatter.slug}/">${frontmatter.title}</a></h5>
-            <p class="card-text text-muted small mb-2">${frontmatter.date} • ${frontmatter.read_time} min</p>
-            <p class="card-text">${frontmatter.description}</p>
-            <div class="mt-2">${tagsHtml}</div>
-          </div>
+      <div class="col-lg-4 text-center mt-4 mb-4 post-card" data-tags="${normalizedTags.join(',')}" data-title="${titleLower}">
+        <div class="box featured">
+          <h3><a href="${frontmatter.slug}/">${escapeHtml(frontmatter.title)}</a></h3>
+          <p class="blog-card-meta">${escapeHtml(frontmatter.date)} • ${frontmatter.read_time} min</p>
+          <p>${escapeHtml(frontmatter.description)}</p>
+${tagsBlock}
         </div>
       </div>
     `;

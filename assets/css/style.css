@@ -440,7 +440,7 @@ h6 {
 }
 
 #hero h2 {
-  color: #fff;
+  color: var(--primary);
   margin-bottom: 50px;
   font-size: 24px;
 }
@@ -1231,6 +1231,44 @@ section {
     max-width: 100%;
     margin: 0 auto 30px auto;
   }
+}
+
+/* Tag chips in homepage blog carousel (section may sit inside #footer — needs explicit colors) */
+.blog .blog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem 0.35rem;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+  text-align: center;
+}
+
+.blog .blog-carousel-title a {
+  color: #444;
+}
+
+.blog .blog-tags a.badge,
+.blog .blog-tags a.badge-tag {
+  display: inline-block;
+  background-color: var(--tertiary);
+  color: var(--secondary) !important;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none !important;
+}
+
+.blog .blog-tags a.badge:hover,
+.blog .blog-tags a.badge:focus-visible,
+.blog .blog-tags a.badge-tag:hover,
+.blog .blog-tags a.badge-tag:focus-visible {
+  background-color: var(--tertiary-darker);
+  color: var(--primary) !important;
+  text-decoration: none !important;
 }
 
 /*--------------------------------------------------------------
@@ -2119,6 +2157,14 @@ img[width][height] {
   color: #444444;
 }
 
+#footer .blog-newsletter.footer-newsletter {
+  background: white;
+  form {
+    box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  }
+}
+
+
 #footer .footer-newsletter h3,
 #footer .footer-newsletter h4 {
   font-size: 24px;
@@ -2305,7 +2351,11 @@ a.details-link:focus-visible,
 }
 
 .portfolio .portfolio-info h4 a {
-  color: inherit;
+  color: var(--tertiary);
+}
+
+.portfolio .portfolio-info h4 a:hover {
+  text-decoration: underline;
 }
 
 .portfolio .portfolio-info h4 a:focus-visible {
