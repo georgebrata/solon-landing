@@ -55,10 +55,13 @@ posts.forEach((post) => {
   blogUrls.add(`${BASE_URL}/blog/${postPath}`);
 });
 
+const normalizeTrailingSlash = (url) =>
+  url.endsWith("/") ? url : `${url}/`;
+
 const existingByLoc = new Map(existingEntries.map((entry) => [entry.loc, entry]));
 const updatedEntries = existingEntries
   .filter((entry) => !entry.loc.startsWith(`${BASE_URL}/blog/`))
-  .map((entry) => ({ ...entry }));
+  .map((entry) => ({ ...entry, loc: normalizeTrailingSlash(entry.loc) }));
 
 const blogIndexLoc = `${BASE_URL}/blog/`;
 const existingBlogIndex = existingByLoc.get(blogIndexLoc);
