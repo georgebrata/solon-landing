@@ -47,7 +47,7 @@ while ((match = urlNodeRegex.exec(sitemapContent)) !== null) {
 }
 
 const posts = JSON.parse(fs.readFileSync(postsJsonPath, "utf8"));
-const blogUrls = new Set([`${BASE_URL}/blog/`]);
+const blogUrls = new Set([`${BASE_URL}/blog`]);
 
 posts.forEach((post) => {
   const postPath = normalizeBlogPath(post.url || post.slug);
@@ -63,7 +63,7 @@ const updatedEntries = existingEntries
   .filter((entry) => !entry.loc.startsWith(`${BASE_URL}/blog/`))
   .map((entry) => ({ ...entry, loc: normalizeTrailingSlash(entry.loc) }));
 
-const blogIndexLoc = `${BASE_URL}/blog/`;
+const blogIndexLoc = `${BASE_URL}/blog`;
 const existingBlogIndex = existingByLoc.get(blogIndexLoc);
 updatedEntries.push({
   loc: blogIndexLoc,

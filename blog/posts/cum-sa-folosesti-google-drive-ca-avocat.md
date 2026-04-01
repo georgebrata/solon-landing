@@ -2,7 +2,7 @@
 title: "Cum să folosești Google Drive ca avocat"
 date: "2026-03-30"
 slug: "cum-sa-folosesti-google-drive-ca-avocat"
-description: "Ghid practic pentru avocați: setări, utilizări avansate, tips & tricks și configurații pentru Google Drive — organizare dosar, permisiuni, versiuni, Shared Drives, căutare și integrări."
+description: "Ghid practic pentru avocați: setări, utilizări avansate, tips & tricks și configurații pentru Google Drive - organizare dosar, permisiuni, versiuni, Shared Drives, căutare și integrări."
 read_time: 7
 categories: ["digitalizare", "productivitate", "automatizări"]
 tags: ["google drive", "avocați", "productivitate", "digitalizare", "documente", "colaborare"]
@@ -10,7 +10,7 @@ tags: ["google drive", "avocați", "productivitate", "digitalizare", "documente"
 
 # Cum să folosești Google Drive ca avocat
 
-Documentele sunt materia primă a avocaturii. Contracte, memorii, acte de procedură, corespondență, probe — toate trebuie stocate, organizate, accesate rapid și transmise în siguranță. Google Drive nu este doar un loc de stocare în cloud, ci un sistem complet de gestiune documentară, cu funcții de colaborare, control al accesului, versionare automată și căutare avansată. Configurat corect, devine infrastructura digitală a cabinetului tău.
+Documentele sunt materia primă a avocaturii. Contracte, memorii, acte de procedură, corespondență, probe - toate trebuie stocate, organizate, accesate rapid și transmise în siguranță. Google Drive nu este doar un loc de stocare în cloud, ci un sistem complet de gestiune documentară, cu funcții de colaborare, control al accesului, versionare automată și căutare avansată. Configurat corect, devine infrastructura digitală a cabinetului tău.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
@@ -45,16 +45,16 @@ Odată ce ai această structură definită, poți crea un dosar-șablon (`_Templ
 
 Google Drive permite controlul granular al accesului. Există patru niveluri de permisiune:
 
-- **Viewer** — poate vedea, nu poate modifica.
-- **Commenter** — poate adăuga comentarii, nu modifică conținutul.
-- **Editor** — poate modifica, muta și șterge.
-- **Owner** — control complet, inclusiv transferul proprietății.
+- **Viewer** - poate vedea, nu poate modifica.
+- **Commenter** - poate adăuga comentarii, nu modifică conținutul.
+- **Editor** - poate modifica, muta și șterge.
+- **Owner** - control complet, inclusiv transferul proprietății.
 
 Recomandări practice pentru avocați:
 
 - Partajează folderele de dosar cu clienții ca **Viewer** sau **Commenter**, niciodată Editor.
 - Folderul de facturare nu trebuie partajat cu clientul decât dacă este necesar explicit.
-- Folosește opțiunea **„Restrict — only people with access can open the link"** în loc de linkuri publice, chiar și pentru documente aparent nesensibile.
+- Folosește opțiunea **„Restrict - only people with access can open the link"** în loc de linkuri publice, chiar și pentru documente aparent nesensibile.
 - Dezactivează opțiunea **„Editors can change permissions and share"** din setările avansate ale dosarului, pentru a preveni redistribuirea necontrolată.
 
 ## 3. Folosește Shared Drives (Unități partajate) pentru echipe
@@ -129,10 +129,10 @@ Recomandare pentru lucrul cu clienți: partajează documentul în modul **Commen
 
 Câteva setări de organizare vizuală care economisesc timp zilnic:
 
-- **Add to Starred** (`Shift+Z`): marchezi dosarele sau documentele la care accesezi frecvent — apar în secțiunea Starred din bara laterală.
+- **Add to Starred** (`Shift+Z`): marchezi dosarele sau documentele la care accesezi frecvent - apar în secțiunea Starred din bara laterală.
 - **Add shortcut to Drive**: adaugi un shortcut către un folder din Shared Drive direct în „My Drive" pentru acces rapid, fără a duplica fișierul.
-- **Color-coding foldere**: click dreapta pe folder → **Change color** — aplică o culoare pentru a diferenția vizual tipurile de dosare (ex. roșu pentru urgent, verde pentru finalizat).
-- **Priority page** (pagina de start din Drive): Google Drive afișează automat documentele recente și sugestii bazate pe activitate — util pentru a relua rapid lucrul la un dosar.
+- **Color-coding foldere**: click dreapta pe folder → **Change color** - aplică o culoare pentru a diferenția vizual tipurile de dosare (ex. roșu pentru urgent, verde pentru finalizat).
+- **Priority page** (pagina de start din Drive): Google Drive afișează automat documentele recente și sugestii bazate pe activitate - util pentru a relua rapid lucrul la un dosar.
 
 ## 9. Automatizări și integrări cu restul ecosistemului Google
 
@@ -153,23 +153,23 @@ Pentru automatizări mai avansate, Drive se integrează prin API și prin platfo
 
 Documentele juridice conțin adesea date cu caracter personal sau informații confidențiale. Minimum obligatoriu:
 
-- Activează **autentificarea în doi pași (2FA)** pe contul Google — din `myaccount.google.com → Security`.
+- Activează **autentificarea în doi pași (2FA)** pe contul Google - din `myaccount.google.com → Security`.
 - Verifică periodic din **Drive → Shared with me** ce documente ai distribuit și revocă accesul pentru foldere sau dosare închise.
 - Evită linkurile de tip **„Anyone with the link"** pentru documente cu date personale sau clauze confidențiale.
-- Folosește **Google Vault** (disponibil în planurile Workspace superioare) pentru retenție și audit al documentelor — util în contexte de conformitate sau litigii.
+- Folosește **Google Vault** (disponibil în planurile Workspace superioare) pentru retenție și audit al documentelor - util în contexte de conformitate sau litigii.
 - Setează **expirarea accesului** la fișierele partajate cu persoane externe: din setările de partajare, poți alege o dată până la care accesul este valabil.
 
 ## 11. Tips & tricks care fac diferența în utilizarea zilnică
 
 - **Ctrl+/** (sau `Cmd+/` pe Mac): deschide lista completă de shortcut-uri keyboard în Google Docs.
 - **Drive nu duplică fișierele partajate**: când adaugi un shortcut la un fișier din Shared Drive, acesta nu ocupă spațiu suplimentar în contul tău.
-- **Offline mode**: activează accesul offline din `Settings → Offline` pentru a edita documente fără conexiune la internet — modificările se sincronizează automat la reconectare.
-- **Scanare documente fizice**: aplicația Google Drive pentru iOS și Android include un scanner integrat — fotografiezi un act, Drive îl salvează ca PDF cu OCR (text searchable).
+- **Offline mode**: activează accesul offline din `Settings → Offline` pentru a edita documente fără conexiune la internet - modificările se sincronizează automat la reconectare.
+- **Scanare documente fizice**: aplicația Google Drive pentru iOS și Android include un scanner integrat - fotografiezi un act, Drive îl salvează ca PDF cu OCR (text searchable).
 - **Caută cu operatorul `owner:me`** pentru a găsi rapid toate fișierele create de tine, exclud cele partajate de alții.
 - **Fișierele mari (PDF-uri cu sute de pagini)** pot fi convertite în Google Docs pentru a beneficia de căutare full-text și comentarii ancorate.
 
 ## Concluzie
 
-Google Drive este mult mai mult decât un server de fișiere în cloud. Configurat corect — cu o structură de foldere logică, permisiuni stricte, Shared Drives pentru echipă, versionare controlată și integrări cu Gmail, Calendar și instrumentele de automatizare — devine sistemul nervos al cabinetului tău digital. Fiecare document este localizabil, fiecare versiune este trasabilă, fiecare colaborare este controlată.
+Google Drive este mult mai mult decât un server de fișiere în cloud. Configurat corect - cu o structură de foldere logică, permisiuni stricte, Shared Drives pentru echipă, versionare controlată și integrări cu Gmail, Calendar și instrumentele de automatizare - devine sistemul nervos al cabinetului tău digital. Fiecare document este localizabil, fiecare versiune este trasabilă, fiecare colaborare este controlată.
 
 Dacă dorești să implementezi un sistem complet de gestiune documentară bazat pe Google Drive, adaptat specificului cabinetului tău de avocatură, echipa SOLON îți poate construi arhitectura, configura permisiunile și automatiza fluxurile de lucru de la zero.

@@ -1,9 +1,30 @@
 [
   {
+    "title": "Cum să folosești Trello ca avocat",
+    "date": "2026-04-01",
+    "slug": "cum-sa-folosesti-trello-ca-avocat",
+    "description": "Ghid practic pentru avocați: funcționalități, setări, automatizări Butler, Power-Ups, configurații avansate și tips & tricks pentru gestionarea dosarelor și sarcinilor juridice cu Trello.",
+    "read_time": 9,
+    "categories": [
+      "digitalizare",
+      "productivitate",
+      "management"
+    ],
+    "tags": [
+      "trello",
+      "avocați",
+      "productivitate",
+      "management",
+      "dosare",
+      "automatizări"
+    ],
+    "url": "cum-sa-folosesti-trello-ca-avocat/"
+  },
+  {
     "title": "Cum să folosești Google Drive ca avocat",
     "date": "2026-03-30",
     "slug": "cum-sa-folosesti-google-drive-ca-avocat",
-    "description": "Ghid practic pentru avocați: setări, utilizări avansate, tips & tricks și configurații pentru Google Drive — organizare dosar, permisiuni, versiuni, Shared Drives, căutare și integrări.",
+    "description": "Ghid practic pentru avocați: setări, utilizări avansate, tips & tricks și configurații pentru Google Drive - organizare dosar, permisiuni, versiuni, Shared Drives, căutare și integrări.",
     "read_time": 7,
     "categories": [
       "digitalizare",
@@ -24,7 +45,7 @@
     "title": "Cum să folosești NotebookLM ca avocat",
     "date": "2026-03-28",
     "slug": "cum-sa-folosesti-notebooklm-ca-avocat",
-    "description": "Ghid practic pentru avocați: NotebookLM (Google) — surse și notebook-uri, setări de confidențialitate, sinteze și cronologii, Audio Overview, colaborare și limitări profesionale.",
+    "description": "Ghid practic pentru avocați: NotebookLM (Google) - surse și notebook-uri, setări de confidențialitate, sinteze și cronologii, Audio Overview, colaborare și limitări profesionale.",
     "read_time": 10,
     "categories": [
       "legaltech",
@@ -46,7 +67,7 @@
     "title": "Automatizarea Proceselor Juridice: Când și Cum Este Utilă?",
     "date": "2026-03-26",
     "slug": "automatizarea-proceselor-juridice-cand-si-cum-este-utila",
-    "description": "Ce înseamnă automatizarea proceselor juridice, când aduce cel mai mult valoare și pașii practici pentru implementare — fără a înlocui expertiza avocatului.",
+    "description": "Ce înseamnă automatizarea proceselor juridice, când aduce cel mai mult valoare și pașii practici pentru implementare - fără a înlocui expertiza avocatului.",
     "read_time": 2,
     "categories": [
       "automatizări",
@@ -104,7 +125,7 @@
     "title": "Cum să folosești Google Calendar eficient ca avocat",
     "date": "2026-03-23",
     "slug": "cum-sa-folosesti-google-calendar-eficient-ca-avocat",
-    "description": "Ghid practic: Google Calendar pentru cabinete de avocatură — calendare multiple, invitații, documente, Maps, Find a time, sloturi și automatizări cu Zapier sau Relay.app.",
+    "description": "Ghid practic: Google Calendar pentru cabinete de avocatură - calendare multiple, invitații, documente, Maps, Find a time, sloturi și automatizări cu Zapier sau Relay.app.",
     "read_time": 4,
     "categories": [
       "automatizări",

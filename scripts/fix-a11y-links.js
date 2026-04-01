@@ -35,7 +35,7 @@ function fix(html) {
     /<a href="([^"]+)" class="hover-no-underline">\s*(<img[^>]*\salt="SOLON"[^>]*>)\s*SOLON<\/a>/g,
     (m, href, img) => {
       const img2 = img.replace(/\s*alt="SOLON"/, ' alt=""');
-      return `<a href="${href}" class="hover-no-underline" aria-label="SOLON — pagina principală">${img2}<span aria-hidden="true">SOLON</span></a>`;
+      return `<a href="${href}" class="hover-no-underline" aria-label="SOLON - pagina principală">${img2}<span aria-hidden="true">SOLON</span></a>`;
     },
   );
 

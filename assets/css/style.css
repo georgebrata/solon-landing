@@ -45,6 +45,9 @@ a {
 .color-white {
   color: #fff;
 }
+#hero h1.color-white {
+  color: #fff;
+}
 
 footer a:hover {
   text-decoration: underline;
@@ -1236,7 +1239,7 @@ section {
   }
 }
 
-/* Tag chips in homepage blog carousel (section may sit inside #footer — needs explicit colors) */
+/* Tag chips in homepage blog carousel (section may sit inside #footer - needs explicit colors) */
 .blog .blog-tags {
   display: flex;
   flex-wrap: wrap;

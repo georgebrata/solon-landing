@@ -1,4 +1,4 @@
-// typeahead (only runs when #pref / #message / .suggestions ul exist — e.g. homepage contact section)
+// typeahead (only runs when #pref / #message / .suggestions ul exist - e.g. homepage contact section)
 (function() {
   "use strict";
 
