@@ -16,5 +16,36 @@ Optional: use [http-server]([url](https://github.com/http-party/http-server)) fo
 - Stripe Integration
 - Wordpress Blog support (but different domain)
 - FAQ section with dinamic content from Google Sheets
+- **Lightweight Static Blog System**: Write in Markdown, build to static HTML.
+
+## Blog System
+
+The project includes a minimal, performant static blog architecture.
+
+### How it works
+1.  **Content**: Write blog posts in Markdown (`.md`) in `/blog/posts/`.
+2.  **Frontmatter**: Each post must include YAML frontmatter (title, date, slug, description, tags).
+3.  **Build**: Run `node scripts/build.js` to compile Markdown files into static HTML pages in `/blog/`.
+4.  **Templates**: Layout and styling are controlled via `/templates/`.
+5.  **Search**: Includes client-side search and filtering by tag.
+
+### Writing a new post
+Create a new `.md` file in `/blog/posts/` with the following format:
+
+```md
+---
+title: "Titlu Articol"
+date: "2026-03-26"
+slug: "titlu-articol"
+description: "Scurtă descriere a articolului."
+tags: ["tag1", "tag2"]
+---
+
+# Titlu Articol
+Conținutul articolului tău aici...
+```
+
+### Automation
+A Git pre-commit hook is configured to automatically run the build script and stage the generated files whenever you commit changes.
 
 

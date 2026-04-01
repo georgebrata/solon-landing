@@ -1,0 +1,110 @@
+<section class="breadcrumbs">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Blog juridic</h2>
+      <ol>
+        <li><a href="../../">Home</a></li>
+        <li><a href="../">Blog juridic</a></li>
+        <li>{{title}}</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="blog-post" class="blog-post">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
+      <div class="col-lg-7">
+        <article class="entry entry-single">
+          <h1 class="entry-title">{{title}}</h1>
+          <div class="entry-meta">
+            <ul>
+              <li class="d-flex align-items-center"><i class="bi bi-calendar"></i> <time datetime="{{date}}">{{date}}</time></li>
+              <li class="d-flex align-items-center"><i class="bi bi-clock"></i> lectură de {{read_time}} min</li>
+            </ul>
+          </div>
+          <div class="entry-tags">
+            <i class="bi bi-tags"></i>
+            <ul class="tags">
+              {{tags_html}}
+            </ul>
+          </div>
+          <div class="entry-content">
+            {{content}}
+          </div>
+        </article>
+      </div>
+      <aside class="col-lg-4 d-none d-lg-block blog-sidebar" aria-label="Sidebar blog">
+        <div class="" data-blog-sidebar>
+          <!-- <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-search-title">
+            <h3 id="blog-sidebar-search-title" class="blog-sidebar-title">Caută</h3>
+            <form class="blog-sidebar-search-form" data-blog-sidebar-search role="search">
+              <label class="visually-hidden" for="blog-sidebar-search-input">Caută articole</label>
+              <div class="blog-sidebar-search-input-wrap">
+                <input id="blog-sidebar-search-input" type="search" class="form-control" placeholder="Caută articole..." aria-label="Caută articole">
+                <button type="submit" class="btn btn-sm blog-sidebar-search-button">Caută</button>
+              </div>
+            </form>
+          </section> -->
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-recent-title">
+            <h3 id="blog-sidebar-recent-title" class="blog-sidebar-title">Articole recente</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-recent></ul>
+          </section>
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-tags-title">
+            <h3 id="blog-sidebar-tags-title" class="blog-sidebar-title">Taguri populare</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-tags></ul>
+          </section>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="blog-article-extras">
+  <div class="container" data-aos="fade-up">
+    <div class="blog-recent-articles">
+      <h2>ARTICOLE RECENTE</h2>
+      <ul>
+        {{recent_posts_html}}
+      </ul>
+    </div>
+
+    <div class="blog-services">
+      <div class="section-title text-start">
+        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+      </div>
+      <div class="row gy-4">
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-headset"></i></div>
+            <h3>Consultanță digitală</h3>
+            <p>Transformăm expertiza ta juridică în succes digital, ghidându-vă spre inovație și eficiență cu soluții digitale personalizate.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-brush"></i></div>
+            <h3>Branding</h3>
+            <p>Sculptăm identitatea brandului dvs. cu măiestrie și viziune pentru a crea o amprentă memorabilă în lumea juridică.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-puzzle"></i></div>
+            <h3>Marketing</h3>
+            <p>Strategiile noastre de marketing vorbesc direct la publicul țintă, crescând respectul pentru brandul dvs. juridic.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-laptop"></i></div>
+            <h3>Development</h3>
+            <p>Website-ul dumneavoastră devine mai mult decât o carte de vizită online; este o capodoperă live care spune povestea firmei dumneavoastră de avocatură.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

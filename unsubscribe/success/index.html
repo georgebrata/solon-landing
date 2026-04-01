@@ -11,7 +11,7 @@
   <meta name="description"
     content="Dezabonarea a fost procesată cu success. Nu vei mai primi emailuri de la SOLON, dar te poți reabona oricând dintr-un link similar. Mulțumim!" />
   <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://solon.agency/unsubscribe/success" />
+  <link rel="canonical" href="https://solon.agency/unsubscribe/success/" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
@@ -98,12 +98,12 @@
   <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center">
 
-      <h1 class="logo me-auto"><a href="../" class="hover-no-underline" aria-label="SOLON — pagina principală"><img alt="" src="../../assets/img/solon-logo.png" height="30" style="margin-bottom: 8px;" /><span aria-hidden="true">SOLON</span></a></h1>
+      <div class="logo me-auto"><a href="../" class="hover-no-underline" aria-label="SOLON - pagina principală"><img alt="Logo SOLON, agenția digitală pentru avocați" src="../../assets/img/solon-logo.png" height="30" /><span aria-hidden="true">SOLON</span></a></div>
 
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto" href="../../">Acasă</a></li>
-          <!-- <li><a class="nav-link" target="_blank" href="https://blog.solon.agency">Blog</a></li> -->
+          <!-- <li><a class="nav-link" target="_blank" href="https://solon.agency/blog/">Blog</a></li> -->
           <!-- <li><a class="nav-link scrollto" href="#servicii">Servicii</a></li> -->
           <!-- <li><a class="getstarted scrollto" href="/oferta">Cere ofertă</a></li> -->
         </ul>
@@ -121,7 +121,7 @@
         <div
           class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-12 text-center d-flex flex-column justify-content-center pt-4 pt-lg-0"
           data-aos="fade-up" data-aos-delay="200">
-          <h1 class="mb-0">Dezabonare cu succes!</h1>
+          <h1 class="mb-0 color-white">Dezabonare cu succes!</h1>
         </div>
       </div>
     </div>
@@ -155,7 +155,6 @@
             <h3>SOLON</h3>
             <p>
               <!-- <strong>Telefon:</strong>  -->
-              <a class="color-primary" href="tel:+40754041070" title="Dan">0754 041 070</a><br>
               <a class="color-primary" href="tel:+40774431127" title="George">0774 431 127</a><br>
               <!-- <strong>Email:</strong>  -->
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
@@ -170,9 +169,11 @@
         </div>
         <div class="row">
           <div class="footer-logos">
-            <a href="https://anpc.ro/" aria-label="ANPC — Soluționarea alternativă a litigiilor (legătură externă)"><img src="../assets/img/anpc-sal.png" alt="" width="500" height="124" decoding="async" /></a>
+            <a href="https://anpc.ro/" aria-label="ANPC - Soluționarea alternativă a litigiilor (legătură externă)">
+                <img src="./assets/img/anpc-sal.png" alt="ANPC logo" width="500" height="124" decoding="async" />
+            </a>
             <script src="https://mny.ro/npId.js?p=143413" type="text/javascript" data-version="orizontal"
-              data-contrast-color="#ffffff"></script>
+                data-contrast-color="#ffffff"></script>
           </div>
         </div>
 
@@ -182,8 +183,8 @@
     <div class="container footer-bottom clearfix">
       <div class="copyright">
         <!-- &copy; Copyright <strong><span>SOLON</span></strong>. Toate drepturile rezervate. -->
-        <img alt="SOLON" src="../../assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
-        <b>SOLON</b> &copy; 2024
+        <img alt="Logo SOLON, agenția digitală pentru avocați" src="../../assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
+        <b>SOLON</b> &copy; <span data-current-year></span>
       </div>
       <div class="credits">
         Servicii digitale complete pentru mediul juridic
@@ -207,6 +208,7 @@
 
   <!-- Template Main JS File -->
   <script src="../../assets/js/main.min.js"></script>
+  <script src="../../assets/js/dynamic-year.min.js"></script>
 
   <style>
     #hero canvas {

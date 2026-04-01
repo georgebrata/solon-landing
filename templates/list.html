@@ -1,0 +1,23 @@
+<section class="breadcrumbs blog-hero">
+  <div class="container">
+    <div class="section-title mt-5 mb-0">
+      <h1>BLOG JURIDIC</h1>
+      <p class="px-lg-5">Simbioza între creativitate și tehnologie se remarcă în toate proiectele noastre.</p>
+      <p class="px-lg-5">Vezi mai jos expertiza noastră în domeniul digitalizării juridice.</p>
+    </div>
+  </div>
+</section>
+
+<section id="blog-list" class="blog blog-list portfolio pt-0">
+  <div class="container" data-aos="fade-up">
+    <div class="blog-search visually-hidden" role="search">
+      <input type="text" id="blog-search-input" placeholder="Caută articole sau filtrează după tag..." class="form-control" aria-label="Caută articole sau filtrează după tag...">
+    </div>
+    <ul id="portfolio-flters" class="d-flex justify-content-center p-0 blog-filters" data-aos="fade-up" data-aos-delay="100">
+      {{filters_html}}
+    </ul>
+    <div class="row" id="blog-posts-container">
+      {{posts_html}}
+    </div>
+  </div>
+</section>

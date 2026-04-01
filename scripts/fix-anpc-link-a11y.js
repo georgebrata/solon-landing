@@ -24,7 +24,7 @@ function fixAnpc(html) {
     const m = block.match(/src="([^"]+)"/);
     if (!m) return block;
     const src = m[1];
-    return `<a href="https://anpc.ro/" aria-label="ANPC — Soluționarea alternativă a litigiilor (legătură externă)"><img src="${src}" alt="" width="500" height="124" decoding="async" /></a>`;
+    return `<a href="https://anpc.ro/" aria-label="ANPC - Soluționarea alternativă a litigiilor (legătură externă)"><img src="${src}" alt="" width="500" height="124" decoding="async" /></a>`;
   });
 }
 

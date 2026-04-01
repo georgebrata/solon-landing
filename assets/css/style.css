@@ -15,6 +15,7 @@
   --tertiary-darker: #d7c996;
   --tertiary-darkeeer: #c3ae61;
   --white: #fff;
+  
 
   --swiper-theme-color: #03170C;
 }
@@ -40,6 +41,12 @@ a {
 }
 .color-tertiary {
   color: var(--tertiary);
+}
+.color-white {
+  color: #fff;
+}
+#hero h1.color-white {
+  color: #fff;
 }
 
 footer a:hover {
@@ -151,16 +158,22 @@ h6 {
   margin: 0;
   padding: 0;
   line-height: 1;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
 #header .logo a {
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
 }
 
 #header .logo img {
   max-height: 30px;
+  width: auto;
+  /* margin-bottom: 8px; */
 }
 
 /*--------------------------------------------------------------
@@ -420,7 +433,7 @@ h6 {
   font-size: 48px;
   font-weight: 700;
   line-height: 56px;
-  color: #fff;
+  color: var(--primary);
 }
 
 @keyframes marquee {
@@ -433,7 +446,7 @@ h6 {
 }
 
 #hero h2 {
-  color: #fff;
+  color: white;
   margin-bottom: 50px;
   font-size: 24px;
 }
@@ -611,7 +624,7 @@ section {
   padding-bottom: 30px;
 }
 
-.section-title h2 {
+.section-title h2, .section-title h1 {
   font-size: 32px;
   font-weight: bold;
   text-transform: uppercase;
@@ -621,7 +634,7 @@ section {
   color: var(--primary);
 }
 
-.section-title h2::before {
+.section-title h2::before, .section-title h1::before {
   content: "";
   position: absolute;
   display: block;
@@ -632,7 +645,7 @@ section {
   left: calc(50% - 60px);
 }
 
-.section-title h2::after {
+.section-title h2::after, .section-title h1::after {
   content: "";
   position: absolute;
   display: block;
@@ -1214,7 +1227,7 @@ section {
 
 @media (max-width: 767px) {
   .blog .box {
-    max-width: 80%;
+    max-width: 95%;
     margin: 0 auto 30px auto;
   }
 }
@@ -1224,6 +1237,44 @@ section {
     max-width: 100%;
     margin: 0 auto 30px auto;
   }
+}
+
+/* Tag chips in homepage blog carousel (section may sit inside #footer - needs explicit colors) */
+.blog .blog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem 0.35rem;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+  text-align: center;
+}
+
+.blog .blog-carousel-title a {
+  color: #444;
+}
+
+.blog .blog-tags a.badge,
+.blog .blog-tags a.badge-tag {
+  display: inline-block;
+  background-color: var(--tertiary);
+  color: var(--secondary) !important;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none !important;
+}
+
+.blog .blog-tags a.badge:hover,
+.blog .blog-tags a.badge:focus-visible,
+.blog .blog-tags a.badge-tag:hover,
+.blog .blog-tags a.badge-tag:focus-visible {
+  background-color: var(--tertiary-darker);
+  color: var(--primary) !important;
+  text-decoration: none !important;
 }
 
 /*--------------------------------------------------------------
@@ -1318,6 +1369,24 @@ section {
 
 .portfolio .portfolio-item:hover .portfolio-info {
   opacity: 1;
+}
+
+/* Related case studies block (bottom of individual case study pages) */
+.related-case-studies.portfolio {
+  background: #fff;
+  /* padding-top: 60px; */
+  padding-bottom: 50px;
+  margin-bottom: 50px;
+}
+
+.related-case-studies .related-case-studies__lead {
+  color: var(--secondary);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.related-case-studies.portfolio .portfolio-item {
+  position: relative;
 }
 
 /*--------------------------------------------------------------
@@ -1835,7 +1904,7 @@ img[width][height] {
 }
 .contact iframe {
   width: 100%;
-  height: 970px;
+  height: 950px;
   overflow: hidden;
   scroll-margin-bottom: 100px;
 }
@@ -2112,6 +2181,14 @@ img[width][height] {
   color: #444444;
 }
 
+#footer .blog-newsletter.footer-newsletter {
+  background: white;
+  form {
+    box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  }
+}
+
+
 #footer .footer-newsletter h3,
 #footer .footer-newsletter h4 {
   font-size: 24px;
@@ -2298,7 +2375,12 @@ a.details-link:focus-visible,
 }
 
 .portfolio .portfolio-info h4 a {
-  color: inherit;
+  color: white;
+}
+
+.portfolio .portfolio-info h4 a:hover, .portfolio .portfolio-info h3:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .portfolio .portfolio-info h4 a:focus-visible {
