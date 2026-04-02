@@ -47,7 +47,7 @@ while ((match = urlNodeRegex.exec(sitemapContent)) !== null) {
 }
 
 const posts = JSON.parse(fs.readFileSync(postsJsonPath, "utf8"));
-const blogUrls = new Set([`${BASE_URL}/blog`]);
+const blogUrls = new Set([`${BASE_URL}`]);
 
 posts.forEach((post) => {
   const postPath = normalizeBlogPath(post.url || post.slug);
