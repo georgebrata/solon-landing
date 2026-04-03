@@ -1,5 +1,5 @@
 ---
-title: "Tendințe actuale în branding pentru profesioniștii din domeniul juridic"
+title: "Tendințe actuale în branding pentru avocați"
 date: "2025-02-07"
 slug: "tendinte-actuale-branding-profesionisti-juridic"
 description: "Branding juridic: digitalizare, identitate vizuală modernă și storytelling autentic pentru încredere și vizibilitate online."

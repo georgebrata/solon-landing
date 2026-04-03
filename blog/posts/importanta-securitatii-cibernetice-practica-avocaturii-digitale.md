@@ -1,5 +1,5 @@
 ---
-title: "Importanța Securității Cibernetice în Practica Avocaturii Digitale"
+title: "Importanța Securității Cibernetice pentru avocați"
 date: "2026-03-22"
 slug: "importanta-securitatii-cibernetice-practica-avocaturii-digitale"
 description: "Ghid aplicabil pentru protejarea datelor juridice: 2FA/MFA, control acces, criptare, backup, GDPR și plan de răspuns la incidente."
@@ -8,7 +8,7 @@ categories: ["securitate", "digitalizare"]
 tags: ["securitate", "GDPR", "digitalizare", "legaltech"]
 ---
 
-# Importanța Securității Cibernetice în Practica Avocaturii Digitale
+# Importanța Securității Cibernetice pentru avocați
 
 În era digitalizării accelerate, avocații și profesioniștii din domeniul juridic din România operează într-un mediu din ce în ce mai conectat, unde gestionarea și protejarea informațiilor sensibile reprezintă o provocare majoră. De la contracte comerciale, testamente, acte constitutive ale societăților și dosare de litigii, până la corespondența confidențială dintre avocați și clienți, fiecare document conține date juridice critice, a căror compromitere ar putea avea consecințe grave – atât din punct de vedere legal, cât și reputațional. Atacurile cibernetice, breșele de securitate și accesul neautorizat la astfel de informații nu mai sunt scenarii ipotetice, ci realități tot mai frecvente, ce pot afecta atât marile firme de avocatură, cât și cabinetele individuale. În acest context, protejarea datelor juridice împotriva amenințărilor cibernetice nu mai este doar o recomandare, ci o obligație fundamentală pentru orice profesionist care dorește să asigure confidențialitatea, integritatea și disponibilitatea informațiilor juridice, respectând în același timp reglementările privind protecția datelor cu caracter personal, cum ar fi GDPR.
 
