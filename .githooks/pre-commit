@@ -45,6 +45,7 @@ fi
 npm run minify
 
 # Build the blog
+node scripts/humanize.js
 node scripts/build.js
 git add blog/
 
