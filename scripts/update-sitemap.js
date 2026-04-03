@@ -3,7 +3,7 @@ const path = require("path");
 
 const BASE_URL = "https://solon.agency";
 const BLOG_PRIORITY = "0.80";
-const BLOG_POST_PRIORITY = "0.80";
+const BLOG_POST_PRIORITY = "0.50";
 
 const now = new Date().toISOString();
 const sitemapPath = path.join(__dirname, "../sitemap.xml");
@@ -47,12 +47,13 @@ while ((match = urlNodeRegex.exec(sitemapContent)) !== null) {
 }
 
 const posts = JSON.parse(fs.readFileSync(postsJsonPath, "utf8"));
-const blogUrls = new Set([`${BASE_URL}`]);
+const blogIndexLoc = `${BASE_URL}/blog/`;
+const blogUrls = new Set([blogIndexLoc]);
 
 posts.forEach((post) => {
   const postPath = normalizeBlogPath(post.url || post.slug);
   if (!postPath) return;
-  blogUrls.add(`${BASE_URL}/blog${postPath}`);
+  blogUrls.add(`${BASE_URL}/blog/${postPath}`);
 });
 
 const normalizeTrailingSlash = (url) =>
@@ -63,7 +64,6 @@ const updatedEntries = existingEntries
   .filter((entry) => !entry.loc.startsWith(`${BASE_URL}/blog/`))
   .map((entry) => ({ ...entry, loc: normalizeTrailingSlash(entry.loc) }));
 
-const blogIndexLoc = `${BASE_URL}/blog`;
 const existingBlogIndex = existingByLoc.get(blogIndexLoc);
 updatedEntries.push({
   loc: blogIndexLoc,
