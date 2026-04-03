@@ -8,7 +8,7 @@ const START_MARKER = "<!-- BLOG_CAROUSEL_ITEMS_START -->";
 const END_MARKER = "<!-- BLOG_CAROUSEL_ITEMS_END -->";
 const POSTS_PER_SLIDE = 2;
 const MAX_POSTS = 6;
-const BLOG_BASE_URL = "https://solon.agency/blog/";
+const BLOG_BASE_URL = "https://solon.agency/blog";
 
 const escapeHtml = (value) =>
   String(value || "")

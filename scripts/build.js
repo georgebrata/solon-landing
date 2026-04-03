@@ -126,7 +126,7 @@ function generateListHTML(posts) {
         const label = String(tag).trim();
         if (!label) return '';
         const tagParam = label.toLowerCase();
-        const href = `blog/?tag=${encodeURIComponent(tagParam)}`;
+        const href = `/?tag=${encodeURIComponent(tagParam)}`;
         return `                      <a href="${href}" class="badge badge-tag me-1">${escapeHtml(label)}</a>`;
       })
       .filter(Boolean)
