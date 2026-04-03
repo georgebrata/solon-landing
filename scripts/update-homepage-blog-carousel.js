@@ -74,7 +74,7 @@ const renderTagsBlock = (tags) => {
       const labelText = String(rawTag).trim();
       if (!labelText) return "";
       const tagParam = labelText.toLowerCase();
-      const href = `/blog/?tag=${encodeURIComponent(tagParam)}`;
+      const href = `blog/?tag=${encodeURIComponent(tagParam)}`;
       const label = escapeHtml(labelText);
       return `                      <a href="${href}" class="badge badge-tag me-1">${label}</a>`;
     })

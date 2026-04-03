@@ -76,93 +76,98 @@
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/</loc>
-        <lastmod>2026-04-03T09:39:09.333Z</lastmod>
-        <priority>0.80</priority>
-    </url>
-    <url>
         <loc>https://solon.agency/</loc>
         <lastmod>2026-04-03T09:39:09.333Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog</loc>
+        <loc>https://solon.agency/blog/</loc>
         <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/</loc>
+        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
         <loc>https://solon.agency</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blog3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/automatizarea-proceselor-juridice-cand-si-cum-este-utila/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogautomatizarea-proceselor-juridice-cand-si-cum-este-utila/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-gmail-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-gmail-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-google-calendar-eficient-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-google-calendar-eficient-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-google-drive-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-google-drive-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-notebooklm-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-notebooklm-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-notion-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-notion-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-outlook-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-outlook-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/cum-sa-folosesti-trello-ca-avocat/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogcum-sa-folosesti-trello-ca-avocat/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/importanta-securitatii-cibernetice-practica-avocaturii-digitale/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogimportanta-securitatii-cibernetice-practica-avocaturii-digitale/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/servicii-seo-profesionale-juridice/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogservicii-seo-profesionale-juridice/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/tendinte-actuale-branding-profesionisti-juridic/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogtendinte-actuale-branding-profesionisti-juridic/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://solon.agency/blog/transformarea-digitala-2026/</loc>
-        <lastmod>2026-04-03T09:44:44.916Z</lastmod>
+        <loc>https://solon.agency/blogtransformarea-digitala-2026/</loc>
+        <lastmod>2026-04-03T09:47:42.814Z</lastmod>
         <priority>0.80</priority>
     </url>
 </urlset>

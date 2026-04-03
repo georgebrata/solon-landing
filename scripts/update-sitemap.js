@@ -52,7 +52,7 @@ const blogUrls = new Set([`${BASE_URL}`]);
 posts.forEach((post) => {
   const postPath = normalizeBlogPath(post.url || post.slug);
   if (!postPath) return;
-  blogUrls.add(`${BASE_URL}/blog/${postPath}`);
+  blogUrls.add(`${BASE_URL}/blog${postPath}`);
 });
 
 const normalizeTrailingSlash = (url) =>
