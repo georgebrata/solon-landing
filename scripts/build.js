@@ -109,7 +109,10 @@ function generateListHTML(posts) {
   });
 
   const totalPosts = posts.length;
-  const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => a[0].localeCompare(b[0], 'ro'));
+  const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => {
+    if (b[1] !== a[1]) return b[1] - a[1];
+    return a[0].localeCompare(b[0], 'ro');
+  });
   const filtersHtml = [
     `<li data-tag="all" class="filter-active">Toate <span class="blog-filter-count">(${totalPosts})</span></li>`,
     ...sortedTags.map(([tag, count]) => `<li data-tag="${tag}">${tag} <span class="blog-filter-count">(${count})</span></li>`)
