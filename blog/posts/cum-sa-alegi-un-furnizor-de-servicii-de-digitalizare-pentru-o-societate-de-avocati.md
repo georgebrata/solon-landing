@@ -129,7 +129,7 @@ Pentru o societate de avocați, digitalizarea este o decizie de business, nu un 
 
 Iar dacă vrei ca digitalizarea să fie dublată de vizibilitate și creștere comercială, următorul pas firesc este strategia de atragere a clienților potriviți.
 
-### CTA: Vrei mai mulți clienți relevanți pentru societatea ta?
+### Vrei mai mulți clienți relevanți pentru societatea ta?
 
 Pe lângă optimizarea internă, o societate de avocați performantă are nevoie și de prezență online puternică. Dacă vrei să transformi expertiza juridică în cereri concrete de consultanță, discută cu noi despre **consultanță SEO juridică**.
 
