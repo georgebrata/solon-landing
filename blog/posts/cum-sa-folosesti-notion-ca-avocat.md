@@ -2,7 +2,7 @@
 title: "Cum sa folosesti Notion ca avocat"
 date: "2026-04-03"
 slug: "cum-sa-folosesti-notion-ca-avocat"
-description: "Ghid practic pentru avocati: baze de date, proprietati, sablooane, Notion AI, relatii intre tabele, permisiuni si configuratii avansate pentru gestionarea dosarelor juridice."
+description: "Ghid Notion pentru avocati: baze de date, proprietati, sablooane, Notion AI, relatii intre tabele, permisiuni si configuratii avansate pentru domeniul juridic."
 read_time: 10
 categories: ["digitalizare", "productivitate", "management"]
 tags: ["notion", "avocati", "productivitate", "management", "dosare", "baze de date"]

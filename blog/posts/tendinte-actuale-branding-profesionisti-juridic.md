@@ -42,7 +42,7 @@ Un avocat care își spune povestea, își prezintă expertiza și își arată 
 
 ## 3. Prezență digitală și optimizare SEO
 
-Un site web bine optimizat este esențial pentru orice profesionist din domeniul juridic. Majoritatea clienților își caută avocați online, iar dacă firma ta nu apare în primele rezultate Google, pierzi potențiali clienți.
+Un website bine optimizat este esențial pentru orice profesionist din domeniul juridic. Majoritatea clienților își caută avocați online, iar dacă firma ta nu apare în primele rezultate Google, pierzi potențiali clienți.
 
 **Elemente esențiale pentru un website performant:**
 
