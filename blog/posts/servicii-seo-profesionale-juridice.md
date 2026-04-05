@@ -108,7 +108,7 @@ Regulă de aur: AI crește viteza, avocatul garantează acuratețea, etica profe
 - adaugă 1-2 articole orientate pe întrebări reale ale clienților;
 - actualizează conținutul vechi cu modificări legislative relevante;
 - repară erorile tehnice (linkuri rupte, imagini grele, meta lipsă);
-- îmbunătățește CTA-urile și formularele de contact;
+- îmbunătățește Call to Action (CTAs) și formularele de contact;
 - urmărește pozițiile pentru 10-20 cuvinte cheie prioritare;
 - măsoară rata de conversie organică și valoarea comercială a lead-urilor.
 
@@ -121,7 +121,7 @@ Regulă de aur: AI crește viteza, avocatul garantează acuratețea, etica profe
 - Include schema markup relevantă (Organization, FAQ, Article) acolo unde aduce claritate.
 - Menține datele de contact vizibile "above the fold" pe paginile cu intenție comercială.
 
-## Concluzie + CTA
+## Concluzie
 
 Serviciile SEO profesionale juridice funcționează când combină strategie, execuție și optimizare continuă pe baza datelor reale. Obiectivul nu este doar poziția în Google, ci creșterea constantă a numărului de clienți potriviți pentru cabinetul tău.
 
