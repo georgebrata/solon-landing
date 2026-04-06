@@ -2,7 +2,7 @@
 title: "Cum să folosești Gmail ca avocat"
 date: "2026-03-24"
 slug: "cum-sa-folosesti-gmail-ca-avocat"
-description: "Ghid practic pentru avocați: cum folosești Gmail eficient, sigur și organizat prin filtre, etichete, șabloane, aliasuri, delegare, căutare avansată și automatizări."
+description: "Ghid practic Gmail pentru avocați: cum folosești filtre, etichete, șabloane, aliasuri, delegare, căutare avansată și automatizări."
 read_time: 6
 categories: ["automatizări", "digitalizare", "productivitate"]
 tags: ["gmail", "avocați", "productivitate", "automatizări", "comunicare"]

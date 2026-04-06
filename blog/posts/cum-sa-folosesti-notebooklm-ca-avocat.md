@@ -2,7 +2,7 @@
 title: "Cum să folosești NotebookLM ca avocat"
 date: "2026-03-28"
 slug: "cum-sa-folosesti-notebooklm-ca-avocat"
-description: "Ghid practic pentru avocați: NotebookLM (Google) - surse și notebook-uri, setări de confidențialitate, sinteze și cronologii, Audio Overview, colaborare și limitări profesionale."
+description: "Ghid NotebookLM pentru avocați: surse și notebook-uri, setări de confidențialitate, sinteze și cronologii, Audio Overview și colaborări profesionale."
 read_time: 10
 categories: ["legaltech", "productivitate", "digitalizare"]
 tags: ["notebooklm", "google", "legaltech", "avocați", "cercetare", "ai", "productivitate"]

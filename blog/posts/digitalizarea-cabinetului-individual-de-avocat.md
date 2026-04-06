@@ -1,261 +1,261 @@
 ---
-title: "Digitalizarea cabinetului individual de avocat: ghid pas cu pas"
+title: "Digitalizarea cabinetului individual de avocat: ghid integral"
 date: "2026-04-03"
 slug: "digitalizarea-cabinetului-individual-de-avocat"
-description: "Ghid practic pentru avocati individuali: audit digital, branding, website, Google Business Profile, SEO local, instrumente de productivitate si masurarea rezultatelor."
+description: "Ghid Google MyBusiness pentru avocați: branding, NAP, website, optimizare SEO, instrumente de productivitate și măsurarea rezultatelor online."
 read_time: 9
 categories: ["digitalizare", "legaltech", "management"]
-tags: ["digitalizare", "cabinet individual", "avocati", "branding", "seo local", "website"]
+tags: ["digitalizare", "cabinet individual", "avocați", "branding", "seo local", "website"]
 ---
 
-# Digitalizarea cabinetului individual de avocat: ghid pas cu pas
+# Digitalizarea cabinetului individual de avocat: ghid integral
 
-Un avocat individual concureaza pe doua fronturi simultan: cel juridic, in instanta si la masa negocierilor, si cel al increderii, in spatiul in care clientul il cauta inainte de a suna. Astazi, primul contact se intampla aproape intotdeauna online: o cautare pe Google, un profil pe Maps, o prima vizita pe site. Daca prezenta digitala lipseste sau transmite semnale gresite, clientul potrivit ajunge la alt cabinet.
+Un avocat individual concurează pe două fronturi simultan: cel juridic, în instanță și la masa negocierilor, și cel al încrederii, în spațiul în care clientul îl caută înainte de a suna. Astăzi, primul contact se întâmplă aproape întotdeauna online: o căutare pe Google, un profil pe Maps, o primă vizită pe website. Dacă prezența digitală lipsește sau transmite semnale greșite, clientul potrivit ajunge la alt cabinet.
 
-Digitalizarea nu inseamna sa fii „pe toate retelele" sau sa investesti in tehnologie de dragul tehnologiei. Inseamna sa construiesti un lant coerent: identitate vizuala clara, vizibilitate locala verificabila, instrumente care reduc munca administrativa si o prezenta online care functioneaza in favoarea ta 24 de ore din 24.
+Digitalizarea nu înseamnă să fii „pe toate rețelele" sau să investești în tehnologie de dragul tehnologiei. Înseamnă să construiești un lanț coerent: identitate vizuală clară, vizibilitate locală verificabilă, instrumente care reduc munca administrativă și o prezență online care funcționează în favoarea ta 24 de ore din 24.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
-    <img src="../../assets/img/undraw_judge_hyqv.png" alt="Ilustratie: avocat in cabinet, reprezentand procesul de profesionalizare digitala a practicii juridice" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+    <img src="../../assets/img/undraw_judge_hyqv.png" alt="Ilustrație: avocat în cabinet, reprezentând procesul de profesionalizare digitală a practicii juridice" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
   </div>
 </div>
 
-Acest ghid parcurge fiecare etapa in ordinea in care ar trebui implementata, cu actiuni concrete si criterii de evaluare a progresului.
+Acest ghid parcurge fiecare etapă în ordinea în care ar trebui implementată, cu acțiuni concrete și criterii de evaluare a progresului.
 
-## 1. Auditul digital de pornire: unde esti acum
+## 1. Auditul digital de pornire: unde ești acum
 
-Inainte de orice actiune, stabileste punctul de plecare. Un audit digital pentru un cabinet individual acopera patru zone:
+Înainte de orice acțiune, stabilește punctul de plecare. Un audit digital pentru un cabinet individual acoperă patru zone:
 
-**Prezenta in cautari (Google)**
-- Cauta `avocat [specialitate] [oras]` si variante similare. Apari in primele rezultate? Apari pe Maps?
-- Verifica daca ai un profil Google Business Profile revendicat si completat.
-- Cauta numele tau exact. Ce gaseste un client care vrea sa te verifice?
+**Prezența în căutări (Google)**
+- Caută `avocat [specialitate] [oraș]` și variante similare. Apari în primele rezultate? Apari pe Maps?
+- Verifică dacă ai un profil Google Business Profile revendicat și completat.
+- Caută numele tău exact. Ce găsește un client care vrea să te verifice?
 
 **Website**
-- Ai un site? Functioneaza pe mobil? Se incarca in sub 3 secunde?
-- Are informatii actualizate: domenii de practica, date de contact, adresa?
-- Exista o cale clara prin care un vizitator poate lua legatura cu tine?
+- Ai un site? Funcționează pe mobil? Se încarcă în sub 3 secunde?
+- Are informații actualizate: domenii de practică, date de contact, adresă?
+- Există o cale clară prin care un vizitator poate lua legătura cu tine?
 
-**Identitate vizuala**
-- Ai un logo consistent pe toate canalele (site, email, retele sociale, documente trimise clientilor)?
-- Documentele pe care le trimiți (contracte, memorii, corespondenta) au un antet profesional?
+**Identitate vizuală**
+- Ai un logo consistent pe toate canalele (site, email, rețele sociale, documente trimise clienților)?
+- Documentele pe care le trimiți (contracte, memorii, corespondență) au un antet profesional?
 
 **Instrumente de lucru intern**
 - Cum gestionezi dosarele active? Notepad, foi de calcul, software dedicat sau un mix?
-- Ai o adresa de email cu domeniu propriu (`nume@cabinet.ro`) sau folosesti o adresa personala de Gmail/Yahoo?
+- Ai o adresă de email cu domeniu propriu (`nume@cabinet.ro`) sau folosești o adresă personală de Gmail/Yahoo?
 
-Rezultatul auditului iti arata unde pierzi incredere si unde pierzi clienti inainte sa stie ca existi.
+Rezultatul auditului îți arată unde pierzi încredere și unde pierzi clienți înainte să știe că exiști.
 
-## 2. Identitatea vizuala: primul lucru pe care il vede clientul
+## 2. Identitatea vizuală: primul lucru pe care îl vede clientul
 
-Brandul unui cabinet individual nu este un moft estetic - este semnalul de credibilitate pe care clientul il proceseaza in primele secunde. Inainte de a citi un singur cuvant, el evalueaza daca se simte in siguranta.
+Brandul unui cabinet individual nu este un moft estetic - este semnalul de credibilitate pe care clientul îl procesează în primele secunde. Înainte de a citi un singur cuvânt, el evaluează dacă se simte în siguranță.
 
-**Componentele minime ale unei identitati vizuale pentru un cabinet individual:**
+**Componentele minime ale unei identități vizuale pentru un cabinet individual:**
 
-- **Logo**: simplu, lizibil la orice dimensiune (de pe cartea de vizita pana pe bannerul de LinkedIn). Evita clipart-urile juridice generice (ciocan de judecator, balanta) - ele nu te diferentiaza.
-- **Paleta de culori**: 2-3 culori definite cu cod hex exact, folosite consistent pe toate materialele. Culorile transmit pozitionare: bleumarin = seriozitate, verde inchis = stabilitate, antracit = modernitate.
-- **Tipografie**: un font pentru titluri, un font pentru text curent. Ambele trebuie sa functioneze atat pe ecran cat si la print.
-- **Manual de brand**: un document de 5-10 pagini care specifica regulile de utilizare. Nu pentru clienti - pentru tine si pentru orice furnizor care va produce materiale in viitor (imprimerie, designer web, agentie social media).
+- **Logo**: simplu, lizibil la orice dimensiune (de pe cartea de vizită până pe bannerul de LinkedIn). Evită clipart-urile juridice generice (ciocan de judecător, balanță) - ele nu te diferențiază.
+- **Paleta de culori**: 2-3 culori definite cu cod hex exact, folosite consistent pe toate materialele. Culorile transmit poziționare: bleumarin = seriozitate, verde închis = stabilitate, antracit = modernitate.
+- **Tipografie**: un font pentru titluri, un font pentru text curent. Ambele trebuie să funcționeze atât pe ecran cât și la print.
+- **Manual de brand**: un document de 5-10 pagini care specifică regulile de utilizare. Nu pentru clienți - pentru tine și pentru orice furnizor care va produce materiale în viitor (imprimerie, designer web, agenție social media).
 
 **Materiale fizice cu impact direct:**
-- Carti de vizita cu date complete si design aliniat brand-ului
-- Antet pentru documente oficiale (contracte, memorii, corespondenta)
-- Mape pentru intalniri cu clienti
+- Cărți de vizită cu date complete și design aliniat brand-ului
+- Antet pentru documente oficiale (contracte, memorii, corespondență)
+- Mape pentru întâlniri cu clienți
 
-Investitia in branding se amortizeaza la fiecare interactiune: fiecare document trimis, fiecare intalnire, fiecare postare pe LinkedIn transmite acelasi semnal vizual coerent.
+Investiția în branding se amortizează la fiecare interacțiune: fiecare document trimis, fiecare întâlnire, fiecare postare pe LinkedIn transmite același semnal vizual coerent.
 
-## 3. Website-ul: cartea de vizita care lucreaza non-stop
+## 3. Website-ul: cartea de vizită care lucrează non-stop
 
-Un website pentru un cabinet individual nu trebuie sa fie complex - trebuie sa fie corect. Clientul care il viziteaza vrea sa inteleaga trei lucruri in 10 secunde: cine esti, in ce poti ajuta si cum te contacteaza.
+Un website pentru un cabinet individual nu trebuie să fie complex - trebuie să fie corect. Clientul care îl vizitează vrea să înțeleagă trei lucruri în 10 secunde: cine ești, în ce poți ajuta și cum te contactează.
 
-**Structura minima a unui site eficient pentru avocat individual:**
+**Structura minimă a unui site eficient pentru avocat individual:**
 
 ```
-Pagina principala (Home)
-  - Mesaj clar: cine esti, ce faci, pentru cine
+Pagina principală (Home)
+  - Mesaj clar: cine ești, ce faci, pentru cine
   - Call-to-action principal: programare / contact
-  - Social proof: testimoniale, ani de experienta, domenii acoperite
+  - Social proof: testimoniale, ani de experiență, domenii acoperite
 
 Despre / Profil
-  - Fotografie profesionala (nu poza de buletin, nu fotografie de vacanta)
+  - Fotografie profesională (nu poza de buletin, nu fotografie de vacanță)
   - Parcurs profesional relevant
-  - Baroul, specializarile, limbile vorbite
+  - Baroul, specializările, limbile vorbite
 
-Domenii de practica
-  - O pagina separata (sau sectiune dedicata) pentru fiecare domeniu principal
-  - Limbaj clar, orientat spre situatia clientului, nu spre terminologia juridica
+Domenii de practică
+  - O pagină separată (sau secțiune dedicată) pentru fiecare domeniu principal
+  - Limbaj clar, orientat spre situația clientului, nu spre terminologia juridică
 
 Blog juridic
-  - Articole despre situatii frecvente cu care vin clientii
-  - Rol SEO: genereaza trafic organic din cautarile clientilor cu probleme concrete
+  - Articole despre situații frecvente cu care vin clienții
+  - Rol SEO: generează trafic organic din căutările clienților cu probleme concrete
 
 Contact
-  - Telefon, email, adresa (cu harta Google embed)
-  - Formular de contact simplu (maxim 3-4 campuri)
+  - Telefon, email, adresă (cu hartă Google embed)
+  - Formular de contact simplu (maxim 3-4 câmpuri)
   - Program de lucru
 ```
 
 **Criterii tehnice nenegociabile:**
-- **Mobile-first**: peste 65% din cautarile juridice locale se fac de pe telefon.
-- **Viteza**: Google penalizeaza site-urile lente in rezultatele de cautare. Tinta: sub 2.5 secunde timp de incarcare (masurat cu PageSpeed Insights).
-- **HTTPS**: certificat SSL activ. Browserele afiseaza avertisment „Not secure" pe site-urile fara HTTPS - efect direct asupra increderii.
-- **Autonomie de continut**: administratorul site-ului (tu sau un coleg) poate actualiza blog-ul si paginile fara sa solicite un programator pentru fiecare modificare.
+- **Mobile-first**: peste 65% din căutările juridice locale se fac de pe telefon.
+- **Viteza**: Google penalizează site-urile lente în rezultatele de căutare. Țintă: sub 2.5 secunde timp de încărcare (măsurat cu PageSpeed Insights).
+- **HTTPS**: certificat SSL activ. Browserele afișează avertisment „Not secure" pe site-urile fără HTTPS - efect direct asupra încrederii.
+- **Autonomie de conținut**: administratorul site-ului (tu sau un coleg) poate actualiza blog-ul și paginile fără să solicite un programator pentru fiecare modificare.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
-    <img src="../../assets/img/undraw_personal-website_kz7a.png" alt="Ilustratie: website profesional pentru cabinet individual de avocat" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+    <img src="../../assets/img/undraw_personal-website_kz7a.png" alt="Ilustrație: website profesional pentru cabinet individual de avocat" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
   </div>
 </div>
 
-## 4. Google Business Profile: vizibilitate locala verificabila
+## 4. Google Business Profile: vizibilitate locală verificabilă
 
-**Google Business Profile** (GBP, fostul Google My Business) este profilul care apare in rezultatele Maps si in panoul din dreapta al cautarilor Google. Pentru un avocat individual, acesta este deseori primul punct de contact cu clientul local - inainte de site.
+**Google Business Profile** (GBP, fostul Google My Business) este profilul care apare în rezultatele Maps și în panoul din dreapta al căutărilor Google. Pentru un avocat individual, acesta este deseori primul punct de contact cu clientul local - înainte de site.
 
-**Pasi de configurare corecta:**
+**Pași de configurare corectă:**
 
-1. **Revendica profilul** la business.google.com daca nu ai facut-o inca. Verificarea se face prin cod postal, apel telefonic sau video.
-2. **Completeaza toate campurile**: denumire cabinet (exact cum apare pe documentele oficiale), categorie principala (`Avocat` sau `Firma de avocatura`), adresa, telefon, website, program de lucru.
-3. **Coerenta NAP** (Name, Address, Phone): informatiile de pe GBP trebuie sa fie identice cu cele de pe site si de pe toate celelalte directoare online. Orice inconsistenta afecteaza SEO local.
-4. **Fotografii**: cel putin 5-10 fotografii profesionale - interiorul cabinetului, exteriorul cladirii, o fotografie de profil a avocatului. Profilurile cu fotografii primesc cu 42% mai multe cereri de indicatii rutiere si cu 35% mai multe click-uri spre site (date Google).
-5. **Descriere**: paragraf de 250-750 de caractere cu cuvintele cheie locale si domeniile de practica. Nu este loc pentru jargon - scrie cum ar explica unui client.
-6. **Recenzii**: solicita activ recenzii clientilor multumiti imediat dupa incheierea dosarului, cat timp experienta este proaspata. Raspunde la toate recenziile - pozitive si negative.
+1. **Revendică profilul** la business.google.com dacă nu ai făcut-o încă. Verificarea se face prin cod poștal, apel telefonic sau video.
+2. **Completează toate câmpurile**: denumire cabinet (exact cum apare pe documentele oficiale), categorie principală (`Avocat` sau `Firmă de avocatură`), adresă, telefon, website, program de lucru.
+3. **Coerență NAP** (Name, Address, Phone): informațiile de pe GBP trebuie să fie identice cu cele de pe site și de pe toate celelalte directoare online. Orice inconsistență afectează SEO local.
+4. **Fotografii**: cel puțin 5-10 fotografii profesionale - interiorul cabinetului, exteriorul clădirii, o fotografie de profil a avocatului. Profilurile cu fotografii primesc cu 42% mai multe cereri de indicații rutiere și cu 35% mai multe click-uri spre site (date Google).
+5. **Descriere**: paragraf de 250-750 de caractere cu cuvintele cheie locale și domeniile de practică. Nu este loc pentru jargon - scrie cum ar explica unui client.
+6. **Recenzii**: solicită activ recenziile clienților mulțumiți imediat după încheierea dosarului, cât timp experiența este proaspătă. Răspunde la toate recenziile - pozitive și negative.
 
-## 5. SEO local: sa fii gasit de clientii din orasul tau
+## 5. SEO local: să fii găsit de clienții din orașul tău
 
-SEO local pentru un avocat individual inseamna sa apari in primele rezultate cand cineva cauta `avocat dreptul muncii Cluj` sau `cabinet avocat Timisoara` - adica clientul cu o problema concreta, din orasul tau.
+SEO local pentru un avocat individual înseamnă să apari în primele rezultate când cineva caută `avocat dreptul muncii Cluj` sau `cabinet avocat Timișoara` - adică clientul cu o problemă concretă, din orașul tău.
 
 **Componentele SEO local relevante pentru cabinete individuale:**
 
-**Cuvinte cheie locale**: combina specialitatea ta cu orasul si cartierul. Exemple: `avocat drept penal Bucuresti sector 1`, `avocat divort Brasov`, `cabinet avocat Cluj-Napoca drept civil`. Foloseste Google Keyword Planner sau Ubersuggest pentru a valida volumul de cautari.
+**Cuvinte cheie locale**: combină specialitatea ta cu orașul și cartierul. Exemple: `avocat drept penal București sector 1`, `avocat divorț Brașov`, `cabinet avocat Cluj-Napoca drept civil`. Folosește Google Keyword Planner sau Ubersuggest pentru a valida volumul de căutări.
 
-**Paginile de servicii optimizate**: fiecare domeniu de practica are propria pagina cu:
-- Tag `<title>` care contine specialitatea + orasul
-- Meta description sub 160 de caractere, orientata spre actiune
+**Paginile de servicii optimizate**: fiecare domeniu de practică are propria pagină cu:
+- Tag `<title>` care conține specialitatea + orașul
+- Meta description sub 160 de caractere, orientată spre acțiune
 - H1 clar, H2-uri structurate logic
-- Text de minim 500 de cuvinte, util si relevant pentru client
+- Text de minim 500 de cuvinte, util și relevant pentru client
 
-**Blog juridic cu continut util**: articole despre situatii frecvente cu care vin clientii (`Ce fac daca angajatorul nu imi plateste salariul?`, `Cum se calculeaza pensia alimentara?`) genereaza trafic organic de la oameni cu probleme concrete - cel mai calificat trafic pe care il poti atrage.
+**Blog juridic cu conținut util**: articole despre situații frecvente cu care vin clienții (`Ce fac dacă angajatorul nu îmi plătește salariul?`, `Cum se calculează pensia alimentară?`) generează trafic organic de la oameni cu probleme concrete - cel mai calificat trafic pe care îl poți atrage.
 
-**Linkuri locale**: inscrierea in directoare juridice (baroul local, directoare de avocati), mentionari in presa locala sau pe site-uri partenere construiesc autoritatea domeniului tau.
+**Linkuri locale**: înscrierea în directoare juridice (baroul local, directoare de avocați), menționări în presa locală sau pe site-uri partenere construiesc autoritatea domeniului tău.
 
-**Google Search Console**: instrument gratuit Google care iti arata exact ce interogari aduc trafic pe site, ce pagini indexeaza Google si ce erori tehnice trebuie corectate. Conecteaza-l imediat dupa lansarea site-ului.
+**Google Search Console**: instrument gratuit Google care îți arată exact ce interogări aduc trafic pe site, ce pagini indexează Google și ce erori tehnice trebuie corectate. Conectează-l imediat după lansarea site-ului.
 
-## 6. Email profesional si comunicarea cu clientii
+## 6. Email profesional și comunicarea cu clienții
 
-O adresa `numespecializare@gmail.com` sau `avocat_cluj@yahoo.com` transmite un semnal negativ inainte ca clientul sa citeasca un cuvant din email. Un email de forma `cristian@cabinetguritanu.ro` transmite ca esti un profesionist cu o structura serioasa.
+O adresă `numespecializare@gmail.com` sau `avocat_cluj@yahoo.com` transmite un semnal negativ înainte ca clientul să citească un cuvânt din email. Un email de forma `cristian@cabinetguritanu.ro` transmite că ești un profesionist cu o structură serioasă.
 
 **Configurarea emailului profesional:**
-- Inregistreaza un domeniu propriu (`cabinetNume.ro` sau `numeavocat.ro`) daca nu ai deja - costa intre 10-30 RON/an.
-- Foloseste Google Workspace (4.68 EUR/utilizator/luna) pentru Gmail cu domeniu propriu, Calendar, Drive si Meet integrate - sau Microsoft 365 (echivalent cu Outlook, OneDrive, Teams).
-- Configureaza semnatura profesionala cu: nume, calitate, date de contact, website si un disclaimer de confidentialitate.
+- Înregistrează un domeniu propriu (`cabinetNume.ro` sau `numeavocat.ro`) dacă nu ai deja - costă între 10-30 RON/an.
+- Folosește Google Workspace (4.68 EUR/utilizator/lună) pentru Gmail cu domeniu propriu, Calendar, Drive și Meet integrate - sau Microsoft 365 (echivalent cu Outlook, OneDrive, Teams).
+- Configurează semnătura profesională cu: nume, calitate, date de contact, website și un disclaimer de confidențialitate.
 
 **Practici de comunicare pentru avocat individual:**
-- Raspunde la emailuri in maximum 24 de ore in zilele lucratoare - seteaza o regula de Out of Office cu informatii utile cand esti in concediu sau la termen.
-- Creeaza sabloane pentru raspunsurile repetitive: confirmare programare, solicitare documente, urmarire dosar.
-- Arhiveaza corespondenta pe dosare - nu lasa emailuri importante numai in Inbox.
+- Răspunde la emailuri în maximum 24 de ore în zilele lucrătoare - setează o regulă de Out of Office cu informații utile când ești în concediu sau la termen.
+- Creează șabloane pentru răspunsurile repetitive: confirmare programare, solicitare documente, urmărire dosar.
+- Arhivează corespondența pe dosare - nu lasă emailuri importante numai în Inbox.
 
-## 7. Instrumente de productivitate pentru practica zilnica
+## 7. Instrumente de productivitate pentru practica zilnică
 
-Digitalizarea interna - modul in care gestionezi dosarele, termenele si sarcinile - are impact direct asupra calitatii serviciului si asupra timpului disponibil pentru activitatea juridica propriu-zisa.
+Digitalizarea internă - modul în care gestionezi dosarele, termenele și sarcinile - are impact direct asupra calității serviciului și asupra timpului disponibil pentru activitatea juridică propriu-zisă.
 
 **Stack minim recomandat pentru un cabinet individual:**
 
 | Nevoie | Instrument recomandat | Cost aproximativ |
 |--------|----------------------|-----------------|
-| Email + Calendar | Google Workspace sau Microsoft 365 | 5-10 EUR/luna |
-| Gestionare dosare si sarcini | Trello (plan gratuit) sau Notion | Gratuit - 10 EUR/luna |
-| Stocare si partajare documente | Google Drive sau OneDrive | Inclus in suite |
-| Videoconferinte | Google Meet sau Zoom | Gratuit pentru 1-on-1 |
-| Semnatura electronica | DocuSign sau semnatura.ro | 15-30 EUR/luna |
+| Email + Calendar | Google Workspace sau Microsoft 365 | 5-10 EUR/lună |
+| Gestionare dosare și sarcini | Trello (plan gratuit) sau Notion | Gratuit - 10 EUR/lună |
+| Stocare și partajare documente | Google Drive sau OneDrive | Inclus în suite |
+| Videoconferințe | Google Meet sau Zoom | Gratuit pentru 1-on-1 |
+| Semnătură electronică | DocuSign sau semnatura.ro | 15-30 EUR/lună |
 
-Nu adopta toate instrumentele simultan. Incepe cu emailul profesional si calendarul, adauga gestionarea sarcinilor dupa ce primul strat este stabil, continua cu stocarea documentelor si automatizarile. Fiecare instrument adoptat superficial devine o sursa de dezordine in plus.
+Nu adopta toate instrumentele simultan. Începe cu emailul profesional și calendarul, adaugă gestionarea sarcinilor după ce primul strat este stabil, continuă cu stocarea documentelor și automatizările. Fiecare instrument adoptat superficial devine o sursă de dezordine în plus.
 
-## 8. Social media: prezenta controlata, nu prezenta generica
+## 8. Social media: prezență controlată, nu prezență generică
 
-Un cabinet individual nu are nevoie de prezenta pe toate retelele sociale. Are nevoie de prezenta corecta pe una sau doua platforme, cu continut relevant pentru clientul ideal.
+Un cabinet individual nu are nevoie de prezență pe toate rețelele sociale. Are nevoie de prezență corectă pe una sau două platforme, cu conținut relevant pentru clientul ideal.
 
-**LinkedIn**: obligatoriu pentru orice avocat, indiferent de specializare. Profilul complet (fotografie profesionala, titlu clar, rezumat al experientei) functioneaza ca un CV public si iti creste vizibilitatea in mediul profesional. Posteaza articole scurte despre spete interesante (fara date personale), schimbari legislative relevante sau lectii din practica.
+**LinkedIn**: obligatoriu pentru orice avocat, indiferent de specializare. Profilul complet (fotografie profesională, titlu clar, rezumat al experienței) funcționează ca un CV public și îți crește vizibilitatea în mediul profesional. Postează articole scurte despre spețe interesante (fără date personale), schimbări legislative relevante sau lecții din practică.
 
-**Facebook / Instagram**: utile daca clientii tai sunt persoane fizice (drept civil, dreptul familiei, dreptul muncii). Continutul vizual - infografice despre drepturi, postari educationale - construieste incredere inainte ca potentialul client sa aiba nevoie de tine.
+**Facebook / Instagram**: utile dacă clienții tăi sunt persoane fizice (drept civil, dreptul familiei, dreptul muncii). Conținutul vizual - infografice despre drepturi, postări educaționale - construiește încredere înainte ca potențialul client să aibă nevoie de tine.
 
-**Regula de baza pentru social media juridica**: nu posta niciodata informatii despre dosare concrete, chiar anonim. Nu da sfaturi juridice specifice in comentarii publice. Nu polemiza cu alti avocati sau cu institutii.
+**Regula de bază pentru social media juridică**: nu posta niciodată informații despre dosare concrete, chiar anonim. Nu da sfaturi juridice specifice în comentarii publice. Nu polemiza cu alți avocați sau cu instituții.
 
-**Ghid de ton**: decide dinainte daca ton-ul tau este formal (`Dumneavoastra`), semiformal sau prietenos. Odata ales, aplica-l consistent pe toate canalele.
+**Ghid de ton**: decide dinainte dacă tonul tău este formal (`Dumneavoastră`), semiformal sau prietenos. Odată ales, aplică-l consistent pe toate canalele.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
-    <img src="../../assets/img/undraw_search-engines_k649.png" alt="Ilustratie: vizibilitate online si optimizare pentru cautari ale clientilor care cauta un avocat" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+    <img src="../../assets/img/undraw_search-engines_k649.png" alt="Ilustrație: vizibilitate online și optimizare pentru căutările clienților care caută un avocat" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
   </div>
 </div>
 
-## 9. Analiza si masurare: ce urmaresti si cum stii ca functioneaza
+## 9. Analiză și măsurare: ce urmărești și cum știi că funcționează
 
-Fara masurare, nu stii ce functioneaza si ce consuma buget degeaba. Pentru un cabinet individual, trei instrumente gratuite acopera ce ai nevoie:
+Fără măsurare, nu știi ce funcționează și ce consumă buget degeaba. Pentru un cabinet individual, trei instrumente gratuite acoperă ce ai nevoie:
 
-**Google Analytics 4**: traficul pe site - cate vizite, de unde vin, ce pagini consulta, cat timp stau, cate formulare de contact completeaza. Instaleaza-l inainte de lansarea site-ului, nu dupa.
+**Google Analytics 4**: traficul pe site - câte vizite, de unde vin, ce pagini consultă, cât timp stau, câte formulare de contact completează. Instalează-l înainte de lansarea site-ului, nu după.
 
-**Google Search Console**: ce interogari apar pe site in cautarile Google, ce pozitie medie ocupi, ce pagini sunt indexate si ce erori tehnice exista. Verifica lunar.
+**Google Search Console**: ce interogări apar pe site în căutările Google, ce poziție medie ocupi, ce pagini sunt indexate și ce erori tehnice există. Verifică lunar.
 
-**Google Business Profile Insights**: cate cautari a generat profilul tau (cautari directe vs. cautari de descoperire), cate click-uri spre site, cate cereri de indicatii rutiere, cate apeluri initiate direct din Maps. Acesta este cel mai relevant indicator pentru clientii locali.
+**Google Business Profile Insights**: câte căutări a generat profilul tău (căutări directe vs. căutări de descoperire), câte click-uri spre site, câte cereri de indicații rutiere, câte apeluri inițiate direct din Maps. Acesta este cel mai relevant indicator pentru clienții locali.
 
-**Ce urmaresti lunar:**
-- Numar de vizite pe site si sursa lor (organic, direct, social, referral)
-- Pozitia medie pentru cuvintele cheie principale
-- Numar de formulare de contact completate
-- Numar de apeluri initiate din Google Maps
-- Numarul si media recenziilor pe GBP
+**Ce urmărești lunar:**
+- Număr de vizite pe site și sursa lor (organic, direct, social, referral)
+- Poziția medie pentru cuvintele cheie principale
+- Număr de formulare de contact completate
+- Număr de apeluri inițiate din Google Maps
+- Numărul și media recenziilor pe GBP
 
-## 10. Cronologie realista si costuri orientative
+## 10. Cronologie realistă și costuri orientative
 
-Un proiect complet de digitalizare pentru un cabinet individual dureaza intre 3 si 6 saptamani de la prima discutie, in functie de viteza de aprobare a materialelor si de complexitatea site-ului.
+Un proiect complet de digitalizare pentru un cabinet individual durează între 3 și 6 săptămâni de la prima discuție, în funcție de viteza de aprobare a materialelor și de complexitatea site-ului.
 
-**Etape si durate orientative:**
+**Etape și durate orientative:**
 
-| Etapa | Durata estimata |
+| Etapă | Durată estimată |
 |-------|----------------|
 | Audit + strategie | 3-5 zile |
-| Identitate vizuala (logo, brand) | 7-10 zile |
-| Materiale fizice (carti de vizita, antet, mape) | 5-7 zile dupa aprobare design |
+| Identitate vizuală (logo, brand) | 7-10 zile |
+| Materiale fizice (cărți de vizită, antet, mape) | 5-7 zile după aprobare design |
 | Configurare Google Business Profile | 1-2 zile + 5 zile verificare Google |
-| Design si implementare website | 10-15 zile |
+| Design și implementare website | 10-15 zile |
 | Configurare email profesional | 1 zi |
-| SEO tehnic initial | 3-5 zile dupa lansare site |
+| SEO tehnic inițial | 3-5 zile după lansare site |
 | Blog juridic (primele 3-5 articole) | 5-10 zile |
 
-**Costuri orientative (externalizat catre o agentie):**
-- Identitate vizuala completa (logo + manual + materiale): 500-1.500 EUR
+**Costuri orientative (externalizat către o agenție):**
+- Identitate vizuală completă (logo + manual + materiale): 500-1.500 EUR
 - Website cu blog (design + implementare + copywriting): 800-2.500 EUR
 - Google Business Profile (setup + optimizare): 150-400 EUR
-- SEO local (setup initial + strategie): 300-800 EUR
-- Mentenanta lunara (site + SEO + actualizari): 150-500 EUR/luna
+- SEO local (setup inițial + strategie): 300-800 EUR
+- Mentenanță lunară (site + SEO + actualizări): 150-500 EUR/lună
 
-Costul total al digitalizarii initiale unui cabinet individual se incadreaza frecvent intre 2.000 si 5.000 EUR, in functie de solutia aleasa si de nivelul de implicare al agentiei.
+Costul total al digitalizării inițiale unui cabinet individual se încadrează frecvent între 2.000 și 5.000 EUR, în funcție de soluția aleasă și de nivelul de implicare al agenției.
 
-## 11. Greseli frecvente in digitalizarea cabinetelor individuale
+## 11. Greșeli frecvente în digitalizarea cabinetelor individuale
 
-- **A incepe cu social media inainte de site**: reteaua sociala trimite oamenii pe site. Daca site-ul nu exista sau nu convinge, efortul social media este irosit.
-- **A alege un website ieftin fara autonomie de continut**: daca pentru orice modificare pe blog trebuie sa suni un programator, blog-ul nu va fi actualizat si isi pierde valoarea SEO.
-- **A ignora Google Business Profile**: 46% din cautarile Google au intentie locala. Un GBP necomplet sau nerevendicat inseamna pozitii mai slabe pe Maps fata de competitori mai putin calificati, dar mai bine optimizati digital.
-- **A folosi aceeasi fotografie de pe buletin pe toate canalele**: o fotografie profesionala realizata in cabinet sau intr-un studio creste rata de conversie pe site si pe LinkedIn.
-- **A masura vanity metrics**: numarul de urmaritori pe Instagram sau de like-uri pe Facebook nu se coreleaza direct cu dosarele noi. Urmareste conversiile reale: apeluri, formulare, programari.
-- **A astepta ca totul sa fie perfect**: un site lansat cu 5 pagini corecte este mai valoros decat un site in constructie de 6 luni. SEO-ul incepe sa functioneze de la indexare, nu de la perfectionare.
+- **A începe cu social media înainte de site**: rețeaua socială trimite oamenii pe site. Dacă site-ul nu există sau nu convinge, efortul social media este irosit.
+- **A alege un website ieftin fără autonomie de conținut**: dacă pentru orice modificare pe blog trebuie să suni un programator, blog-ul nu va fi actualizat și își pierde valoarea SEO.
+- **A ignora Google Business Profile**: 46% din căutările Google au intenție locală. Un GBP necomplet sau nerevendicat înseamnă poziții mai slabe pe Maps față de competitori mai puțin calificați, dar mai bine optimizați digital.
+- **A folosi aceeași fotografie de pe buletin pe toate canalele**: o fotografie profesională realizată în cabinet sau într-un studio crește rata de conversie pe site și pe LinkedIn.
+- **A măsura vanity metrics**: numărul de urmăritori pe Instagram sau de like-uri pe Facebook nu se corelează direct cu dosarele noi. Urmărește conversiile reale: apeluri, formulare, programări.
+- **A aștepta ca totul să fie perfect**: un site lansat cu 5 pagini corecte este mai valoros decât un site în construcție de 6 luni. SEO-ul începe să funcționeze de la indexare, nu de la perfecționare.
 
 ## 12. Tips & tricks din practica cabinetelor digitalizate
 
-- **Solicita recenzia imediat**: trimite un link direct catre pagina de recenzii Google imediat dupa incheierea cu succes a unui dosar - rata de conversie este de 3-5 ori mai mare decat la solicitarile intarziate.
-- **Cuvantul cheie in titlul paginii Google Business Profile nu este interzis**: `Av. Cristian Guritanu | Avocat Drept Civil Cluj-Napoca` este un titlu valid si mai eficient decat simplu `Cabinet Avocat Guritanu`.
-- **Un articol de blog pe luna este suficient pentru start**: 12 articole relevante pe an, bine optimizate, au impact SEO mai mare decat 50 de articole scurte si superficiale.
-- **Fotografiaza la lansarea cabinetului**: cheltuieste o data pe un fotograf profesionist. Vei folosi acele imagini 3-5 ani pe site, LinkedIn, Google Business Profile si materiale de print.
-- **Adresa de email in semnatura fizica**: pune adresa site-ului pe cartea de vizita, pe antet si pe orice document trimis. Fiecare contact fizic este o oportunitate de a genera trafic pe site.
-- **Raspunde la recenziile negative calm si profesionist**: un raspuns bine formulat la o recenzie negativa demonstreaza mai multa credibilitate decat absenta oricarei recenzii negative.
-- **Verifica lunar coerenta NAP**: daca schimbi numarul de telefon sau adresa, actualizeaza simultan GBP, site-ul, directoarele juridice si semnatura de email.
+- **Solicită recenzia imediat**: trimite un link direct către pagina de recenzii Google imediat după încheierea cu succes a unui dosar - rata de conversie este de 3-5 ori mai mare decât la solicitările întârziate.
+- **Cuvântul cheie în titlul paginii Google Business Profile nu este interzis**: `Av. Cristian Gurițanu | Avocat Drept Civil Cluj-Napoca` este un titlu valid și mai eficient decât simplu `Cabinet Avocat Guritanu`.
+- **Un articol de blog pe lună este suficient pentru start**: 12 articole relevante pe an, bine optimizate, au impact SEO mai mare decât 50 de articole scurte și superficiale.
+- **Fotografiază la lansarea cabinetului**: cheltuiește o dată pe un fotograf profesionist. Vei folosi acele imagini 3-5 ani pe site, LinkedIn, Google Business Profile și materiale de print.
+- **Adresa de email în semnătura fizică**: pune adresa site-ului pe cartea de vizită, pe antet și pe orice document trimis. Fiecare contact fizic este o oportunitate de a genera trafic pe site.
+- **Răspunde la recenziile negativ calm și profesionist**: un răspuns bine formulat la o recenzie negativă demonstrează mai multă credibilitate decât absența oricărei recenzii negative.
+- **Verifică lunar coerența NAP**: dacă schimbi numărul de telefon sau adresa, actualizează simultan GBP, site-ul, directoarele juridice și semnătura de email.
 
 ## Concluzie
 
-Digitalizarea unui cabinet individual de avocat nu este un proiect de o singura data - este un sistem care se construieste in etape si se intretine continuu. Prioritatea nu este sa fii prezent pretutindeni, ci sa fii prezent corect acolo unde clientul tau te cauta: Google, Maps, un site care convinge.
+Digitalizarea unui cabinet individual de avocat nu este un proiect de o singură dată - este un sistem care se construiește în etape și se întreține continuu. Prioritatea nu este să fii prezent pretutindeni, ci să fii prezent corect acolo unde clientul tău te caută: Google, Maps, un site care convinge.
 
-Rezultatele documentate in practica arata ca un cabinet digitalizat corect - cu identitate vizuala coerenta, site optimizat, Google Business Profile activ si continut juridic relevant - atrage clienti mai calificati, reduce timpul pierdut cu clienti nepotriviti si construieste o reputatie online care functioneaza independent de referintele personale.
+Rezultatele documentate în practică arată că un cabinet digitalizat corect - cu identitate vizuală coerentă, site optimizat, Google Business Profile activ și conținut juridic relevant - atrage clienți mai calificați, reduce timpul pierdut cu clienți nepotriviți și construiește o reputație online care funcționează independent de referințele personale.
 
-Dezavantajul principal al abordarii pe cont propriu: digitalizarea completa consuma timp pe care un avocat individual cu volum de dosare nu il are. Delegarea catre o agentie specializata nu este un cost - este o decizie de oportunitate: timpul eliberat din administrativ si marketing se transforma in ore de practica juridica factuurabila.
+Dezavantajul principal al abordării pe cont propriu: digitalizarea completă consumă timp pe care un avocat individual cu volum de dosare nu îl are. Delegarea către o agenție specializată nu este un cost - este o decizie de oportunitate: timpul eliberat din administrativ și marketing se transformă în ore de practică juridică facturabilă.
 
-Daca vrei sa incepi digitalizarea cabinetului tau cu o strategie clara si livrabile masurate in termen fix, echipa **SOLON** a parcurs acest drum cu cabinete individuale din toata tara si poate construi sistemul potrivit pentru practica ta - de la identitate vizuala la primele pozitii in cautarile locale.
+Dacă vrei să începi digitalizarea cabinetului tău cu o strategie clară și livrabile măsurate în termen fix, echipa **SOLON** a parcurs acest drum cu cabinete individuale din toată țara și poate construi sistemul potrivit pentru practica ta - de la identitate vizuală la primele poziții în căutările locale.

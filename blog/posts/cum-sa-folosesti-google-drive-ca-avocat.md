@@ -2,7 +2,7 @@
 title: "Cum să folosești Google Drive ca avocat"
 date: "2026-03-30"
 slug: "cum-sa-folosesti-google-drive-ca-avocat"
-description: "Ghid practic pentru avocați: setări, utilizări avansate, tips & tricks și configurații pentru Google Drive - organizare dosar, permisiuni, versiuni, Shared Drives, căutare și integrări."
+description: "Ghid Google Drive pentru avocați: setări, utilizări avansate, tips & tricks și configurații avansate - permisiuni, versiuni, Shared Drives și automatizări."
 read_time: 7
 categories: ["digitalizare", "productivitate", "automatizări"]
 tags: ["google drive", "avocați", "productivitate", "digitalizare", "documente", "colaborare"]

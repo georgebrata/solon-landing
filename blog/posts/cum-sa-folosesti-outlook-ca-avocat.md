@@ -2,7 +2,7 @@
 title: "Cum să folosești Outlook ca avocat"
 date: "2026-04-02"
 slug: "cum-sa-folosesti-outlook-ca-avocat"
-description: "Ghid practic pentru avocați: funcționalități, setări, reguli automate, Quick Steps, Focused Inbox, calendare partajate, delegare, add-in-uri și configurații avansate în Microsoft Outlook."
+description: "Ghid Outlook pentru avocați: funcționalități, setări, reguli automate, Quick Steps, calendare partajate, delegare, add-in-uri și configurații avansate."
 read_time: 10
 categories: ["digitalizare", "productivitate", "automatizări"]
 tags: ["outlook", "microsoft", "avocați", "productivitate", "email", "calendar", "automatizări"]

@@ -2,7 +2,7 @@
 title: "Cum să folosești Trello ca avocat"
 date: "2026-04-01"
 slug: "cum-sa-folosesti-trello-ca-avocat"
-description: "Ghid practic pentru avocați: funcționalități, setări, automatizări Butler, Power-Ups, configurații avansate și tips & tricks pentru gestionarea dosarelor și sarcinilor juridice cu Trello."
+description: "Ghid Trello pentru avocați: funcționalități, setări, automatizări Butler, Power-Ups și configurații avansate pentru gestionarea sarcinilor juridice."
 read_time: 9
 categories: ["digitalizare", "productivitate", "management"]
 tags: ["trello", "avocați", "productivitate", "management", "dosare", "automatizări"]
