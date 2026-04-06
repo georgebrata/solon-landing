@@ -170,7 +170,7 @@ ${tagsBlock}
 
   return layoutTemplate
     .replace(/{{title}}/g, 'Blog')
-    .replace(/{{description}}/g, 'SOLON Blog LegalTech - digitalizare juridică și productivitate pentru practica avocaturii digitale')
+    .replace(/{{description}}/g, 'SOLON Blog LegalTech - digitalizare juridică, unelte digitale și productivitate pentru practica avocaturii moderne')
     .replace(/{{slug}}/g, '')
     .replace(/{{body}}/g, listBody)
     .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>');
