@@ -79,7 +79,7 @@ function generatePostHTML(post, posts) {
     .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
 
-  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="..?tag=${tag}">${tag}</a></li>`).join('');
+  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../blog/?tag=${tag}">${tag}</a></li>`).join('');
 
   let postHtml = postTemplate
     .replace(/{{title}}/g, frontmatter.title)
@@ -129,7 +129,7 @@ function generateListHTML(posts) {
         const label = String(tag).trim();
         if (!label) return '';
         const tagParam = label.toLowerCase();
-        const href = `blog/?tag=${encodeURIComponent(tagParam)}`;
+        const href = `../blog/?tag=${encodeURIComponent(tagParam)}`;
         return `                      <a href="${href}" class="badge badge-tag me-1">${escapeHtml(label)}</a>`;
       })
       .filter(Boolean)
