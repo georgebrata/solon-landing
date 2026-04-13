@@ -93,6 +93,7 @@ function generatePostHTML(post, posts) {
     .replace(/{{title}}/g, frontmatter.title)
     .replace(/{{description}}/g, frontmatter.description)
     .replace(/{{slug}}/g, frontmatter.slug)
+    .replace(/{{slugWithTrailingSlash}}/g, frontmatter.slug + '/')
     .replace(/{{body}}/g, postHtml)
     .replace(/{{scripts}}/g, '<script src="../../assets/js/blog-sidebar.js"></script>');
 }

@@ -1,9 +1,30 @@
 [
   {
-    "title": "Cum sa folosesti Notion ca avocat",
+    "title": "Cum să folosești Ahrefs ca avocat",
+    "date": "2026-04-13",
+    "slug": "cum-sa-folosesti-ahrefs-ca-avocat",
+    "description": "Ghid Ahrefs pentru avocați: cercetare cuvinte cheie juridice, analiza competitorilor, audit SEO, monitorizare backlink-uri și strategii de conținut pentru vizibilitate online.",
+    "read_time": 10,
+    "categories": [
+      "digitalizare",
+      "SEO",
+      "marketing"
+    ],
+    "tags": [
+      "ahrefs",
+      "avocați",
+      "SEO",
+      "marketing juridic",
+      "vizibilitate online",
+      "cuvinte cheie"
+    ],
+    "url": "cum-sa-folosesti-ahrefs-ca-avocat/"
+  },
+  {
+    "title": "Cum să folosești Notion ca avocat",
     "date": "2026-04-03",
     "slug": "cum-sa-folosesti-notion-ca-avocat",
-    "description": "Ghid Notion pentru avocati: baze de date, proprietati, sablooane, Notion AI, relatii intre tabele, permisiuni si configuratii avansate pentru domeniul juridic.",
+    "description": "Ghid Notion pentru avocați: baze de date, proprietăți, șabloane, Notion AI, relații între tabele, permisiuni și configurații avansate pentru domeniul juridic.",
     "read_time": 10,
     "categories": [
       "digitalizare",
@@ -12,7 +33,7 @@
     ],
     "tags": [
       "notion",
-      "avocati",
+      "avocați",
       "productivitate",
       "management",
       "dosare",
@@ -147,7 +168,7 @@
     "url": "automatizarea-proceselor-juridice-cand-si-cum-este-utila/"
   },
   {
-    "title": "Cum sa alegi un furnizor de sofware pentru o societate de avocați?",
+    "title": "Cum să alegi un furnizor de software pentru o societate de avocați?",
     "date": "2026-03-25",
     "slug": "cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati",
     "description": "Află cum să alegi inteligent furnizorul de software și consultantul de digitalizare pentru societatea ta de avocați astfel încât să câștigi eficiență reală.",
@@ -157,11 +178,11 @@
       "management"
     ],
     "tags": [
-      "societate de avocati",
+      "societate de avocați",
       "software juridic",
       "consultant digitalizare",
       "legaltech",
-      "eficienta operationala"
+      "eficiență operațională"
     ],
     "url": "cum-sa-alegi-un-furnizor-de-servicii-de-digitalizare-pentru-o-societate-de-avocati/"
   },

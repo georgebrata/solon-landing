@@ -1,5 +1,21 @@
 # Instructions for Generating New Blog Articles — SOLON Agency
 
+## Example Prompt to Give the Agent
+
+```
+Similarly to the articles in blog/posts/, write a new article called
+"Cum sa folosesti [TOOL] ca avocat" where you share specific
+functionalities, settings, power uses, tips & tricks, and advanced
+configurations that lawyers can use with this digital tool.
+Be correct, precise and specific. Write in Romanian and use diacritics.
+Generate only the .md file in blog/posts/.
+Use the following images inside the article:
+- assets/img/[image1.png]
+- assets/img/[image2.png]
+After creating the .md file, run node scripts/humanize.js,
+then node scripts/build.js, then node scripts/update-sitemap.js.
+```
+
 ## Overview
 
 This is a static website for SOLON Agency, a digital agency for lawyers. The blog system uses Markdown source files that are compiled into HTML via a build script. All articles are written in **Romanian**.
@@ -240,20 +256,3 @@ Read these files to calibrate tone, depth and structure before writing:
 | `blog/posts/cum-sa-folosesti-trello-ca-avocat.md` | Task/project management, Kanban, Butler automations, Power-Ups |
 | `blog/posts/cum-sa-folosesti-outlook-ca-avocat.md` | Outlook email, Rules, Quick Steps, calendar, delegation, security |
 
----
-
-## Example Prompt to Give the Agent
-
-```
-Similarly to the articles in blog/posts/, write a new article called
-"Cum sa folosesti [TOOL] ca avocat" where you share specific
-functionalities, settings, power uses, tips & tricks, and advanced
-configurations that lawyers can use with this digital tool.
-Be correct, precise and specific. Write in Romanian.
-Generate only the .md file in blog/posts/.
-Use the following images inside the article:
-- assets/img/[image1.png]
-- assets/img/[image2.png]
-After creating the .md file, run node scripts/humanize.js,
-then node scripts/build.js, then node scripts/update-sitemap.js.
-```
