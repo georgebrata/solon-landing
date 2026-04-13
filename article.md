@@ -14,6 +14,11 @@ Use the following images inside the article:
 - assets/img/[image2.png]
 After creating the .md file, run node scripts/humanize.js,
 then node scripts/build.js, then node scripts/update-sitemap.js.
+
+Constraints: 
+- title max 50 characters
+- description up to 130 characters
+- total article length at least 1000 words of varying complexity, in correct natural language
 ```
 
 ## Overview

@@ -2,7 +2,7 @@
 title: "Cum să folosești Ahrefs ca avocat"
 date: "2026-04-13"
 slug: "cum-sa-folosesti-ahrefs-ca-avocat"
-description: "Ghid Ahrefs pentru avocați: cercetare cuvinte cheie juridice, analiza competitorilor, audit SEO, monitorizare backlink-uri și strategii de conținut pentru vizibilitate online."
+description: "Ghid Ahrefs pentru avocați: cercetare cuvinte cheie juridice, analiza competitorilor, audit SEO, monitorizare backlinks și strategii de conținut online."
 read_time: 10
 categories: ["digitalizare", "SEO", "marketing"]
 tags: ["ahrefs", "avocați", "SEO", "marketing juridic", "vizibilitate online", "cuvinte cheie"]

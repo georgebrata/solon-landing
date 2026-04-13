@@ -1,5 +1,5 @@
 ---
-title: "Automatizarea Proceselor Juridice: Când și Cum Este Utilă?"
+title: "Automatizarea Proceselor Juridice"
 date: "2026-03-26"
 slug: "automatizarea-proceselor-juridice-cand-si-cum-este-utila"
 description: "Ce înseamnă automatizarea proceselor juridice, când aduce cel mai mult valoare și pașii practici pentru implementare - fără a înlocui expertiza avocatului."
