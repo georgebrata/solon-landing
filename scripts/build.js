@@ -79,7 +79,7 @@ function generatePostHTML(post, posts) {
     .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
 
-  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../blog/?tag=${tag}">${tag}</a></li>`).join('');
+  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../?tag=${tag}">${tag}</a></li>`).join('');
 
   let postHtml = postTemplate
     .replace(/{{title}}/g, frontmatter.title)

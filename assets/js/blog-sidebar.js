@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tagsList.innerHTML = '';
     topTags.forEach(([tag, count]) => {
       tagsList.appendChild(
-        createListItem(`../blog/?tag=${encodeURIComponent(tag)}`, `${tag}`, `${count} articole`)
+        createListItem(`../?tag=${encodeURIComponent(tag)}`, `${tag}`, `${count} articole`)
       );
     });
   };
