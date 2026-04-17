@@ -1,7 +1,7 @@
 ---
 title: "3 ore pe zi salvate cu un singur tool digital"
 date: "2025-03-31"
-slug: "3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management/"
+slug: "3-ore-pe-zi-salvate-cu-un-singur-tool-nu-e-magie-e-management"
 description: "Câștigă până la 3 ore pe zi fără să lucrezi mai mult. Descoperă cum un tool de management juridic îți organizează munca și reduce sarcinile repetitive."
 read_time: 3
 categories: ["automatizări", "digitalizare"]
