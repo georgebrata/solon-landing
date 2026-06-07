@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="canonical" href="https://solon.agency/blog/cum-sa-folosesti-google-search-console-ca-avocat/" />
+
+  <!-- Primary Meta Tags -->
+  <title>Cum să folosești Google Search Console ca avocat | SOLON Blog</title>
+  <meta name="title" content="Cum să folosești Google Search Console ca avocat | SOLON Blog" />
+  <meta name="description" content="Ghid Google Search Console pentru avocați: verificarea proprietății, raportul Performanță, inspecția URL, indexare, sitemap, Core Web Vitals, link-uri, filtre regex și configurații avansate." />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://solon.agency/blog/cum-sa-folosesti-google-search-console-ca-avocat/" />
+  <meta property="og:title" content="Cum să folosești Google Search Console ca avocat | SOLON Blog" />
+  <meta property="og:description" content="Ghid Google Search Console pentru avocați: verificarea proprietății, raportul Performanță, inspecția URL, indexare, sitemap, Core Web Vitals, link-uri, filtre regex și configurații avansate." />
+  <meta property="og:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://solon.agency/blog/cum-sa-folosesti-google-search-console-ca-avocat/" />
+  <meta property="twitter:title" content="Cum să folosești Google Search Console ca avocat | SOLON Blog" />
+  <meta property="twitter:description" content="Ghid Google Search Console pentru avocați: verificarea proprietății, raportul Performanță, inspecția URL, indexare, sitemap, Core Web Vitals, link-uri, filtre regex și configurații avansate." />
+  <meta property="twitter:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="../../assets/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="../../assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="../../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../../assets/css/style.min.css" rel="stylesheet">
+  <link href="../../assets/css/blog.css" rel="stylesheet">
+
+  <style>
+    /* Ensure the header is visible on blog pages */
+    .breadcrumbs {
+      margin-top: 70px;
+    }
+  </style>
+
+  <!-- ahrefs analytics tracking code for SOLON -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
+
+  <!-- clarity -->
+  <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "w9hin0o1ua");
+  </script>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top header-inner-pages">
+    <div class="container d-flex align-items-center">
+
+      <div class="logo me-auto"><a href="../../" class="hover-no-underline" aria-label="SOLON - pagina principală">
+          <img alt="Logo SOLON, agenția digitală pentru avocați" src="../../assets/img/solon-logo.png" width="250" height="250" />
+          <span aria-hidden="true">SOLON</span></a></div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link" href="../../#servicii">Servicii</a></li>
+          <li><a class="nav-link" href="../../studii-de-caz/">Studii de caz</a></li>
+          <li><a class="nav-link active" href="../../blog/">Blog</a></li>
+          <li><a class="getstarted scrollto mr-1" href="../../programare-consultanta-gratuita/">Programează consultanță
+              gratuită</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <section class="breadcrumbs">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Blog LegalTech</h2>
+      <ol>
+        <li><a href="../../">Home</a></li>
+        <li><a href="../">Blog LegalTech</a></li>
+        <li>Cum să folosești Google Search Console ca avocat</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="blog-post" class="blog-post">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
+      <div class="col-lg-7">
+        <article class="entry entry-single">
+          <h1 class="entry-title">Cum să folosești Google Search Console ca avocat</h1>
+          <div class="entry-meta">
+            <ul>
+              <li class="d-flex align-items-center"><i class="bi bi-calendar"></i> <time datetime="2026-06-07">2026-06-07</time></li>
+              <li class="d-flex align-items-center"><i class="bi bi-clock"></i> lectură de 12 min</li>
+            </ul>
+          </div>
+          <div class="entry-tags">
+            <i class="bi bi-tags"></i>
+            <ul class="tags">
+              <li><a href="../?tag=google search console">google search console</a></li><li><a href="../?tag=avocați">avocați</a></li><li><a href="../?tag=SEO">SEO</a></li><li><a href="../?tag=marketing juridic">marketing juridic</a></li><li><a href="../?tag=vizibilitate online">vizibilitate online</a></li><li><a href="../?tag=indexare">indexare</a></li>
+            </ul>
+          </div>
+          <div class="entry-content">
+            <p>Google Search Console (GSC) este instrumentul oficial și gratuit prin care Google îți comunică direct cum „vede” site-ul cabinetului tău: pentru ce căutări apari, pe ce poziții, ce pagini sunt indexate, ce probleme tehnice te frânează și cine face link către tine. Spre deosebire de instrumentele terțe care estimează, Search Console îți arată date reale, măsurate de Google. Pentru un cabinet de avocatură care vrea clienți din căutările locale, GSC nu este opțional – este sursa de adevăr a vizibilității tale online.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_location-search_9mdg.png" alt="Ilustrație: analiza vizibilității și a căutărilor locale pentru un cabinet de avocatură cu Google Search Console" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<p>Acest ghid acoperă funcționalitățile reale ale platformei, cu setări, configurații și utilizări specifice pentru practica juridică din România.</p>
+<h2>1. Adăugarea și verificarea proprietății: alege tipul corect</h2>
+<p>Primul pas este să adaugi site-ul ca „proprietate” (property) în Search Console. Google îți oferă două tipuri, iar alegerea contează:</p>
+<ul>
+<li><strong>Domain property</strong> (proprietate de tip domeniu): acoperă toate variantele – <code>http</code>, <code>https</code>, cu și fără <code>www</code>, plus toate subdomeniile (<code>blog.cabinet.ro</code>, <code>cazuri.cabinet.ro</code>). Verificarea se face exclusiv prin <strong>înregistrare DNS</strong> (un record TXT adăugat la furnizorul tău de domeniu). Este varianta recomandată pentru majoritatea cabinetelor, pentru că nu ratezi date din cauza unei variante de URL neacoperite.</li>
+<li><strong>URL-prefix property</strong> (proprietate de tip prefix URL): acoperă o singură variantă exactă (ex. <code>https://www.cabinet.ro/</code>). Permite mai multe metode de verificare și este utilă dacă vrei să separi, de exemplu, subdomeniul de blog de site-ul principal.</li>
+</ul>
+<p><strong>Metode de verificare a proprietății URL-prefix:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metodă</th>
+<th>Cum funcționează</th>
+<th>Recomandare</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fișier HTML</td>
+<td>Încarci un fișier furnizat de Google în rădăcina site-ului</td>
+<td>Stabilă; nu o șterge ulterior</td>
+</tr>
+<tr>
+<td>Tag HTML</td>
+<td>Adaugi un <code>&lt;meta&gt;</code> în secțiunea <code>&lt;head&gt;</code></td>
+<td>Simplă dacă ai acces la cod</td>
+</tr>
+<tr>
+<td>Google Analytics</td>
+<td>Folosește contul GA4 existent</td>
+<td>Rapidă dacă ai deja Analytics</td>
+</tr>
+<tr>
+<td>Google Tag Manager</td>
+<td>Folosește containerul GTM existent</td>
+<td>Utilă dacă deja folosești GTM</td>
+</tr>
+<tr>
+<td>Înregistrare DNS</td>
+<td>Record TXT la furnizorul de domeniu</td>
+<td>Cea mai robustă</td>
+</tr>
+</tbody></table>
+<p><strong>Recomandare practică:</strong> creează o <strong>Domain property</strong> verificată prin DNS pentru imaginea completă și, opțional, o <strong>URL-prefix property</strong> pentru blogul juridic, dacă vrei rapoarte separate pentru acea secțiune.</p>
+<h2>2. Raportul Performanță: pentru ce te găsesc clienții</h2>
+<p>Raportul <strong>Performanță &gt; Rezultate căutare</strong> (Performance &gt; Search results) este inima Search Console. Aici vezi exact pentru ce căutări apare cabinetul tău în Google.</p>
+<p><strong>Cele patru metrici fundamentale:</strong></p>
+<ul>
+<li><strong>Afișări (Impressions)</strong>: de câte ori a apărut un link al site-ului tău în rezultate. Indică vizibilitatea – pentru câte căutări ești măcar luat în considerare de Google.</li>
+<li><strong>Clicuri (Clicks)</strong>: de câte ori a dat cineva click pe rezultatul tău.</li>
+<li><strong>CTR (rata de click)</strong>: clicuri împărțite la afișări. Un CTR mic la afișări mari înseamnă că apari, dar titlul sau descrierea nu conving.</li>
+<li><strong>Poziția medie (Average position)</strong>: poziția medie la care ai apărut pentru căutările respective.</li>
+</ul>
+<p><strong>Cele șase dimensiuni de analiză (tab-urile din raport):</strong></p>
+<ol>
+<li><strong>Interogări (Queries)</strong>: cuvintele exacte pe care le-au tastat oamenii când ți-au văzut site-ul. Cea mai valoroasă filă pentru un avocat – îți arată limbajul real al clienților (ex. <code>cât costă un divorț cu avocat</code>, <code>avocat contestație decizie de concediere</code>).</li>
+<li><strong>Pagini (Pages)</strong>: ce URL-uri ale tale au generat afișări și clicuri. Vezi care pagini de practică performează și care nu.</li>
+<li><strong>Țări (Countries)</strong>: util ca să confirmi că traficul vine din România, nu din regiuni irelevante.</li>
+<li><strong>Dispozitive (Devices)</strong>: desktop vs. mobil vs. tabletă. Pentru servicii juridice locale, ponderea mobilului este de regulă majoritară.</li>
+<li><strong>Aspect în căutare (Search appearance)</strong>: dacă apari cu elemente speciale (rezultate îmbogățite, breadcrumbs etc.).</li>
+<li><strong>Date</strong>: evoluția în timp; activează modul de comparație pentru a vedea tendințele.</li>
+</ol>
+<p><strong>Setare esențială:</strong> GSC afișează implicit ultimele 3 luni. Extinde intervalul la <strong>16 luni</strong> (maximul disponibil) pentru a observa sezonalitatea și tendințele reale, nu fluctuațiile de scurtă durată.</p>
+<h2>3. Filtre și expresii regulate (regex): analiză avansată a interogărilor</h2>
+<p>Adevărata putere a raportului Performanță stă în filtre. Pe lângă filtrele simple („conține”, „nu conține”, „exact”), Search Console acceptă <strong>expresii regulate (regex)</strong> atât pentru interogări, cât și pentru pagini.</p>
+<p><strong>Exemple practice de filtre regex pentru un cabinet:</strong></p>
+<ul>
+<li>Grupează toate căutările cu intenție de preț:
+<code>cât costă|preț|onorariu|tarif</code></li>
+<li>Izolează căutările pe orașul tău:
+<code>cluj|cluj-napoca</code></li>
+<li>Vezi toate întrebările (conținut ideal pentru blog și FAQ):
+<code>^(cum|ce|când|cât|de ce|cine|unde)</code></li>
+<li>Filtrează o arie de practică:
+<code>divor[țt]|custodie|pensie aliment</code></li>
+</ul>
+<p><strong>Cum aplici:</strong> în raportul Performanță, apasă <strong>+ Nou (New)</strong> &gt; <strong>Interogare (Query)</strong> sau <strong>Pagină (Page)</strong> &gt; selectează <strong>Personalizat (regex)</strong> din meniul derulant și introdu expresia.</p>
+<p><strong>Mod de comparație:</strong> orice filtru poate fi pus în comparație (perioadă vs. perioadă, dispozitiv vs. dispozitiv, țară vs. țară). Astfel demonstrezi concret evoluția: de exemplu, clicurile pe paginile de drept penal în trimestrul curent față de cel anterior.</p>
+<h2>4. URL Inspection: diagnoza fiecărei pagini</h2>
+<p>Instrumentul <strong>Inspectare URL</strong> (URL Inspection), accesibil din bara de căutare de sus, îți arată cum vede Google o anumită pagină.</p>
+<p><strong>Ce afli pentru un URL:</strong></p>
+<ul>
+<li>Dacă pagina este <strong>indexată</strong> și eligibilă să apară în Google.</li>
+<li><strong>Data ultimei accesări (crawl)</strong> de către Googlebot și starea acesteia.</li>
+<li><strong>URL-ul canonic</strong> ales de Google (poate diferi de cel declarat de tine).</li>
+<li>Dacă pagina este acoperită de un <strong>sitemap</strong>.</li>
+<li>Eventuale probleme de <strong>rezultate îmbogățite</strong> (structured data) detectate pe pagină.</li>
+</ul>
+<p><strong>Două acțiuni-cheie:</strong></p>
+<ol>
+<li><strong>Testează URL-ul live (Test live URL)</strong>: verifică pagina în timp real, util după ce ai modificat conținutul sau ai reparat o eroare.</li>
+<li><strong>Solicită indexarea (Request indexing)</strong>: după ce publici o pagină nouă (o nouă pagină de serviciu sau un articol de blog) sau o actualizezi substanțial, trimite-o spre indexare ca să accelerezi apariția în Google.</li>
+</ol>
+<p><strong>Recomandare:</strong> după fiecare articol nou pe blogul juridic, inspectează URL-ul și solicită indexarea. Nu garantează indexarea instant, dar grăbește procesul față de așteptarea unui crawl natural.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_searching_no1g.png" alt="Ilustrație: inspectarea paginilor și verificarea stării de indexare în Google Search Console" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<h2>5. Raportul Indexare &gt; Pagini: ce intră (și ce nu) în Google</h2>
+<p>Secțiunea <strong>Indexare &gt; Pagini</strong> (Indexing &gt; Pages) îți arată câte pagini sunt indexate și, mai important, <strong>de ce anume nu</strong> sunt indexate altele.</p>
+<p><strong>Stări frecvente „Neindexat (Not indexed)” la site-urile de cabinet:</strong></p>
+<ul>
+<li><strong>Pagină duplicată, fără canonic selectat de utilizator</strong>: aceeași pagină accesibilă pe mai multe URL-uri. Definește un canonic clar.</li>
+<li><strong>Pagină alternativă cu etichetă canonică corectă</strong>: normal, nu necesită acțiune – Google a ales corect o altă versiune.</li>
+<li><strong>Descoperită – momentan neindexată (Discovered – currently not indexed)</strong>: Google știe de pagină, dar nu a accesat-o încă. Apare des la conținut nou sau la site-uri cu autoritate mică.</li>
+<li><strong>Accesată (crawled) – momentan neindexată</strong>: Google a văzut pagina, dar a decis să nu o indexeze (de obicei conținut subțire sau de calitate redusă). Semnal că pagina trebuie îmbunătățită.</li>
+<li><strong>Blocat de robots.txt</strong> sau <strong>exclus printr-o etichetă „noindex”</strong>: verifică dacă blocarea este intenționată.</li>
+<li><strong>Soft 404</strong>: pagina returnează cod 200, dar conținutul pare „gol” pentru Google.</li>
+</ul>
+<p><strong>Utilizare practică:</strong> verifică lunar acest raport. Dacă paginile-cheie de servicii (drept civil, drept penal, dreptul muncii) apar drept neindexate, pierzi clienți care nu te vor găsi niciodată pentru acele căutări.</p>
+<h2>6. Sitemap-uri: ajută Google să-ți descopere paginile</h2>
+<p>Un <strong>sitemap XML</strong> este lista structurată a paginilor pe care vrei să le indexeze Google. În <strong>Indexare &gt; Sitemap-uri (Sitemaps)</strong> îți trimiți sitemap-ul și verifici starea lui.</p>
+<p><strong>Bune practici pentru un cabinet:</strong></p>
+<ul>
+<li>Trimite URL-ul sitemap-ului (de obicei <code>https://cabinet.ro/sitemap.xml</code>).</li>
+<li>Include toate paginile importante: pagina principală, paginile de practică, pagina „Despre”, „Contact”, articolele de blog și eventualele studii de caz.</li>
+<li>Verifică în raport numărul de pagini <strong>descoperite</strong> față de cele <strong>trimise</strong> – discrepanțele indică probleme.</li>
+<li>Actualizează sitemap-ul automat la fiecare pagină nouă publicată, astfel încât Google să fie informat rapid.</li>
+</ul>
+<p><strong>De știut:</strong> trimiterea sitemap-ului nu garantează indexarea, dar este modul oficial prin care îi semnalezi lui Google ce conținut consideri prioritar.</p>
+<h2>7. Eliminări (Removals): control temporar asupra rezultatelor</h2>
+<p>Instrumentul <strong>Indexare &gt; Eliminări (Removals)</strong> îți permite să ascunzi temporar (aproximativ 6 luni) un URL din rezultatele Google.</p>
+<p><strong>Când este util pentru un avocat:</strong></p>
+<ul>
+<li>Ai publicat din greșeală o pagină cu date confidențiale ale unui client și ai nevoie să dispară urgent din rezultate cât rezolvi cauza la nivel de site (ștergere, <code>noindex</code>, restricționare acces).</li>
+<li>O pagină veche, retrasă, încă apare în căutări.</li>
+</ul>
+<p><strong>Atenție:</strong> eliminarea este <strong>temporară</strong>. Pentru o soluție permanentă trebuie fie să ștergi pagina (cod 404/410), fie să o marchezi <code>noindex</code>, fie să restricționezi accesul. Folosește și fila <strong>Conținut învechit (Outdated content)</strong> pentru a actualiza fragmentele afișate de Google după o modificare.</p>
+<h2>8. Experiență pagină și Core Web Vitals: viteza contează</h2>
+<p>Secțiunea <strong>Experiență (Experience)</strong> include raportul <strong>Core Web Vitals</strong> și raportul <strong>HTTPS</strong>.</p>
+<p><strong>Cele trei semnale Core Web Vitals:</strong></p>
+<ul>
+<li><strong>LCP (Largest Contentful Paint)</strong>: cât durează până se afișează conținutul principal. Țintă: sub 2,5 secunde.</li>
+<li><strong>INP (Interaction to Next Paint)</strong>: cât de rapid răspunde pagina la interacțiuni (click-uri, atingeri). Țintă: sub 200 ms. (INP a înlocuit fostul FID în 2024.)</li>
+<li><strong>CLS (Cumulative Layout Shift)</strong>: cât de mult „sare” aspectul paginii în timpul încărcării. Țintă: sub 0,1.</li>
+</ul>
+<p><strong>Raportul HTTPS</strong>: confirmă că paginile sunt servite securizat. Pentru un site juridic, securitatea conexiunii este obligatorie – atât pentru încrederea clienților, cât și ca semnal pentru Google.</p>
+<p><strong>Utilizare practică:</strong> datele Core Web Vitals provin din experiența reală a utilizatorilor (Chrome User Experience Report). Dacă paginile apar la „URL-uri slabe (Poor)” sau „necesită îmbunătățiri (Needs improvement)”, optimizează imaginile, reducerea codului și serverul – o pagină lentă alungă deopotrivă clienții și pozițiile.</p>
+<h2>9. Rezultate îmbogățite (structured data): apariții speciale în Google</h2>
+<p>Dacă site-ul tău include date structurate (schema.org în format JSON-LD), Search Console afișează rapoarte dedicate în secțiunea <strong>Îmbunătățiri (Enhancements)</strong>, de exemplu <strong>Breadcrumbs</strong> (firul Ariadnei).</p>
+<p><strong>Tipuri de date structurate relevante pentru un cabinet:</strong></p>
+<ul>
+<li><strong>LocalBusiness / LegalService</strong>: nume, adresă, telefon (NAP), program, zonă deservită – ajută la vizibilitatea locală.</li>
+<li><strong>BreadcrumbList</strong>: navigarea ierarhică afișată în rezultate.</li>
+<li><strong>Article</strong>: pentru articolele de blog juridic.</li>
+<li><strong>FAQPage</strong>: marcarea întrebărilor frecvente (afișarea ca rezultat îmbogățit este însă limitată de Google și nu este garantată).</li>
+</ul>
+<p><strong>Validare:</strong> după implementare, folosește <strong>Inspectare URL</strong> sau <strong>testul de rezultate îmbogățite (Rich Results Test)</strong> al Google, iar rapoartele din „Îmbunătățiri” îți vor semnala eventualele erori sau avertismente de remediat.</p>
+<h2>10. Raportul Link-uri: cine îți construiește autoritatea</h2>
+<p>Raportul <strong>Link-uri (Links)</strong> arată profilul de legături al site-ului, împărțit în două:</p>
+<p><strong>Link-uri externe (External links):</strong></p>
+<ul>
+<li><strong>Pagini cele mai accesate (Top linked pages)</strong>: ce pagini ale tale primesc cele mai multe link-uri externe.</li>
+<li><strong>Site-uri care creează link-uri (Top linking sites)</strong>: domeniile care trimit cele mai multe legături spre tine.</li>
+<li><strong>Text de ancorare (Top linking text)</strong>: cuvintele folosite ca text de link către site-ul tău.</li>
+</ul>
+<p><strong>Link-uri interne (Internal links):</strong></p>
+<ul>
+<li>Paginile tale cu cele mai multe (și cele mai puține) legături interne. Paginile importante de servicii ar trebui să primească multe link-uri interne din articole și din meniu; paginile cu zero link-uri interne sunt „orfane” și greu de găsit.</li>
+</ul>
+<p><strong>Utilizare practică pentru avocați:</strong> verifică din ce surse provin link-urile externe – directoare juridice, barouri, publicații de specialitate, parteneri (notari, executori, contabili). Întărește, în paralel, structura de link-uri interne ca să direcționezi autoritatea spre paginile care aduc clienți.</p>
+<h2>11. Acțiuni manuale și probleme de securitate</h2>
+<p>Două rapoarte critice, de verificat periodic:</p>
+<ul>
+<li><strong>Acțiuni manuale (Manual actions)</strong>: dacă un evaluator Google a aplicat o penalizare manuală (ex. pentru link-uri nenaturale sau conținut spam). În mod ideal, acest raport spune „Nu au fost detectate probleme”. Dacă apare o acțiune, urmează instrucțiunile de remediere și trimite o <strong>cerere de reexaminare (reconsideration request)</strong>.</li>
+<li><strong>Probleme de securitate (Security issues)</strong>: te alertează dacă site-ul a fost compromis (malware, conținut înșelător, hacking). Pentru un cabinet, un site marcat ca nesigur distruge instant încrederea – tratează orice alertă ca urgență.</li>
+</ul>
+<h2>12. Setări, utilizatori și permisiuni</h2>
+<p>În <strong>Setări (Settings)</strong> găsești configurări importante:</p>
+<ul>
+<li><strong>Utilizatori și permisiuni (Users and permissions)</strong>: adaugă colaboratori cu rol de <strong>Complet (Full)</strong>, <strong>Restrâns (Restricted)</strong> sau <strong>Proprietar (Owner)</strong>. Astfel, agenția care îți gestionează SEO sau un coleg de cabinet poate accesa datele fără să-ți partajezi contul personal Google.</li>
+<li><strong>Verificarea proprietății (Ownership verification)</strong>: vezi metodele active. Nu șterge fișierul/tag-ul de verificare, altfel pierzi accesul.</li>
+<li><strong>Statistici de accesare (Crawl stats)</strong>: câte cereri face Googlebot, timpul de răspuns al serverului și eventualele erori de accesare. Util pentru diagnostic tehnic.</li>
+<li><strong>Asocieri (Associations)</strong>: leagă Search Console de <strong>Google Analytics 4</strong> și de <strong>Looker Studio</strong> pentru rapoarte combinate.</li>
+<li><strong>Schimbarea adresei (Change of address)</strong>: instrumentul oficial când migrezi pe un domeniu nou (ex. de la un domeniu vechi la unul cu numele actual al cabinetului).</li>
+</ul>
+<h2>13. Configurații avansate: export, Looker Studio și BigQuery</h2>
+<p>Pentru raportare și analiză la scară mai mare:</p>
+<ul>
+<li><strong>Export rapid</strong>: orice raport poate fi exportat în Google Sheets, Excel sau CSV.</li>
+<li><strong>Looker Studio</strong>: conectează Search Console pentru dashboard-uri vizuale, actualizate automat – ideale pentru a prezenta evoluția vizibilității partenerilor de cabinet, fără ca aceștia să intre în GSC.</li>
+<li><strong>Bulk Data Export către BigQuery</strong>: pentru volume mari de date, poți configura un export zilnic complet în BigQuery, depășind limita de rânduri din interfața web. Util pentru cabinete mari sau pentru analize SEO aprofundate realizate de o agenție.</li>
+<li><strong>Search Console Insights</strong>: un raport simplificat care combină datele din GSC (și GA4, dacă e conectat) într-o formă prietenoasă: care conținut atrage vizitatori, ce căutări sunt în creștere, cum te găsesc oamenii. Bun pentru o privire rapidă, fără jargon tehnic.</li>
+</ul>
+<h2>14. Tips &amp; tricks care fac diferența</h2>
+<ul>
+<li><strong>Oportunități de CTR</strong>: în raportul Performanță, sortează interogările cu <strong>multe afișări dar CTR mic</strong>. Acolo apari, dar nu convingi – rescrie titlul (<code>&lt;title&gt;</code>) și meta descrierea acelor pagini pentru a câștiga clicuri fără efort suplimentar de poziționare.</li>
+<li><strong>„Striking distance” (pozițiile 8–20)</strong>: filtrează interogările cu poziția medie între 8 și 20. Sunt aproape de prima pagină – un mic efort de optimizare le poate aduce în Top 5.</li>
+<li><strong>Idei de conținut din întrebări</strong>: filtrul regex pe interogări de tip întrebare îți oferă subiecte exacte de articole și întrebări pentru pagina FAQ, formulate în limbajul real al clienților.</li>
+<li><strong>Validează reparațiile</strong>: după ce rezolvi o eroare de indexare sau Core Web Vitals, folosește butonul <strong>Validează remedierea (Validate fix)</strong> ca Google să reverifice și să închidă problema.</li>
+<li><strong>Compară mereu perioade</strong>: nu privi cifrele izolat. Modul de comparație (lună vs. lună, an vs. an) transformă datele brute în tendințe pe care le poți acționa.</li>
+<li><strong>Activează alertele pe email</strong>: GSC trimite automat notificări la probleme grave (scădere de indexare, acțiuni manuale, securitate). Asigură-te că ajung la adresa pe care o citești zilnic.</li>
+<li><strong>Curăță paginile „crawled – not indexed”</strong>: dacă pagini importante apar aici, îmbunătățește-le substanțial (conținut mai amplu, mai util, link-uri interne) și solicită reindexarea.</li>
+<li><strong>Monitorizează canonicalizarea</strong>: pentru paginile-cheie, verifică în URL Inspection ca „URL-ul canonic ales de Google” să fie cel dorit – discrepanțele pot dilua poziționarea.</li>
+</ul>
+<h2>Concluzie</h2>
+<p>Google Search Console este singura sursă oficială și gratuită care îți arată exact cum te poziționează Google: ce caută potențialii clienți când te găsesc, ce pagini funcționează, ce probleme tehnice îți reduc vizibilitatea și cine îți construiește autoritatea. Pentru un cabinet de avocatură, nu este un instrument „de specialiști” – este tabloul de bord al prezenței tale online.</p>
+<p>Nu trebuie să devii expert SEO ca să folosești GSC eficient. Trebuie să verifici corect proprietatea, să citești lunar raportul Performanță și raportul de indexare, să trimiți sitemap-ul, să soliciți indexarea conținutului nou și să acționezi pe oportunitățile evidente (CTR slab, poziții 8–20, pagini neindexate).</p>
+<p>Dacă vrei ca cineva să configureze, să monitorizeze și să acționeze pe datele din Search Console pentru cabinetul tău – de la indexare și viteză până la conținut și link-uri – echipa <strong>SOLON</strong> poate prelua întreaga strategie SEO, adaptată practicii tale juridice.</p>
+
+          </div>
+        </article>
+      </div>
+      <aside class="col-lg-4 d-none d-lg-block blog-sidebar" aria-label="Sidebar blog">
+        <div class="" data-blog-sidebar>
+          <!-- <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-search-title">
+            <h3 id="blog-sidebar-search-title" class="blog-sidebar-title">Caută</h3>
+            <form class="blog-sidebar-search-form" data-blog-sidebar-search role="search">
+              <label class="visually-hidden" for="blog-sidebar-search-input">Caută articole</label>
+              <div class="blog-sidebar-search-input-wrap">
+                <input id="blog-sidebar-search-input" type="search" class="form-control" placeholder="Caută articole..." aria-label="Caută articole">
+                <button type="submit" class="btn btn-sm blog-sidebar-search-button">Caută</button>
+              </div>
+            </form>
+          </section> -->
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-recent-title">
+            <h3 id="blog-sidebar-recent-title" class="blog-sidebar-title">Articole recente</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-recent></ul>
+          </section>
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-tags-title">
+            <h3 id="blog-sidebar-tags-title" class="blog-sidebar-title">Taguri populare</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-tags></ul>
+          </section>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="blog-article-extras">
+  <div class="container" data-aos="fade-up">
+    <div class="blog-recent-articles">
+      <h2>ARTICOLE RECENTE</h2>
+      <ul>
+        <li><a href="../cum-sa-folosesti-ahrefs-ca-avocat/">Cum să folosești Ahrefs ca avocat</a>, 13 aprilie 2026</li>
+<li><a href="../cum-sa-folosesti-notion-ca-avocat/">Cum să folosești Notion ca avocat</a>, 3 aprilie 2026</li>
+<li><a href="../digitalizarea-cabinetului-individual-de-avocat/">Digitalizare cabinet individual de avocat: ghid integral</a>, 3 aprilie 2026</li>
+<li><a href="../cum-sa-folosesti-outlook-ca-avocat/">Cum să folosești Outlook ca avocat</a>, 2 aprilie 2026</li>
+<li><a href="../cum-sa-folosesti-trello-ca-avocat/">Cum să folosești Trello ca avocat</a>, 1 aprilie 2026</li>
+      </ul>
+    </div>
+
+    <div class="blog-services">
+      <div class="section-title text-start">
+        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+      </div>
+      <div class="row gy-4">
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-headset"></i></div>
+            <h3>Consultanță digitală</h3>
+            <p>Transformăm expertiza ta juridică în succes digital, ghidându-vă spre inovație și eficiență cu soluții digitale personalizate.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-brush"></i></div>
+            <h3>Branding</h3>
+            <p>Sculptăm identitatea brandului dvs. cu măiestrie și viziune pentru a crea o amprentă memorabilă în lumea juridică.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-puzzle"></i></div>
+            <h3>Marketing</h3>
+            <p>Strategiile noastre de marketing vorbesc direct la publicul țintă, crescând respectul pentru brandul dvs. juridic.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-laptop"></i></div>
+            <h3>Development</h3>
+            <p>Website-ul dumneavoastră devine mai mult decât o carte de vizită online; este o capodoperă live care spune povestea firmei dumneavoastră de avocatură.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <!-- ======= Newsletter Section ======= -->
+    <div class="footer-newsletter blog-newsletter">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="section-title">
+            <h2>Newsletter</h2>
+          </div>
+          <div class="col-lg-7">
+            <h3>Abonează-te la noutăți din domeniul LegalTech</h3>
+            <p>Poți câștiga un pachet de servicii GOLD în valoare de 349€</p>
+            <div id="mc_embed_shell">
+              <div id="mc_embed_signup">
+                <form
+                  action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=c9db637b01&amp;f_id=00a6f8e6f0"
+                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+                  target="_self" novalidate="">
+                  <div id="mc_embed_signup_scroll">
+                    <div class="mc-field-group">
+                      <label for="mce-EMAIL-newsletter" class="form-label visually-hidden">Adresă de email pentru
+                        newsletter</label>
+                      <input type="email" name="EMAIL" class="required email" id="mce-EMAIL-newsletter" required=""
+                        value="" autocomplete="email">
+                    </div>
+                    <div hidden=""><input type="hidden" name="tags" value="3016574"></div>
+                    <div id="mce-responses" class="clear">
+                      <div class="response" id="mce-error-response" style="display: none;"></div>
+                      <div class="response" id="mce-success-response" style="display: none;"></div>
+                    </div>
+                    <div aria-hidden="true" style="position: absolute; left: -5000px;"><input type="text"
+                        name="b_8cfcf6d7f1f80308125058838_c9db637b01" tabindex="-1" value=""></div>
+                    <div class="clear"><input type="submit" name="subscribe" id="mc-embedded-subscribe-newsletter"
+                        class="button" value="Subscribe"></div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Newsletter Section -->
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6 footer-links">
+            <h3>Follow us</h3>
+            <ul>
+              <li>
+                  <i class="bx bxl-instagram" aria-hidden="true" ></i>
+                  <a href="https://www.instagram.com/solon.agency" target="_blank">Instagram</a>
+              </li>
+              <li>
+                  <i class="bx bxl-facebook" aria-hidden="true"></i>
+                  <a href="https://www.facebook.com/people/SOLON-Agency/61554025732235/" target="_blank">Facebook</a>
+              </li>
+              <li>
+                  <i class="bx bxl-linkedin" aria-hidden="true"></i> 
+                  <a href="https://www.linkedin.com/company/solonagency/" target="_blank">LinkedIn</a>
+              </li>
+              <li>
+                  <i class="bx bxl-twitter" aria-hidden="true"></i> 
+                  <a href="https://www.twitter.com/solon_agency" target="_blank">Twitter</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-6 col-sm-6 footer-links">
+            <h3>Linkuri utile</h3>
+            <ul>
+              <li> <a href="/blog/">Blog LegalTech</a></li>
+              <li> <a target="_blank" href="../../terms/">Termeni și condiții</a></li>
+              <li> <a target="_blank" href="../../cookies/">Politica cookie</a></li>
+              <li> <a target="_blank" href="../../privacy/">Politică de confidențialitate</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-12 footer-contact">
+            <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
+            <h3>SOLON</h3>
+            <p>
+              <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
+              <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        <b>SOLON</b> &copy; <span data-current-year></span>
+      </div>
+      <div class="credits">
+        Servicii digitale complete pentru mediul juridic
+      </div>
+    </div>
+  </footer>
+  <!-- End Footer -->
+
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    aria-label="Înapoi la începutul paginii"><i class="bi bi-arrow-up-short" aria-hidden="true"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../../assets/vendor/aos/aos.js"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="../../assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="../../assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="../../assets/js/main.min.js"></script>
+  <script src="../../assets/js/dynamic-year.min.js"></script>
+  <script src="../../assets/js/blog-sidebar.js"></script>
+</body>
+
+</html>

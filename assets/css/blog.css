@@ -95,7 +95,8 @@
 }
 
 #header.header-inner-pages {
-  background: color-mix(in srgb, var(--primary) 90%, transparent);
+  /* background: color-mix(in srgb, var(--primary) 90%, transparent); */
+  background: var(--primary);
 }
 
 .entry-title {
