@@ -3,17 +3,15 @@
 ## Example Prompt to Give the Agent
 
 ```
-Similarly to the articles in blog/posts/, write a new article called
-"Cum sa folosesti [TOOL] ca avocat" where you share specific
-functionalities, settings, power uses, tips & tricks, and advanced
-configurations that lawyers can use with this digital tool.
-Be correct, precise and specific. Write in Romanian and use diacritics.
+Similarly to the articles in blog/posts/, write a new article called "Cum să folosești [TOOL] ca avocat" where you share specific functionalities, settings, power uses, tips & tricks, and advanced configurations that lawyers can use with this digital tool - including third party integrations. Link other blog articles within the article and make sure the article ranks well on search engines for long-tail keywords.
+Be correct, precise and specific in your language. Write in Romanian and use diacritics.
 Generate only the .md file in blog/posts/.
 Use the following images inside the article:
 - assets/img/[image1.png]
 - assets/img/[image2.png]
 After creating the .md file, run node scripts/humanize.js,
 then node scripts/build.js, then node scripts/update-sitemap.js.
+Finally, run node scripts/append-blog-google-sheets.js "ARTICLE_TITLE" (pass the article title as the argument).
 
 Constraints: 
 - title max 50 characters
