@@ -1,5 +1,26 @@
 [
   {
+    "title": "Zero-trust security explicat pentru avocați",
+    "date": "2026-06-14",
+    "slug": "zero-trust-security-explicat-pentru-avocati",
+    "description": "Ghid zero-trust pentru avocați: principii, standarde NIST și CISA, MFA, acces minim, platforme și integrări pentru date juridice.",
+    "read_time": 13,
+    "categories": [
+      "securitate",
+      "digitalizare",
+      "legaltech"
+    ],
+    "tags": [
+      "zero-trust",
+      "avocați",
+      "securitate",
+      "GDPR",
+      "MFA",
+      "legaltech"
+    ],
+    "url": "zero-trust-security-explicat-pentru-avocati/"
+  },
+  {
     "title": "Cum să folosești DocuSign ca avocat",
     "date": "2026-06-12",
     "slug": "cum-sa-folosesti-docusign-ca-avocat",
