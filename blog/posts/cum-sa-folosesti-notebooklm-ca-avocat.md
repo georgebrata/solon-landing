@@ -58,7 +58,7 @@ Dacă un document este **secret profesional** sau **clasificat** în alt mod, tr
 
 Formulează cereri **înguste** și **verificabile**:
 
-- „Extrage o **cronologie** a evenimentelor din sursele A–F, cu date și trimitere la document.”
+- „Extrage o **cronologie** a evenimentelor din sursele A - F, cu date și trimitere la document.”
 - „Listează **clauzele** care privesc rezolvarea disputelor / penalitățile / forța majoră și spune din ce fișier provine fiecare.”
 - „Pregătește o **listă de întrebări** pentru interogatoriul martorului X, strict pe baza declarațiilor încărcate.”
 - „Compară versiunea 1 și versiunea 2 ale contractului: diferențe substanțiale în 5 bullet points.”

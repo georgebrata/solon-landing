@@ -160,6 +160,6 @@ Dacă lucrezi în echipă, folosește conturi separate per persoană și evită 
 
 ## Concluzie
 
-Gmail poate fi mult mai mult decât o căsuță de e-mail. Pentru un avocat, poate deveni un sistem de operare pentru comunicare: clar, rapid, urmărit și sigur. Cu etichete bine gândite, filtre automate, căutare avansată, șabloane, delegare și integrare cu restul ecosistemului Google, poți reduce semnificativ timpul pierdut pe administrativ și poți rămâne concentrat pe activitatea juridică propriu-zisă.
+Gmail poate fi mult mai mult decât o căsuță de e-mail. Pentru un avocat, poate deveni un sistem de operare pentru comunicare: clar, rapid, urmărit și sigur. Cu etichete bine gândite, filtre automate, căutare avansată, șabloane, delegare și integrare cu restul ecosistemului Google, poți reduce vizibil timpul pierdut pe administrativ și poți rămâne concentrat pe activitatea juridică propriu-zisă.
 
 Dacă vrei să mergi mai departe, următorul pas este să-ți construiești un flux complet Gmail + Calendar + automatizări, adaptat modului în care lucrează cabinetul tău.

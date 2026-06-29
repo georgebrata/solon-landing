@@ -8,7 +8,7 @@ categories: ["digitalizare", "social media"]
 tags: ["branding", "digitalizare", "seo"]
 ---
 
-Într-o lume în continuă schimbare, brandingul pentru profesioniștii din domeniul juridic evoluează rapid, punând accent pe digitalizare, identitate vizuală modernă și storytelling autentic – toate menite să creeze o legătură de încredere cu clienții.
+Într-o lume în continuă schimbare, brandingul pentru profesioniștii din domeniul juridic evoluează rapid, punând accent pe digitalizare, identitate vizuală modernă și storytelling autentic - toate menite să creeze o legătură de încredere cu clienții.
 
 ![Tendințe actuale în branding pentru profesioniștii din domeniul juridic, ilustrare cu design modern de website](../../assets/img/hero-img.png)
 
@@ -21,7 +21,7 @@ Prima impresie contează, iar identitatea vizuală a unui cabinet de avocatură 
 **Elemente cheie ale unei identități vizuale eficiente:**
 
 - Logo simplu, dar memorabil
-- O paletă de culori profesională (albastru, gri, auriu – simboluri ale stabilității și încrederii)
+- O paletă de culori profesională (albastru, gri, auriu - simboluri ale stabilității și încrederii)
 - Tipografie clară și modernă
 - Design uniform pe toate materialele (website, documente oficiale, social media)
 

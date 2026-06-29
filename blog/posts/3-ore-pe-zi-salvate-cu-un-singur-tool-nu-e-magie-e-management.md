@@ -34,7 +34,7 @@ Toate aceste lucruri nu țin de competență sau de efort, ci de lipsa unui sist
 
 Un software specializat pentru avocați - cunoscut și sub denumirea de "legal practice management" - poate face o diferență majoră. În loc să jonglezi între foldere, e-mailuri și Excel-uri, ai toate informațiile relevante într-un singur loc. Dosarele, clienții, termenele și documentele sunt organizate clar și accesibile imediat.
 
-Aceste instrumente automatizează o serie de sarcini repetitive: facturile se generează automat pe baza timpului înregistrat, plățile sunt urmărite în timp real, iar actualizările din instanță pot fi primite fără să mai cauți manual.
+Aceste instrumente automatizează mai multe sarcini repetitive: facturile se generează automat pe baza timpului înregistrat, plățile sunt urmărite în timp real, iar actualizările din instanță pot fi primite fără să mai cauți manual.
 
 În plus, vezi mai ușor ce ai de făcut în fiecare zi, ce e urgent și ce poate fi delegat. Poți înțelege mai bine cum îți folosești timpul, ce clienți sunt profitabili și unde se blochează lucrurile. Iar pentru că toate aceste funcții sunt disponibile și de pe mobil sau tabletă, ai libertatea să lucrezi de oriunde, nu doar de la birou.
 

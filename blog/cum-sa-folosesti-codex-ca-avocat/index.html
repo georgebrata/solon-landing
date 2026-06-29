@@ -141,10 +141,10 @@
 <p>Codex este un <strong>agent de codare (coding agent)</strong>: spre deosebire de un chatbot care doar îți răspunde, Codex citește fișiere, scrie cod, execută comenzi, verifică rezultatul și corectează singur erorile, până când sarcina este îndeplinită. Este alimentat de modelele specializate ale OpenAI pentru sarcini agentice (familia de modele Codex / GPT-5).</p>
 <p>Întrebarea firească: de ce ar avea un avocat nevoie de așa ceva? Pentru că o mare parte din munca administrativă a unui cabinet înseamnă, de fapt, operațiuni repetitive pe date și documente - exact lucruri care se rezolvă cu mici programe. Cu Codex le poți construi descriind problema în cuvinte, nu scriind cod:</p>
 <ul>
-<li>„Ia acest tabel cu 200 de clienți și generează câte un contract de asistență juridică pentru fiecare, pe baza acestui șablon.&quot;</li>
-<li>„Redenumește toate aceste 500 de PDF-uri după modelul <code>Nume_Client - Tip_Document - Data</code>.&quot;</li>
-<li>„Extrage din aceste 30 de facturi PDF valoarea, data și CUI-ul și pune-le într-un tabel.&quot;</li>
-<li>„Construiește-mi un formular web prin care un client nou își completează datele înainte de prima consultație.&quot;</li>
+<li>„Ia acest tabel cu 200 de clienți și generează câte un contract de asistență juridică pentru fiecare, pe baza acestui șablon.”</li>
+<li>„Redenumește toate aceste 500 de PDF-uri după modelul <code>Nume_Client - Tip_Document - Data</code>.”</li>
+<li>„Extrage din aceste 30 de facturi PDF valoarea, data și CUI-ul și pune-le într-un tabel.”</li>
+<li>„Construiește-mi un formular web prin care un client nou își completează datele înainte de prima consultație.”</li>
 </ul>
 <p>Codex se folosește în patru forme: <strong>Codex CLI</strong> (în terminal), <strong>extensia IDE</strong> (în editoare precum VS Code sau Cursor), <strong>Codex în cloud / în ChatGPT</strong> (sarcini delegate care rulează pe serverele OpenAI) și <strong>integrarea cu GitHub</strong> (pentru revizuirea automată a codului). Pentru un avocat, cele mai utile sunt CLI-ul local și varianta din cloud.</p>
 <p>Spre deosebire de un instrument de cercetare precum cel descris în ghidul <a href="../cum-sa-folosesti-notebooklm-ca-avocat/">Cum să folosești NotebookLM ca avocat</a>, Codex nu rezumă documente - el construiește instrumente care prelucrează documente.</p>
@@ -153,7 +153,7 @@
 <p>Pentru un cabinet, recomandarea practică:</p>
 <ul>
 <li><strong>ChatGPT Plus</strong> este suficient pentru a testa și a rula automatizări ocazionale.</li>
-<li><strong>ChatGPT Business</strong> este alegerea corectă pentru un cabinet cu echipă, pentru că oferă administrare centralizată și, esențial, <strong>datele nu sunt folosite pentru antrenarea modelelor</strong> în mod implicit (vezi secțiunea 11 despre confidențialitate).</li>
+<li><strong>ChatGPT Business</strong> este alegerea corectă pentru un cabinet cu echipă, pentru că oferă administrare centralizată și, esențial, <strong>datele nu sunt folosite pentru antrenarea modelelor</strong> implicit (vezi secțiunea 11 despre confidențialitate).</li>
 <li>Verifică întotdeauna setările de reținere a datelor (data retention) ale planului înainte de a-l folosi pe sarcini reale.</li>
 </ul>
 <h2>3. Instalarea și prima configurare a Codex CLI</h2>
@@ -198,7 +198,7 @@
 <p>Cea mai directă valoare a Codex pentru un cabinet este generarea și prelucrarea în serie a documentelor. Câteva sarcini reale, formulate exact așa cum i le-ai cere:</p>
 <ul>
 <li><strong>Generare în masă din șablon</strong>: „Am un șablon de contract de asistență juridică în <code>sablon.docx</code> cu câmpurile <code>{{NUME}}</code>, <code>{{CNP}}</code>, <code>{{ONORARIU}}</code> și un fișier <code>clienti.csv</code> cu datele. Generează câte un document Word completat pentru fiecare rând.&quot; Codex scrie scriptul (de exemplu în Python, cu biblioteca <code>python-docx</code>) și îl rulează.</li>
-<li><strong>Procesare PDF</strong>: îmbinarea mai multor PDF-uri într-un dosar unic, împărțirea unui PDF mare pe capitole, adăugarea numerotării paginilor sau a unui filigran „CONFIDENȚIAL&quot; pe fiecare pagină.</li>
+<li><strong>Procesare PDF</strong>: îmbinarea mai multor PDF-uri într-un dosar unic, împărțirea unui PDF mare pe capitole, adăugarea numerotării paginilor sau a unui filigran „CONFIDENȚIAL” pe fiecare pagină.</li>
 <li><strong>Redenumire și organizare</strong>: aplicarea unei convenții de denumire coerente peste sute de fișiere, util înainte de a le încărca în arhiva cloud descrisă în ghidul <a href="../cum-sa-folosesti-google-drive-ca-avocat/">Cum să folosești Google Drive ca avocat</a>.</li>
 <li><strong>Conversii</strong>: transformarea unui set de documente Word în PDF sau extragerea textului din PDF-uri scanate (OCR).</li>
 </ul>
@@ -206,7 +206,7 @@
 <h2>6. Prelucrarea și analiza datelor</h2>
 <p>A doua categorie de sarcini ține de date structurate - tabele, liste, evidențe:</p>
 <ul>
-<li><strong>Extragere de date din documente</strong>: „Citește aceste 40 de hotărâri în PDF și extrage într-un tabel numărul dosarului, instanța, data și soluția.&quot;</li>
+<li><strong>Extragere de date din documente</strong>: „Citește aceste 40 de hotărâri în PDF și extrage într-un tabel numărul dosarului, instanța, data și soluția.”</li>
 <li><strong>Consolidarea evidențelor</strong>: combinarea mai multor fișiere Excel cu termene, onorarii sau clienți într-un singur tabel curat, fără duplicate.</li>
 <li><strong>Calcule juridice</strong>: un script care calculează termene procedurale, dobânzi penalizatoare sau actualizarea unei creanțe cu rata inflației, pe baza unor date de intrare.</li>
 <li><strong>Anonimizarea datelor (pseudonimizare)</strong>: înlocuirea automată a numelor, CNP-urilor și adreselor dintr-un set de documente cu coduri, esențială înainte de a partaja exemple sau de a folosi date în scop de testare - o cerință directă de minimizare impusă de GDPR.</li>
@@ -228,7 +228,7 @@
 </ul>
 <p>Pentru ca un astfel de instrument public să fie găsit în Google, integrează-l cu o strategie de optimizare - vezi <a href="../cum-sa-folosesti-google-search-console-ca-avocat/">Cum să folosești Google Search Console ca avocat</a>.</p>
 <h2>8. AGENTS.md - cum îi dai context și reguli stabile lui Codex</h2>
-<p>Pentru ca rezultatele să fie consecvente, Codex citește un fișier special numit <strong><code>AGENTS.md</code></strong>, plasat în folderul de lucru. Este, practic, un set de instrucțiuni permanente pe care agentul le respectă la fiecare rulare - echivalentul unui „mandat&quot; scris dat unui colaborator.</p>
+<p>Pentru ca rezultatele să fie consecvente, Codex citește un fișier special numit <strong><code>AGENTS.md</code></strong>, plasat în folderul de lucru. Este, practic, un set de instrucțiuni permanente pe care agentul le respectă la fiecare rulare - echivalentul unui „mandat” scris dat unui colaborator.</p>
 <p>Într-un <code>AGENTS.md</code> pentru un cabinet poți preciza:</p>
 <pre><code class="language-markdown"># Instrucțiuni pentru proiectul de automatizare
 
@@ -242,7 +242,7 @@
 <h2>9. Integrări third-party și protocolul MCP</h2>
 <p>Codex devine cu adevărat puternic când nu mai lucrează izolat, ci se conectează la instrumentele tale. Principalele căi de integrare:</p>
 <ul>
-<li><strong>Model Context Protocol (MCP)</strong>: un standard deschis prin care Codex se conectează la „servere&quot; externe care îi oferă unelte și acces la date - de exemplu, un server MCP pentru Google Drive, pentru o bază de date sau pentru un sistem de management al dosarelor. Configurezi serverele MCP în fișierul de configurare al Codex.</li>
+<li><strong>Model Context Protocol (MCP)</strong>: un standard deschis prin care Codex se conectează la „servere” externe care îi oferă unelte și acces la date - de exemplu, un server MCP pentru Google Drive, pentru o bază de date sau pentru un sistem de management al dosarelor. Configurezi serverele MCP în fișierul de configurare al Codex.</li>
 <li><strong>Integrarea cu GitHub</strong>: Codex poate fi conectat la un depozit de cod pentru a revizui automat modificările și a propune corecturi - util dacă cabinetul își dezvoltă instrumente proprii pe termen lung.</li>
 <li><strong>Sarcini în cloud delegate din ChatGPT</strong>: din interfața ChatGPT poți trimite o sarcină care rulează în fundal, pe un mediu izolat al OpenAI, și primești rezultatul (un set de modificări) când e gata.</li>
 <li><strong>API și conectare la alte servicii</strong>: cu permisiunea ta de acces la rețea, Codex poate scrie scripturi care folosesc API-uri publice (de exemplu, cursul valutar BNR pentru actualizarea unei creanțe) sau care scriu într-o foaie de calcul Google.</li>
@@ -255,7 +255,7 @@
 <li>Sarcinile <strong>sensibile</strong>, care ating date reale de clienți, rulează <strong>local</strong>, în sandbox, fără acces la rețea.</li>
 <li>Sarcinile <strong>generice</strong> (construirea unui calculator public, prototiparea unui formular, învățarea unui concept) pot rula <strong>în cloud</strong>, folosind date fictive.</li>
 </ul>
-<p>Această separare clară între „local cu date reale&quot; și „cloud cu date fictive&quot; este cea mai simplă regulă prin care reconciliezi puterea instrumentului cu obligația de confidențialitate.</p>
+<p>Această separare clară între „local cu date reale” și „cloud cu date fictive” este cea mai simplă regulă prin care reconciliezi puterea instrumentului cu obligația de confidențialitate.</p>
 <h2>11. Confidențialitate, secret profesional și GDPR</h2>
 <p>Acesta este capitolul pe care niciun avocat nu îl poate sări. Codex este un instrument puternic, dar lucrezi cu date protejate de secretul profesional (Legea nr. 51/1995) și de GDPR. Reguli minime obligatorii:</p>
 <ul>
@@ -271,11 +271,11 @@
 <ul>
 <li><strong>Începe fiecare proiect cu un <code>AGENTS.md</code></strong> care stabilește limba, formatul și regula de a nu scoate datele din folder.</li>
 <li><strong>Formulează sarcini mici și clare</strong>, una câte una; un agent primește instrucțiuni precise mai bine decât o cerere vagă și uriașă.</li>
-<li><strong>Cere-i lui Codex să-ți explice ce face</strong> înainte de a aproba - „explică-mi pe scurt ce va face scriptul, apoi așteaptă confirmarea&quot;.</li>
+<li><strong>Cere-i lui Codex să-ți explice ce face</strong> înainte de a aproba - „explică-mi pe scurt ce va face scriptul, apoi așteaptă confirmarea”.</li>
 <li><strong>Lucrează cu control al versiunilor (Git)</strong> pe proiectele mai mari, ca să poți reveni dacă o modificare strică ceva.</li>
 <li><strong>Folosește date fictive pentru prototipare</strong> și treci la datele reale doar după ce ai validat că instrumentul funcționează.</li>
 <li><strong>Reia sesiunile</strong>: Codex poate relua o sesiune anterioară, păstrând contextul, fără să-i explici totul de la capăt.</li>
-<li><strong>Testează pe un singur fișier</strong> înainte de a rula o operațiune pe sute - „fă mai întâi pe un singur document, ca să verific rezultatul&quot;.</li>
+<li><strong>Testează pe un singur fișier</strong> înainte de a rula o operațiune pe sute - „fă mai întâi pe un singur document, ca să verific rezultatul”.</li>
 <li><strong>Cere documentație</strong>: roagă-l să adauge un scurt fișier <code>README</code> care explică, în română, cum se folosește instrumentul - util pentru colegii din cabinet.</li>
 </ul>
 <h2>13. Limitări și când să NU folosești Codex</h2>
@@ -290,7 +290,7 @@
 <h2>14. Concluzie</h2>
 <p>Codex aduce în cabinetul de avocatură o capacitate care, până recent, presupunea angajarea unui dezvoltator: transformarea unei cerințe formulate în română într-un instrument care chiar funcționează - de la generarea în serie a contractelor și prelucrarea PDF-urilor, la anonimizarea datelor și construirea unui formular de preluare a clienților. Valoarea concretă stă în consecvență și în timpul recuperat din sarcinile repetitive, iar modurile de aprobare și sandbox-ul îți păstrează controlul asupra a ceea ce face agentul.</p>
 <p>Trade-off-ul real este dublu: Codex cere un minim de confort tehnic și o disciplină fermă de confidențialitate - datele reale ale clienților nu au ce căuta în sarcini de cloud neverificate, iar fiecare rezultat trebuie validat înainte de a produce efecte juridice. Folosit cu aceste precauții - local, în sandbox, cu date pseudonimizate și cu verificare umană - devine un multiplicator de productivitate, nu un risc.</p>
-<p>Dacă dorești să implementezi automatizări cu Codex pentru cabinetul tău - de la generarea documentelor și prelucrarea datelor, până la instrumente interne și integrări sigure, configurate cu respectarea secretului profesional și a GDPR - echipa <strong>SOLON</strong> oferă consultanță de digitalizare adaptată specificului practicii tale juridice.</p>
+<p>Dacă vrei să implementezi automatizări cu Codex pentru cabinetul tău - de la generarea documentelor și prelucrarea datelor, până la instrumente interne și integrări sigure, configurate cu respectarea secretului profesional și a GDPR - echipa <strong>SOLON</strong> oferă consultanță de digitalizare adaptată specificului practicii tale juridice.</p>
 
           </div>
         </article>
@@ -329,10 +329,10 @@
       <h2>ARTICOLE RECENTE</h2>
       <ul>
         <li><a href="../ce-este-un-manual-de-brand-pentru-avocati/">Ce este un manual de brand pentru avocați?</a>, 29 iunie 2026</li>
+<li><a href="../sfaturi-digitale-pentru-un-avocat-stagiar/">Sfaturi digitale pentru un avocat stagiar</a>, 29 iunie 2026</li>
 <li><a href="../zero-trust-security-explicat-pentru-avocati/">Zero-trust security explicat pentru avocați</a>, 14 iunie 2026</li>
 <li><a href="../cum-sa-folosesti-docusign-ca-avocat/">Cum să folosești DocuSign ca avocat</a>, 12 iunie 2026</li>
 <li><a href="../5-carti-esentiale-de-digital-marketing-pentru-un-avocat/">5 cărți esențiale de digital marketing pentru un avocat</a>, 7 iunie 2026</li>
-<li><a href="../cum-sa-folosesti-google-search-console-ca-avocat/">Cum să folosești Google Search Console ca avocat</a>, 7 iunie 2026</li>
       </ul>
     </div>
 

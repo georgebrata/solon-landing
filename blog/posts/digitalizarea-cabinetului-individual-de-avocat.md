@@ -12,7 +12,7 @@ tags: ["digitalizare", "cabinet individual", "avocați", "branding", "seo local"
 
 Un avocat individual concurează pe două fronturi simultan: cel juridic, în instanță și la masa negocierilor, și cel al încrederii, în spațiul în care clientul îl caută înainte de a suna. Astăzi, primul contact se întâmplă aproape întotdeauna online: o căutare pe Google, un profil pe Maps, o primă vizită pe website. Dacă prezența digitală lipsește sau transmite semnale greșite, clientul potrivit ajunge la alt cabinet.
 
-Digitalizarea nu înseamnă să fii „pe toate rețelele" sau să investești în tehnologie de dragul tehnologiei. Înseamnă să construiești un lanț coerent: identitate vizuală clară, vizibilitate locală verificabilă, instrumente care reduc munca administrativă și o prezență online care funcționează în favoarea ta 24 de ore din 24.
+Digitalizarea nu înseamnă să fii „pe toate rețelele” sau să investești în tehnologie de dragul tehnologiei. Înseamnă să construiești un lanț coerent: identitate vizuală clară, vizibilitate locală verificabilă, instrumente care reduc munca administrativă și o prezență online care funcționează în favoarea ta 24 de ore din 24.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
@@ -98,7 +98,7 @@ Contact
 **Criterii tehnice nenegociabile:**
 - **Mobile-first**: peste 65% din căutările juridice locale se fac de pe telefon.
 - **Viteza**: Google penalizează site-urile lente în rezultatele de căutare. Țintă: sub 2.5 secunde timp de încărcare (măsurat cu PageSpeed Insights).
-- **HTTPS**: certificat SSL activ. Browserele afișează avertisment „Not secure" pe site-urile fără HTTPS - efect direct asupra încrederii.
+- **HTTPS**: certificat SSL activ. Browserele afișează avertisment „Not secure” pe site-urile fără HTTPS - efect direct asupra încrederii.
 - **Autonomie de conținut**: administratorul site-ului (tu sau un coleg) poate actualiza blog-ul și paginile fără să solicite un programator pentru fiecare modificare.
 
 <div class="row justify-content-center my-4">

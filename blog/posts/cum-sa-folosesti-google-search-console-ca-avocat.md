@@ -10,7 +10,7 @@ tags: ["google search console", "avocați", "SEO", "marketing juridic", "vizibil
 
 # Cum să folosești Google Search Console ca avocat
 
-Google Search Console (GSC) este instrumentul oficial și gratuit prin care Google îți comunică direct cum „vede” site-ul cabinetului tău: pentru ce căutări apari, pe ce poziții, ce pagini sunt indexate, ce probleme tehnice te frânează și cine face link către tine. Spre deosebire de instrumentele terțe care estimează, Search Console îți arată date reale, măsurate de Google. Pentru un cabinet de avocatură care vrea clienți din căutările locale, GSC nu este opțional – este sursa de adevăr a vizibilității tale online.
+Google Search Console (GSC) este instrumentul oficial și gratuit prin care Google îți comunică direct cum „vede” site-ul cabinetului tău: pentru ce căutări apari, pe ce poziții, ce pagini sunt indexate, ce probleme tehnice te frânează și cine face link către tine. Spre deosebire de instrumentele terțe care estimează, Search Console îți arată date reale, măsurate de Google. Pentru un cabinet de avocatură care vrea clienți din căutările locale, GSC nu este opțional - este sursa de adevăr a vizibilității tale online.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
@@ -24,7 +24,7 @@ Acest ghid acoperă funcționalitățile reale ale platformei, cu setări, confi
 
 Primul pas este să adaugi site-ul ca „proprietate” (property) în Search Console. Google îți oferă două tipuri, iar alegerea contează:
 
-- **Domain property** (proprietate de tip domeniu): acoperă toate variantele – `http`, `https`, cu și fără `www`, plus toate subdomeniile (`blog.cabinet.ro`, `cazuri.cabinet.ro`). Verificarea se face exclusiv prin **înregistrare DNS** (un record TXT adăugat la furnizorul tău de domeniu). Este varianta recomandată pentru majoritatea cabinetelor, pentru că nu ratezi date din cauza unei variante de URL neacoperite.
+- **Domain property** (proprietate de tip domeniu): acoperă toate variantele - `http`, `https`, cu și fără `www`, plus toate subdomeniile (`blog.cabinet.ro`, `cazuri.cabinet.ro`). Verificarea se face exclusiv prin **înregistrare DNS** (un record TXT adăugat la furnizorul tău de domeniu). Este varianta recomandată pentru majoritatea cabinetelor, pentru că nu ratezi date din cauza unei variante de URL neacoperite.
 - **URL-prefix property** (proprietate de tip prefix URL): acoperă o singură variantă exactă (ex. `https://www.cabinet.ro/`). Permite mai multe metode de verificare și este utilă dacă vrei să separi, de exemplu, subdomeniul de blog de site-ul principal.
 
 **Metode de verificare a proprietății URL-prefix:**
@@ -45,14 +45,14 @@ Raportul **Performanță > Rezultate căutare** (Performance > Search results) e
 
 **Cele patru metrici fundamentale:**
 
-- **Afișări (Impressions)**: de câte ori a apărut un link al site-ului tău în rezultate. Indică vizibilitatea – pentru câte căutări ești măcar luat în considerare de Google.
+- **Afișări (Impressions)**: de câte ori a apărut un link al site-ului tău în rezultate. Indică vizibilitatea - pentru câte căutări ești măcar luat în considerare de Google.
 - **Clicuri (Clicks)**: de câte ori a dat cineva click pe rezultatul tău.
 - **CTR (rata de click)**: clicuri împărțite la afișări. Un CTR mic la afișări mari înseamnă că apari, dar titlul sau descrierea nu conving.
 - **Poziția medie (Average position)**: poziția medie la care ai apărut pentru căutările respective.
 
 **Cele șase dimensiuni de analiză (tab-urile din raport):**
 
-1. **Interogări (Queries)**: cuvintele exacte pe care le-au tastat oamenii când ți-au văzut site-ul. Cea mai valoroasă filă pentru un avocat – îți arată limbajul real al clienților (ex. `cât costă un divorț cu avocat`, `avocat contestație decizie de concediere`).
+1. **Interogări (Queries)**: cuvintele exacte pe care le-au tastat oamenii când ți-au văzut site-ul. Cea mai valoroasă filă pentru un avocat - îți arată limbajul real al clienților (ex. `cât costă un divorț cu avocat`, `avocat contestație decizie de concediere`).
 2. **Pagini (Pages)**: ce URL-uri ale tale au generat afișări și clicuri. Vezi care pagini de practică performează și care nu.
 3. **Țări (Countries)**: util ca să confirmi că traficul vine din România, nu din regiuni irelevante.
 4. **Dispozitive (Devices)**: desktop vs. mobil vs. tabletă. Pentru servicii juridice locale, ponderea mobilului este de regulă majoritară.
@@ -68,13 +68,13 @@ Adevărata putere a raportului Performanță stă în filtre. Pe lângă filtrel
 **Exemple practice de filtre regex pentru un cabinet:**
 
 - Grupează toate căutările cu intenție de preț:
-  `cât costă|preț|onorariu|tarif`
+ `cât costă|preț|onorariu|tarif`
 - Izolează căutările pe orașul tău:
-  `cluj|cluj-napoca`
+ `cluj|cluj-napoca`
 - Vezi toate întrebările (conținut ideal pentru blog și FAQ):
-  `^(cum|ce|când|cât|de ce|cine|unde)`
+ `^(cum|ce|când|cât|de ce|cine|unde)`
 - Filtrează o arie de practică:
-  `divor[țt]|custodie|pensie aliment`
+ `divor[țt]|custodie|pensie aliment`
 
 **Cum aplici:** în raportul Performanță, apasă **+ Nou (New)** > **Interogare (Query)** sau **Pagină (Page)** > selectează **Personalizat (regex)** din meniul derulant și introdu expresia.
 
@@ -112,9 +112,9 @@ Secțiunea **Indexare > Pagini** (Indexing > Pages) îți arată câte pagini su
 **Stări frecvente „Neindexat (Not indexed)” la site-urile de cabinet:**
 
 - **Pagină duplicată, fără canonic selectat de utilizator**: aceeași pagină accesibilă pe mai multe URL-uri. Definește un canonic clar.
-- **Pagină alternativă cu etichetă canonică corectă**: normal, nu necesită acțiune – Google a ales corect o altă versiune.
-- **Descoperită – momentan neindexată (Discovered – currently not indexed)**: Google știe de pagină, dar nu a accesat-o încă. Apare des la conținut nou sau la site-uri cu autoritate mică.
-- **Accesată (crawled) – momentan neindexată**: Google a văzut pagina, dar a decis să nu o indexeze (de obicei conținut subțire sau de calitate redusă). Semnal că pagina trebuie îmbunătățită.
+- **Pagină alternativă cu etichetă canonică corectă**: normal, nu necesită acțiune - Google a ales corect o altă versiune.
+- **Descoperită - momentan neindexată (Discovered - currently not indexed)**: Google știe de pagină, dar nu a accesat-o încă. Apare des la conținut nou sau la site-uri cu autoritate mică.
+- **Accesată (crawled) - momentan neindexată**: Google a văzut pagina, dar a decis să nu o indexeze (de obicei conținut subțire sau de calitate redusă). Semnal că pagina trebuie îmbunătățită.
 - **Blocat de robots.txt** sau **exclus printr-o etichetă „noindex”**: verifică dacă blocarea este intenționată.
 - **Soft 404**: pagina returnează cod 200, dar conținutul pare „gol” pentru Google.
 
@@ -128,7 +128,7 @@ Un **sitemap XML** este lista structurată a paginilor pe care vrei să le index
 
 - Trimite URL-ul sitemap-ului (de obicei `https://cabinet.ro/sitemap.xml`).
 - Include toate paginile importante: pagina principală, paginile de practică, pagina „Despre”, „Contact”, articolele de blog și eventualele studii de caz.
-- Verifică în raport numărul de pagini **descoperite** față de cele **trimise** – discrepanțele indică probleme.
+- Verifică în raport numărul de pagini **descoperite** față de cele **trimise** - discrepanțele indică probleme.
 - Actualizează sitemap-ul automat la fiecare pagină nouă publicată, astfel încât Google să fie informat rapid.
 
 **De știut:** trimiterea sitemap-ului nu garantează indexarea, dar este modul oficial prin care îi semnalezi lui Google ce conținut consideri prioritar.
@@ -154,9 +154,9 @@ Secțiunea **Experiență (Experience)** include raportul **Core Web Vitals** ș
 - **INP (Interaction to Next Paint)**: cât de rapid răspunde pagina la interacțiuni (click-uri, atingeri). Țintă: sub 200 ms. (INP a înlocuit fostul FID în 2024.)
 - **CLS (Cumulative Layout Shift)**: cât de mult „sare” aspectul paginii în timpul încărcării. Țintă: sub 0,1.
 
-**Raportul HTTPS**: confirmă că paginile sunt servite securizat. Pentru un site juridic, securitatea conexiunii este obligatorie – atât pentru încrederea clienților, cât și ca semnal pentru Google.
+**Raportul HTTPS**: confirmă că paginile sunt servite securizat. Pentru un site juridic, securitatea conexiunii este obligatorie - atât pentru încrederea clienților, cât și ca semnal pentru Google.
 
-**Utilizare practică:** datele Core Web Vitals provin din experiența reală a utilizatorilor (Chrome User Experience Report). Dacă paginile apar la „URL-uri slabe (Poor)” sau „necesită îmbunătățiri (Needs improvement)”, optimizează imaginile, reducerea codului și serverul – o pagină lentă alungă deopotrivă clienții și pozițiile.
+**Utilizare practică:** datele Core Web Vitals provin din experiența reală a utilizatorilor (Chrome User Experience Report). Dacă paginile apar la „URL-uri slabe (Poor)” sau „necesită îmbunătățiri (Needs improvement)”, optimizează imaginile, reducerea codului și serverul - o pagină lentă alungă deopotrivă clienții și pozițiile.
 
 ## 9. Rezultate îmbogățite (structured data): apariții speciale în Google
 
@@ -164,7 +164,7 @@ Dacă site-ul tău include date structurate (schema.org în format JSON-LD), Sea
 
 **Tipuri de date structurate relevante pentru un cabinet:**
 
-- **LocalBusiness / LegalService**: nume, adresă, telefon (NAP), program, zonă deservită – ajută la vizibilitatea locală.
+- **LocalBusiness / LegalService**: nume, adresă, telefon (NAP), program, zonă deservită - ajută la vizibilitatea locală.
 - **BreadcrumbList**: navigarea ierarhică afișată în rezultate.
 - **Article**: pentru articolele de blog juridic.
 - **FAQPage**: marcarea întrebărilor frecvente (afișarea ca rezultat îmbogățit este însă limitată de Google și nu este garantată).
@@ -185,14 +185,14 @@ Raportul **Link-uri (Links)** arată profilul de legături al site-ului, împăr
 
 - Paginile tale cu cele mai multe (și cele mai puține) legături interne. Paginile importante de servicii ar trebui să primească multe link-uri interne din articole și din meniu; paginile cu zero link-uri interne sunt „orfane” și greu de găsit.
 
-**Utilizare practică pentru avocați:** verifică din ce surse provin link-urile externe – directoare juridice, barouri, publicații de specialitate, parteneri (notari, executori, contabili). Întărește, în paralel, structura de link-uri interne ca să direcționezi autoritatea spre paginile care aduc clienți.
+**Utilizare practică pentru avocați:** verifică din ce surse provin link-urile externe - directoare juridice, barouri, publicații de specialitate, parteneri (notari, executori, contabili). Întărește, în paralel, structura de link-uri interne ca să direcționezi autoritatea spre paginile care aduc clienți.
 
 ## 11. Acțiuni manuale și probleme de securitate
 
 Două rapoarte critice, de verificat periodic:
 
 - **Acțiuni manuale (Manual actions)**: dacă un evaluator Google a aplicat o penalizare manuală (ex. pentru link-uri nenaturale sau conținut spam). În mod ideal, acest raport spune „Nu au fost detectate probleme”. Dacă apare o acțiune, urmează instrucțiunile de remediere și trimite o **cerere de reexaminare (reconsideration request)**.
-- **Probleme de securitate (Security issues)**: te alertează dacă site-ul a fost compromis (malware, conținut înșelător, hacking). Pentru un cabinet, un site marcat ca nesigur distruge instant încrederea – tratează orice alertă ca urgență.
+- **Probleme de securitate (Security issues)**: te alertează dacă site-ul a fost compromis (malware, conținut înșelător, hacking). Pentru un cabinet, un site marcat ca nesigur distruge instant încrederea - tratează orice alertă ca urgență.
 
 ## 12. Setări, utilizatori și permisiuni
 
@@ -209,25 +209,25 @@ Două rapoarte critice, de verificat periodic:
 Pentru raportare și analiză la scară mai mare:
 
 - **Export rapid**: orice raport poate fi exportat în Google Sheets, Excel sau CSV.
-- **Looker Studio**: conectează Search Console pentru dashboard-uri vizuale, actualizate automat – ideale pentru a prezenta evoluția vizibilității partenerilor de cabinet, fără ca aceștia să intre în GSC.
+- **Looker Studio**: conectează Search Console pentru dashboard-uri vizuale, actualizate automat - ideale pentru a prezenta evoluția vizibilității partenerilor de cabinet, fără ca aceștia să intre în GSC.
 - **Bulk Data Export către BigQuery**: pentru volume mari de date, poți configura un export zilnic complet în BigQuery, depășind limita de rânduri din interfața web. Util pentru cabinete mari sau pentru analize SEO aprofundate realizate de o agenție.
 - **Search Console Insights**: un raport simplificat care combină datele din GSC (și GA4, dacă e conectat) într-o formă prietenoasă: care conținut atrage vizitatori, ce căutări sunt în creștere, cum te găsesc oamenii. Bun pentru o privire rapidă, fără jargon tehnic.
 
 ## 14. Tips & tricks care fac diferența
 
-- **Oportunități de CTR**: în raportul Performanță, sortează interogările cu **multe afișări dar CTR mic**. Acolo apari, dar nu convingi – rescrie titlul (`<title>`) și meta descrierea acelor pagini pentru a câștiga clicuri fără efort suplimentar de poziționare.
-- **„Striking distance” (pozițiile 8–20)**: filtrează interogările cu poziția medie între 8 și 20. Sunt aproape de prima pagină – un mic efort de optimizare le poate aduce în Top 5.
+- **Oportunități de CTR**: în raportul Performanță, sortează interogările cu **multe afișări dar CTR mic**. Acolo apari, dar nu convingi - rescrie titlul (`<title>`) și meta descrierea acelor pagini pentru a câștiga clicuri fără efort suplimentar de poziționare.
+- **„Striking distance” (pozițiile 8 - 20)**: filtrează interogările cu poziția medie între 8 și 20. Sunt aproape de prima pagină - un mic efort de optimizare le poate aduce în Top 5.
 - **Idei de conținut din întrebări**: filtrul regex pe interogări de tip întrebare îți oferă subiecte exacte de articole și întrebări pentru pagina FAQ, formulate în limbajul real al clienților.
 - **Validează reparațiile**: după ce rezolvi o eroare de indexare sau Core Web Vitals, folosește butonul **Validează remedierea (Validate fix)** ca Google să reverifice și să închidă problema.
 - **Compară mereu perioade**: nu privi cifrele izolat. Modul de comparație (lună vs. lună, an vs. an) transformă datele brute în tendințe pe care le poți acționa.
 - **Activează alertele pe email**: GSC trimite automat notificări la probleme grave (scădere de indexare, acțiuni manuale, securitate). Asigură-te că ajung la adresa pe care o citești zilnic.
-- **Curăță paginile „crawled – not indexed”**: dacă pagini importante apar aici, îmbunătățește-le substanțial (conținut mai amplu, mai util, link-uri interne) și solicită reindexarea.
-- **Monitorizează canonicalizarea**: pentru paginile-cheie, verifică în URL Inspection ca „URL-ul canonic ales de Google” să fie cel dorit – discrepanțele pot dilua poziționarea.
+- **Curăță paginile „crawled - not indexed”**: dacă pagini importante apar aici, îmbunătățește-le substanțial (conținut mai amplu, mai util, link-uri interne) și solicită reindexarea.
+- **Monitorizează canonicalizarea**: pentru paginile-cheie, verifică în URL Inspection ca „URL-ul canonic ales de Google” să fie cel dorit - discrepanțele pot dilua poziționarea.
 
 ## Concluzie
 
-Google Search Console este singura sursă oficială și gratuită care îți arată exact cum te poziționează Google: ce caută potențialii clienți când te găsesc, ce pagini funcționează, ce probleme tehnice îți reduc vizibilitatea și cine îți construiește autoritatea. Pentru un cabinet de avocatură, nu este un instrument „de specialiști” – este tabloul de bord al prezenței tale online.
+Google Search Console este singura sursă oficială și gratuită care îți arată exact cum te poziționează Google: ce caută potențialii clienți când te găsesc, ce pagini funcționează, ce probleme tehnice îți reduc vizibilitatea și cine îți construiește autoritatea. Pentru un cabinet de avocatură, nu este un instrument „de specialiști” - este tabloul de bord al prezenței tale online.
 
-Nu trebuie să devii expert SEO ca să folosești GSC eficient. Trebuie să verifici corect proprietatea, să citești lunar raportul Performanță și raportul de indexare, să trimiți sitemap-ul, să soliciți indexarea conținutului nou și să acționezi pe oportunitățile evidente (CTR slab, poziții 8–20, pagini neindexate).
+Nu trebuie să devii expert SEO ca să folosești GSC eficient. Trebuie să verifici corect proprietatea, să citești lunar raportul Performanță și raportul de indexare, să trimiți sitemap-ul, să soliciți indexarea conținutului nou și să acționezi pe oportunitățile evidente (CTR slab, poziții 8 - 20, pagini neindexate).
 
-Dacă vrei ca cineva să configureze, să monitorizeze și să acționeze pe datele din Search Console pentru cabinetul tău – de la indexare și viteză până la conținut și link-uri – echipa **SOLON** poate prelua întreaga strategie SEO, adaptată practicii tale juridice.
+Dacă vrei ca cineva să configureze, să monitorizeze și să acționeze pe datele din Search Console pentru cabinetul tău - de la indexare și viteză până la conținut și link-uri - echipa **SOLON** poate prelua întreaga strategie SEO, adaptată practicii tale juridice.

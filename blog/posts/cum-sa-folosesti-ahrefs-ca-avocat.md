@@ -10,7 +10,7 @@ tags: ["ahrefs", "avocați", "SEO", "marketing juridic", "vizibilitate online", 
 
 # Cum să folosești Ahrefs ca avocat
 
-Ahrefs este una dintre cele mai complete platforme de analiză SEO și cercetare a vizibilității online. Pentru un cabinet de avocatură, Ahrefs nu este un instrument de marketing generic – este un radar care îți arată exact ce caută potențialii clienți, cum se poziționează competitorii tăi, ce pagini ale site-ului tău funcționează și ce trebuie reparat pentru ca Google să te considere relevant.
+Ahrefs este una dintre cele mai complete platforme de analiză SEO și cercetare a vizibilității online. Pentru un cabinet de avocatură, Ahrefs nu este un instrument de marketing generic - este un radar care îți arată exact ce caută potențialii clienți, cum se poziționează competitorii tăi, ce pagini ale site-ului tău funcționează și ce trebuie reparat pentru ca Google să te considere relevant.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
@@ -27,9 +27,9 @@ Site Explorer este modulul central din Ahrefs. Introdu URL-ul site-ului cabinetu
 **Ce vezi și ce contează pentru un cabinet de avocatură:**
 
 - **Organic traffic**: estimarea numărului de vizitatori lunari din căutările Google. Dacă ai sub 100 de vizitatori organici pe lună, site-ul tău este practic invizibil în căutările relevante.
-- **Organic keywords**: numărul de cuvinte cheie pentru care apari în rezultatele Google. Urmărește câte sunt în Top 10 (prima pagină) – doar acestea generează trafic real.
+- **Organic keywords**: numărul de cuvinte cheie pentru care apari în rezultatele Google. Urmărește câte sunt în Top 10 (prima pagină) - doar acestea generează trafic real.
 - **Domain Rating (DR)**: scor de la 0 la 100 care reflectă autoritatea site-ului tău în funcție de profilul de backlink-uri. Un cabinet nou pornește de obicei de la DR 0-10; un site juridic cu conținut constant și link-uri de calitate ajunge la DR 20-40 în 12-18 luni.
-- **Referring domains**: numărul de site-uri distincte care trimit link-uri către site-ul tău. Mai important decât numărul total de backlink-uri – 10 link-uri de la 10 site-uri diferite valorează mai mult decât 50 de link-uri de la același site.
+- **Referring domains**: numărul de site-uri distincte care trimit link-uri către site-ul tău. Mai important decât numărul total de backlink-uri - 10 link-uri de la 10 site-uri diferite valorează mai mult decât 50 de link-uri de la același site.
 
 **Setare practică:** adaugă site-ul cabinetului tău în **Dashboard** > **+ Add project** și configurează monitorizarea automată. Ahrefs va scana periodic site-ul și te va alerta când apar schimbări semnificative în trafic, cuvinte cheie sau backlink-uri.
 
@@ -57,7 +57,7 @@ Keywords Explorer este instrumentul de cercetare a cuvintelor cheie. Pentru un a
 - **Also rank for**: vezi ce alte cuvinte cheie poziționează paginile din Top 10 pentru termenul tău. Astfel descoperi termeni înrudiți pe care să-i incluzi în aceeași pagină.
 - **SERP overview**: pentru fiecare cuvânt cheie, Ahrefs afișează primele 10 rezultate din Google cu metricile lor (DR, trafic, număr de backlink-uri). Astfel evaluezi dacă ai șanse reale să concurezi.
 
-**Exemplu practic:** căutând `avocat dreptul muncii București`, poți descoperi că variația `avocat concediere abuzivă` are volum mai mic dar KD mult mai redus – o oportunitate concretă de poziționare pe care competitorii tăi o ignoră.
+**Exemplu practic:** căutând `avocat dreptul muncii București`, poți descoperi că variația `avocat concediere abuzivă` are volum mai mic dar KD mult mai redus - o oportunitate concretă de poziționare pe care competitorii tăi o ignoră.
 
 ## 3. Site Audit: diagnosticul tehnic al site-ului
 
@@ -89,7 +89,7 @@ Content Explorer este un motor de căutare intern Ahrefs care indexează miliard
 **Utilizare practică pentru un avocat:**
 
 - Caută `dreptul muncii România` și filtrează după **Organic traffic > 100** și **Language: Romanian**. Vei vedea exact ce articole juridice atrag cel mai mult trafic organic în România.
-- Filtrează după **Referring domains > 5** pentru a găsi articolele care au primit link-uri de la alte site-uri – acestea sunt subiecte cu potențial ridicat de link building.
+- Filtrează după **Referring domains > 5** pentru a găsi articolele care au primit link-uri de la alte site-uri - acestea sunt subiecte cu potențial ridicat de link building.
 - Folosește filtrul **Published: Last 12 months** pentru a vedea doar conținutul recent și a identifica tendențe actuale.
 
 **De ce contează:** înainte să scrii un articol pe blog, verifică ce există deja pe acel subiect. Dacă primele 10 rezultate sunt articole superficiale de 300 de cuvinte, ai o oportunitate clară să creezi un ghid complet de 1500-2000 de cuvinte care să le depășească. Dacă primele rezultate sunt ghiduri detaliate de pe site-uri cu DR 60+, concentrează-te pe un unghi mai specific (ex. în loc de `contractul de muncă`, scrie despre `clauza de neconcurență în IT – ce trebuie să știi`).
@@ -112,11 +112,11 @@ Rank Tracker urmărește zilnic pozițiile site-ului tău pentru cuvintele cheie
 
 **Metrici de urmărit:**
 
-- **Visibility**: procentul de vizibilitate organică estimată. Urmărește trendul lunar – crește sau scade?
+- **Visibility**: procentul de vizibilitate organică estimată. Urmărește trendul lunar - crește sau scade?
 - **Average position**: poziția medie pentru toate cuvintele cheie monitorizate.
-- **SERP features**: dacă pentru cuvintele tale cheie Google afișează Featured Snippets, People Also Ask, Local Pack sau alte elemente speciale – și dacă site-ul tău apare în vreunul.
+- **SERP features**: dacă pentru cuvintele tale cheie Google afișează Featured Snippets, People Also Ask, Local Pack sau alte elemente speciale - și dacă site-ul tău apare în vreunul.
 
-**Alerte:** configurează notificări pentru schimbări de poziție mai mari de 5 locuri – astfel detectezi rapid atât îmbunătățirile cât și pierderile de poziții.
+**Alerte:** configurează notificări pentru schimbări de poziție mai mari de 5 locuri - astfel detectezi rapid atât îmbunătățirile cât și pierderile de poziții.
 
 ## 6. Analiza competitorilor: ce fac alți avocați și ce poți învăța
 
@@ -124,7 +124,7 @@ Ahrefs este la fel de puternic pentru analiza competitorilor cât este pentru an
 
 **Pașii unei analize competitive:**
 
-1. **Identifică competitorii organici**: în Site Explorer, mergi la **Organic competitors**. Ahrefs îți arată automat site-urile care se poziționează pe aceleași cuvinte cheie ca tine. Nu sunt neapărat competitorii tăi direcți din piață – pot fi portaluri juridice, site-uri de informații sau alte cabinete din alte orașe.
+1. **Identifică competitorii organici**: în Site Explorer, mergi la **Organic competitors**. Ahrefs îți arată automat site-urile care se poziționează pe aceleași cuvinte cheie ca tine. Nu sunt neapărat competitorii tăi direcți din piață - pot fi portaluri juridice, site-uri de informații sau alte cabinete din alte orașe.
 
 2. **Content Gap (lacune de conținut)**: această funcție compară cuvintele cheie pentru care competitorii tăi se poziționează dar tu nu. Mergi la **Site Explorer > [site-ul tău] > Content Gap** > introdu 2-3 URL-uri de competitori. Ahrefs generează lista cuvintelor cheie pe care le ratezi.
 
@@ -132,7 +132,7 @@ Ahrefs este la fel de puternic pentru analiza competitorilor cât este pentru an
 
 3. **Top Pages**: în Site Explorer, secțiunea **Top pages** îți arată paginile care aduc cel mai mult trafic organic competitorului. Astfel vezi ce tipuri de pagini funcționează (pagini de serviciu, articole de blog, pagini FAQ, studii de caz) și poți adapta strategia.
 
-4. **Backlink Gap**: similar cu Content Gap, dar pentru backlink-uri. Identifică site-urile care fac link către competitori dar nu către tine – potențiale surse de link building.
+4. **Backlink Gap**: similar cu Content Gap, dar pentru backlink-uri. Identifică site-urile care fac link către competitori dar nu către tine - potențiale surse de link building.
 
 ## 7. Backlink-uri: construirea autorității online
 
@@ -150,10 +150,10 @@ Profilul de backlink-uri este unul dintre cei mai importanți factori de ranking
 **Strategii de link building specifice pentru avocați:**
 
 - **Directoare juridice**: înscrie-te în directoare profesionale cu profil complet și link către site (UNBR, barouri locale, directoare juridice online).
-- **Publicații de specialitate**: scrie articole de opinie sau analize pentru publicații juridice online – fiecare articol publicat include de obicei un link către site-ul autorului.
-- **Parteneriate locale**: colaborări cu notari, executori, mediatori, contabili – schimb reciproc de recomandări pe site-urile respective.
+- **Publicații de specialitate**: scrie articole de opinie sau analize pentru publicații juridice online - fiecare articol publicat include de obicei un link către site-ul autorului.
+- **Parteneriate locale**: colaborări cu notari, executori, mediatori, contabili - schimb reciproc de recomandări pe site-urile respective.
 - **Interviuri și podcast-uri**: participarea la emisiuni sau podcast-uri de specialitate generează link-uri naturale de pe site-urile gazdă.
-- **Resurse gratuite**: ghiduri descărcabile, checklist-uri juridice, modele de cereri – conținut util pe care alte site-uri îl vor menționa și îl vor linkui în mod natural.
+- **Resurse gratuite**: ghiduri descărcabile, checklist-uri juridice, modele de cereri - conținut util pe care alte site-uri îl vor menționa și îl vor linkui firesc.
 
 **Monitorizare:** configurează **New backlinks alerts** în **Alerts** > **Backlinks** pentru a primi notificări când site-ul tău primește link-uri noi. La fel, monitorizează **Lost backlinks** pentru a detecta link-urile pierdute și a acționa (contactează site-ul sursă dacă link-ul a fost șters accidental).
 
@@ -163,8 +163,8 @@ Dacă bugetul nu permite un abonament complet Ahrefs, **Ahrefs Webmaster Tools (
 
 **Ce include AWT:**
 
-- **Site Audit**: scanare completă a site-ului cu raport de erori tehnice – identic cu versiunea plătită.
-- **Site Explorer** (limitat): date despre propriul site – backlink-uri, cuvinte cheie organice, trafic estimat.
+- **Site Audit**: scanare completă a site-ului cu raport de erori tehnice - identic cu versiunea plătită.
+- **Site Explorer** (limitat): date despre propriul site - backlink-uri, cuvinte cheie organice, trafic estimat.
 - **Rank Tracker** (limitat): monitorizarea pozițiilor pentru un număr redus de cuvinte cheie.
 
 **Ce nu include AWT:** cercetarea de cuvinte cheie (Keywords Explorer), analiza competitorilor, Content Explorer și alertele avansate.
@@ -181,7 +181,7 @@ Pentru un cabinet mic care abia începe să lucreze pe SEO, AWT este un punct de
 
 - **SERP overlay**: când cauți pe Google un termen juridic, Toolbar-ul afișează sub fiecare rezultat: DR-ul domeniului, numărul de backlink-uri, traficul estimat al paginii. Astfel evaluezi competiția direct din pagina de căutare, fără să intri în Ahrefs.
 - **On-page SEO report**: pe orice pagină a site-ului tău, Toolbar-ul analizează elementele on-page: title tag, meta description, headings (H1-H6), imagini fără alt, link-uri interne și externe. Util pentru verificări rapide ale paginilor de serviciu.
-- **HTTP headers**: verifică codurile de stare (200, 301, 404) pentru orice pagină – util când restructurezi site-ul și vrei să te asiguri că redirecționările funcționează corect.
+- **HTTP headers**: verifică codurile de stare (200, 301, 404) pentru orice pagină - util când restructurezi site-ul și vrei să te asiguri că redirecționările funcționează corect.
 
 Extensia funcționează și fără abonament Ahrefs, deși cu date limitate. Cu abonament activ, afișează toate metricile disponibile.
 
@@ -209,7 +209,7 @@ Ahrefs transformă crearea de conținut dintr-un exercițiu intuitiv într-un pr
 **Fluxul complet de creare a unui articol juridic:**
 
 1. **Cercetare**: în Keywords Explorer, caută un subiect din practica ta (ex. `clauză penală contract`). Analizează volumul, dificultatea și intenția de căutare.
-2. **Analiza SERP**: verifică primele 10 rezultate – ce acoperă, cât de detaliate sunt, ce le lipsește.
+2. **Analiza SERP**: verifică primele 10 rezultate - ce acoperă, cât de detaliate sunt, ce le lipsește.
 3. **Cuvinte cheie secundare**: din **Also rank for** și **Questions**, extrage 5-10 termeni înrudiți pe care să-i integrezi natural în articol.
 4. **Structura**: construiește structura articolului astfel încât să acopere toate subtopicurile identificate în pasul anterior.
 5. **Publicare și monitorizare**: după publicare, adaugă cuvintele cheie țintă în Rank Tracker și urmărește evoluția poziției în următoarele 4-8 săptămâni.
@@ -219,13 +219,13 @@ Ahrefs transformă crearea de conținut dintr-un exercițiu intuitiv într-un pr
 
 ## 12. Tips & tricks care fac diferența
 
-- **Best by links**: în Content Explorer, filtrează după `Best by links` pentru a găsi subiectele juridice care atrag cele mai multe link-uri naturale – acestea sunt ideale pentru strategia de link building prin conținut.
+- **Best by links**: în Content Explorer, filtrează după `Best by links` pentru a găsi subiectele juridice care atrag cele mai multe link-uri naturale - acestea sunt ideale pentru strategia de link building prin conținut.
 - **Compară perioade**: în Site Explorer > **Compare** poți compara performanța organică între două perioade (ex. luna curentă vs. luna anterioară). Util pentru a demonstra ROI-ul activităților de SEO în fața partenerilor de cabinet.
 - **Batch Analysis**: dacă ai o listă de 10-20 de URL-uri de competitori, folosește **Batch Analysis** pentru a obține metricile tuturor site-urilor într-un singur raport. Economisești timp când faci cercetare competitivă la nivel de piață.
-- **Internal links report**: în Site Audit, secțiunea **Internal links** îți arată paginile cu puține sau zero link-uri interne – pagini orfane pe care Google le găsește greu. Adaugă link-uri interne din articolele de blog și paginile de serviciu către aceste pagini.
+- **Internal links report**: în Site Audit, secțiunea **Internal links** îți arată paginile cu puține sau zero link-uri interne - pagini orfane pe care Google le găsește greu. Adaugă link-uri interne din articolele de blog și paginile de serviciu către aceste pagini.
 - **Top pages by traffic change**: în Site Explorer > **Top pages** > sortează după **Traffic change** pentru a vedea ce pagini au câștigat sau pierdut trafic recent. Paginile în declin necesită actualizare.
 - **Keyword clustering**: grupează cuvintele cheie similare care pot fi acoperite de o singură pagină. Ahrefs îți arată prin **Parent topic** care este termenul principal sub care se grupează termenii secundari.
-- **SERP History**: pentru orice cuvânt cheie, vizualizează istoricul pozițiilor din ultimele 6-12 luni. Dacă rezultatele fluctuează frecvent, înseamnă că Google nu a stabilit încă un câștigător clar – oportunitate de intrare.
+- **SERP History**: pentru orice cuvânt cheie, vizualizează istoricul pozițiilor din ultimele 6-12 luni. Dacă rezultatele fluctuează frecvent, înseamnă că Google nu a stabilit încă un câștigător clar - oportunitate de intrare.
 
 ## Concluzie
 
@@ -233,4 +233,4 @@ Ahrefs este un instrument de decizie, nu doar de monitorizare. Pentru un cabinet
 
 Nu trebuie să devii specialist SEO ca să folosești Ahrefs eficient. Trebuie să înțelegi ce metrici contează, să configurezi alertele și rapoartele automate și să folosești datele ca bază pentru decizii concrete despre conținut și vizibilitate.
 
-Dacă vrei să implementezi o strategie SEO completă pentru cabinetul tău – de la cercetarea cuvintelor cheie până la crearea de conținut optimizat și monitorizarea rezultatelor – echipa **SOLON** poate construi și executa întreaga strategie adaptată practicii tale juridice.
+Dacă vrei să implementezi o strategie SEO completă pentru cabinetul tău - de la cercetarea cuvintelor cheie până la crearea de conținut optimizat și monitorizarea rezultatelor - echipa **SOLON** poate construi și executa întreaga strategie adaptată practicii tale juridice.
