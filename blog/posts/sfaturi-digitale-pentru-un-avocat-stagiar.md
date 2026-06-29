@@ -241,4 +241,4 @@ Câteva obiceiuri mici au efect mare:
 
 Un avocat stagiar nu trebuie să devină specialist IT, dar trebuie să lucreze digital cu disciplină. Calendarul, folderele, denumirile clare, taskurile, șabloanele și regulile de securitate reduc haosul și cresc încrederea coordonatorului în munca ta. Trade-off-ul este că un sistem bun cere consecvență: dacă îl aplici doar ocazional, devine încă un strat de dezordine.
 
-Dacă vrei să configurezi un sistem digital de lucru pentru cabinetul tău, cu structură de dosare, calendar, task management, șabloane și reguli de securitate adaptate activității juridice, echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.
+Dacă dorești să configurezi un sistem digital de lucru pentru cabinetul tău, cu structură de dosare, calendar, task management, șabloane și reguli de securitate adaptate activității juridice, echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.

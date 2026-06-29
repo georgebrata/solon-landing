@@ -244,12 +244,6 @@ const rules = [
   },
   {
     name: "Scurteaza CTA-ul",
-    pattern: boundedPhrase("dacă dorești să"),
-    replacement: "dacă vrei să",
-    preserveCase: true,
-  },
-  {
-    name: "Scurteaza CTA-ul",
     pattern: boundedPhrase("contactează-ne astăzi"),
     replacement: "contactează-ne",
     preserveCase: true,
