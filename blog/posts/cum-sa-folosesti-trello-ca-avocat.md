@@ -108,7 +108,7 @@ Checklist-urile din Trello sunt mai puternice decât par la prima vedere:
 - **Checklist cu assignee individual**: fiecare item dintr-o listă poate fi asignat unui membru diferit al echipei - util când mai mulți avocați contribuie la același dosar.
 - **Due date per item**: fiecare task din checklist poate avea propriul deadline, independent de due date-ul cardului.
 - **Progres vizibil**: bara de progres procentuală apare automat pe fața cardului pe măsură ce bifezi taskuri (`3/7 completate = 43%`).
-- **Copiere checklist**: dacă ai un checklist standard (ex. „Pași onboarding client nou" sau „Verificări preliminare dosar nou"), îl poți copia pe orice card nou din opțiunea **Copy checklist from...** - elimini complet rescrierea manuală.
+- **Copiere checklist**: dacă ai un checklist standard (ex. „Pași onboarding client nou” sau „Verificări preliminare dosar nou”), îl poți copia pe orice card nou din opțiunea **Copy checklist from...** - elimini complet rescrierea manuală.
 
 **Șablon checklist pentru un dosar de litigiu civil:**
 ```
@@ -179,7 +179,7 @@ Planurile Trello Standard, Premium și Enterprise (nu Free) deblochează vizuali
 - **Board visibility**: fiecare board poate fi `Private` (doar membrii invitați), `Workspace` (toți membrii din workspace) sau `Public` (oricine cu linkul). Pentru dosare juridice: mereu **Private**.
 - **Guest members**: poți invita colegi externi (ex. avocați colaboratori) pe board-uri specifice, fără să le dai acces la întregul workspace - din **Board Settings → Invite Members → Guest**.
 - **Observer role** (plan Premium+): membrii cu rol Observer pot vedea board-ul și cardurile, dar nu pot face modificări - ideal pentru clienți cărora le oferi transparență limitată asupra stadiului dosarului.
-- **Dezactivează opțiunea „Members can invite"** din setările workspace-ului dacă vrei ca numai administratorul să poată adăuga membri noi.
+- **Dezactivează opțiunea „Members can invite”** din setările workspace-ului dacă vrei ca numai administratorul să poată adăuga membri noi.
 
 ## 11. Template-uri de Board pentru fluxuri juridice frecvente
 
@@ -225,4 +225,4 @@ Trello nu este doar o tablă cu post-it-uri digitale. Configurat cu structura co
 
 Spre deosebire de un software juridic dedicat, Trello oferă flexibilitate totală în configurare și un cost foarte scăzut (planul Free acoperă nevoile unui cabinet mic; planul Standard la ~5 USD/utilizator/lună deblochează vizualizările avansate). Dezavantajul principal: nu este proiectat pentru evidența financiară, facturare sau gestionarea documentelor cu semnătură electronică - aceste aspecte necesită instrumente complementare.
 
-Dacă dorești să implementezi un flux de management al dosarelor în Trello, adaptat specificului cabinetului tău, cu automatizări Butler configurate și integrări cu Gmail și Google Calendar, echipa **SOLON** poate construi și configura sistemul de la zero.
+Dacă vrei să implementezi un flux de management al dosarelor în Trello, adaptat specificului cabinetului tău, cu automatizări Butler configurate și integrări cu Gmail și Google Calendar, echipa **SOLON** poate construi și configura sistemul de la zero.

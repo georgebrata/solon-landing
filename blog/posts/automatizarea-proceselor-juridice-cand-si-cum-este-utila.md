@@ -63,7 +63,7 @@ Un software de gestionare a dosarelor poate trimite notificări automate cu priv
 
 ## Cum să implementăm soluțiile de automatizare?
 
-Pentru ca automatizarea să fie eficientă, este esențial să fie implementată strategic. Iată câțiva pași importanți:
+Pentru ca automatizarea să fie eficientă, e esențial să fie implementată strategic. Iată câțiva pași importanți:
 
 ### Identificarea proceselor care pot fi automatizate
 
@@ -75,7 +75,7 @@ Există numeroase platforme de automatizare, de la software pentru managementul 
 
 ### Instruirea personalului
 
-Oricât de avansată ar fi tehnologia, este esențial ca echipa să fie pregătită să o folosească eficient. Oferiți traininguri pentru a facilita tranziția la noile soluții.
+Oricât de avansată ar fi tehnologia, este esențial ca echipa să fie pregătită să o folosească eficient. Oferiți traininguri pentru a ușura tranziția la noile soluții.
 
 ### Asigurarea securității datelor
 

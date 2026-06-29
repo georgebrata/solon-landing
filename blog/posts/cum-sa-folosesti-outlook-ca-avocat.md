@@ -75,13 +75,13 @@ Categoriile sunt sincronizate cu Exchange / Microsoft 365 - dacă delegi accesul
 
 Reguli utile pentru avocați:
 
-- **E-mailuri de la instanțe**: dacă expeditorul conține `@just.ro` sau subiectul conține „citație" / „termen" / „dosar", mută automat în folderul `Instanță / Termene` și aplică categoria `Albastru`.
+- **E-mailuri de la instanțe**: dacă expeditorul conține `@just.ro` sau subiectul conține „citație” / „termen” / „dosar”, mută automat în folderul `Instanță / Termene` și aplică categoria `Albastru`.
 - **Notificări de platforme**: e-mailuri de la `noreply@`, `no-reply@`, newslettere → mută direct în `Arhivă` sau în un folder `Notificări`, fără să încarce Inbox-ul principal.
-- **Clienți prioritari**: dacă expeditorul este un client sau coleg important, marchează ca „High Importance" și mută în `@Acțiune necesară`.
-- **Confirmări financiare**: e-mailuri cu subiectul „plată", „factură", „confirmare transfer" → folderul `Facturare`.
+- **Clienți prioritari**: dacă expeditorul este un client sau coleg important, marchează ca „High Importance” și mută în `@Acțiune necesară`.
+- **Confirmări financiare**: e-mailuri cu subiectul „plată”, „factură”, „confirmare transfer” → folderul `Facturare`.
 - **Forward automat selectiv**: dacă ești în concediu sau delegat, poți crea o regulă care forward-ează automat e-mailurile marcate ca urgente către un coleg desemnat (în loc de un out-of-office generic).
 
-**Structura corectă a unei reguli**: condiție (expeditor / subiect / cuvânt cheie) → acțiune (mutare / marcare / notificare) → excepție opțională. Definește mai întâi excepțiile (ex. „nu aplica dacă am trimis eu mesajul") pentru a evita efecte secundare neașteptate.
+**Structura corectă a unei reguli**: condiție (expeditor / subiect / cuvânt cheie) → acțiune (mutare / marcare / notificare) → excepție opțională. Definește mai întâi excepțiile (ex. „nu aplica dacă am trimis eu mesajul”) pentru a evita efecte secundare neașteptate.
 
 ## 5. Quick Steps - acțiuni compuse cu un singur click
 
@@ -89,11 +89,11 @@ Reguli utile pentru avocați:
 
 Quick Steps recomandate pentru avocați:
 
-- **„Dosar procesat"**: marchează ca citit → mută în folderul `Arhivă` → elimină categoria. Shortcut: `Ctrl+Shift+1`.
-- **„Task din e-mail"**: creează un task în Microsoft To Do cu subiectul e-mailului → setează data scadentă la mâine → marchează e-mailul cu steag (flag). Shortcut: `Ctrl+Shift+2`.
-- **„Forward la secretar/asistent"**: forward automat către adresa internă desemnată + adaugă categoria `Mov` (administrativ). Shortcut: `Ctrl+Shift+3`.
-- **„Meeting din e-mail"**: deschide o invitație de întâlnire pre-completată cu subiectul e-mailului ca titlu, foloseala adreselor din conversație ca invitați. Shortcut: `Ctrl+Shift+4`.
-- **„Răspuns standard"**: deschide un răspuns cu un șablon pre-completat (ex. „Am primit mesajul tău și voi reveni..."). Shortcut: `Ctrl+Shift+5`.
+- **„Dosar procesat”**: marchează ca citit → mută în folderul `Arhivă` → elimină categoria. Shortcut: `Ctrl+Shift+1`.
+- **„Task din e-mail”**: creează un task în Microsoft To Do cu subiectul e-mailului → setează data scadentă la mâine → marchează e-mailul cu steag (flag). Shortcut: `Ctrl+Shift+2`.
+- **„Forward la secretar/asistent”**: forward automat către adresa internă desemnată + adaugă categoria `Mov` (administrativ). Shortcut: `Ctrl+Shift+3`.
+- **„Meeting din e-mail”**: deschide o invitație de întâlnire pre-completată cu subiectul e-mailului ca titlu, foloseala adreselor din conversație ca invitați. Shortcut: `Ctrl+Shift+4`.
+- **„Răspuns standard”**: deschide un răspuns cu un șablon pre-completat (ex. „Am primit mesajul tău și voi reveni...”). Shortcut: `Ctrl+Shift+5`.
 
 Crearea unui Quick Step: **Home → Quick Steps → Create New** sau click pe săgeata din colțul grupului Quick Steps → **New Quick Step**.
 
@@ -111,18 +111,18 @@ Activare: **View → Focused Inbox** (desktop) sau **Settings → Mail → Focus
 
 Cum să-l calibrezi eficient:
 - Când un e-mail important apare în tab-ul `Other`, click dreapta → **Move to Focused** - Outlook va redirecționa viitoarele mesaje de la acel expeditor în `Focused`.
-- Când un e-mail nesemnificativ apare în `Focused`, click dreapta → **Move to Other** - îl „înveți" pe Outlook ce nu este relevant.
+- Când un e-mail nesemnificativ apare în `Focused`, click dreapta → **Move to Other** - îl „înveți” pe Outlook ce nu este relevant.
 - Combini Focused Inbox cu regulile automate: regulile au prioritate față de clasificarea automată, deci e-mailurile cu reguli aplicată nu sunt afectate de Focused.
 
 **Atenție**: Focused Inbox funcționează optim cu conturi Exchange / Microsoft 365. Pe conturi IMAP (ex. Gmail adăugat în Outlook), funcționalitatea poate fi limitată.
 
 ## 7. Căutarea avansată - găsești orice e-mail în secunde
 
-Bara de căutare din Outlook suportă operatori avansați care reduc semnificativ timpul de localizare a unui mesaj:
+Bara de căutare din Outlook suportă operatori avansați care reduc vizibil timpul de localizare a unui mesaj:
 
-- `from:ionescu` - e-mailuri de la orice expeditor care conține „ionescu"
+- `from:ionescu` - e-mailuri de la orice expeditor care conține „ionescu”
 - `to:contact@cabinet.ro` - e-mailuri trimise către o adresă specifică
-- `subject:contract` - e-mailuri cu „contract" în subiect
+- `subject:contract` - e-mailuri cu „contract” în subiect
 - `hasattachment:yes` - e-mailuri cu atașamente
 - `received:last week` / `received:>=01/01/2026` - filtrare după dată
 - `category:Litigiu` - e-mailuri cu categoria aplicată
@@ -132,9 +132,9 @@ Bara de căutare din Outlook suportă operatori avansați care reduc semnificati
 Combinație practică: `from:tribunal subject:termen hasattachment:yes received:>=01/03/2026` - găsești în secunde toate comunicările oficiale de la tribunal cu documente atașate din ultimele luni.
 
 **Search Folders (Foldere de căutare)**: din **Folder → New Search Folder** poți crea foldere virtuale care afișează în timp real toate e-mailurile care respectă un criteriu, indiferent de folderul fizic în care se află. Exemple utile:
-- „E-mailuri nesolicitate cu atașamente" (pentru audit de securitate)
-- „Toate e-mailurile de la instanțe" (indiferent de folder)
-- „Mesaje mari (>5MB)" (pentru curățarea spațiului)
+- „E-mailuri nesolicitate cu atașamente” (pentru audit de securitate)
+- „Toate e-mailurile de la instanțe” (indiferent de folder)
+- „Mesaje mari (>5MB)” (pentru curățarea spațiului)
 
 ## 8. Quick Parts și șabloane de răspuns
 
@@ -146,7 +146,7 @@ Inserare rapidă: în corpul oricărui e-mail, tastează primele litere din nume
 
 Exemple utile pentru avocați:
 
-- **Disclaimer de confidențialitate**: „Acest mesaj și orice fișier atașat sunt confidențiale și destinate exclusiv destinatarului indicat..."
+- **Disclaimer de confidențialitate**: „Acest mesaj și orice fișier atașat sunt confidențiale și destinate exclusiv destinatarului indicat...”
 - **Cerere standard de documente**: lista documentelor necesare pentru onboarding (CI, contract de muncă, acte dosar etc.)
 - **Confirmare consultanță**: textul standard de confirmare a programării cu detalii logistice
 - **Clauze contractuale frecvente**: forță majoră, clauza de confidențialitate, clauza de jurisdicție - inserate direct în e-mailuri fără a deschide Word
@@ -157,7 +157,7 @@ Calendarul din Outlook este profund integrat cu e-mailul, spre deosebire de Goog
 
 **Calendare multiple și suprapunere**:
 - Creează calendare separate din **My Calendars → Add Calendar → Create new blank calendar**: `Termene instanță`, `Întâlniri clienți`, `Personal`, `Deadline-uri interne`.
-- Activează vizualizarea „overlay" (suprapunere) pentru a vedea toate calendarele simultan: click pe săgeata de lângă fiecare calendar → **View in Overlay Mode**.
+- Activează vizualizarea „overlay” (suprapunere) pentru a vedea toate calendarele simultan: click pe săgeata de lângă fiecare calendar → **View in Overlay Mode**.
 - Colorează fiecare calendar diferit din click dreapta → **Color**.
 
 **Meeting requests (Invitații de întâlnire)**:
@@ -186,7 +186,7 @@ Crearea rapidă a unui task dintr-un e-mail:
 - Sau click dreapta pe e-mail → **Add to Tasks** (shortcut: `Ctrl+Shift+K`).
 - Sau setează un **Flag** pe e-mail (click pe steagul roșu din colțul e-mailului) → e-mailul apare în lista `Flagged Email` din Tasks cu data scadenței seteabile.
 
-**Lista „My Day"** din Tasks / To Do: în fiecare dimineață, revizuiește lista `My Day` și trage din `Flagged Email` sau din celelalte liste sarcinile pe care le vei face azi - este echivalentul revizuirii zilnice a task-urilor urgente.
+**Lista „My Day”** din Tasks / To Do: în fiecare dimineață, revizuiește lista `My Day` și trage din `Flagged Email` sau din celelalte liste sarcinile pe care le vei face azi - este echivalentul revizuirii zilnice a task-urilor urgente.
 
 **Bucle**: taskurile cu termen expirat apar cu roșu în Tasks și generează un reminder vizibil în Calendar, nu doar în lista de sarcini. Această integrare elimină nevoia unui sistem separat de tracking.
 
@@ -209,7 +209,7 @@ Configurare: **File → Account Settings → Delegate Access → Add** → selec
 Recomandare pentru cabinete:
 - Asistentul juridic primește acces **Editor** la Calendar (poate programa/reprograma întâlniri) și **Author** la Inbox (poate crea răspunsuri, dar nu șterge).
 - Un alt avocat din cabinet primește **Reviewer** la folderul `Instanță / Termene` (vizibilitate, fără modificare).
-- Activează opțiunea **Send on behalf of** dacă vrei ca asistentul să poată trimite mesaje în numele tău - destinatarul va vedea „trimis de X în numele Y".
+- Activează opțiunea **Send on behalf of** dacă vrei ca asistentul să poată trimite mesaje în numele tău - destinatarul va vedea „trimis de X în numele Y”.
 
 **Shared Mailbox**: dacă mai mulți avocați gestionează o adresă comună (ex. `contact@cabinet.ro`), folosește un **Shared Mailbox** Exchange în loc de un cont individual partajat. Avantaje: fiecare acces este traceable, nu se pierd mesajele la plecarea unui angajat, nu necesită licență separată pentru adresa comună.
 
@@ -219,7 +219,7 @@ Add-in-urile extind funcționalitățile Outlook direct din interfață, fără 
 
 Add-in-uri recomandate:
 
-- **Microsoft Viva Insights** (inclus în Microsoft 365): analizează tiparele de comunicare, îți arată câte ore ai petrecut în e-mailuri și întâlniri, sugerează perioade de „focus time" neîntrerupt. Util pentru avocații care vor să gestioneze mai bine bugetul de timp.
+- **Microsoft Viva Insights** (inclus în Microsoft 365): analizează tiparele de comunicare, îți arată câte ore ai petrecut în e-mailuri și întâlniri, sugerează perioade de „focus time” neîntrerupt. Util pentru avocații care vor să gestioneze mai bine bugetul de timp.
 - **Boomerang for Outlook**: programează trimiterea e-mailurilor la o oră viitoare, setează remindere dacă nu primești răspuns într-un interval definit, propune automat ore de întâlnire disponibile din calendar.
 - **DocuSign for Outlook**: trimite documente pentru semnătură electronică direct din Outlook, fără să deschizi DocuSign separat - util pentru contracte și acte de procedură care necesită semnătură la distanță.
 - **Zoom / Teams**: creează automat linkuri de întâlnire video direct din invitațiile din calendar, fără să copiezi manual URL-uri.
@@ -230,7 +230,7 @@ Add-in-uri recomandate:
 Comunicarea juridică implică date cu caracter personal și informații protejate de secretul profesional. Minimum obligatoriu pentru un avocat care folosește Outlook:
 
 - **Autentificare în doi pași (MFA)**: activează din **portal.microsoft.com → Security → MFA** sau de la administratorul Microsoft 365 al organizației. Fără MFA, un cont Microsoft 365 este vulnerabil inclusiv la atacuri de phishing sofisticate.
-- **Sensitivity Labels (Etichete de sensibilitate)**: disponibile în planurile Microsoft 365 Business Premium sau superioare - permite marcarea e-mailurilor ca „Confidential / Legal" sau „Highly Confidential". Mesajele marcate pot fi criptate automat, iar linkurile din ele pot fi restricționate să nu poată fi forward-ate sau tipărite.
+- **Sensitivity Labels (Etichete de sensibilitate)**: disponibile în planurile Microsoft 365 Business Premium sau superioare - permite marcarea e-mailurilor ca „Confidential / Legal” sau „Highly Confidential”. Mesajele marcate pot fi criptate automat, iar linkurile din ele pot fi restricționate să nu poată fi forward-ate sau tipărite.
 - **S/MIME (criptare și semnătură digitală)**: dacă organizația emite certificate S/MIME, poți semna digital și cripta e-mailurile end-to-end. Configurare: **File → Options → Trust Center → Email Security → Encrypted email**.
 - **Message Recall (Retragere mesaj)**: dacă ai trimis un mesaj greșit unui destinatar din aceeași organizație Exchange, poți retrage din **Sent Items → deschide mesajul → Actions → Recall This Message**. Funcționează doar dacă destinatarul nu a deschis încă mesajul și ambele conturi sunt pe același server Exchange.
 - **Audit și retenție**: în planurile Microsoft 365, administratorul poate configura politici de retenție a e-mailurilor (ex. păstrare obligatorie 5 ani) și audit logs pentru fiecare acțiune pe cutia poștală - util în contexte de compliance sau litigii interne.
@@ -241,7 +241,7 @@ Comunicarea juridică implică date cu caracter personal și informații proteja
 Aplicația Outlook pentru iOS și Android reunește e-mail și calendar într-un singur loc, cu funcții specifice pentru mobilitate:
 
 - **Swipe actions**: configurează gesturile swipe stânga/dreapta pe fiecare e-mail din **Settings → Swipe options** - setează cel mai frecvent workflow (ex. swipe stânga = arhivare, swipe dreapta = flagged/task).
-- **Focused Inbox pe mobil**: la fel ca pe desktop, calibrează-l prin „Move to Focused / Other" din acțiunile rapide.
+- **Focused Inbox pe mobil**: la fel ca pe desktop, calibrează-l prin „Move to Focused / Other” din acțiunile rapide.
 - **Vizualizare calendar integrată**: din tab-ul Calendar al aplicației, poți vedea zilele cu e-mailuri importante evidențiate pe calendar - o funcție unică față de alte aplicații de e-mail.
 - **Căutare pe mobil**: suportă toți operatorii de căutare avansată menționați la secțiunea 7 - poți căuta `from:instanta hasattachment:yes` direct din bara de căutare mobilă.
 - **Add accounts**: adaugă multiple conturi (Exchange, Outlook.com, Gmail, Yahoo) și gestionează-le din aceeași aplicație cu inbox-uri separate sau unite.
@@ -266,4 +266,4 @@ Outlook oferă un ecosistem complet pentru gestionarea comunicării profesionale
 
 Comparativ cu Gmail, Outlook excelează în medii cu Active Directory / Exchange, delegare granulară și integrare nativă cu Word, OneDrive și Teams. Dezavantajul principal față de ecosistemul Google este că funcționalitățile avansate (Sensitivity Labels, audit, retenție) necesită planuri Microsoft 365 mai scumpe (Business Premium sau E3/E5).
 
-Dacă dorești să configurezi Microsoft 365 și Outlook pentru cabinetul tău - inclusiv reguli, Quick Steps, politici de securitate și integrare cu restul fluxului de lucru - echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii juridice.
+Dacă vrei să configurezi Microsoft 365 și Outlook pentru cabinetul tău - inclusiv reguli, Quick Steps, politici de securitate și integrare cu restul fluxului de lucru - echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii juridice.

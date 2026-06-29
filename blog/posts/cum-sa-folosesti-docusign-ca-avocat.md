@@ -66,11 +66,11 @@ După adăugarea documentelor, plasezi câmpurile din bara laterală prin drag &
 - **Date Signed**: completează automat data semnării - nu o lăsa pe semnatar să o scrie manual, pentru a evita datări incorecte.
 - **Name**, **Email**, **Company**, **Title**: date pre-completate din profilul destinatarului.
 - **Text**: câmp liber pentru CNP, serie/număr CI, adresă, valoare contract. Poți marca un câmp ca **Required** și poți aplica **validări** (de exemplu format numeric, e-mail, ZIP) din panoul de proprietăți al câmpului.
-- **Checkbox**, **Radio Button**, **Dropdown**: pentru opțiuni de tipul „de acord cu clauza X" sau alegerea unui regim contractual.
+- **Checkbox**, **Radio Button**, **Dropdown**: pentru opțiuni de tipul „de acord cu clauza X” sau alegerea unui regim contractual.
 - **Attachment**: ceri semnatarului să încarce un document (copie CI, dovadă a calității de reprezentant) chiar în timpul semnării.
 - **Note** și **Formula**: text explicativ needitabil, respectiv câmp calculat (de exemplu TVA, total) pe baza altor câmpuri.
 
-**Conditional Fields (câmpuri condiționale)**: poți seta ca un câmp să apară doar dacă alt câmp are o anumită valoare - de exemplu, secțiunea „date soț/soție" apare doar dacă semnatarul bifează „căsătorit". Configurezi din proprietățile câmpului declanșator → **Create Rule**.
+**Conditional Fields (câmpuri condiționale)**: poți seta ca un câmp să apară doar dacă alt câmp are o anumită valoare - de exemplu, secțiunea „date soț/soție” apare doar dacă semnatarul bifează „căsătorit”. Configurezi din proprietățile câmpului declanșator → **Create Rule**.
 
 **Sfat de acuratețe**: asignează fiecare câmp destinatarului corect din meniul **Recipients** de sus (fiecare semnatar are o culoare proprie). Un câmp asignat greșit este una dintre cele mai frecvente cauze de plicuri blocate.
 
@@ -93,7 +93,7 @@ Exemplu de flux pentru un contract de asistență juridică: `1` - clientul semn
 
 ## 6. Autentificarea semnatarilor - dovada identității
 
-Pentru un avocat, întrebarea „cine a semnat de fapt?" este esențială. DocuSign oferă metode de autentificare ce se aplică per destinatar, din opțiunile avansate ale fiecărui semnatar (**More → Add authentication**):
+Pentru un avocat, întrebarea „cine a semnat de fapt?” este esențială. DocuSign oferă metode de autentificare ce se aplică per destinatar, din opțiunile avansate ale fiecărui semnatar (**More → Add authentication**):
 
 - **Access Code**: un cod stabilit de tine, comunicat clientului pe alt canal (telefon, SMS). Semnatarul trebuie să-l introducă înainte de a accesa documentul.
 - **SMS Authentication**: DocuSign trimite un cod unic prin SMS la numărul indicat, verificând că semnatarul controlează acel telefon.
@@ -107,7 +107,7 @@ Pentru un avocat, întrebarea „cine a semnat de fapt?" este esențială. DocuS
   </div>
 </div>
 
-Combină autentificarea cu o politică internă clară: pentru orice document cu valoare patrimonială semnificativă, impune cel puțin **SMS Authentication** sau **ID Verification**. Metoda aleasă este înregistrată în Certificate of Completion și întărește forța probantă a documentului. Despre miza autentificării corecte și a protejării datelor clienților poți citi mai mult în articolul dedicat [importanței securității cibernetice în avocatura digitală](../importanta-securitatii-cibernetice-practica-avocaturii-digitale/).
+Combină autentificarea cu o politică internă clară: pentru orice document cu valoare patrimonială vizibilă, impune cel puțin **SMS Authentication** sau **ID Verification**. Metoda aleasă este înregistrată în Certificate of Completion și întărește forța probantă a documentului. Despre miza autentificării corecte și a protejării datelor clienților poți citi mai mult în articolul dedicat [importanței securității cibernetice în avocatura digitală](../importanta-securitatii-cibernetice-practica-avocaturii-digitale/).
 
 ## 7. Șabloane (Templates) pentru documente recurente
 
@@ -164,7 +164,7 @@ Bulk Send este disponibil în planurile business și are limite de volum în fun
 Un document rămas nesemnat blochează dosarul. DocuSign automatizează urmărirea:
 
 - **Reminders**: din **Advanced Options** la trimitere (sau implicit în **Settings → Reminders and Expirations**), setezi primul memento după X zile și repetarea la fiecare Y zile. Recomandat: primul memento la 2 zile, repetare la fiecare 3 zile.
-- **Expiration**: documentul expiră automat după un număr de zile (de exemplu 30), util pentru oferte cu termen limitat.
+- **Expiration**: documentul expiră automat după mai multe zile (de exemplu 30), util pentru oferte cu termen limitat.
 - **Void (anulare)**: din **Manage → (plicul) → Void** retragi un document trimis din greșeală; semnatarii sunt notificați automat, iar acțiunea rămâne în pista de audit.
 - **Correct**: din **Manage → Correct** modifici destinatarii sau câmpurile unui plic deja trimis, fără să o iei de la capăt.
 - **Resend**: retrimiți e-mailul de invitație dacă semnatarul l-a pierdut.
@@ -189,7 +189,7 @@ Valoarea reală a DocuSign apare când nu mai trebuie să intri în platformă p
 Într-un cabinet cu mai mulți avocați și personal administrativ, controlul accesului este esențial:
 
 - **Shared Access**: din **Settings → Shared Access** acorzi unui coleg dreptul de a gestiona plicurile tale (vizualizare, trimitere, semnare în numele tău) fără să-i dai parola. Util pentru relația avocat - asistent.
-- **Signing Groups**: din **Settings → Signing Groups** creezi un grup (de exemplu „Avocați coordonatori") din care **oricine** poate semna în locul rolului respectiv - primul disponibil preia documentul. Elimină blocajele când un anumit semnatar este indisponibil.
+- **Signing Groups**: din **Settings → Signing Groups** creezi un grup (de exemplu „Avocați coordonatori”) din care **oricine** poate semna în locul rolului respectiv - primul disponibil preia documentul. Elimină blocajele când un anumit semnatar este indisponibil.
 - **Permission Profiles**: din **Settings → Permission Profiles** definești ce poate face fiecare categorie de utilizatori (cine poate trimite, cine poate crea șabloane, cine poate folosi Bulk Send). Asistentul administrativ poate primi drept de trimitere fără drept de modificare a șabloanelor verificate juridic.
 - **Comments**: pe document, opțiunea de comentarii permite discuții interne între membrii echipei înainte de finalizare, fără e-mailuri separate.
 
@@ -231,4 +231,4 @@ DocuSign comprimă un proces care dura zile - tipărire, deplasare, scanare, ret
 
 Trebuie reținut însă un trade-off real: DocuSign nu acoperă actele care necesită formă autentică notarială, iar nivelul implicit de semnătură (SES/AES) nu este întotdeauna echivalent cu semnătura olografă - pentru acele cazuri ai nevoie de QES și de verificarea cerinței de formă a fiecărui act. În plus, planurile avansate (branding, Bulk Send, integrări) presupun abonamente business mai costisitoare.
 
-Dacă dorești să implementezi DocuSign pentru cabinetul tău - cu șabloane juridice, autentificare corectă, PowerForms de onboarding și integrare cu Outlook, Gmail și Google Drive - echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.
+Dacă vrei să implementezi DocuSign pentru cabinetul tău - cu șabloane juridice, autentificare corectă, PowerForms de onboarding și integrare cu Outlook, Gmail și Google Drive - echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.

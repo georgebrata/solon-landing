@@ -10,7 +10,7 @@ tags: ["manual de brand", "branding", "avocați", "identitate vizuală", "market
 
 # Ce este un manual de brand pentru avocați?
 
-Un manual de brand (brand book sau brand guidelines) este documentul care definește, în mod unitar și obligatoriu, cum arată și cum „vorbește" identitatea unui cabinet de avocatură: de la logo, culori și tipografie, până la tonul comunicării și modul în care apar acestea pe cărți de vizită, documente, site și rețele sociale. Pentru un avocat, el nu este un capriciu estetic, ci instrumentul care transformă o colecție de materiale disparate într-un brand coerent, recognoscibil și demn de încredere - exact calitatea pe care un client o caută înainte de a-și încredința o problemă juridică.
+Un manual de brand (brand book sau brand guidelines) este documentul care definește, în mod unitar și obligatoriu, cum arată și cum „vorbește” identitatea unui cabinet de avocatură: de la logo, culori și tipografie, până la tonul comunicării și modul în care apar acestea pe cărți de vizită, documente, site și rețele sociale. Pentru un avocat, el nu este un capriciu estetic, ci instrumentul care transformă o colecție de materiale disparate într-un brand coerent, recognoscibil și demn de încredere - exact calitatea pe care un client o caută înainte de a-și încredința o problemă juridică.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-8">
@@ -30,7 +30,7 @@ Este important de distins între trei noțiuni des confundate:
 - **Identitate vizuală** - sistemul complet de elemente vizuale (logo, culori, tipografie, grafică).
 - **Brand** - percepția totală din mintea clientului, care include și tonul comunicării, valorile și experiența oferită.
 
-Manualul de brand este „regulamentul" care guvernează toate aceste niveluri. Fără el, identitatea unui cabinet se erodează în timp: logo-ul apare în zeci de variante, culorile diferă de la un document la altul, iar mesajul devine inconsecvent. Cu el, brandul rămâne unitar pe ani de zile, chiar dacă echipa sau furnizorii se schimbă.
+Manualul de brand este „regulamentul” care guvernează toate aceste niveluri. Fără el, identitatea unui cabinet se erodează în timp: logo-ul apare în zeci de variante, culorile diferă de la un document la altul, iar mesajul devine inconsecvent. Cu el, brandul rămâne unitar pe ani de zile, chiar dacă echipa sau furnizorii se schimbă.
 
 ## 2. De ce are nevoie un avocat de un manual de brand
 
@@ -40,7 +40,7 @@ Manualul de brand este „regulamentul" care guvernează toate aceste niveluri. 
 - **Diferențiere**: pe o piață în care multe cabinete arată la fel, o identitate distinctă te face memorabil.
 - **Eficiență**: nu mai pierzi timp și bani de fiecare dată când creezi un material nou; regulile sunt deja stabilite.
 - **Scalabilitate**: când cabinetul crește și apar colaboratori, manualul asigură că toți comunică sub aceeași identitate.
-- **Coerență online-offline**: cartea de vizită, antetul, site-ul și profilul de social media vorbesc aceeași „limbă" vizuală.
+- **Coerență online-offline**: cartea de vizită, antetul, site-ul și profilul de social media vorbesc aceeași „limbă” vizuală.
 
 Brandingul juridic a evoluat mult dincolo de un logo elegant - despre direcțiile actuale poți citi în articolul [Tendințe actuale în branding pentru avocați](../tendinte-actuale-branding-profesionisti-juridic/).
 
@@ -112,10 +112,10 @@ Brandul nu este doar vizual - este și felul în care comunici. Manualul de bran
 Pentru un avocat, tonul vocii echilibrează două cerințe: autoritatea profesională și apropierea de client. Manualul oferă de obicei:
 
 - 3-5 atribute ale vocii (de exemplu: clar, riguros, empatic, direct);
-- exemple de „așa da / așa nu" pentru formulări;
+- exemple de „așa da / așa nu” pentru formulări;
 - mesajele-cheie și propunerea de valoare a cabinetului.
 
-Acest ton trebuie aplicat consecvent peste tot - de la pagina „Despre noi" până la postările de social media. Pentru fundamentele comunicării și marketingului juridic, vezi și [5 cărți esențiale de digital marketing pentru un avocat](../5-carti-esentiale-de-digital-marketing-pentru-un-avocat/).
+Acest ton trebuie aplicat consecvent peste tot - de la pagina „Despre noi” până la postările de social media. Pentru fundamentele comunicării și marketingului juridic, vezi și [5 cărți esențiale de digital marketing pentru un avocat](../5-carti-esentiale-de-digital-marketing-pentru-un-avocat/).
 
 ## 8. Aplicațiile identității: de la cartea de vizită la semnătura e-mail
 
@@ -155,11 +155,11 @@ Acesta este punctul în care brandingul juridic se deosebește de cel comercial 
 În practică, un manual de brand pentru un avocat trebuie să respecte câteva principii:
 
 - comunicarea trebuie să fie **decentă, corectă și neînșelătoare**;
-- nu sunt permise mesajele **comparative** (de tip „cel mai bun avocat") sau cele care garantează rezultate;
+- nu sunt permise mesajele **comparative** (de tip „cel mai bun avocat”) sau cele care garantează rezultate;
 - nu se folosesc tehnici de reclamă agresivă, specifice comerțului;
 - se păstrează **demnitatea și prestigiul profesiei** în orice material.
 
-Un branding bun pentru un avocat nu „strigă", ci inspiră încredere prin sobrietate și coerență. Tocmai de aceea identitatea vizuală juridică tinde spre eleganță și reținere, nu spre spectacol. Un partener care înțelege specificul profesiei va construi un brand puternic fără să încalce regulile deontologice - un echilibru pe care SOLON îl tratează ca punct de pornire.
+Un branding bun pentru un avocat nu „strigă”, ci inspiră încredere prin sobrietate și coerență. Tocmai de aceea identitatea vizuală juridică tinde spre eleganță și reținere, nu spre spectacol. Un partener care înțelege specificul profesiei va construi un brand puternic fără să încalce regulile deontologice - un echilibru pe care SOLON îl tratează ca punct de pornire.
 
 ## 11. Exemple reale de manuale de brand realizate de SOLON
 
@@ -174,7 +174,7 @@ Fiecare dintre aceste documente arată cum se traduce identitatea unui cabinet �
 
 ## 12. Cum decurge realizarea unui manual de brand
 
-Un manual de brand nu se „desenează" pur și simplu - el rezultă dintr-un proces structurat:
+Un manual de brand nu se „desenează” pur și simplu - el rezultă dintr-un proces structurat:
 
 1. **Descoperire (discovery)** - înțelegerea cabinetului: arii de practică, valori, public-țintă, poziționare dorită.
 2. **Strategie de brand** - definirea poziționării, a personalității și a mesajelor-cheie.
@@ -183,7 +183,7 @@ Un manual de brand nu se „desenează" pur și simplu - el rezultă dintr-un pr
 5. **Documentarea în manual** - reunirea tuturor regulilor într-un PDF de referință.
 6. **Predare și implementare** - livrarea fișierelor sursă și aplicarea identității pe site și pe canale.
 
-Greșeli frecvente de evitat: copierea identității altui cabinet, alegerea unui logo „la modă" fără strategie, lipsa variantelor de logo, paletă fără coduri exacte și, cea mai costisitoare, absența totală a unui manual - care duce la o identitate care se destramă în câteva luni.
+Greșeli frecvente de evitat: copierea identității altui cabinet, alegerea unui logo „la modă” fără strategie, lipsa variantelor de logo, paletă fără coduri exacte și, cea mai costisitoare, absența totală a unui manual - care duce la o identitate care se destramă în câteva luni.
 
 ## Concluzie
 
@@ -191,4 +191,4 @@ Un manual de brand este, pentru un avocat, mult mai mult decât un logo frumos: 
 
 Trebuie reținut și un compromis real: un manual de brand de calitate presupune o investiție inițială de timp și buget și disciplina de a-l respecta ulterior. Însă alternativa - o identitate inconsecventă, refăcută la fiecare material nou - costă, pe termen lung, mai mult, atât financiar, cât și reputațional.
 
-Dacă dorești să construiești un manual de brand profesionist pentru cabinetul tău - cu identitate vizuală coerentă, aplicații complete și conformitate deontologică -, echipa **SOLON** oferă consultanță de branding și digitalizare adaptată specificului practicii tale juridice.
+Dacă vrei să construiești un manual de brand profesionist pentru cabinetul tău - cu identitate vizuală coerentă, aplicații complete și conformitate deontologică -, echipa **SOLON** oferă consultanță de branding și digitalizare adaptată specificului practicii tale juridice.

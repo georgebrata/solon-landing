@@ -54,7 +54,7 @@ Nu accepta demo-uri generale. Cere demonstrație pe scenarii concrete din societ
 
 ### 3) Adopție rapidă în echipă
 
-Un software dificil de utilizat va fi ignorat, indiferent cât de „avansat” este. Testează cu utilizatori diferiți: avocați, colaboratori, back-office, management.
+Un software dificil de folosit va fi ignorat, indiferent cât de „avansat” este. Testează cu utilizatori diferiți: avocați, colaboratori, back-office, management.
 
 ### 4) Vizibilitate în performanță (KPI)
 

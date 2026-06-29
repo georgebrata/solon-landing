@@ -129,7 +129,7 @@
             </ul>
           </div>
           <div class="entry-content">
-            <p>Zero-trust (sau „încredere zero&quot;) este modelul de securitate care pornește de la o premisă simplă și incomodă: nicio cerere de acces nu este de încredere implicit, nici măcar cea care vine din interiorul rețelei cabinetului. În locul vechiului perimetru („totul ce e în birou e sigur, totul ce e afară e periculos&quot;), fiecare utilizator, dispozitiv și aplicație trebuie verificat de fiecare dată când cere acces la un dosar, un contract sau o căsuță de e-mail. Pentru un avocat care lucrează cu date protejate de secretul profesional și de GDPR, acest model nu este un moft tehnic, ci cea mai solidă apărare împotriva phishing-ului, a parolelor compromise și a accesului neautorizat.</p>
+            <p>Zero-trust (sau „încredere zero”) este modelul de securitate care pornește de la o premisă simplă și incomodă: nicio cerere de acces nu este de încredere implicit, nici măcar cea care vine din interiorul rețelei cabinetului. În locul vechiului perimetru („totul ce e în birou e sigur, totul ce e afară e periculos”), fiecare utilizator, dispozitiv și aplicație trebuie verificat de fiecare dată când cere acces la un dosar, un contract sau o căsuță de e-mail. Pentru un avocat care lucrează cu date protejate de secretul profesional și de GDPR, acest model nu este un moft tehnic, ci cea mai solidă apărare împotriva phishing-ului, a parolelor compromise și a accesului neautorizat.</p>
 <div class="row justify-content-center my-4">
   <div class="col-md-8">
     <img src="../../assets/img/undraw_private-files_m2bw.png" alt="Ilustrație: avocat care depune documente confidențiale într-o arhivă digitală protejată cu lacăt" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
@@ -138,8 +138,8 @@
 
 <p>Acest ghid explică, în termeni practici pentru un cabinet de avocatură, ce înseamnă concret zero-trust: principiile și standardele oficiale (NIST SP 800-207, modelul de maturitate CISA), pilonii de implementare, platformele și integrările reale pe care le poți folosi, cazurile de utilizare din avocatură și greșelile de evitat.</p>
 <h2>1. Ce înseamnă zero-trust și de ce contează pentru avocați</h2>
-<p>Modelul tradițional de securitate funcționa ca un castel cu zid de apărare: odată ce treceai de firewall și intrai în rețeaua biroului, erai considerat „de încredere&quot; și aveai acces la aproape tot. Problema este că, în 2026, perimetrul nu mai există: lucrezi de acasă, din instanță și din vacanță, datele cabinetului stau în cloud (Google Workspace, Microsoft 365), iar un singur set de credențiale furate prin phishing dărâmă tot zidul.</p>
-<p>Zero-trust inversează logica. Mantra modelului, formulată de analistul John Kindervag (Forrester) și preluată de standardele oficiale, este <strong>„never trust, always verify&quot;</strong> - nu te încrede niciodată, verifică întotdeauna. Concret, asta înseamnă trei reguli de fier:</p>
+<p>Modelul tradițional de securitate funcționa ca un castel cu zid de apărare: odată ce treceai de firewall și intrai în rețeaua biroului, erai considerat „de încredere” și aveai acces la aproape tot. Problema este că, în 2026, perimetrul nu mai există: lucrezi de acasă, din instanță și din vacanță, datele cabinetului stau în cloud (Google Workspace, Microsoft 365), iar un singur set de credențiale furate prin phishing dărâmă tot zidul.</p>
+<p>Zero-trust inversează logica. Mantra modelului, formulată de analistul John Kindervag (Forrester) și preluată de standardele oficiale, este <strong>„never trust, always verify”</strong> - nu te încrede niciodată, verifică întotdeauna. Concret, asta înseamnă trei reguli de fier:</p>
 <ul>
 <li><strong>Verifică explicit</strong>: fiecare cerere de acces este autentificată și autorizată pe baza tuturor semnalelor disponibile (identitatea utilizatorului, starea dispozitivului, locația, ora, comportamentul).</li>
 <li><strong>Folosește privilegiul minim</strong>: fiecare utilizator primește exact accesul de care are nevoie pentru sarcina curentă, nimic în plus.</li>
@@ -176,7 +176,7 @@
 </div>
 
 <h2>4. Privilegiul minim și controlul accesului (least privilege)</h2>
-<p>Principiul <strong>privilegiului minim (least privilege)</strong> spune că fiecare persoană are acces doar la resursele strict necesare rolului ei și doar pe durata necesară. Într-un cabinet, asta înlocuiește practica periculoasă în care „toți văd tot&quot;.</p>
+<p>Principiul <strong>privilegiului minim (least privilege)</strong> spune că fiecare persoană are acces doar la resursele strict necesare rolului ei și doar pe durata necesară. Într-un cabinet, asta înlocuiește practica periculoasă în care „toți văd tot”.</p>
 <p>Mecanisme concrete:</p>
 <ul>
 <li><strong>Control al accesului bazat pe rol (RBAC)</strong>: definești roluri (avocat coordonator, avocat colaborator, paralegal, secretariat, contabilitate externă) și atașezi fiecărui rol un set de permisiuni. Secretariatul poate vedea calendarul și facturile, dar nu și strategia de litigiu dintr-un dosar sensibil.</li>
@@ -186,7 +186,7 @@
 </ul>
 <h2>5. Pilonul Rețele: ZTNA în locul VPN-ului clasic</h2>
 <p>Multe cabinete încă folosesc un <strong>VPN</strong> pentru accesul la distanță. Problema cu VPN-ul tradițional este că, odată conectat, utilizatorul capătă acces la întreaga rețea internă - exact perimetrul de încredere pe care zero-trust îl elimină.</p>
-<p>Soluția modernă este <strong>ZTNA (Zero Trust Network Access)</strong>: în loc să te conectezi la rețea, te conectezi direct la aplicația de care ai nevoie, după ce identitatea și dispozitivul au fost verificate. Aplicațiile rămân „invizibile&quot; pentru oricine nu este autorizat explicit.</p>
+<p>Soluția modernă este <strong>ZTNA (Zero Trust Network Access)</strong>: în loc să te conectezi la rețea, te conectezi direct la aplicația de care ai nevoie, după ce identitatea și dispozitivul au fost verificate. Aplicațiile rămân „invizibile” pentru oricine nu este autorizat explicit.</p>
 <ul>
 <li><strong>Micro-segmentarea</strong> împarte rețeaua în zone mici și izolate, astfel încât o breșă într-o zonă (de exemplu, calculatorul de la recepție) să nu se propage la serverul cu dosare.</li>
 <li><strong>SASE (Secure Access Service Edge)</strong> combină ZTNA cu filtrarea traficului web și protecția DNS într-un singur serviciu cloud - util pentru cabinetele complet remote.</li>
@@ -205,13 +205,13 @@
 <p>În centrul oricărei arhitecturi zero-trust pentru un cabinet stau datele - contracte, dosare, corespondență privilegiată. Protejarea lor presupune:</p>
 <ul>
 <li><strong>Clasificarea documentelor</strong>: etichetează informația pe niveluri (public, intern, confidențial, secret profesional). Microsoft Purview (Sensitivity Labels) și Google Drive labels permit aplicarea automată a etichetelor și a restricțiilor aferente.</li>
-<li><strong>Criptare în repaus și în tranzit</strong>: datele stocate sunt criptate, iar transferul se face exclusiv pe canale criptate (TLS). Pentru documente extrem de sensibile, ia în calcul criptarea la nivel de fișier (de exemplu, AES-256) înainte de încărcarea în cloud.</li>
-<li><strong>Prevenirea pierderii de date (DLP)</strong>: reguli care împiedică trimiterea accidentală a datelor confidențiale - de exemplu, blochezi atașarea unui document marcat „secret profesional&quot; către un destinatar extern sau detectezi un CNP trimis în clar.</li>
+<li><strong>Criptare în repaus și în tranzit</strong>: datele stocate sunt criptate, iar transferul se face exclusiv pe canale criptate (TLS). Pentru documente foarte sensibile, ia în calcul criptarea la nivel de fișier (de exemplu, AES-256) înainte de încărcarea în cloud.</li>
+<li><strong>Prevenirea pierderii de date (DLP)</strong>: reguli care împiedică trimiterea accidentală a datelor confidențiale - de exemplu, blochezi atașarea unui document marcat „secret profesional” către un destinatar extern sau detectezi un CNP trimis în clar.</li>
 <li><strong>Drepturi de utilizare persistente (IRM)</strong>: poți restricționa ca un document să nu poată fi printat, copiat sau redistribuit, chiar și după ce a fost descărcat.</li>
 <li><strong>Semnătură electronică și pistă de audit</strong> pentru documentele care părăsesc cabinetul - vezi practicile descrise în ghidul <a href="../cum-sa-folosesti-docusign-ca-avocat/">Cum să folosești DocuSign ca avocat</a>, unde fiecare semnătură are autentificare și certificat de finalizare.</li>
 </ul>
 <h2>8. Vizibilitate, monitorizare continuă și automatizare</h2>
-<p>Principiul „assume breach&quot; cere să presupui că, mai devreme sau mai târziu, ceva va merge prost - deci trebuie să poți observa și reacționa rapid.</p>
+<p>Principiul „assume breach” cere să presupui că, mai devreme sau mai târziu, ceva va merge prost - deci trebuie să poți observa și reacționa rapid.</p>
 <ul>
 <li><strong>Jurnalizare (logging) și audit</strong>: păstrează jurnale despre cine a accesat ce, când și de unde. În Microsoft 365 și Google Workspace, audit log-urile sunt disponibile nativ în consola de administrare.</li>
 <li><strong>Alerte pentru comportament anormal</strong>: autentificare dintr-o țară neobișnuită, descărcarea în masă a unui dosar, login la ore atipice - toate ar trebui să declanșeze o alertă sau o verificare suplimentară.</li>
@@ -269,7 +269,7 @@
 <td>Entra ID, Google, Okta, Duo</td>
 </tr>
 </tbody></table>
-<p>Pentru majoritatea cabinetelor din România, punctul de plecare firesc este ecosistemul pe care îl folosesc deja: cei pe <strong>Microsoft 365</strong> activează Entra ID Conditional Access și Intune; cei pe <strong>Google Workspace</strong> activează context-aware access și verificarea în 2 pași. Cheia este ca aceste platforme să fie integrate, nu folosite izolat - identitatea din IdP devine „cheia&quot; care guvernează accesul la e-mail, dosare, semnătură electronică și instrumente de management. Vezi cum se leagă aceste piese în <a href="../cum-sa-folosesti-gmail-ca-avocat/">Cum să folosești Gmail ca avocat</a> și <a href="../cum-sa-folosesti-outlook-ca-avocat/">Cum să folosești Outlook ca avocat</a>.</p>
+<p>Pentru majoritatea cabinetelor din România, punctul de plecare firesc este ecosistemul pe care îl folosesc deja: cei pe <strong>Microsoft 365</strong> activează Entra ID Conditional Access și Intune; cei pe <strong>Google Workspace</strong> activează context-aware access și verificarea în 2 pași. Cheia este ca aceste platforme să fie integrate, nu folosite izolat - identitatea din IdP devine „cheia” care guvernează accesul la e-mail, dosare, semnătură electronică și instrumente de management. Vezi cum se leagă aceste piese în <a href="../cum-sa-folosesti-gmail-ca-avocat/">Cum să folosești Gmail ca avocat</a> și <a href="../cum-sa-folosesti-outlook-ca-avocat/">Cum să folosești Outlook ca avocat</a>.</p>
 <h2>10. Cazuri de utilizare concrete în avocatură</h2>
 <p>Cum arată zero-trust în ziua de lucru a unui avocat? Câteva scenarii reale:</p>
 <ul>
@@ -277,7 +277,7 @@
 <li><strong>Colaborator extern temporar</strong>: aduci un avocat colaborator pe un litigiu pentru trei luni. Îi acorzi acces just-in-time doar la dosarele relevante; la finalul mandatului, accesul expiră automat.</li>
 <li><strong>Tentativă de phishing</strong>: un atacator obține parola unui paralegal printr-un e-mail fals. Fără al doilea factor (cheia FIDO2) și fără un dispozitiv gestionat, accesul este refuzat - parola furată devine inutilă.</li>
 <li><strong>Laptop pierdut</strong>: un avocat își uită laptopul în tren. Discul este criptat, iar prin MDM declanșezi ștergerea de la distanță. Datele clienților rămân protejate, iar obligația de notificare GDPR se evaluează în consecință.</li>
-<li><strong>Trimitere accidentală</strong>: un asistent vrea să atașeze din greșeală un document marcat „secret profesional&quot; către un destinatar extern. Regula DLP blochează acțiunea și avertizează expeditorul.</li>
+<li><strong>Trimitere accidentală</strong>: un asistent vrea să atașeze din greșeală un document marcat „secret profesional” către un destinatar extern. Regula DLP blochează acțiunea și avertizează expeditorul.</li>
 </ul>
 <p>Aceste scenarii arată de ce zero-trust este o traducere directă a obligației de confidențialitate într-o arhitectură tehnică verificabilă.</p>
 <h2>11. Cum implementezi zero-trust pas cu pas</h2>
@@ -295,7 +295,7 @@
 <h2>12. GDPR, conformitate și standarde aplicabile</h2>
 <p>Zero-trust nu este doar bună practică tehnică - susține direct conformitatea legală a cabinetului:</p>
 <ul>
-<li><strong>GDPR (Regulamentul UE 2016/679)</strong>: principiile de „securitate a prelucrării&quot; (art. 32), „protecția datelor începând cu momentul conceperii&quot; (privacy by design, art. 25) și minimizarea accesului se mapează aproape unu-la-unu pe privilegiul minim și criptarea din zero-trust. Jurnalele de audit ajută la îndeplinirea obligației de a demonstra conformitatea (accountability).</li>
+<li><strong>GDPR (Regulamentul UE 2016/679)</strong>: principiile de „securitate a prelucrării” (art. 32), „protecția datelor începând cu momentul conceperii” (privacy by design, art. 25) și minimizarea accesului se mapează aproape unu-la-unu pe privilegiul minim și criptarea din zero-trust. Jurnalele de audit ajută la îndeplinirea obligației de a demonstra conformitatea (accountability).</li>
 <li><strong>Secretul profesional</strong>: arhitectura zero-trust oferă dovada tehnică a faptului că ai luat măsuri rezonabile pentru protejarea confidențialității clientului.</li>
 <li><strong>Standarde de referință</strong>: ISO/IEC 27001 (sistem de management al securității informației), NIST SP 800-207 și modelul de maturitate CISA îți oferă un cadru auditabil. Pentru semnătura electronică, regulamentul <strong>eIDAS</strong> stabilește nivelurile de valabilitate juridică.</li>
 <li><strong>Notificarea breșelor</strong>: dacă, în ciuda măsurilor, are loc o breșă, ai obligația de a notifica ANSPDCP în 72 de ore. Monitorizarea zero-trust îți permite să detectezi și să delimitezi rapid incidentul.</li>
@@ -306,18 +306,18 @@
 <ul>
 <li><strong>Pornește de la identitate, nu de la firewall</strong>: cel mai mare câștig vine din MFA rezistent la phishing și SSO. Lasă rețeaua pe locul doi.</li>
 <li><strong>Folosește passkeys sau chei FIDO2</strong> acolo unde poți - codurile SMS sunt vulnerabile la SIM swapping.</li>
-<li><strong>Nu acorda niciodată drepturi „de admin&quot; conturilor de zi cu zi</strong>; ține un cont administrativ separat, cu MFA hardware.</li>
+<li><strong>Nu acorda niciodată drepturi „de admin” conturilor de zi cu zi</strong>; ține un cont administrativ separat, cu MFA hardware.</li>
 <li><strong>Activează jurnalele de audit din prima zi</strong>, chiar dacă nu le citești încă - vei avea nevoie de istoric în caz de incident.</li>
 <li><strong>Testează revocarea accesului</strong>: simulează plecarea unui colaborator și verifică în cât timp îi dispare accesul la toate sistemele.</li>
-<li><strong>Evită „MFA fatigue&quot;</strong>: configurează number matching în aplicația de autentificare, ca utilizatorul să nu aprobe din reflex o cerere falsă.</li>
+<li><strong>Evită „MFA fatigue”</strong>: configurează number matching în aplicația de autentificare, ca utilizatorul să nu aprobe din reflex o cerere falsă.</li>
 <li><strong>Nu trata zero-trust ca pe un proiect cu final</strong>: este un proces continuu de verificare, revizuire și ajustare a politicilor.</li>
-<li><strong>Greșeala clasică</strong>: a crede că un VPN sau un antivirus „înseamnă zero-trust&quot;. Niciunul nu verifică contextual fiecare cerere de acces.</li>
+<li><strong>Greșeala clasică</strong>: a crede că un VPN sau un antivirus „înseamnă zero-trust”. Niciunul nu verifică contextual fiecare cerere de acces.</li>
 <li><strong>A doua greșeală</strong>: a complica peste capacitatea echipei. Un cabinet mic obține 80% din beneficii prin MFA, privilegiu minim și criptare - nu are nevoie de SOC propriu.</li>
 </ul>
 <h2>14. Concluzie</h2>
 <p>Zero-trust nu este un produs pe care îl cumperi, ci un mod de a gândi securitatea: nu te încrede în nimeni implicit, verifică fiecare acces, acordă minimul necesar și presupune mereu că breșa e posibilă. Pentru un avocat, acest model traduce direct obligațiile de confidențialitate și secret profesional într-o arhitectură tehnică verificabilă, ancorată în standarde recunoscute - NIST SP 800-207 și modelul de maturitate CISA - și aliniată cerințelor GDPR. Câștigul concret este uriaș: o parolă furată prin phishing nu mai dărâmă tot cabinetul, un laptop pierdut nu mai înseamnă o breșă de date, iar accesul colaboratorilor rămâne mereu sub control.</p>
 <p>Trade-off-ul real este efortul de implementare și o ușoară frecare în experiența zilnică - mai multe verificări, mai puține scurtături. Pentru cabinetele mici, riscul este și supra-inginerizarea: nu ai nevoie de un centru de operațiuni de securitate, ci de pașii fundamentali (MFA rezistent la phishing, privilegiu minim, criptare, jurnale de audit) aplicați corect și consecvent. Cheia este să avansezi gradual, pe nivelurile de maturitate, fără să copleșești echipa.</p>
-<p>Dacă dorești să implementezi un model zero-trust pentru cabinetul tău - cu identitate centralizată, MFA rezistent la phishing, acces condiționat, criptarea documentelor și integrare cu Microsoft 365 sau Google Workspace - echipa <strong>SOLON</strong> oferă consultanță de digitalizare și securitate adaptată specificului practicii tale juridice.</p>
+<p>Dacă vrei să implementezi un model zero-trust pentru cabinetul tău - cu identitate centralizată, MFA rezistent la phishing, acces condiționat, criptarea documentelor și integrare cu Microsoft 365 sau Google Workspace - echipa <strong>SOLON</strong> oferă consultanță de digitalizare și securitate adaptată specificului practicii tale juridice.</p>
 
           </div>
         </article>
@@ -356,10 +356,10 @@
       <h2>ARTICOLE RECENTE</h2>
       <ul>
         <li><a href="../ce-este-un-manual-de-brand-pentru-avocati/">Ce este un manual de brand pentru avocați?</a>, 29 iunie 2026</li>
+<li><a href="../sfaturi-digitale-pentru-un-avocat-stagiar/">Sfaturi digitale pentru un avocat stagiar</a>, 29 iunie 2026</li>
 <li><a href="../cum-sa-folosesti-codex-ca-avocat/">Cum să folosești Codex ca avocat</a>, 26 iunie 2026</li>
 <li><a href="../cum-sa-folosesti-docusign-ca-avocat/">Cum să folosești DocuSign ca avocat</a>, 12 iunie 2026</li>
 <li><a href="../5-carti-esentiale-de-digital-marketing-pentru-un-avocat/">5 cărți esențiale de digital marketing pentru un avocat</a>, 7 iunie 2026</li>
-<li><a href="../cum-sa-folosesti-google-search-console-ca-avocat/">Cum să folosești Google Search Console ca avocat</a>, 7 iunie 2026</li>
       </ul>
     </div>
 
