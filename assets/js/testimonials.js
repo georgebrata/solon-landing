@@ -4,46 +4,13 @@
     const URL = "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
     const faqList = document.getElementById("faq-list");
     const faqListParent = document.getElementById("faq");
-    renderLibraryItems();
-
-
-    async function renderLibraryItems() {
-        let response, items;
-        try {
-            response = await fetch(URL);
-            items = await response.json();
-        } catch (error) {
-            console.error(error);
-            return;
-        }
-
-        hideLoading();
-        let visibleItems = items.filter(item => item.Visible);
-        console.log(visibleItems);
-
-        if(visibleItems.length === 0) {
-            faqListParent.classList.add("hidden");
-            return; 
-        } else {
-            visibleItems.forEach((item, index) => {
-                const element = {
-                    intrebare: item.Intrebare,
-                    raspuns: item.Raspuns,
-                }
-                if (item.Visible) {
-                    appendItem(createFaqTemplate(element, index));
-                }
-            })
-        }
-
-    }
 
     const appendItem = (itemHtml) => {
         const newFaqListItem = document.createElement("li");
         newFaqListItem.innerHTML = itemHtml;
 
         faqList.appendChild(newFaqListItem);
-    }
+    };
 
     const createFaqTemplate = (faqObject, index) => {
         let { intrebare, raspuns } = faqObject;
@@ -59,11 +26,43 @@
                 ${raspuns}
             </p>
             </div>
-        </li>`
+        </li>`;
     };
 
     const hideLoading = () => {
         const loading = document.getElementById("loading");
         loading.classList.add("hidden");
+    };
+
+    async function renderLibraryItems() {
+        let response, items;
+        try {
+            response = await fetch(URL);
+            items = await response.json();
+        } catch (error) {
+            console.error(error);
+            return;
+        }
+
+        hideLoading();
+        let visibleItems = items.filter(item => item.Visible);
+        console.log(visibleItems);
+
+        if (visibleItems.length === 0) {
+            faqListParent.classList.add("hidden");
+            return;
+        }
+
+        visibleItems.forEach((item, index) => {
+            const element = {
+                intrebare: item.Intrebare,
+                raspuns: item.Raspuns,
+            };
+            if (item.Visible) {
+                appendItem(createFaqTemplate(element, index));
+            }
+        });
     }
-})()
+
+    renderLibraryItems();
+})();
