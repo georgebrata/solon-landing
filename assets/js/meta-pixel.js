@@ -1,3 +1,4 @@
+/* global fbq */
 (function () {
   "use strict";
 
