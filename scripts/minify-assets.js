@@ -39,20 +39,21 @@ function minifyStyleMerged() {
   }).minify(input);
   if (out.errors && out.errors.length) {
     console.error(out.errors);
-    process.exit(1);
+    return false;
   }
   const outPath = path.join(cssDir, "style.min.css");
   fs.writeFileSync(outPath, out.styles);
   console.log(
     `OK style.css (+ toggle.css) → style.min.css (${input.length} → ${out.styles.length} bytes)`
   );
+  return true;
 }
 
 function minifyCss(relPath) {
   const full = path.join(root, "assets/css", relPath);
   if (!fs.existsSync(full)) {
     console.warn(`Skip missing CSS: ${relPath}`);
-    return;
+    return true;
   }
   const input = fs.readFileSync(full, "utf8");
   const cssDir = path.join(root, "assets/css");
@@ -63,7 +64,7 @@ function minifyCss(relPath) {
   }).minify(input);
   if (out.errors && out.errors.length) {
     console.error(out.errors);
-    process.exit(1);
+    return false;
   }
   const base = relPath.replace(/\.css$/, "");
   const outPath = path.join(root, "assets/css", `${base}.min.css`);
@@ -71,13 +72,14 @@ function minifyCss(relPath) {
   console.log(
     `OK ${relPath} → ${base}.min.css (${input.length} → ${out.styles.length} bytes)`
   );
+  return true;
 }
 
 async function minifyJs(relPath) {
   const full = path.join(root, "assets/js", relPath);
   if (!fs.existsSync(full)) {
     console.warn(`Skip missing JS: ${relPath}`);
-    return;
+    return true;
   }
   const input = fs.readFileSync(full, "utf8");
   const result = await terserMinify(input, {
@@ -87,17 +89,31 @@ async function minifyJs(relPath) {
   });
   if (result.error) {
     console.error(result.error);
-    process.exit(1);
+    return false;
   }
   const base = relPath.replace(/\.js$/, "");
   const outPath = path.join(root, "assets/js", `${base}.min.js`);
   fs.writeFileSync(outPath, result.code);
   const outLen = Buffer.byteLength(result.code, "utf8");
   console.log(`OK ${relPath} → ${base}.min.js (${input.length} → ${outLen} bytes)`);
+  return true;
 }
 
 (async () => {
-  minifyStyleMerged();
-  for (const f of cssFiles) minifyCss(f);
-  for (const f of jsFiles) await minifyJs(f);
+  if (!minifyStyleMerged()) {
+    process.exitCode = 1;
+    return;
+  }
+  for (const f of cssFiles) {
+    if (!minifyCss(f)) {
+      process.exitCode = 1;
+      return;
+    }
+  }
+  for (const f of jsFiles) {
+    if (!(await minifyJs(f))) {
+      process.exitCode = 1;
+      return;
+    }
+  }
 })();

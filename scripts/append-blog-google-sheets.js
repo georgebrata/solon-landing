@@ -53,7 +53,8 @@ const main = async () => {
   if (!title) {
     console.error('Error: "title" is required.');
     console.error("Usage: node scripts/append-blog-google-sheets.js \"Article title\"");
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   try {
@@ -61,7 +62,7 @@ const main = async () => {
     console.log(`Appended row to Google Sheet: ["${formatToday()}", "", "${title}", "${AUTHOR}"]`);
   } catch (error) {
     console.error(`Failed to append row: ${error.message}`);
-    process.exit(1);
+    process.exitCode = 1;
   }
 };
 
