@@ -12,7 +12,6 @@ function scrollToElement(elementId, seconds) {
             // Scroll to the element
             targetElement.scrollIntoView({
                 behavior: 'smooth', // You can change this to 'auto' for instant scrolling
-                block: 'start',
                 block: 'center'
             });
         } else {
