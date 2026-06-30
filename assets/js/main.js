@@ -5,7 +5,7 @@
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
-/* global Swiper, AOS, GLightbox, Isotope */
+/* global Swiper, AOS, GLightbox, Isotope, Waypoint */
 (function() {
   "use strict";
 
