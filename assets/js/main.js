@@ -91,7 +91,7 @@
   /**
    * Mobile nav toggle
    */
-  on('click', '.mobile-nav-toggle', function(e) {
+  on('click', '.mobile-nav-toggle', function() {
     select('#navbar').classList.toggle('navbar-mobile')
     this.classList.toggle('bi-list')
     this.classList.toggle('bi-x')
@@ -149,7 +149,7 @@
   /**
    * Initiate  glightbox 
    */
-  const glightbox = GLightbox({
+  GLightbox({
     selector: '.glightbox'
   });
 
@@ -161,7 +161,7 @@
     new Waypoint({
       element: skilsContent,
       offset: '80%',
-      handler: function(direction) {
+      handler: function() {
         let progress = select('.progress .progress-bar', true);
         progress.forEach((el) => {
           el.style.width = el.getAttribute('aria-valuenow') + '%'
@@ -203,7 +203,7 @@
   /**
    * Initiate portfolio lightbox 
    */
-  const portfolioLightbox = GLightbox({
+  GLightbox({
     selector: '.portfolio-lightbox'
   });
 
