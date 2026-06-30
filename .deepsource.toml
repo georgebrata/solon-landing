@@ -1,0 +1,28 @@
+version = 1
+
+exclude_patterns = [
+  "node_modules/**",
+  "assets/vendor/**",
+  "**/*.min.js",
+  "**/*.min.css",
+  "assets/img/**",
+  "assets/pdfs/**",
+  "templates/**"
+]
+
+test_patterns = []
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+  [analyzers.meta]
+  environment = ["nodejs", "browser"]
+  module_system = "commonjs"
+
+[[analyzers]]
+name = "shell"
+enabled = true
+
+  [analyzers.meta]
+  dialect = "bash"
