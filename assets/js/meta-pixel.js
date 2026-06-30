@@ -2,8 +2,8 @@
 (function () {
   "use strict";
 
-  var PIXEL_ID = "400022442507673";
-  var FBE_SRC = "https://connect.facebook.net/en_US/fbevents.js";
+  const PIXEL_ID = "400022442507673";
+  const FBE_SRC = "https://connect.facebook.net/en_US/fbevents.js";
 
   !(function (f, b, e, v, n, t, s) {
     if (f.fbq) {

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     try {
         // Find the element with the id 'contact'
-        var contactElement = document.getElementById('contact');
+        const contactElement = document.getElementById('contact');
         
         // Check if the contact element exists
         if (!contactElement) {
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Create a new iframe element
-        var iframe = document.createElement('iframe');
+        const iframe = document.createElement('iframe');
 
         // Set the src attribute of the iframe
         iframe.src = 'https://us21.list-manage.com/contact-form?u=8cfcf6d7f1f80308125058838&form_id=83c3568e3e4044a508584b292af3395d';

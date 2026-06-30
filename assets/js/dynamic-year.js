@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  var year = String(new Date().getFullYear());
-  var nodes = document.querySelectorAll("[data-current-year]");
+  const year = String(new Date().getFullYear());
+  const nodes = document.querySelectorAll("[data-current-year]");
 
   nodes.forEach(function (node) {
     node.textContent = year;

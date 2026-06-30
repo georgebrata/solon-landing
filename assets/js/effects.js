@@ -5,7 +5,7 @@ function scrollToElement(elementId, seconds) {
     // Wait for 5 seconds
     setTimeout(function () {
         // Get the target element
-        var targetElement = document.getElementById(elementId);
+        const targetElement = document.getElementById(elementId);
 
         // Check if the element exists
         if (targetElement) {
