@@ -1,5 +1,49 @@
 [
   {
+    "title": "Cum să folosești Portalul Instanțelor ca avocat",
+    "date": "2026-07-03",
+    "slug": "cum-sa-folosesti-portalul-instantelor-ca-avocat",
+    "description": "Ghid practic pentru avocați: căutare rapidă în dosare, urmărirea ședințelor, verificarea actelor și organizarea termenelor.",
+    "read_time": 12,
+    "categories": [
+      "legaltech",
+      "digitalizare",
+      "management"
+    ],
+    "tags": [
+      "portalul instanțelor",
+      "avocați",
+      "litigii",
+      "termene",
+      "dosare",
+      "legaltech",
+      "productivitate"
+    ],
+    "url": "cum-sa-folosesti-portalul-instantelor-ca-avocat/"
+  },
+  {
+    "title": "Cum să folosești ReJust ca avocat",
+    "date": "2026-07-02",
+    "slug": "cum-sa-folosesti-rejust-ca-avocat",
+    "description": "Ghid ReJust pentru avocați: căutare de jurisprudență, filtre utile, organizarea spețelor și integrarea în fluxul de litigii.",
+    "read_time": 11,
+    "categories": [
+      "legaltech",
+      "digitalizare",
+      "productivitate"
+    ],
+    "tags": [
+      "rejust",
+      "avocați",
+      "jurisprudență",
+      "legaltech",
+      "litigii",
+      "cercetare",
+      "productivitate"
+    ],
+    "url": "cum-sa-folosesti-rejust-ca-avocat/"
+  },
+  {
     "title": "Ce este un manual de brand pentru avocați?",
     "date": "2026-06-29",
     "slug": "ce-este-un-manual-de-brand-pentru-avocati",
