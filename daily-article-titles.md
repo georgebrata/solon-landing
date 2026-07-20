@@ -6,4 +6,4 @@
 - 2026-07-03: Cum să folosești Portalul Instanțelor ca avocat
 - 2026-07-04: Cum își construiește un avocat din România un dashboard zilnic pentru dosare, termene și ședințe
 - 2026-07-05: Cum își construiește un avocat din România un dosar digital de litigiu care nu scapă termene, probe și jurisprudență
-- 2026-07-20: Cum își construiește un avocat din România un sistem de alerte pentru termene, citații și modificări din dosar
+- 2026-07-20: Cum își construiește un avocat din România un flux săptămânal de jurisprudență cu ReJust, Portalul Instanțelor și AI
