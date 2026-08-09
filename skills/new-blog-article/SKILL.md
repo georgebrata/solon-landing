@@ -1,10 +1,11 @@
 ---
-name: article
+name: new-blog-article
 description: >-
   Write and publish a new SOLON Agency blog article for lawyers (Romanian, with
   diacritics) as a Markdown file in blog/posts/, then run the humanize, build,
   sitemap and Google Sheets pipeline. Use when the user asks to write a new blog
-  article (e.g. "Cum să folosești X ca avocat") or invokes /article.
+  article (e.g. "Cum să folosești X ca avocat") or invokes the new-blog-article
+  skill.
 disable-model-invocation: true
 ---
 
