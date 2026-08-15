@@ -1,5 +1,65 @@
 [
   {
+    "title": "Bonus: top 10 seriale cu și pentru avocați",
+    "date": "2026-08-15",
+    "slug": "bonus-top-10-seriale-cu-si-pentru-avocati",
+    "description": "Zece seriale despre avocați și justiție: de la Better Call Saul și Suits la drame despre etică și drepturi civile.",
+    "read_time": 9,
+    "categories": [
+      "productivitate",
+      "marketing juridic"
+    ],
+    "tags": [
+      "seriale juridice",
+      "avocați",
+      "procese",
+      "etică profesională",
+      "streaming",
+      "justiție"
+    ],
+    "url": "bonus-top-10-seriale-cu-si-pentru-avocati/"
+  },
+  {
+    "title": "Top 10 filme cu și pentru avocați (după 2000)",
+    "date": "2026-08-15",
+    "slug": "top-10-filme-cu-si-pentru-avocati-dupa-anul-2000",
+    "description": "Zece filme juridice după 2000 pentru avocați: corupție, tehnologie, mediu, drepturi civile și strategii de apărare.",
+    "read_time": 9,
+    "categories": [
+      "productivitate",
+      "marketing juridic"
+    ],
+    "tags": [
+      "filme juridice",
+      "avocați",
+      "procese",
+      "cinema",
+      "drepturi civile",
+      "etică profesională"
+    ],
+    "url": "top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/"
+  },
+  {
+    "title": "Top 10 filme cu și pentru avocați (înainte de 2000)",
+    "date": "2026-08-15",
+    "slug": "top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000",
+    "description": "Zece filme juridice de văzut înainte de 2000: procese, etică, prejudecăți și lecții memorabile pentru avocați.",
+    "read_time": 9,
+    "categories": [
+      "productivitate",
+      "marketing juridic"
+    ],
+    "tags": [
+      "filme juridice",
+      "avocați",
+      "procese",
+      "etică profesională",
+      "cinema",
+      "justiție"
+    ],
+    "url": "top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000/"
+  },
+  {
     "title": "Cât te costă, de fapt, un cabinet de avocatură nedigitalizat?",
     "date": "2026-08-10",
     "slug": "cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat",
