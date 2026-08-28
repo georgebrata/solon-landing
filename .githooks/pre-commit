@@ -42,21 +42,21 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
-npm run minify
+# npm run minify
 
 # Build the blog
-node scripts/humanize.js
-node scripts/build.js
-git add blog/
+# node scripts/humanize.js
+# node scripts/build.js
+# git add blog/
 
-node scripts/update-homepage-blog-carousel.js
-git add index.html
+# node scripts/update-homepage-blog-carousel.js
+# git add index.html
 
-for f in assets/css/*.min.css assets/js/*.min.js; do
-  if [ -f "$f" ]; then
-    git add "$f"
-  fi
-done
+# for f in assets/css/*.min.css assets/js/*.min.js; do
+#   if [ -f "$f" ]; then
+#     git add "$f"
+#   fi
+# done
 
-node scripts/update-sitemap.js
-git add sitemap.xml
+# node scripts/update-sitemap.js
+# git add sitemap.xml
