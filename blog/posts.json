@@ -1,5 +1,195 @@
 [
   {
+    "title": "Cum să folosești LinkedIn ca avocat",
+    "date": "2026-08-28",
+    "slug": "cum-sa-folosesti-linkedin-ca-avocat",
+    "description": "Ghid LinkedIn pentru avocați: profil optimizat, conținut, networking, SSI, conformitate deontologică și strategie de vizibilitate.",
+    "read_time": 13,
+    "categories": [
+      "marketing juridic",
+      "digitalizare",
+      "productivitate"
+    ],
+    "tags": [
+      "linkedin",
+      "avocați",
+      "marketing juridic",
+      "networking",
+      "branding",
+      "vizibilitate"
+    ],
+    "url": "cum-sa-folosesti-linkedin-ca-avocat/"
+  },
+  {
+    "title": "Bonus: top 10 seriale cu și pentru avocați",
+    "date": "2026-08-15",
+    "slug": "bonus-top-10-seriale-cu-si-pentru-avocati",
+    "description": "Zece seriale despre avocați și justiție: de la Better Call Saul și Suits la drame despre etică și drepturi civile.",
+    "read_time": 9,
+    "categories": [
+      "productivitate",
+      "marketing juridic"
+    ],
+    "tags": [
+      "seriale juridice",
+      "avocați",
+      "procese",
+      "etică profesională",
+      "streaming",
+      "justiție"
+    ],
+    "url": "bonus-top-10-seriale-cu-si-pentru-avocati/"
+  },
+  {
+    "title": "Top 10 filme cu și pentru avocați (după 2000)",
+    "date": "2026-08-15",
+    "slug": "top-10-filme-cu-si-pentru-avocati-dupa-anul-2000",
+    "description": "Zece filme juridice după 2000 pentru avocați: corupție, tehnologie, mediu, drepturi civile și strategii de apărare.",
+    "read_time": 9,
+    "categories": [
+      "productivitate",
+      "marketing juridic"
+    ],
+    "tags": [
+      "filme juridice",
+      "avocați",
+      "procese",
+      "cinema",
+      "drepturi civile",
+      "etică profesională"
+    ],
+    "url": "top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/"
+  },
+  {
+    "title": "Top 10 filme cu și pentru avocați (înainte de 2000)",
+    "date": "2026-08-15",
+    "slug": "top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000",
+    "description": "Zece filme juridice de văzut înainte de 2000: procese, etică, prejudecăți și lecții memorabile pentru avocați.",
+    "read_time": 9,
+    "categories": [
+      "productivitate",
+      "marketing juridic"
+    ],
+    "tags": [
+      "filme juridice",
+      "avocați",
+      "procese",
+      "etică profesională",
+      "cinema",
+      "justiție"
+    ],
+    "url": "top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000/"
+  },
+  {
+    "title": "Cât te costă, de fapt, un cabinet de avocatură nedigitalizat?",
+    "date": "2026-08-10",
+    "slug": "cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat",
+    "description": "Analiză despre costul oportunității în avocatură: calculează câți bani și câte ore pierzi lunar din cauza lipsei digitalizării (ore pierdute × valoarea orei de avocat).",
+    "read_time": 8,
+    "categories": [
+      "digitalizare",
+      "management",
+      "legaltech"
+    ],
+    "tags": [
+      "cost oportunitate",
+      "digitalizare avocați",
+      "productivitate",
+      "management cabinet",
+      "legaltech",
+      "calcul costuri"
+    ],
+    "url": "cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/"
+  },
+  {
+    "title": "Cum să folosești Legalit.ro ca avocat",
+    "date": "2026-08-10",
+    "slug": "cum-sa-folosesti-legalit-ro-ca-avocat",
+    "description": "Ghid practic pentru avocați: monitor legislativ, verificări ANAF, calendar fiscal, SEAP și dashboard personalizat în Legalit.ro.",
+    "read_time": 11,
+    "categories": [
+      "legaltech",
+      "digitalizare",
+      "productivitate",
+      "calendar"
+    ],
+    "tags": [
+      "legalit.ro",
+      "avocați",
+      "legaltech",
+      "monitor legislativ",
+      "ANAF",
+      "calendar fiscal",
+      "automatizări"
+    ],
+    "url": "cum-sa-folosesti-legalit-ro-ca-avocat/"
+  },
+  {
+    "title": "Cum să folosești Lexeto ca avocat",
+    "date": "2026-08-09",
+    "slug": "cum-sa-folosesti-lexeto-ca-avocat",
+    "description": "Ghid pentru avocați: cont gratuit, profil în Lexeto, calculatoare juridice și evaluarea prezenței online.",
+    "read_time": 9,
+    "categories": [
+      "digitalizare",
+      "legaltech",
+      "marketing juridic"
+    ],
+    "tags": [
+      "lexeto",
+      "avocați",
+      "legaltech",
+      "prezență online",
+      "marketing juridic",
+      "calculatoare juridice"
+    ],
+    "url": "cum-sa-folosesti-lexeto-ca-avocat/"
+  },
+  {
+    "title": "Cum să folosești Portalul Instanțelor ca avocat",
+    "date": "2026-07-03",
+    "slug": "cum-sa-folosesti-portalul-instantelor-ca-avocat",
+    "description": "Ghid practic pentru avocați: căutare rapidă în dosare, urmărirea ședințelor, verificarea actelor și organizarea termenelor.",
+    "read_time": 12,
+    "categories": [
+      "legaltech",
+      "digitalizare",
+      "management"
+    ],
+    "tags": [
+      "portalul instanțelor",
+      "avocați",
+      "litigii",
+      "termene",
+      "dosare",
+      "legaltech",
+      "productivitate"
+    ],
+    "url": "cum-sa-folosesti-portalul-instantelor-ca-avocat/"
+  },
+  {
+    "title": "Cum să folosești ReJust ca avocat",
+    "date": "2026-07-02",
+    "slug": "cum-sa-folosesti-rejust-ca-avocat",
+    "description": "Ghid ReJust pentru avocați: căutare de jurisprudență, filtre utile, organizarea spețelor și integrarea în fluxul de litigii.",
+    "read_time": 11,
+    "categories": [
+      "legaltech",
+      "digitalizare",
+      "productivitate"
+    ],
+    "tags": [
+      "rejust",
+      "avocați",
+      "jurisprudență",
+      "legaltech",
+      "litigii",
+      "cercetare",
+      "productivitate"
+    ],
+    "url": "cum-sa-folosesti-rejust-ca-avocat/"
+  },
+  {
     "title": "Ce este un manual de brand pentru avocați?",
     "date": "2026-06-29",
     "slug": "ce-este-un-manual-de-brand-pentru-avocati",

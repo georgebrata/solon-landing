@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Normalize ANPC footer links: aria-label on <a>, empty img alt, intrinsic dimensions.
  */

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Back-to-top aria-label; header logo duplicate text; placeholder social icons.
  */
