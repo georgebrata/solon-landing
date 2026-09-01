@@ -97,7 +97,7 @@ O structură identică pentru toate cauzele reduce timpul de căutare și riscul
 └── 99_Arhiva
 ```
 
-Separarea dintre `03_Lucru` și `04_Acte-depuse` este esențială. Prima zonă conține versiuni în redactare; a doua trebuie să conțină numai forma transmisă, împreună cu dovada depunerii sau expedierii.
+Separarea dintre `03_Lucru` și `04_Acte-depuse` este esențială. Prima zonă conține versiuni în redactare. a doua trebuie să conțină numai forma transmisă, împreună cu dovada depunerii sau expedierii.
 
 Adoptă o convenție predictibilă:
 
@@ -140,7 +140,7 @@ Nu trata toate semnăturile electronice ca fiind echivalente:
 | **Avansată** | documente pentru care ai nevoie de legare mai puternică de semnatar și integritate | furnizor, metodă și condițiile Legii nr. 214/2024 |
 | **Calificată** | când este necesar echivalentul semnăturii olografe | certificat calificat valid și furnizor calificat |
 
-Legea nr. 214/2024 prevede situații distincte în care semnătura simplă sau avansată poate produce efecte juridice comparabile cu semnătura olografă. De aceea, alegerea nu se face după aspectul grafic al semnăturii, ci după **cerința de formă, identitatea semnatarului, tipul actului și riscul probatoriu**.
+Legea nr. 214/2024 prevede situații distincte în care semnătura simplă sau avansată poate produce efecte juridice comparabile cu semnătura olografă. Așa că, alegerea nu se face după aspectul grafic al semnăturii, ci după **cerința de formă, identitatea semnatarului, tipul actului și riscul probatoriu**.
 
 Pentru fiecare tip de document, creează o matrice internă aprobată de avocatul responsabil: nivelul de semnătură, metoda de identificare, cine semnează, ordinea și ce dovezi se arhivează. Păstrează documentul final, raportul de validare, certificatul ori pista de audit și marcajele temporale relevante în același dosar.
 
@@ -159,7 +159,7 @@ Pentru fiecare obligație importantă, înregistrează:
 - acțiunea concretă;
 - linkul către fișa dosarului, fără date sensibile inutile în descriere.
 
-Exemplu: dacă un act trebuie depus vineri, nu transforma vineri în singurul reminder. Creează etape distincte pentru prima versiune, verificarea coordonatorului, aprobarea clientului dacă este necesară și transmiterea finală.
+Exemplu. dacă un act trebuie depus vineri, nu transforma vineri în singurul reminder. Creează etape distincte pentru prima versiune, verificarea coordonatorului, aprobarea clientului dacă este necesară și transmiterea finală.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
@@ -222,7 +222,7 @@ Evită automatizarea fără control a deciziilor privind conflictul de interese,
 
 ## 11. Aplică securitatea în fiecare etapă a fluxului
 
-Securitatea nu este o aplicație instalată la final, ci o proprietate a întregului proces. Configurația minimă ar trebui să includă:
+Securitatea nu este o aplicație instalată pe scurt, ci o proprietate a întregului proces. Configurația minimă ar trebui să includă:
 
 - **MFA rezistent la phishing** unde serviciul permite, preferabil cheie de securitate sau passkey;
 - cont individual pentru fiecare membru, fără parole partajate;
@@ -272,7 +272,7 @@ Un sistem sigur se degradează dacă nimeni nu îl întreține. Transformă ment
 - revizuiește furnizorii, incidentele și excepțiile;
 - actualizează șabloanele care au produs erori.
 
-Folosește un checklist cu dată și responsabil. O listă bifată mecanic nu ajută; excepțiile trebuie descrise, atribuite și urmărite până la rezolvare.
+Folosește un checklist cu dată și responsabil. O listă bifată mecanic nu ajută. excepțiile trebuie descrise, atribuite și urmărite până la rezolvare.
 
 ## 13. Implementează în 30 de zile, fără să blochezi cabinetul
 
@@ -289,12 +289,12 @@ Migrarea tuturor datelor dintr-o singură mișcare este rareori cea mai sigură 
 
 Măsoară rezultate concrete: timpul până la găsirea unui document, numărul versiunilor trimise greșit, procentul termenelor cu deadline intern, durata onboarding-ului și numărul accesărilor externe rămase active. Nu măsura succesul prin numărul de aplicații instalate.
 
-Începe cu dosarele noi. Migrează arhiva numai după ce structura a fost testată și după ce ai stabilit reguli de păstrare, deduplicare și verificare. Păstrează o evidență a migrării, astfel încât să știi ce a fost mutat, când și de către cine.
+Începe cu dosarele noi. Migrează arhiva numai după ce structura a fost testată și după ce ai stabilit reguli de păstrare, deduplicare și verificare. Păstrează o evidență a migrării, ca să să știi ce a fost mutat, când și de către cine.
 
 ## 14. Concluzie
 
 Un flux digital sigur pentru avocatul din România unește patru elemente: un dosar central bine structurat, o semnare aleasă după cerința juridică, termene propagate într-un calendar controlat și acces protejat pe tot parcursul informației. Beneficiul nu este doar viteza, ci reducerea dependenței de memorie și posibilitatea de a verifica fiecare etapă importantă.
 
-Trade-off-ul este real: standardizarea cere timp, disciplină și instruirea echipei, iar o automatizare prost proiectată poate multiplica o eroare mai repede decât un proces manual. De aceea, implementează gradual, testează pe dosare cu risc controlabil și păstrează validarea profesională acolo unde există consecințe juridice.
+Trade-off-ul este real: standardizarea cere timp, disciplină și instruirea echipei, iar o automatizare prost proiectată poate multiplica o eroare mai repede decât un proces manual. Așa că, implementează gradual, testează pe dosare cu risc controlabil și păstrează validarea profesională acolo unde există consecințe juridice.
 
 Dacă dorești să implementezi un flux digital sigur pentru cabinetul tău, cu structură de documente, semnătură electronică, calendar, automatizări și permisiuni adaptate activității, echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.

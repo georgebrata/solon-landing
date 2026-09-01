@@ -10,7 +10,9 @@ tags: ["filme juridice", "avocați", "procese", "etică profesională", "cinema"
 
 # Top 10 filme cu și pentru avocați (înainte de 2000)
 
-Dacă vrei o listă de filme despre avocați și procese care să merite timpul după o zi de pledoarii, începe cu filmele de mai jos. Sunt producții realizate înainte de anul 2000, dar întrebările lor despre probatoriu, prejudecată, morală și responsabilitate profesională nu au expirat. Unele sunt realiste, altele sunt spectaculos de hollywoodiene; toate oferă câte o idee bună de discutat la cafea și câte una de verificat în practică.
+Dacă vrei o listă de filme despre avocați și procese care să merite timpul după o zi de pledoarii, începe cu filmele de mai jos. Sunt producții realizate înainte de anul 2000, dar întrebările lor despre probatoriu, prejudecată, morală și responsabilitate profesională nu au expirat.
+
+Unele sunt realiste, altele sunt spectaculos de hollywoodiene. toate oferă câte o idee bună de discutat la cafea și câte una de verificat în practică.
 
 Selecția pornește de la recomandările din ghidul SOLON cu filme pentru avocați și completează lista cu două clasice care se potrivesc firesc aceleiași teme. Pentru filme juridice mai noi, continuă cu [Top 10 filme cu și pentru avocați după anul 2000](../top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/), iar pentru seri întregi de binge-watching vezi [bonusul cu 10 seriale despre avocați](../bonus-top-10-seriale-cu-si-pentru-avocati/).
 
@@ -152,6 +154,8 @@ Pentru argumentare și prejudecăți, alege *12 Angry Men*. Pentru etică, *Judg
 
 ## Concluzie
 
-Cele mai bune filme juridice pentru avocați nu sunt neapărat cele în care cineva strigă o replică memorabilă la final. Sunt cele care te fac să întrebi dacă ai verificat suficient o probă, dacă ai ascultat cu adevărat clientul și dacă soluția legală este și una corectă. Aceste producții sunt ficțiune și comprimă proceduri, termene și negocieri pentru spectacol, deci nu trebuie tratate ca formare juridică.
+Cele mai bune filme juridice pentru avocați nu sunt neapărat cele în care cineva strigă o replică memorabilă la final. Sunt cele care te fac să întrebi dacă ai verificat suficient o probă, dacă ai ascultat cu adevărat clientul și dacă soluția legală este și una corectă.
+
+Aceste producții sunt ficțiune și comprimă proceduri, termene și negocieri pentru spectacol, deci nu trebuie tratate ca formare juridică.
 
 Dacă vrei să transformi aceeași atenție pentru structură și claritate într-o prezență online mai bună pentru cabinetul tău, echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice. Pentru continuare, citește [filmele cu și pentru avocați după anul 2000](../top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/) și [cele mai bune seriale despre avocați](../bonus-top-10-seriale-cu-si-pentru-avocati/).

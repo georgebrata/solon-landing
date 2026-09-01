@@ -51,7 +51,7 @@ Client - Nume Dosar/
 
 Folosește aceeași logică pentru fiecare dosar. Evită foldere precum `Diverse`, `Nou`, `De vazut` sau `Acte bune`, pentru că peste trei luni nu vor mai însemna nimic. Pentru lucrul în cloud, vezi și ghidul [Cum să folosești Google Drive ca avocat](../cum-sa-folosesti-google-drive-ca-avocat/), unde structura de foldere, partajarea și versionarea sunt tratate mai detaliat.
 
-## 3. Denumește fișierele astfel încât să le poți găsi fără să le deschizi
+## 3. Denumește fișierele ca să să le poți găsi fără să le deschizi
 
 Numele fișierului trebuie să spună ce conține documentul. O convenție bună reduce erorile și ajută la căutare.
 
@@ -156,7 +156,7 @@ Securitatea nu este doar responsabilitatea departamentului IT. Ca avocat stagiar
 Reguli minime:
 
 - Activează **autentificarea în doi pași** pentru conturile profesionale.
-- Folosește un **password manager**; nu păstra parole în notițe, documente sau conversații.
+- Folosește un **password manager**. nu păstra parole în notițe, documente sau conversații.
 - Nu trimite documente sensibile pe conturi personale.
 - Nu încărca documente reale de client în aplicații AI sau servicii cloud neaprobate.
 - Blochează laptopul când pleci de la birou: `Cmd + Control + Q` pe macOS sau `Windows + L` pe Windows.
@@ -235,10 +235,12 @@ Câteva obiceiuri mici au efect mare:
 - Folosește istoric de versiuni în Google Docs, Word sau Drive ca să recuperezi rapid modificări.
 - Învață să exportezi emailuri importante în PDF când trebuie păstrate în dosar.
 - Ține o notă personală cu proceduri interne: unde se salvează actele, cum se denumesc fișierele, cine aprobă ce.
-- Nu amesteca browserul personal cu cel profesional; folosește profiluri separate.
+- Nu amesteca browserul personal cu cel profesional. folosește profiluri separate.
 
 ## 14. Concluzie
 
-Un avocat stagiar nu trebuie să devină specialist IT, dar trebuie să lucreze digital cu disciplină. Calendarul, folderele, denumirile clare, taskurile, șabloanele și regulile de securitate reduc haosul și cresc încrederea coordonatorului în munca ta. Trade-off-ul este că un sistem bun cere consecvență: dacă îl aplici doar ocazional, devine încă un strat de dezordine.
+Un avocat stagiar nu trebuie să devină specialist IT, dar trebuie să lucreze digital cu disciplină. Calendarul, folderele, denumirile clare, taskurile, șabloanele și regulile de securitate reduc haosul și cresc încrederea coordonatorului în munca ta.
+
+Trade-off-ul este că un sistem bun cere consecvență: dacă îl aplici doar ocazional, devine încă un strat de dezordine.
 
 Dacă dorești să configurezi un sistem digital de lucru pentru cabinetul tău, cu structură de dosare, calendar, task management, șabloane și reguli de securitate adaptate activității juridice, echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.

@@ -10,7 +10,9 @@ tags: ["marketing digital", "avocați", "cărți", "branding", "comunicare", "st
 
 # 5 cărți esențiale de digital marketing pentru un avocat
 
-Marketingul digital pentru un cabinet de avocatură nu înseamnă reclame agresive sau promisiuni goale. Înseamnă claritate, încredere, mesaje care răspund la întrebările reale ale clienților și o prezență online coerentă. Problema este că majoritatea resurselor disponibile online sunt scrise pentru e-commerce sau SaaS - nu pentru profesioniști reglementați, care vând expertiză, nu produse.
+Marketingul digital pentru un cabinet de avocatură nu înseamnă reclame agresive sau promisiuni goale. Înseamnă claritate, încredere, mesaje care răspund la întrebările reale ale clienților și o prezență online coerentă.
+
+Problema este că majoritatea resurselor disponibile online sunt scrise pentru e-commerce sau SaaS - nu pentru profesioniști reglementați, care vând expertiză, nu produse.
 
 Cele cinci cărți de mai jos acoperă exact golurile pe care le întâlnim la cabinetele pe care le digitalizăm: mesaj neclar, comunicare prea tehnică, reticență față de „vânzare”, lipsă de aliniere între ce spui online și ce se întâmplă la prima consultație. Fiecare carte aduce un unghi diferit - de la neuroștiință la storytelling - și toate pot fi aplicate direct în practica juridică.
 
@@ -24,7 +26,7 @@ Cele cinci cărți de mai jos acoperă exact golurile pe care le întâlnim la c
   </div>
 </div>
 
-Donald Miller argumentează că majoritatea brandurilor - inclusiv cabinetele de avocatură - comunică prea mult despre ei înșiși și prea puțin despre client. *Building a StoryBrand* învață cititorii cum să simplifice mesajul de marcă astfel încât oamenii să-l înțeleagă imediat și cum să creeze cele mai eficiente mesaje pentru site-uri web, broșuri și social media.
+Donald Miller argumentează că majoritatea brandurilor - inclusiv cabinetele de avocatură - comunică prea mult despre ei înșiși și prea puțin despre client. *Building a StoryBrand* învață cititorii cum să simplifice mesajul de marcă ca să oamenii să-l înțeleagă imediat și cum să creeze cele mai eficiente mesaje pentru site-uri web, broșuri și social media.
 
 **De ce contează pentru un avocat:**
 
@@ -124,7 +126,7 @@ Cele cinci cărți nu se exclud - se completează. Un flux logic de lectură pen
 4. **Influence Is Your Superpower** - convinge etic, fără disconfort (cum convingi).
 5. **Create Togetherness** - aliniază eforturile întregului cabinet (cine face ce).
 
-Nu trebuie să citești toate cinci înainte de a acționa. Alege cartea care corespunde problemei tale imediate: mesaj neclar → StoryBrand; site plictisitor → Lemon; puține consultații → Catalyst; disconfort la „vânzare” → Chance; dezordine internă → Davis.
+Nu trebuie să citești toate cinci înainte de a acționa. Alege cartea care corespunde problemei tale imediate: mesaj neclar → StoryBrand. site plictisitor → Lemon. puține consultații → Catalyst. disconfort la „vânzare” → Chance. dezordine internă → Davis.
 
 ## Concluzie
 

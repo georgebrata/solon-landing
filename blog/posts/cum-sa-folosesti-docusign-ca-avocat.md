@@ -27,7 +27,7 @@ Acest ghid acoperă funcționalitățile reale ale DocuSign eSignature, cu setă
 - **Limba și fusul orar**: setează limba interfeței și a notificărilor în **My Preferences → Regional Settings**. Pentru semnatari din România, fusul `(UTC+02:00) Bucharest` asigură marcaje de timp corecte în pista de audit.
 - **Aspectul semnăturii**: din **My Preferences → Signatures → Add Signature** alegi stilul semnăturii și al inițialelor (font predefinit, desen cu mouse-ul/touch sau imagine încărcată). Avocații preferă de regulă o semnătură desenată, mai apropiată de cea olografă.
 - **Brand-ul cabinetului**: în planurile **Business Pro** și superioare, mergi la **Settings → Brands → Add Brand** și încarcă logo-ul, culorile și textul e-mailurilor de invitație. Documentele trimise vor purta identitatea vizuală a cabinetului, nu pe cea generică DocuSign - un detaliu de încredere pentru client.
-- **Semnătura și antetul implicit al e-mailului**: personalizează din **Settings → Email Preferences** subiectul și mesajul standard de invitație la semnare, astfel încât clientul să recunoască imediat expeditorul.
+- **Semnătura și antetul implicit al e-mailului**: personalizează din **Settings → Email Preferences** subiectul și mesajul standard de invitație la semnare, ca să clientul să recunoască imediat expeditorul.
 
 ## 2. Tipurile de semnătură electronică și valabilitatea juridică
 
@@ -131,7 +131,7 @@ Cea mai mare economie de timp pentru un cabinet vine din **șabloane** - plicuri
 - **Procură / împuternicire avocațială** - cu inițiale pe fiecare pagină și ID Verification.
 - **Acord de prelucrare a datelor (GDPR)** - clauza standard, refolosibilă pentru fiecare client nou.
 
-Poți partaja șabloanele cu întreaga echipă din **Template → Share**, astfel încât toți avocații să pornească de la aceleași documente verificate. Logica este similară cu cea a șabloanelor reutilizabile din alte instrumente - vezi și abordarea pe șabloane descrisă în ghidul [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
+Poți partaja șabloanele cu întreaga echipă din **Template → Share**, ca să toți avocații să pornească de la aceleași documente verificate. Logica este similară cu cea a șabloanelor reutilizabile din alte instrumente - vezi și abordarea pe șabloane descrisă în ghidul [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
 
 ## 8. PowerForms - formulare de auto-servire pentru clienți
 
@@ -155,6 +155,7 @@ Configurare: pornești de la un șablon → **Use → Bulk Send** → încarci o
 Aplicații concrete:
 - Notificări sau acte adiționale identice către toți clienții afectați de o modificare legislativă.
 - Acorduri GDPR re-emise către întreaga bază de clienți.
+
 - Documente de consimțământ într-un litigiu colectiv sau o acțiune cu mulți reclamanți.
 
 Bulk Send este disponibil în planurile business și are limite de volum în funcție de abonament - verifică plafonul lunar înainte de o campanie mare.
@@ -165,7 +166,7 @@ Un document rămas nesemnat blochează dosarul. DocuSign automatizează urmărir
 
 - **Reminders**: din **Advanced Options** la trimitere (sau implicit în **Settings → Reminders and Expirations**), setezi primul memento după X zile și repetarea la fiecare Y zile. Recomandat: primul memento la 2 zile, repetare la fiecare 3 zile.
 - **Expiration**: documentul expiră automat după mai multe zile (de exemplu 30), util pentru oferte cu termen limitat.
-- **Void (anulare)**: din **Manage → (plicul) → Void** retragi un document trimis din greșeală; semnatarii sunt notificați automat, iar acțiunea rămâne în pista de audit.
+- **Void (anulare)**: din **Manage → (plicul) → Void** retragi un document trimis din greșeală. semnatarii sunt notificați automat, iar acțiunea rămâne în pista de audit.
 - **Correct**: din **Manage → Correct** modifici destinatarii sau câmpurile unui plic deja trimis, fără să o iei de la capăt.
 - **Resend**: retrimiți e-mailul de invitație dacă semnatarul l-a pierdut.
 
@@ -211,7 +212,7 @@ Aplicația pentru iOS și Android oferă funcționalitate completă pentru avoca
 - **Semnezi și trimiți** documente de pe telefon sau tabletă, direct din sala de așteptare a instanței.
 - **Scanarea documentelor**: folosește camera pentru a transforma un document fizic în PDF, gata de trimis spre semnare.
 - **In-person signing**: clientul semnează direct pe ecranul tabletei la sediul cabinetului, fără hârtie.
-- **Mod offline**: pregătești și semnezi documente fără internet; se sincronizează automat la reconectare.
+- **Mod offline**: pregătești și semnezi documente fără internet. se sincronizează automat la reconectare.
 - **Notificări push**: ești anunțat instant când un document a fost semnat sau respins.
 
 ## 15. Tips & tricks care fac diferența
@@ -229,6 +230,6 @@ Aplicația pentru iOS și Android oferă funcționalitate completă pentru avoca
 
 DocuSign comprimă un proces care dura zile - tipărire, deplasare, scanare, retrimitere - într-un flux digital de câteva minute, cu o pistă de audit solidă și valabilitate juridică recunoscută în temeiul eIDAS. Pentru un avocat, beneficiile concrete sunt șabloanele care elimină munca repetitivă, autentificarea care întărește forța probantă, PowerForms care automatizează onboarding-ul clienților și integrările care aduc semnătura electronică direct în Outlook, Gmail și Drive.
 
-Trebuie reținut însă un trade-off real: DocuSign nu acoperă actele care necesită formă autentică notarială, iar nivelul implicit de semnătură (SES/AES) nu este întotdeauna echivalent cu semnătura olografă - pentru acele cazuri ai nevoie de QES și de verificarea cerinței de formă a fiecărui act. În plus, planurile avansate (branding, Bulk Send, integrări) presupun abonamente business mai costisitoare.
+Trebuie reținut însă un trade-off real: DocuSign nu acoperă actele care necesită formă autentică notarială, iar nivelul implicit de semnătură (SES/AES) nu este întotdeauna echivalent cu semnătura olografă - pentru acele cazuri ai nevoie de QES și de verificarea cerinței de formă a fiecărui act. Apoi, planurile avansate (branding, Bulk Send, integrări) presupun abonamente business mai costisitoare.
 
 Dacă vrei să implementezi DocuSign pentru cabinetul tău - cu șabloane juridice, autentificare corectă, PowerForms de onboarding și integrare cu Outlook, Gmail și Google Drive - echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.

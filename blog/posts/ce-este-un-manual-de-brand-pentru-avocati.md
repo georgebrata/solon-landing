@@ -38,7 +38,7 @@ Manualul de brand este „regulamentul” care guvernează toate aceste niveluri
 
 - **Încredere și profesionalism**: un cabinet cu identitate coerentă transmite rigoare - aceeași rigoare pe care clientul o așteaptă în gestionarea dosarului său.
 - **Diferențiere**: pe o piață în care multe cabinete arată la fel, o identitate distinctă te face memorabil.
-- **Eficiență**: nu mai pierzi timp și bani de fiecare dată când creezi un material nou; regulile sunt deja stabilite.
+- **Eficiență**: nu mai pierzi timp și bani de fiecare dată când creezi un material nou. regulile sunt deja stabilite.
 - **Scalabilitate**: când cabinetul crește și apar colaboratori, manualul asigură că toți comunică sub aceeași identitate.
 - **Coerență online-offline**: cartea de vizită, antetul, site-ul și profilul de social media vorbesc aceeași „limbă” vizuală.
 
@@ -86,7 +86,7 @@ Un manual de brand definește fiecare culoare cu **coduri exacte**, ca să fie r
 | **CMYK** | tipar (cărți de vizită, broșuri) |
 | **Pantone (PMS)** | tipar de precizie, culori speciale |
 
-Manualul precizează și **proporțiile de utilizare** (care culoare este dominantă, care este accent) și combinațiile permise, astfel încât identitatea să rămână echilibrată pe orice material.
+Manualul precizează și **proporțiile de utilizare** (care culoare este dominantă, care este accent) și combinațiile permise, ca să identitatea să rămână echilibrată pe orice material.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-8">

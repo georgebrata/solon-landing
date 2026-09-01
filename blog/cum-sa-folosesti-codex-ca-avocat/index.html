@@ -179,18 +179,18 @@
 </thead>
 <tbody><tr>
 <td><strong>Read Only</strong> (doar citire)</td>
-<td>Doar citește fișiere și răspunde; nu modifică nimic</td>
+<td>Doar citește fișiere și răspunde. nu modifică nimic</td>
 <td>Explorare, analiză, prima dată când testezi</td>
 </tr>
 <tr>
 <td><strong>Auto</strong> (implicit)</td>
-<td>Citește și modifică fișiere, rulează comenzi în folderul de lucru; cere voie pentru acces la internet sau în afara folderului</td>
+<td>Citește și modifică fișiere, rulează comenzi în folderul de lucru. cere voie pentru acces la internet sau în afara folderului</td>
 <td>Munca de zi cu zi</td>
 </tr>
 <tr>
 <td><strong>Full Access</strong> (acces complet)</td>
 <td>Rulează orice, inclusiv acces la rețea, fără să întrebe</td>
-<td>De evitat; doar în medii de test izolate</td>
+<td>De evitat. doar în medii de test izolate</td>
 </tr>
 </tbody></table>
 <p>Recomandarea fermă pentru un cabinet: <strong>pornește în Read Only</strong>, treci la <strong>Auto</strong> când ai înțeles ce face și <strong>nu folosi niciodată Full Access</strong> pe un calculator cu date reale de clienți. Sandbox-ul împiedică agentul să atingă fișiere din afara folderului de lucru și să acceseze rețeaua fără permisiune - este prima ta linie de apărare.</p>
@@ -247,7 +247,7 @@
 <li><strong>Sarcini în cloud delegate din ChatGPT</strong>: din interfața ChatGPT poți trimite o sarcină care rulează în fundal, pe un mediu izolat al OpenAI, și primești rezultatul (un set de modificări) când e gata.</li>
 <li><strong>API și conectare la alte servicii</strong>: cu permisiunea ta de acces la rețea, Codex poate scrie scripturi care folosesc API-uri publice (de exemplu, cursul valutar BNR pentru actualizarea unei creanțe) sau care scriu într-o foaie de calcul Google.</li>
 </ul>
-<p>Atenție: orice integrare care implică acces la internet sau la date externe trebuie aprobată explicit și evaluată din perspectiva confidențialității (secțiunea 11).</p>
+<p>Atenție. orice integrare care implică acces la internet sau la date externe trebuie aprobată explicit și evaluată din perspectiva confidențialității (secțiunea 11).</p>
 <h2>10. Sarcini în cloud și delegarea în paralel</h2>
 <p>Pe lângă varianta locală, Codex poate executa sarcini <strong>în cloud</strong>: le descrii, agentul lucrează într-un container izolat pe serverele OpenAI și îți întoarce rezultatul. Avantajul este că poți lansa <strong>mai multe sarcini în paralel</strong> și că nu îți ocupă calculatorul - pornești o automatizare lungă și te întorci la munca ta juridică.</p>
 <p>Modelul de lucru recomandat pentru un avocat:</p>
@@ -270,7 +270,7 @@
 <h2>12. Tips &amp; tricks care fac diferența</h2>
 <ul>
 <li><strong>Începe fiecare proiect cu un <code>AGENTS.md</code></strong> care stabilește limba, formatul și regula de a nu scoate datele din folder.</li>
-<li><strong>Formulează sarcini mici și clare</strong>, una câte una; un agent primește instrucțiuni precise mai bine decât o cerere vagă și uriașă.</li>
+<li><strong>Formulează sarcini mici și clare</strong>, una câte una. un agent primește instrucțiuni precise mai bine decât o cerere vagă și uriașă.</li>
 <li><strong>Cere-i lui Codex să-ți explice ce face</strong> înainte de a aproba - „explică-mi pe scurt ce va face scriptul, apoi așteaptă confirmarea”.</li>
 <li><strong>Lucrează cu control al versiunilor (Git)</strong> pe proiectele mai mari, ca să poți reveni dacă o modificare strică ceva.</li>
 <li><strong>Folosește date fictive pentru prototipare</strong> și treci la datele reale doar după ce ai validat că instrumentul funcționează.</li>
@@ -283,7 +283,7 @@
 <ul>
 <li><strong>Nu este un instrument de consultanță juridică</strong>: Codex automatizează operațiuni pe documente și date, nu oferă analiză sau opinii juridice de încredere.</li>
 <li><strong>Necesită un minim de confort tehnic</strong>: deși nu scrii cod, trebuie să înțelegi ce este un terminal, un folder de lucru și un mod de aprobare.</li>
-<li><strong>Poate greși</strong>: scripturile generate trebuie verificate; nu folosi rezultatul nevalidat pe documente care produc efecte juridice.</li>
+<li><strong>Poate greși</strong>: scripturile generate trebuie verificate. nu folosi rezultatul nevalidat pe documente care produc efecte juridice.</li>
 <li><strong>Nu este potrivit pentru date ultrasensibile în cloud</strong>: pentru acestea, rămâi pe execuția locală izolată.</li>
 </ul>
 <p>Dacă ai nevoie doar de un asistent de cercetare și sinteză, un instrument precum cel din ghidul <a href="../cum-sa-folosesti-notebooklm-ca-avocat/">Cum să folosești NotebookLM ca avocat</a> este mai potrivit. Codex strălucește atunci când problema ta este, în esență, una de automatizare repetitivă.</p>
@@ -328,11 +328,11 @@
     <div class="blog-recent-articles">
       <h2>ARTICOLE RECENTE</h2>
       <ul>
-        <li><a href="../cum-sa-folosesti-linkedin-ca-avocat/">Cum să folosești LinkedIn ca avocat</a>, 28 august 2026</li>
+        <li><a href="../flux-digital-sigur-pentru-avocatul-din-romania/">Flux digital sigur pentru avocatul din România</a>, 1 septembrie 2026</li>
+<li><a href="../cum-sa-folosesti-linkedin-ca-avocat/">Cum să folosești LinkedIn ca avocat</a>, 28 august 2026</li>
+<li><a href="../cum-sa-folosesti-slack-ca-avocat/">Cum să folosești Slack ca avocat</a>, 28 august 2026</li>
 <li><a href="../bonus-top-10-seriale-cu-si-pentru-avocati/">Bonus: top 10 seriale cu și pentru avocați</a>, 15 august 2026</li>
 <li><a href="../top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/">Top 10 filme cu și pentru avocați (după 2000)</a>, 15 august 2026</li>
-<li><a href="../top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000/">Top 10 filme cu și pentru avocați (înainte de 2000)</a>, 15 august 2026</li>
-<li><a href="../cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/">Cât te costă, de fapt, un cabinet de avocatură nedigitalizat?</a>, 10 august 2026</li>
       </ul>
     </div>
 

@@ -28,7 +28,7 @@ Site Explorer este modulul central din Ahrefs. Introdu URL-ul site-ului cabinetu
 
 - **Organic traffic**: estimarea numărului de vizitatori lunari din căutările Google. Dacă ai sub 100 de vizitatori organici pe lună, site-ul tău este practic invizibil în căutările relevante.
 - **Organic keywords**: numărul de cuvinte cheie pentru care apari în rezultatele Google. Urmărește câte sunt în Top 10 (prima pagină) - doar acestea generează trafic real.
-- **Domain Rating (DR)**: scor de la 0 la 100 care reflectă autoritatea site-ului tău în funcție de profilul de backlink-uri. Un cabinet nou pornește de obicei de la DR 0-10; un site juridic cu conținut constant și link-uri de calitate ajunge la DR 20-40 în 12-18 luni.
+- **Domain Rating (DR)**: scor de la 0 la 100 care reflectă autoritatea site-ului tău în funcție de profilul de backlink-uri. Un cabinet nou pornește de obicei de la DR 0-10. un site juridic cu conținut constant și link-uri de calitate ajunge la DR 20-40 în 12-18 luni.
 - **Referring domains**: numărul de site-uri distincte care trimit link-uri către site-ul tău. Mai important decât numărul total de backlink-uri - 10 link-uri de la 10 site-uri diferite valorează mai mult decât 50 de link-uri de la același site.
 
 **Setare practică:** adaugă site-ul cabinetului tău în **Dashboard** > **+ Add project** și configurează monitorizarea automată. Ahrefs va scana periodic site-ul și te va alerta când apar schimbări semnificative în trafic, cuvinte cheie sau backlink-uri.
@@ -46,7 +46,7 @@ Keywords Explorer este instrumentul de cercetare a cuvintelor cheie. Pentru un a
 | Metrică | Ce înseamnă | De ce contează |
 |---------|-------------|----------------|
 | **Search Volume (SV)** | Numărul mediu lunar de căutări | Indică cererea reală pentru serviciul respectiv |
-| **Keyword Difficulty (KD)** | Scor 0-100, cât de greu este să ajungi în Top 10 | Sub 20 = accesibil pentru un site nou; peste 40 = competiție puternică |
+| **Keyword Difficulty (KD)** | Scor 0-100, cât de greu este să ajungi în Top 10 | Sub 20 = accesibil pentru un site nou. peste 40 = competiție puternică |
 | **CPC** | Costul per click în Google Ads | CPC mare (peste 2-3 EUR) indică intenție comercială puternică |
 | **Traffic Potential (TP)** | Traficul estimat pentru întreaga pagină, nu doar pentru un singur cuvânt cheie | Mai relevant decât SV-ul individual |
 
@@ -145,7 +145,7 @@ Profilul de backlink-uri este unul dintre cei mai importanți factori de ranking
 - **Referring page**: pagina exactă care face link către tine.
 - **DR al domeniului sursă**: cât de autoritar este site-ul care te menționează.
 - **Anchor text**: textul pe care utilizatorul îl vede ca link. Un profil natural de link-uri are ancore variate (numele cabinetului, URL-ul, termeni generici ca `click aici`, termeni descriptivi ca `avocat specializat dreptul muncii`).
-- **Dofollow / Nofollow**: link-urile dofollow transmit autoritate; link-urile nofollow nu, dar contribuie la un profil natural.
+- **Dofollow / Nofollow**: link-urile dofollow transmit autoritate. link-urile nofollow nu, dar ajută la un profil natural.
 
 **Strategii de link building specifice pentru avocați:**
 
@@ -211,7 +211,7 @@ Ahrefs transformă crearea de conținut dintr-un exercițiu intuitiv într-un pr
 1. **Cercetare**: în Keywords Explorer, caută un subiect din practica ta (ex. `clauză penală contract`). Analizează volumul, dificultatea și intenția de căutare.
 2. **Analiza SERP**: verifică primele 10 rezultate - ce acoperă, cât de detaliate sunt, ce le lipsește.
 3. **Cuvinte cheie secundare**: din **Also rank for** și **Questions**, extrage 5-10 termeni înrudiți pe care să-i integrezi natural în articol.
-4. **Structura**: construiește structura articolului astfel încât să acopere toate subtopicurile identificate în pasul anterior.
+4. **Structura**: construiește structura articolului ca să să acopere toate subtopicurile identificate în pasul anterior.
 5. **Publicare și monitorizare**: după publicare, adaugă cuvintele cheie țintă în Rank Tracker și urmărește evoluția poziției în următoarele 4-8 săptămâni.
 6. **Optimizare**: dacă după 2-3 luni articolul se poziționează pe pozițiile 5-15, optimizează-l: adaugă secțiuni noi, actualizează informațiile, îmbunătățește titlul și meta description-ul.
 

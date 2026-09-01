@@ -26,7 +26,7 @@ Primul pas pentru a crea un spațiu de lucru ordonat este configurarea corectă 
 
 - **Numele și URL-ul spațiului**: alege un domeniu clar și profesionist (de exemplu `cabinet-avocat-popescu.slack.com` sau `societate-juridica.slack.com`).
 - **Profilul membrilor**: impune completarea numelui complet, a rolului specific (ex. `Avocat coordonator - Litigii`, `Avocat colaborator - Drept comercial`, `Secretariat`) și a numărului direct de telefon. O fotografie de profil profesională ajută la identificarea instantă a interlocutorilor.
-- **Fusul orar și limba**: asigură-te că toți membrii au setat fusul orar `(UTC+02:00) Bucharest` în **Preferences → Language & region**, astfel încât mesajele programate și alertele să fie sincronizate perfect.
+- **Fusul orar și limba**: asigură-te că toți membrii au setat fusul orar `(UTC+02:00) Bucharest` în **Preferences → Language & region**, ca să mesajele programate și alertele să fie sincronizate perfect.
 - **Programul de notificări (Do Not Disturb)**: din **Preferences → Notifications**, setează intervalul de liniște (de pildă între orele 19:30 și 08:00). În afara acestui program, mesajele primite nu declanșează alerte sonore sau vibrații, protejând timpul de refacere al echipei, dar rămân disponibile la prima deschidere a aplicației.
 - **Filtrarea alertelor**: setează notificările implicite pe `Direct messages, mentions & keywords` în loc de `All new messages`. Astfel, avocații primesc alerte doar când sunt vizați direct sau când apare un cuvânt cheie important, eliminând zgomotul de fond.
 
@@ -73,7 +73,7 @@ Fiecare canal din Slack include un document persistent numit **Canvas** (accesib
 - **Linkuri directe către fișiere**: folderele dosarului stocate în cloud, conform procedurii descrise în ghidul despre [cum să folosești Google Drive ca avocat](../cum-sa-folosesti-google-drive-ca-avocat/).
 - **Obiectul și strategia scurtă**: sinteza de două paragrafe a capetelor de cerere și excepțiilor invocate.
 
-În plus, poți folosi funcția **Slack Lists** direct în canal pentru a urmări pașii procedurali critici:
+Apoi, poți folosi funcția **Slack Lists** direct în canal pentru a urmări pașii procedurali critici:
 - [ ] Redactare întâmpinare până la data de 15 a lunii
 - [ ] Achitare taxă judiciară de timbru și trimitere recipisă
 - [ ] Semnare electronică a tranzacției de către client
@@ -143,6 +143,7 @@ Pentru relația cu clienții corporate (societăți comerciale, fonduri de inves
 
 **Tipuri de conturi pentru colaboratori externi:**
 - **Single-Channel Guests**: ideal pentru clienți individuali sau experți parte. Aceștia au acces strict la canalul dedicat cazului lor și nu pot vedea restul canalelor sau colegii din cabinet.
+
 - **Multi-Channel Guests**: util pentru avocați colaboratori externi sau stagiari care lucrează doar pe anumite proiecte selectate.
 
 Avantajul strategic este că istoricul, fișierele și deciziile rămân stocate în arhiva cabinetului tău, protejate prin politici de securitate centralizate, chiar dacă relația contractuală cu respectivul colaborator încetează ulterior.
@@ -192,7 +193,7 @@ Păstrarea secretului profesional și conformitatea cu GDPR și Legea nr. 51/199
 - **Politica de retenție a mesajelor (Message Retention)**: în planurile **Pro** și **Business+**, poți stabili durata de păstrare a conversațiilor din **Workspace settings → Retention**. Poți alege ca mesajele să fie păstrate pe toată durata de activitate a cabinetului sau să fie șterse automat după un anumit interval de ani, în conformitate cu politicile interne de arhivare.
 - **Controlul descărcării fișierelor pe dispozitive nesecurizate**: restricționează descărcarea documentelor pe dispozitive personale neverificate pentru a preveni scurgerile accidentale de date.
 - **Deconectarea de la distanță a sesiunilor**: dacă un coleg își pierde laptopul sau telefonul mobil, administratorul poate revoca instant sesiunea activă din panoul de administrare, blocând orice acces neautorizat la datele clienților.
-- **Criptarea datelor**: Slack criptează datele în tranzit (folosind TLS 1.2 sau superior) și la repaus (utilizând criptare robustă AES-256).
+- **Criptarea datelor**: Slack criptează datele în tranzit (folosind TLS 1.2 sau superior) și la repaus (utilizând criptare solidă AES-256).
 
 Pentru a aprofunda cele mai bune practici de protecție a datelor în mediul digital, citește ghidul despre [importanța securității cibernetice în practica avocaturii digitale](../importanta-securitatii-cibernetice-practica-avocaturii-digitale/) și principiile din [zero trust security explicat pentru avocați](../zero-trust-security-explicat-pentru-avocati/).
 
@@ -222,7 +223,7 @@ Avocații de litigii își petrec o bună parte din zi în instanțe, pe drum sa
 
 ## 12. Tips & tricks concrete pentru avocați
 
-Iată opt comenzi rapide și bune practici care cresc considerabil viteza de lucru în echipă:
+Iată opt comenzi rapide și bune practici care cresc vizibil viteza de lucru în echipă:
 
 1. **Comanda `/remind` pentru termene procedurale**: tastează direct în căsuța de text `/remind me to transmit concluziile scrise in dosarul Popescu on Thursday at 10:00`. Slackbot îți va trimite un reminder privat exact la momentul stabilit.
 2. **Scurtătura de navigare rapidă `Cmd + K` (Mac) sau `Ctrl + K` (Windows)**: deschide bara Quick Switcher. Tastezi primele două litere ale dosarului sau numele unui coleg și sari instant în canalul respectiv fără să derulezi lista.
@@ -235,7 +236,7 @@ Iată opt comenzi rapide și bune practici care cresc considerabil viteza de luc
 
 ## Concluzie
 
-Implementarea Slack într-un cabinet de avocatură înseamnă mai mult decât instalarea unei aplicații de mesagerie; înseamnă crearea unei infrastructuri organizate de colaborare în care informația circulă rapid, dosarele au un istoric complet și securizat, iar timpul pierdut în e-mailuri interne sau pe grupuri nestructurate de chat este recuperat în totalitate. Despre costurile ascunse ale lipsei de structură digitală poți citi mai pe larg în analiza noastră despre [cât te costă de fapt un cabinet de avocatură nedigitalizat](../cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/).
+Implementarea Slack într-un cabinet de avocatură înseamnă mai mult decât instalarea unei aplicații de mesagerie. înseamnă crearea unei infrastructuri organizate de colaborare în care informația circulă rapid, dosarele au un istoric complet și securizat, iar timpul pierdut în e-mailuri interne sau pe grupuri nestructurate de chat este recuperat în totalitate. Despre costurile ascunse ale lipsei de structură digitală poți citi mai pe larg în analiza noastră despre [cât te costă de fapt un cabinet de avocatură nedigitalizat](../cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/).
 
 Totuși, merită spus că Slack necesită disciplină internă și reguli clare de adoptare: dacă o parte din echipă continuă să trimită documente pe e-mail sau instrucțiuni pe WhatsApp, valoarea centralizării se diluează. Succesul ține de o configurare profesionistă a spațiului de lucru, stabilirea convențiilor de canale și instruirea fiecărui avocat asupra etichetei de lucru.
 

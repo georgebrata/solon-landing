@@ -48,7 +48,7 @@ Pe portal, rezultatele diferă mult în funcție de câmpul de căutare folosit.
 - **Obiect dosar** când faci orientare pe un tip de cauză, nu pe un dosar anume.
 - **Instituție** când vrei să restrângi rezultatele la o anumită instanță.
 
-Regula de bază este simplă: pentru verificare operațională folosești **numărul de dosar**; pentru cercetare și mapare folosești combinații mai largi. Dacă lucrezi exclusiv după nume de parte într-un portofoliu mare, vei produce mult zgomot și riști să urmărești dosare irelevante.
+Regula de bază este simplă: pentru verificare operațională folosești **numărul de dosar**. pentru cercetare și mapare folosești combinații mai largi. Dacă lucrezi exclusiv după nume de parte într-un portofoliu mare, vei produce mult zgomot și riști să urmărești dosare irelevante.
 
 Păstrează într-un document intern o structură standard pentru identificare:
 
@@ -237,7 +237,7 @@ Mai jos sunt câteva obiceiuri care fac diferența în practică:
 - Păstrează un text expander pentru formulări repetitive din emailurile către client.
 - Notează `ultima verificare` în fiecare fișă de dosar.
 - Separă dosarele la pronunțare de cele cu termen de judecată deja fixat.
-- Nu amesteca verificarea portalului cu redactarea actelor; fă-le în blocuri diferite.
+- Nu amesteca verificarea portalului cu redactarea actelor. fă-le în blocuri diferite.
 - Verifică la aceeași oră zilnic dosarele sensibile, ca să reduci omisiunile.
 - Dacă un dosar are miză mare, cere dublă verificare internă înainte de termen.
 - Leagă fiecare termen de un task cu deadline intern anterior, nu de data ședinței propriu-zise.
@@ -246,6 +246,6 @@ Mai jos sunt câteva obiceiuri care fac diferența în practică:
 
 Portalul Instanțelor nu este sofisticat, dar poate deveni un instrument foarte eficient dacă îl integrezi într-un proces disciplinat. Câștigul real nu vine din interfață, ci din felul în care cauți, clasifici, notezi și redistribui informația în restul sistemului tău de lucru.
 
-Limita lui principală este că nu organizează munca pentru tine și nu înlocuiește verificarea profesionistă a actelor sau a implicațiilor procedurale. Tocmai de aceea, avantajul competitiv apare atunci când construiești în jurul lui un flux intern clar, repetabil și sigur.
+Limita lui principală este că nu organizează munca pentru tine și nu înlocuiește verificarea profesionistă a actelor sau a implicațiilor procedurale. Tocmai așa că, avantajul competitiv apare atunci când construiești în jurul lui un flux intern clar, repetabil și sigur.
 
 Dacă dorești să configurezi Portalul Instanțelor pentru cabinetul tău cu automatizări, integrare cu Gmail și Calendar și un flux clar de monitorizare a dosarelor, echipa **SOLON** poate ajuta cu consultanță de digitalizare adaptată specificului practicii tale juridice.

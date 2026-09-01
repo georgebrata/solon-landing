@@ -142,10 +142,14 @@ Selecția folosește recomandările din ghidul SOLON cu filme pentru avocați ș
 
 ## Cum alegi un film juridic după interesul tău?
 
-Pentru avocatură corporativă și crize interne, începe cu *Michael Clayton* și *The Social Network*. Pentru litigii penale, *Fracture* și *The Lincoln Lawyer* au ritmul cel mai bun. Pentru investigații, *Spotlight* este alegerea metodică. Pentru drepturi civile și cauze cu impact social, alege *Just Mercy*, *The Mauritanian* sau *A Most Wanted Man*. Iar pentru răspundere și analiză retrospectivă, *Sully* și *Dark Waters* oferă material serios de reflecție.
+Pentru avocatură corporativă și crize interne, începe cu *Michael Clayton* și *The Social Network*. Pentru litigii penale, *Fracture* și *The Lincoln Lawyer* au ritmul cel mai bun. Pentru investigații, *Spotlight* este alegerea metodică.
+
+Pentru drepturi civile și cauze cu impact social, alege *Just Mercy*, *The Mauritanian* sau *A Most Wanted Man*. Iar pentru răspundere și analiză retrospectivă, *Sully* și *Dark Waters* oferă material serios de reflecție.
 
 ## Concluzie
 
-Filmele cu și pentru avocați după anul 2000 arată o profesie care nu se mai desfășoară doar în sala de judecată. Se desfășoară în corporații, în comunități, în laboratoare, în presă și în sistemele digitale care produc tot mai multe conflicte noi. Ficțiunea comprimă realitatea și dramatizează procedurile, așa că privește aceste producții ca pe un exercițiu de perspectivă, nu ca pe o sursă de consultanță juridică.
+Filmele cu și pentru avocați după anul 2000 arată o profesie care nu se mai desfășoară doar în sala de judecată. Se desfășoară în corporații, în comunități, în laboratoare, în presă și în sistemele digitale care produc tot mai multe conflicte noi.
+
+Ficțiunea comprimă realitatea și dramatizează procedurile, așa că privește aceste producții ca pe un exercițiu de perspectivă, nu ca pe o sursă de consultanță juridică.
 
 Dacă vrei să construiești pentru cabinet aceeași claritate pe care o cauți într-o strategie bună de film, echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice. Pentru o doză mai lungă de intrigă, continuă cu [serialele despre avocați pe care merită să le vezi](../bonus-top-10-seriale-cu-si-pentru-avocati/) și cu [filmele juridice de dinainte de 2000](../top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000/).

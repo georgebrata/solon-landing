@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { marked } = require('marked');
 const yaml = require('js-yaml');
 
 const POSTS_DIR = path.join(__dirname, '../blog/posts');
@@ -72,7 +71,7 @@ function generateRecentPostsHTML(posts, currentSlug, limit = 5) {
   }).join('\n');
 }
 
-function generatePostHTML(post, posts) {
+function generatePostHTML(post, posts, marked) {
   const { frontmatter, content } = post;
   const htmlContent = marked.parse(content)
     // Keep only one document H1 (the template's .entry-title).
@@ -178,9 +177,10 @@ ${tagsBlock}
     .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>');
 }
 
-function build() {
+async function build() {
   console.log('Building blog...');
 
+  const { marked } = await import('marked');
   const files = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.md'));
   const posts = files.map(file => parseMarkdown(path.join(POSTS_DIR, file)));
 
@@ -192,7 +192,7 @@ function build() {
     const postDir = path.join(OUTPUT_DIR, post.frontmatter.slug);
     if (!fs.existsSync(postDir)) fs.mkdirSync(postDir, { recursive: true });
 
-    const html = generatePostHTML(post, posts);
+    const html = generatePostHTML(post, posts, marked);
     fs.writeFileSync(path.join(postDir, 'index.html'), html);
     console.log(`Generated: /blog/${post.frontmatter.slug}/index.html`);
   });
@@ -213,4 +213,7 @@ function build() {
   console.log('Build complete!');
 }
 
-build();
+build().catch((error) => {
+  console.error('Build failed:', error);
+  process.exitCode = 1;
+});

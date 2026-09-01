@@ -137,7 +137,7 @@ Puterea Gmail crește când îl folosești împreună cu celelalte instrumente G
 - **Tasks**: transformi e-mailurile în task-uri urmărite.
 - **Drive**: salvezi și partajezi documente fără atașamente duplicate.
 
-Pentru fluxuri avansate, poți integra Gmail și cu instrumente externe de automatizare (de exemplu Zapier sau Relay.app), astfel încât acțiunile repetitive să ruleze automat.
+Pentru fluxuri avansate, poți integra Gmail și cu instrumente externe de automatizare (de exemplu Zapier sau Relay.app), ca să acțiunile repetitive să ruleze automat.
 
 ## 11. Securitate și conformitate: minimul obligatoriu pentru avocați
 

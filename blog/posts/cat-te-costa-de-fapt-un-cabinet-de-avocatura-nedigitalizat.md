@@ -32,9 +32,11 @@ Sarcini repetitive precum:
 - Completarea manuală a formularelor standardizate;
 - Notarea termenelor pe hârtie sau în directoare locale separate;
 - Trimiterea de reminder-uri manuale către clienți pentru predarea documentelor;
-- Verificarea individuală, dosar cu dosar, pe Portalul Instanțelor;
+- Verificarea individuală, dosar cu dosar, pe Portalul Instanțelor.
 
-răpesc, în medie, între **1,5 și 3 ore pe zi** din timpul unui avocat. Aceste ore nu produc valoare juridică adăugată și nu pot fi facturate clientului la valoarea reală a experienței tale. Sunt ore luate direct din timpul dedicat analizei de caz, strategiei sau dezvoltării cabinetului.
+răpesc, în medie, între **1,5 și 3 ore pe zi** din timpul unui avocat. Aceste ore nu produc valoare juridică adăugată și nu pot fi facturate clientului la valoarea reală a experienței tale.
+
+Sunt ore luate direct din timpul dedicat analizei de caz, strategiei sau dezvoltării cabinetului.
 
 ---
 
@@ -78,7 +80,7 @@ Stabilirea unei simple consultanțe inițiale poate deveni un consumator uriaș 
 > *„Nu, marți am termen. Ce spuneți de miercuri la 14?”* 
 > *„Miercuri nu pot eu. Joi la 9?”* 
 
-Acest ping-pong de 5-6 mesaje sau apeluri telefonice irosește timp prețios pentru ambele părți. În plus, fără un calendar integrat și fără SMS-uri sau e-mailuri automate de reamintire:
+Acest ping-pong de 5-6 mesaje sau apeluri telefonice irosește timp prețios pentru ambele părți. Apoi, fără un calendar integrat și fără SMS-uri sau e-mailuri automate de reamintire:
 - Rata de neprezentare (*no-show*) la consultanțe crește vizibil;
 - Apar suprapuneri accidentale în agendă;
 - Intervalele libere dintre întâlniri rămân neutilizate eficient.
@@ -87,7 +89,7 @@ Acest ping-pong de 5-6 mesaje sau apeluri telefonice irosește timp prețios pen
 
 ## 5. Lead-uri pierdute pe drum
 
-Fiecare potențial client care ajunge pe site-ul tău, trimite un mesaj pe formularul de contact sau este recomandat de un partener reprezintă o oportunitate valoroasă.
+Fiecare potențial client care ajunge pe site-ul tău, trimite un mesaj pe formularul de contact sau este recomandat de un partener e o ocazie valoroasă.
 
 Fără un sistem centralizat de evidență a oportunităților (un CRM juridic simplu):
 - Solicitările rămân nepreluate sau sunt uitate în inbox;

@@ -79,7 +79,7 @@ Oricât de avansată ar fi tehnologia, este esențial ca echipa să fie pregăti
 
 ### Asigurarea securității datelor
 
-Confidențialitatea este crucială în domeniul juridic. Soluțiile alese trebuie să respecte standardele de securitate și să protejeze datele sensibile ale clienților.
+Confidențialitatea este decisivă în domeniul juridic. Soluțiile alese trebuie să respecte standardele de securitate și să protejeze datele sensibile ale clienților.
 
 ## Ce urmează pentru profesioniștii din domeniul juridic?
 

@@ -105,7 +105,7 @@ Câmpurile custom apar vizibil pe fața cardului (front of card), nu doar în in
 
 Checklist-urile din Trello sunt mai puternice decât par la prima vedere:
 
-- **Checklist cu assignee individual**: fiecare item dintr-o listă poate fi asignat unui membru diferit al echipei - util când mai mulți avocați contribuie la același dosar.
+- **Checklist cu assignee individual**: fiecare item dintr-o listă poate fi asignat unui membru diferit al echipei - util când mai mulți avocați ajută la același dosar.
 - **Due date per item**: fiecare task din checklist poate avea propriul deadline, independent de due date-ul cardului.
 - **Progres vizibil**: bara de progres procentuală apare automat pe fața cardului pe măsură ce bifezi taskuri (`3/7 completate = 43%`).
 - **Copiere checklist**: dacă ai un checklist standard (ex. „Pași onboarding client nou” sau „Verificări preliminare dosar nou”), îl poți copia pe orice card nou din opțiunea **Copy checklist from...** - elimini complet rescrierea manuală.
@@ -156,7 +156,7 @@ Pe lângă Custom Fields și Calendar (deja menționate), acestea merită activa
 - **Card Repeater**: creează automat carduri recurente la intervale predefinite - util pentru sarcini periodice (ex. verificare lunară platforme instanță, trimitere raport lunar client).
 - **Trello for Gmail** (extensie Chrome): transformă orice e-mail în card Trello direct din Gmail, cu subiectul pre-completat și opțiunea de a alege board-ul și lista.
 - **Google Drive Power-Up**: atașează fișiere direct din Google Drive la carduri, cu previzualizare inline - fără descărcări intermediare.
-- **Slack Power-Up**: primești notificări Trello direct în canalele Slack relevante; poți crea carduri Trello din comenzi Slack (`/trello add`).
+- **Slack Power-Up**: primești notificări Trello direct în canalele Slack relevante. poți crea carduri Trello din comenzi Slack (`/trello add`).
 - **Voting Power-Up**: util în ședințele de echipă pentru prioritizarea dosarelor sau a deciziilor strategice.
 
 Activarea unui Power-Up: Board → **Power-Ups** (bara laterală) → caută după nume → **Add**.
@@ -204,8 +204,8 @@ Salvare template: Board → **Show menu** → **More** → **Copy board** sau **
 Aplicația Trello pentru iOS și Android este completă funcțional, nu o versiune redusă:
 
 - **Quick add**: din ecranul principal, butonul `+` creează rapid un card nou pe orice board - util când ești la instanță și vrei să notezi imediat o sarcină.
-- **Notifications center**: toate notificările sunt centralizate; poți seta care tipuri te notifică prin push (menționare, apropierea unui due date, mișcare card).
-- **Offline mode**: cardurile deschise anterior sunt accesibile offline; modificările se sincronizează la reconectare.
+- **Notifications center**: toate notificările sunt centralizate. poți seta care tipuri te notifică prin push (menționare, apropierea unui due date, mișcare card).
+- **Offline mode**: cardurile deschise anterior sunt accesibile offline. modificările se sincronizează la reconectare.
 - **Camera atașare**: fotografiezi un act din dosar direct din card (buton atașare → cameră foto) - documentul ajunge instant în card.
 - **Widget home screen**: pe Android și iOS poți adăuga un widget cu cardurile urgente sau cu board-ul preferat direct pe ecranul de pornire.
 
@@ -223,6 +223,6 @@ Aplicația Trello pentru iOS și Android este completă funcțional, nu o versiu
 
 Trello nu este doar o tablă cu post-it-uri digitale. Configurat cu structura corectă de board-uri și liste, etichete coerente, câmpuri custom, automatizări Butler și Power-Up-uri relevante, devine un sistem de management al practicii juridice complet vizibil, urmărit și replicabil. Fiecare dosar are un loc clar, fiecare sarcină are un responsabil și un termen, fiecare etapă este trasabilă.
 
-Spre deosebire de un software juridic dedicat, Trello oferă flexibilitate totală în configurare și un cost foarte scăzut (planul Free acoperă nevoile unui cabinet mic; planul Standard la ~5 USD/utilizator/lună deblochează vizualizările avansate). Dezavantajul principal: nu este proiectat pentru evidența financiară, facturare sau gestionarea documentelor cu semnătură electronică - aceste aspecte necesită instrumente complementare.
+Spre deosebire de un software juridic dedicat, Trello oferă flexibilitate totală în configurare și un cost foarte scăzut (planul Free acoperă nevoile unui cabinet mic. planul Standard la ~5 USD/utilizator/lună deblochează vizualizările avansate). Dezavantajul principal: nu este proiectat pentru evidența financiară, facturare sau gestionarea documentelor cu semnătură electronică - aceste aspecte necesită instrumente complementare.
 
 Dacă vrei să implementezi un flux de management al dosarelor în Trello, adaptat specificului cabinetului tău, cu automatizări Butler configurate și integrări cu Gmail și Google Calendar, echipa **SOLON** poate construi și configura sistemul de la zero.

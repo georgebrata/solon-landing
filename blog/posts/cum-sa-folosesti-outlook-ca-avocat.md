@@ -25,7 +25,7 @@ Acest ghid acoperă atât versiunea desktop (Windows și Mac), cât și Outlook 
 Înainte de orice, câteva setări pe care orice avocat ar trebui să le configureze la prima utilizare:
 
 - **Semnătură profesională**: mergi la **File → Options → Mail → Signatures** (Windows) sau **Outlook → Settings → Email → Compose and reply** (web/Mac). Creează câte o semnătură separată pentru mesajele noi și pentru răspunsuri/forward-uri. Semnătura completă include: nume, calitate (Av./Av. dr.), număr de telefon, adresă cabinet, website și un disclaimer juridic de confidențialitate (recomandat pentru orice avocat care comunică prin e-mail).
-- **Undo Send (anulare trimitere)**: în Outlook pe web, activează din **Settings → Mail → Compose and reply → Undo send** cu un delay de 10 secunde. În Outlook desktop, configurează **File → Options → Advanced → Send and receive** - implicit mesajele pot rămâne în Outbox câteva secunde înainte de trimitere; setează un interval de minim 1 minut.
+- **Undo Send (anulare trimitere)**: în Outlook pe web, activează din **Settings → Mail → Compose and reply → Undo send** cu un delay de 10 secunde. În Outlook desktop, configurează **File → Options → Advanced → Send and receive** - implicit mesajele pot rămâne în Outbox câteva secunde înainte de trimitere. setează un interval de minim 1 minut.
 - **Reading pane (panoul de citire)**: poziționează-l la dreapta (nu jos) pentru a citi mesajele fără să le marchezi automat ca citite. Din **View → Reading Pane → Right**, apoi dezactivează **Mark items as read when viewed in the Reading Pane** din **File → Options → Advanced → Outlook panes** dacă vrei control manual.
 - **Conversation view**: activează gruparea pe conversații din **View → Show as Conversations** pentru a urmări contextul complet al unui schimb de e-mailuri cu un client sau o instanță.
 
@@ -163,6 +163,7 @@ Calendarul din Outlook este profund integrat cu e-mailul, spre deosebire de Goog
 **Meeting requests (Invitații de întâlnire)**:
 - La crearea unui eveniment, adaugă participanții în câmpul **Required** sau **Optional** - vor primi automat o invitație cu opțiunile Accept / Tentative / Decline.
 - Folosește **Scheduling Assistant** (tab-ul din fereastra de creare a evenimentului) pentru a vedea disponibilitatea tuturor participanților simultan și a alege un interval liber fără schimb de e-mailuri.
+
 - Orice modificare (oră, locație, agendă) trimite automat o actualizare tuturor invitaților.
 
 **Room finder și locații**:
@@ -171,6 +172,7 @@ Calendarul din Outlook este profund integrat cu e-mailul, spre deosebire de Goog
 
 **Recurrence (Recurență) pentru termene periodice**:
 - La evenimentele recurente (ex. ședințe lunare de cabinet, rapoarte periodice), setează recurența din **Recurrence** - zilnic, săptămânal, lunar, anual sau personalizat.
+
 - Poți modifica o singură instanță a recurenței fără să afectezi restul seriei.
 
 **Calendar sharing (Partajare calendar)**:

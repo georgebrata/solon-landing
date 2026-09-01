@@ -225,7 +225,7 @@ Notion nu are integrare nativă bidirecțională cu Google Calendar, dar există
 Aplicația Notion pentru iOS și Android oferă acces complet la workspace, inclusiv editarea bazelor de date și crearea de pagini noi:
 
 - **Quick capture**: din widgetul de pe ecranul de pornire (iOS/Android), adaugi rapid o notă, o sarcină sau o intrare în baza de date preferată fără să deschizi aplicația complet.
-- **Offline mode**: paginile accesate recent sunt disponibile offline; modificările se sincronizează la reconectare. Util la instanță sau în deplasări fără internet stabil.
+- **Offline mode**: paginile accesate recent sunt disponibile offline. modificările se sincronizează la reconectare. Util la instanță sau în deplasări fără internet stabil.
 - **Shortcuts**: pe iOS, poți adăuga o pagină Notion ca shortcut pe ecranul de pornire prin **Share > Add to Home Screen** - deschizi direct baza de date `Dosare active` fără să navighezi prin workspace.
 - **Camera și fișiere**: atașează fotografii (acte, contracte fizice) direct la orice pagină sau intrare în baza de date din butonul de atașamente al aplicației mobile.
 - **Notificări push**: primești notificări pentru mențiuni (`@nume`), comentarii noi și actualizări la paginile urmărite. Configurează granular ce tipuri de notificări primești din **Settings > Notifications**.
@@ -244,8 +244,10 @@ Aplicația Notion pentru iOS și Android oferă acces complet la workspace, incl
 
 ## Concluzie
 
-Notion oferă o flexibilitate rară: poți construi exact sistemul de management al practicii de care ai nevoie, fără să accepți limitările unui software juridic rigid. Bazele de date relaționale conectează clienții, dosarele, sarcinile și notele într-un ecosistem coerent; șabloanele elimină munca repetitivă; Notion AI accelerează procesarea informației; partajarea granulară permite colaborarea fără să expui informații confidențiale.
+Notion oferă o flexibilitate rară: poți construi exact sistemul de management al practicii de care ai nevoie, fără să accepți limitările unui software juridic rigid. Bazele de date relaționale conectează clienții, dosarele, sarcinile și notele într-un ecosistem coerent. șabloanele elimină munca repetitivă; Notion AI accelerează procesarea informației. partajarea granulară permite colaborarea fără să expui informații confidențiale.
 
-Dezavantajul principal: Notion necesită timp de configurare inițială și disciplină pentru a-l menține organizat. Fără o structură bine gândită de la început și fără reguli interne clare (cine adaugă ce, unde), workspace-ul devine haotic rapid. Nu este nici un software de facturare, nici un instrument de semnătură electronică - aceste nevoi rămân acoperite de instrumente complementare.
+Dezavantajul principal: Notion necesită timp de configurare inițială și disciplină pentru a-l menține organizat. Fără o structură bine gândită de la început și fără reguli interne clare (cine adaugă ce, unde), workspace-ul devine haotic rapid.
+
+Nu este nici un software de facturare, nici un instrument de semnătură electronică - aceste nevoi rămân acoperite de instrumente complementare.
 
 Dacă vrei să implementezi un workspace Notion complet pentru cabinetul tău - cu baze de date relaționale, șabloane, automatizări și permisiuni configurate corespunzător - echipa **SOLON** poate construi întreaga arhitectură și instrui echipa pentru adoptarea eficientă a sistemului.

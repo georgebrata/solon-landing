@@ -31,11 +31,11 @@ Primul pas este să adaugi site-ul ca „proprietate” (property) în Search Co
 
 | Metodă | Cum funcționează | Recomandare |
 |--------|------------------|-------------|
-| Fișier HTML | Încarci un fișier furnizat de Google în rădăcina site-ului | Stabilă; nu o șterge ulterior |
+| Fișier HTML | Încarci un fișier furnizat de Google în rădăcina site-ului | Stabilă. nu o șterge ulterior |
 | Tag HTML | Adaugi un `<meta>` în secțiunea `<head>` | Simplă dacă ai acces la cod |
 | Google Analytics | Folosește contul GA4 existent | Rapidă dacă ai deja Analytics |
 | Google Tag Manager | Folosește containerul GTM existent | Utilă dacă deja folosești GTM |
-| Înregistrare DNS | Record TXT la furnizorul de domeniu | Cea mai robustă |
+| Înregistrare DNS | Record TXT la furnizorul de domeniu | Cea mai solidă |
 
 **Recomandare practică:** creează o **Domain property** verificată prin DNS pentru imaginea completă și, opțional, o **URL-prefix property** pentru blogul juridic, dacă vrei rapoarte separate pentru acea secțiune.
 
@@ -57,7 +57,7 @@ Raportul **Performanță > Rezultate căutare** (Performance > Search results) e
 3. **Țări (Countries)**: util ca să confirmi că traficul vine din România, nu din regiuni irelevante.
 4. **Dispozitive (Devices)**: desktop vs. mobil vs. tabletă. Pentru servicii juridice locale, ponderea mobilului este de regulă majoritară.
 5. **Aspect în căutare (Search appearance)**: dacă apari cu elemente speciale (rezultate îmbogățite, breadcrumbs etc.).
-6. **Date**: evoluția în timp; activează modul de comparație pentru a vedea tendințele.
+6. **Date**: evoluția în timp. activează modul de comparație pentru a vedea tendințele.
 
 **Setare esențială:** GSC afișează implicit ultimele 3 luni. Extinde intervalul la **16 luni** (maximul disponibil) pentru a observa sezonalitatea și tendințele reale, nu fluctuațiile de scurtă durată.
 
@@ -95,7 +95,7 @@ Instrumentul **Inspectare URL** (URL Inspection), accesibil din bara de căutare
 **Două acțiuni-cheie:**
 
 1. **Testează URL-ul live (Test live URL)**: verifică pagina în timp real, util după ce ai modificat conținutul sau ai reparat o eroare.
-2. **Solicită indexarea (Request indexing)**: după ce publici o pagină nouă (o nouă pagină de serviciu sau un articol de blog) sau o actualizezi substanțial, trimite-o spre indexare ca să accelerezi apariția în Google.
+2. **Solicită indexarea (Request indexing)**: după ce publici o pagină nouă (o nouă pagină de serviciu sau un articol de blog) sau o actualizezi serios, trimite-o spre indexare ca să accelerezi apariția în Google.
 
 **Recomandare:** după fiecare articol nou pe blogul juridic, inspectează URL-ul și solicită indexarea. Nu garantează indexarea instant, dar grăbește procesul față de așteptarea unui crawl natural.
 
@@ -129,7 +129,7 @@ Un **sitemap XML** este lista structurată a paginilor pe care vrei să le index
 - Trimite URL-ul sitemap-ului (de obicei `https://cabinet.ro/sitemap.xml`).
 - Include toate paginile importante: pagina principală, paginile de practică, pagina „Despre”, „Contact”, articolele de blog și eventualele studii de caz.
 - Verifică în raport numărul de pagini **descoperite** față de cele **trimise** - discrepanțele indică probleme.
-- Actualizează sitemap-ul automat la fiecare pagină nouă publicată, astfel încât Google să fie informat rapid.
+- Actualizează sitemap-ul automat la fiecare pagină nouă publicată, ca să Google să fie informat rapid.
 
 **De știut:** trimiterea sitemap-ului nu garantează indexarea, dar este modul oficial prin care îi semnalezi lui Google ce conținut consideri prioritar.
 
@@ -183,7 +183,7 @@ Raportul **Link-uri (Links)** arată profilul de legături al site-ului, împăr
 
 **Link-uri interne (Internal links):**
 
-- Paginile tale cu cele mai multe (și cele mai puține) legături interne. Paginile importante de servicii ar trebui să primească multe link-uri interne din articole și din meniu; paginile cu zero link-uri interne sunt „orfane” și greu de găsit.
+- Paginile tale cu cele mai multe (și cele mai puține) legături interne. Paginile importante de servicii ar trebui să primească multe link-uri interne din articole și din meniu. paginile cu zero link-uri interne sunt „orfane” și greu de găsit.
 
 **Utilizare practică pentru avocați:** verifică din ce surse provin link-urile externe - directoare juridice, barouri, publicații de specialitate, parteneri (notari, executori, contabili). Întărește, în paralel, structura de link-uri interne ca să direcționezi autoritatea spre paginile care aduc clienți.
 
@@ -221,7 +221,7 @@ Pentru raportare și analiză la scară mai mare:
 - **Validează reparațiile**: după ce rezolvi o eroare de indexare sau Core Web Vitals, folosește butonul **Validează remedierea (Validate fix)** ca Google să reverifice și să închidă problema.
 - **Compară mereu perioade**: nu privi cifrele izolat. Modul de comparație (lună vs. lună, an vs. an) transformă datele brute în tendințe pe care le poți acționa.
 - **Activează alertele pe email**: GSC trimite automat notificări la probleme grave (scădere de indexare, acțiuni manuale, securitate). Asigură-te că ajung la adresa pe care o citești zilnic.
-- **Curăță paginile „crawled - not indexed”**: dacă pagini importante apar aici, îmbunătățește-le substanțial (conținut mai amplu, mai util, link-uri interne) și solicită reindexarea.
+- **Curăță paginile „crawled - not indexed”**: dacă pagini importante apar aici, îmbunătățește-le serios (conținut mai amplu, mai util, link-uri interne) și solicită reindexarea.
 - **Monitorizează canonicalizarea**: pentru paginile-cheie, verifică în URL Inspection ca „URL-ul canonic ales de Google” să fie cel dorit - discrepanțele pot dilua poziționarea.
 
 ## Concluzie

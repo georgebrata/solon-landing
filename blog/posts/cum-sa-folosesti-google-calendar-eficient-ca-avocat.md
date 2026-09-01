@@ -24,9 +24,13 @@ Iată o parte din funcțiile pe care le poți folosi în Google Calendar și nu 
 
 ## 1. Creează calendare dedicate pentru diferite aspecte ale activității juridice
 
-Pentru avocați, un singur calendar poate deveni rapid aglomerat și dezorganizat - mai ales când activitățile sunt în diverse domenii de activitate sau pentru diferiți clienți. Google Calendar permite crearea de calendare multiple, ceea ce înseamnă că poți avea un calendar pentru muncă, altul pentru termenele din instanță și unul pentru viața personală. Dacă lucrezi cu alți avocați, o altă modalitate este de a crea un calendar nou pentru fiecare client astfel încât poți trimite acel calendar tuturor membrilor echipei care lucrează pentru acel client.
+Pentru avocați, un singur calendar poate deveni rapid aglomerat și dezorganizat - mai ales când activitățile sunt în diverse domenii de activitate sau pentru diferiți clienți. Google Calendar permite crearea de calendare multiple, ceea ce înseamnă că poți avea un calendar pentru muncă, altul pentru termenele din instanță și unul pentru viața personală.
 
-În acel calendar se pot adăuga evenimente specifice acelui client, de ex. termene, interogări, percheziții, întâlniri etc., și fiecare membru poate avea permisiuni distincte, ceea ce înseamnă că unii pot adăuga evenimente în calendar, alții doar le pot vedea - în funcție de setări. Atribuind o culoare distinctă fiecărui calendar poți identifica rapid ce tip de activitate urmează și, astfel, să te organizezi mai eficient, făcând o distincție clară între evenimente.
+Dacă lucrezi cu alți avocați, o altă modalitate este de a crea un calendar nou pentru fiecare client ca să poți trimite acel calendar tuturor membrilor echipei care lucrează pentru acel client.
+
+În acel calendar se pot adăuga evenimente specifice acelui client, de ex. termene, interogări, percheziții, întâlniri etc., și fiecare membru poate avea permisiuni distincte, ceea ce înseamnă că unii pot adăuga evenimente în calendar, alții doar le pot vedea - în funcție de setări.
+
+Atribuind o culoare distinctă fiecărui calendar poți identifica rapid ce tip de activitate urmează și, astfel, să te organizezi mai eficient, făcând o distincție clară între evenimente.
 
 ## 2. Adaugă invitați la evenimente
 
@@ -38,11 +42,13 @@ Folosește cu încredere funcția de atașare a documentelor pentru că este ide
 
 ## 4. Integrarea locației întâlnirii prin Google Maps
 
-Pentru avocații care se întâlnesc cu clienți în diverse locații, integrarea Google Maps în Google Calendar este un beneficiu major. Poți adăuga adresa locului de întâlnire și aceasta va fi afișată în Calendar cu o opțiune de accesare rapidă a hărții. Aceasta este de ajutor mai ales pentru întâlnirile care au loc în locații noi, oferindu-le participanților informații precise despre locația următoarei întâlniri.
+Pentru avocații care se întâlnesc cu clienți în diverse locații, integrarea Google Maps în Google Calendar este un beneficiu major. Poți adăuga adresa locului de întâlnire și aceasta va fi afișată în Calendar cu o opțiune de accesare rapidă a hărții.
+
+Aceasta este de ajutor mai ales pentru întâlnirile care au loc în locații noi, oferindu-le participanților informații precise despre locația următoarei întâlniri.
 
 ## 5. Găsește rapid un interval disponibil pentru întâlniri cu multipli membri
 
-Cu funcția „Find a time”, poți vizualiza mai ușor toate angajamentele sau întâlnirile din Calendar și să eviți suprapunerile. Această funcție este foarte utilă când tu și colegii tăi aveți o agendă foarte încărcată și vrei să programezi o întâlnire cu unul sau mai mulți participanți deoarece îți permite să identifici cel mai convenabil interval pentru toată lumea. De asemenea, dacă ai acces la calendarul colegilor, poți găsi intervale comune pentru întâlniri de echipă, fără a parcurge manual programul fiecărui participant.
+Cu funcția „Find a time”, poți vizualiza mai ușor toate angajamentele sau întâlnirile din Calendar și să eviți suprapunerile. Această funcție este foarte utilă când tu și colegii tăi aveți o agendă foarte încărcată și vrei să programezi o întâlnire cu unul sau mai mulți participanți deoarece îți permite să identifici cel mai convenabil interval pentru toată lumea. Și dacă ai acces la calendarul colegilor, poți găsi intervale comune pentru întâlniri de echipă, fără a parcurge manual programul fiecărui participant.
 
 <div class="row justify-content-center my-4">
   <div class="col-lg-10">
@@ -62,7 +68,9 @@ Intervalele pentru întâlniri reprezintă o funcție utilă pentru avocații ca
 
 ## 7. Activează orele de lucru
 
-Pentru avocații care au un program de lucru mai neconvențional, funcția de ore de lucru este deosebit de utilă. Această setare permite setarea unui interval de ore în care ești disponibil pentru întâlniri. Astfel, colegii și clienții sunt alertați automat dacă încearcă să programeze o întâlnire în afara orelor tale de lucru. Această funcționalitate îți protejează timpul și permite o comunicare clară a disponibilității.
+Pentru avocații care au un program de lucru mai neconvențional, funcția de ore de lucru este deosebit de utilă. Această setare permite setarea unui interval de ore în care ești disponibil pentru întâlniri.
+
+Astfel, colegii și clienții sunt alertați automat dacă încearcă să programeze o întâlnire în afara orelor tale de lucru. Această funcționalitate îți protejează timpul și permite o comunicare clară a disponibilității.
 
 ## 8. Folosește notificările pe mobil sau desktop pentru a nu pierde întâlnirile importante
 

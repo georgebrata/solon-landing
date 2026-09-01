@@ -33,7 +33,9 @@ Elimină widget-urile pe care nu le folosești zilnic și adaugă-le înapoi doa
 
 ## 2. Monitorizează legislația română și europeană
 
-**Monitorul legislativ** urmărește zilnic Monitorul Oficial și oferă rezumate pentru edițiile publicate. În loc să verifici manual fiecare gazetă, poți căuta și filtra conținutul după cuvinte-cheie, acte normative și tag-uri. Funcția este utilă când vrei să identifici rapid modificări în materia fiscală, comercială, a muncii sau a achizițiilor publice.
+**Monitorul legislativ** urmărește zilnic Monitorul Oficial și oferă rezumate pentru edițiile publicate. În loc să verifici manual fiecare gazetă, poți căuta și filtra conținutul după cuvinte-cheie, acte normative și tag-uri.
+
+Funcția este utilă când vrei să identifici rapid modificări în materia fiscală, comercială, a muncii sau a achizițiilor publice.
 
 Configurează alerte pentru termeni care apar frecvent în dosarele tale: `Cod fiscal`, `achiziții publice`, `societăți`, `insolvență`, `digitalizare`, `GDPR` sau numele unui act normativ. Legalit.ro poate trimite alerte zilnice la ora 09:00 și permite configurarea lor după cuvinte-cheie. Folosește **highlight-uri** pe actele importante și consultă istoricul ultimelor alerte când trebuie să explici clientului când ai identificat o schimbare.
 
@@ -53,7 +55,7 @@ Un flux simplu de verificare poate arăta astfel:
 4. Salvează datele firmei și descarcă informațiile ca dovadă sau document de lucru.
 5. Notează data verificării în dosar, deoarece datele fiscale se pot modifica.
 
-Dacă lucrezi permanent cu aceiași clienți sau furnizori, activează **monitorizarea firmelor**. Planul Pro permite monitorizarea nelimitată a firmelor; înainte de abonare, verifică dacă volumul cabinetului justifică acest nivel de utilizare.
+Dacă lucrezi permanent cu aceiași clienți sau furnizori, activează **monitorizarea firmelor**. Planul Pro permite monitorizarea nelimitată a firmelor. înainte de abonare, verifică dacă volumul cabinetului justifică acest nivel de utilizare.
 
 ## 4. Folosește verificarea TVA în due diligence
 
@@ -73,9 +75,11 @@ Dacă trimiți clientului un rezultat, explică ce dovedește verificarea și ce
 
 **Calendarul fiscal** centralizează termenele de declarare și plată și te ajută să urmărești ce declarații trebuie depuse. Pentru un avocat care oferă consultanță antreprenorilor sau lucrează împreună cu un contabil, calendarul poate deveni un punct de control înaintea fiecărei discuții cu clientul.
 
-Configurează profilul astfel încât reminder-ele să reflecte tipul de contribuabil urmărit. Folosește reminder-e pe mai multe niveluri: unul cu suficient timp pentru colectarea documentelor, unul înainte de redactare și unul în apropierea termenului de depunere. Activează notificările pe email pentru termenele pe care nu vrei să le ratezi.
+Configurează profilul ca să reminder-ele să reflecte tipul de contribuabil urmărit. Folosește reminder-e pe mai multe niveluri: unul cu suficient timp pentru colectarea documentelor, unul înainte de redactare și unul în apropierea termenului de depunere. Activează notificările pe email pentru termenele pe care nu vrei să le ratezi.
 
-Nu trata calendarul ca pe o dovadă că o obligație a fost îndeplinită. El îți arată termenul și te ajută să organizezi munca; confirmarea depunerii și documentele justificative trebuie păstrate în sistemul de dosare al cabinetului.
+Nu trata calendarul ca pe o dovadă că o obligație a fost îndeplinită. El îți arată termenul și te ajută să organizezi munca.
+
+confirmarea depunerii și documentele justificative trebuie păstrate în sistemul de dosare al cabinetului.
 
 ## 6. Folosește calculatoarele fiscale în discuțiile cu antreprenorii
 
@@ -96,7 +100,7 @@ Introdu datele reale ale clientului, notează ipotezele și exportă sau salveaz
 
 Dacă reprezinți operatori economici sau autorități contractante, secțiunea **SEAP / achiziții publice** oferă acces rapid la căutarea și consultarea licitațiilor publice. Poți folosi informațiile pentru o primă documentare a procedurii, a autorității contractante sau a furnizorilor implicați.
 
-Un flux practic este să cauți după obiectul contractului, să verifici termenul și documentele disponibile, apoi să salvezi referința în dosarul electronic. Pentru analiza juridică propriu-zisă, consultă documentația oficială a procedurii și respectă termenele și regulile aplicabile. Legalit.ro scurtează etapa de orientare; nu înlocuiește lectura integrală a caietului de sarcini, a clarificărilor și a comunicărilor oficiale.
+Un flux practic este să cauți după obiectul contractului, să verifici termenul și documentele disponibile, apoi să salvezi referința în dosarul electronic. Pentru analiza juridică propriu-zisă, consultă documentația oficială a procedurii și respectă termenele și regulile aplicabile. Legalit.ro scurtează etapa de orientare. nu înlocuiește lectura integrală a caietului de sarcini, a clarificărilor și a comunicărilor oficiale.
 
 ## 8. Creează o rutină pentru cercetare și documentare
 
@@ -114,7 +118,9 @@ Pentru fiecare client important, poți avea o fișă de verificare cu CUI, statu
 
 Biblioteca de **ghiduri fiscale** include materiale actualizate pentru 2026, inclusiv despre Declarația Unică, PFA vs SRL și impozitul pe microîntreprindere. Secțiunea FAQ reunește sute de întrebări și răspunsuri fiscale, utile pentru pregătirea unei întâlniri sau pentru formularea întrebărilor corecte către contabilul clientului.
 
-Înainte de consultație, caută tema în ghid și notează termenii pe care trebuie să îi verifici în legislația aplicabilă. Nu copia automat un răspuns într-o opinie juridică: verifică data actualizării, excepțiile și dacă situația clientului corespunde ipotezelor din material. Ghidul este un instrument de orientare și economisește timp în faza de cercetare inițială.
+Înainte de consultație, caută tema în ghid și notează termenii pe care trebuie să îi verifici în legislația aplicabilă. Nu copia automat un răspuns într-o opinie juridică: verifică data actualizării, excepțiile și dacă situația clientului corespunde ipotezelor din material.
+
+Ghidul este un instrument de orientare și economisește timp în faza de cercetare inițială.
 
 ## 10. Păstrează rapoarte și dovezi ale verificărilor
 
@@ -132,7 +138,9 @@ Păstrează separat documentul original, nota de analiză și concluzia transmis
 
 ## 11. Configurează securitatea și limitele de acces
 
-Datele despre clienți, firme și situații fiscale pot fi confidențiale. Folosește un cont individual, o parolă unică și autentificarea disponibilă în platformă. Nu trimite credențialele colegilor și nu încărca în câmpuri publice date care nu sunt necesare pentru verificare.
+Datele despre clienți, firme și situații fiscale pot fi confidențiale. Folosește un cont individual, o parolă unică și autentificarea disponibilă în platformă.
+
+Nu trimite credențialele colegilor și nu încărca în câmpuri publice date care nu sunt necesare pentru verificare.
 
 Înainte de a salva sau descărca informații, stabilește:
 

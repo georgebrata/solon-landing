@@ -73,9 +73,9 @@ Acesta este punctul în care un avocat trebuie să fie atent. Codex rulează imp
 
 | Mod | Ce poate face fără să întrebe | Recomandat pentru |
 |-----|-------------------------------|-------------------|
-| **Read Only** (doar citire) | Doar citește fișiere și răspunde; nu modifică nimic | Explorare, analiză, prima dată când testezi |
-| **Auto** (implicit) | Citește și modifică fișiere, rulează comenzi în folderul de lucru; cere voie pentru acces la internet sau în afara folderului | Munca de zi cu zi |
-| **Full Access** (acces complet) | Rulează orice, inclusiv acces la rețea, fără să întrebe | De evitat; doar în medii de test izolate |
+| **Read Only** (doar citire) | Doar citește fișiere și răspunde. nu modifică nimic | Explorare, analiză, prima dată când testezi |
+| **Auto** (implicit) | Citește și modifică fișiere, rulează comenzi în folderul de lucru. cere voie pentru acces la internet sau în afara folderului | Munca de zi cu zi |
+| **Full Access** (acces complet) | Rulează orice, inclusiv acces la rețea, fără să întrebe | De evitat. doar în medii de test izolate |
 
 Recomandarea fermă pentru un cabinet: **pornește în Read Only**, treci la **Auto** când ai înțeles ce face și **nu folosi niciodată Full Access** pe un calculator cu date reale de clienți. Sandbox-ul împiedică agentul să atingă fișiere din afara folderului de lucru și să acceseze rețeaua fără permisiune - este prima ta linie de apărare.
 
@@ -145,7 +145,7 @@ Codex devine cu adevărat puternic când nu mai lucrează izolat, ci se conectea
 - **Sarcini în cloud delegate din ChatGPT**: din interfața ChatGPT poți trimite o sarcină care rulează în fundal, pe un mediu izolat al OpenAI, și primești rezultatul (un set de modificări) când e gata.
 - **API și conectare la alte servicii**: cu permisiunea ta de acces la rețea, Codex poate scrie scripturi care folosesc API-uri publice (de exemplu, cursul valutar BNR pentru actualizarea unei creanțe) sau care scriu într-o foaie de calcul Google.
 
-Atenție: orice integrare care implică acces la internet sau la date externe trebuie aprobată explicit și evaluată din perspectiva confidențialității (secțiunea 11).
+Atenție. orice integrare care implică acces la internet sau la date externe trebuie aprobată explicit și evaluată din perspectiva confidențialității (secțiunea 11).
 
 ## 10. Sarcini în cloud și delegarea în paralel
 
@@ -173,7 +173,7 @@ Aceste măsuri se înscriu în strategia mai largă de protecție a datelor desc
 ## 12. Tips & tricks care fac diferența
 
 - **Începe fiecare proiect cu un `AGENTS.md`** care stabilește limba, formatul și regula de a nu scoate datele din folder.
-- **Formulează sarcini mici și clare**, una câte una; un agent primește instrucțiuni precise mai bine decât o cerere vagă și uriașă.
+- **Formulează sarcini mici și clare**, una câte una. un agent primește instrucțiuni precise mai bine decât o cerere vagă și uriașă.
 - **Cere-i lui Codex să-ți explice ce face** înainte de a aproba - „explică-mi pe scurt ce va face scriptul, apoi așteaptă confirmarea”.
 - **Lucrează cu control al versiunilor (Git)** pe proiectele mai mari, ca să poți reveni dacă o modificare strică ceva.
 - **Folosește date fictive pentru prototipare** și treci la datele reale doar după ce ai validat că instrumentul funcționează.
@@ -187,7 +187,7 @@ Onestitatea profesională cere să recunoști granițele instrumentului:
 
 - **Nu este un instrument de consultanță juridică**: Codex automatizează operațiuni pe documente și date, nu oferă analiză sau opinii juridice de încredere.
 - **Necesită un minim de confort tehnic**: deși nu scrii cod, trebuie să înțelegi ce este un terminal, un folder de lucru și un mod de aprobare.
-- **Poate greși**: scripturile generate trebuie verificate; nu folosi rezultatul nevalidat pe documente care produc efecte juridice.
+- **Poate greși**: scripturile generate trebuie verificate. nu folosi rezultatul nevalidat pe documente care produc efecte juridice.
 - **Nu este potrivit pentru date ultrasensibile în cloud**: pentru acestea, rămâi pe execuția locală izolată.
 
 Dacă ai nevoie doar de un asistent de cercetare și sinteză, un instrument precum cel din ghidul [Cum să folosești NotebookLM ca avocat](../cum-sa-folosesti-notebooklm-ca-avocat/) este mai potrivit. Codex strălucește atunci când problema ta este, în esență, una de automatizare repetitivă.

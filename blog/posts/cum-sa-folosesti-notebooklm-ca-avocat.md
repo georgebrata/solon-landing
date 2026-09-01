@@ -23,7 +23,7 @@ Mai jos găsești setări utile, scenarii concrete și o abordare „avansată�
 ## 1. Înainte de toate: ce este NotebookLM și ce nu este
 
 - **Este**: un asistent care citește **doar** materialele adăugate de tine în notebook (și, după caz, tipuri de surse acceptate de produs la momentul utilizării: documente Google, PDF-uri, text copiat, în unele configurații linkuri sau transcrieri de conținut public).
-- **Nu este**: un consilier juridic autonom; nu îi poți delega responsabilitatea profesională. Răspunsurile trebuie tratate ca **schițe de lucru**, verificate în textele originale, în legislație și în practica instanțelor relevante.
+- **Nu este**: un consilier juridic autonom. nu îi poți delega responsabilitatea profesională. Răspunsurile trebuie tratate ca **schițe de lucru**, verificate în textele originale, în legislație și în practica instanțelor relevante.
 - **Ancorarea în surse**: atunci când funcția este disponibilă, NotebookLM indică fragmente din documentele tale - folosește acest mecanism pentru a sări rapid la pasajul sursă, nu doar la rezumatul generat.
 
 Verifică disponibilitatea produsului și condițiile contului tău Google (personal vs. Google Workspace), deoarece politicile organizației pot restricționa sau permite anumite produse AI.
@@ -42,7 +42,7 @@ Cea mai frecventă greșeală este amestecarea tuturor documentelor într-un sin
 - **PDF-uri**: preferă text **selectabil** (OCR de calitate). PDF-uri scanate prost îngreunează indexarea și citatele.
 - **Google Docs**: utile pentru note de ședință, drafturi interne sincronizate din Drive - verifică că versiunea încărcată este cea finală.
 - **Denumiri**: redenumește sursele în interfață (titluri scurte: „Contract 12.03.2026”, „Întâmpinare părât”) ca să recunoști instant citatele în chat.
-- **Volume mari**: împarte pe etape - adaugă întâi nucleul faptic, apoi documente secundare; păstrează notebook-ul „sub control” ca să nu pierzi precizia la întrebări înguste.
+- **Volume mari**: împarte pe etape - adaugă întâi nucleul faptic, apoi documente secundare. păstrează notebook-ul „sub control” ca să nu pierzi precizia la întrebări înguste.
 
 ## 4. Setări și confidențialitate (esențial pentru avocați)
 
@@ -68,15 +68,15 @@ Evită, pentru materiale decisive: „Ce ar trebui să fac în dosar?” fără 
 ## 6. Funcții „power user”: peste chatul simplu
 
 - **Rezumate structurate**: cere format fix: „Fapte / Probleme de drept / Probe / Riscuri” - apoi revizuiești manual fiecare secțiune.
-- **Audio Overview** (dacă este activ în contul tău): generează o discuție tip podcast pe baza surselor - util pentru **reîmprospătarea** rapidă în deplasare; nu substituie lectura pentru un termen critic.
+- **Audio Overview** (dacă este activ în contul tău): generează o discuție tip podcast pe baza surselor - util pentru **reîmprospătarea** rapidă în deplasare. nu substituie lectura pentru un termen critic.
 - **Fișe și ghiduri de studiu** (denumirile pot varia în interfață): folosește-le ca punct de plecare pentru învățare internă sau onboarding în echipă, nu ca documente oficiale către client fără review.
 - **Export**: orice export (note, rezumate) trebuie trecut prin același filtru de verificare ca un draft uman.
 
 ## 7. Configurări avansate și obiceiuri de echipă
 
-- **Instrucțiuni persistente** (dacă interfața le oferă): definește rolul - ex. „Asistent de sinteză pentru materiale factuale din dosar; nu formula concluzii juridice; semnalează incertitudinea.”
+- **Instrucțiuni persistente** (dacă interfața le oferă): definește rolul - ex. „Asistent de sinteză pentru materiale factuale din dosar. nu formula concluzii juridice. semnalează incertitudinea.”
 - **Convenții de denumire** la nivel de cabinet: prefixe pentru notebook-uri (`CLI-D-2026-014 – Contracte`, `Research – GDPR dosare medicale`).
-- **Roluri**: un avocat senior verifică prompturile reutilizabile; asistenții actualizează sursele, nu replică prompturi depășite.
+- **Roluri**: un avocat senior verifică prompturile reutilizabile. asistenții actualizează sursele, nu replică prompturi depășite.
 - **Separarea vieții personale**: nu folosi același cont sau același notebook pentru documente neprofesionale și dosare - reduce riscul de amestecare accidentală la partajare sau export.
 
 <div class="row justify-content-center my-4">
@@ -87,15 +87,15 @@ Evită, pentru materiale decisive: „Ce ar trebui să fac în dosar?” fără 
 
 ## 8. Sfaturi și capcane frecvente
 
-- **Halucinațiile**: chiar cu surse, verifică pasajul; modelele pot rezuma greșit tonul sau pot omite nuanțe.
+- **Halucinațiile**: chiar cu surse, verifică pasajul. modelele pot rezuma greșit tonul sau pot omite nuanțe.
 - **Date și numere**: reconfirmă calcule, sume, termene - din sursă, nu din memoria modelului.
-- **Limba**: poți cere explicit răspunsuri în română pe baza surselor în română sau mixte; revizuiește terminologia juridică.
-- **Actualitate**: NotebookLM reflectă ceea ce încarci; nu înlocuiește monitorizarea legislației pe canale oficiale.
-- **Probe în instanță**: un fișier generat de AI nu „dovedește” nimic; doar înscrisurile și procedura probatorie contează - folosește instrumentul pentru pregătire, nu ca substitut al probelor.
+- **Limba**: poți cere explicit răspunsuri în română pe baza surselor în română sau mixte. revizuiește terminologia juridică.
+- **Actualitate**: NotebookLM reflectă ceea ce încarci. nu înlocuiește monitorizarea legislației pe canale oficiale.
+- **Probe în instanță**: un fișier generat de AI nu „dovedește” nimic. doar înscrisurile și procedura probatorie contează - folosește instrumentul pentru pregătire, nu ca substitut al probelor.
 
 ## 9. Concluzie
 
-NotebookLM poate reduce timpul petrecut cu **lectura repetată** și cu **structurarea informației** din dosare mari, dar nu absoarbe **responsabilitatea** pentru calitatea actului juridic sau pentru protecția datelor. Folosit cu **notebook-uri disciplinate**, **întrebări precise** și **verificare umană**, devine un multiplicator de productivitate; folosit superficial, devine un risc.
+NotebookLM poate reduce timpul petrecut cu **lectura repetată** și cu **structurarea informației** din dosare mari, dar nu absoarbe **responsabilitatea** pentru calitatea actului juridic sau pentru protecția datelor. Folosit cu **notebook-uri disciplinate**, **întrebări precise** și **verificare umană**, devine un multiplicator de productivitate. folosit superficial, devine un risc.
 
 Dacă vrei să integrezi astfel de instrumente într-un flux sigur pentru cabinet (politici, Workspace, arhivare și automatizări), echipa **SOLON** poate ajuta cu consultanță de digitalizare pentru mediul juridic. **Contactează-ne** pentru o discuție adaptată tipului tău de practică.
 

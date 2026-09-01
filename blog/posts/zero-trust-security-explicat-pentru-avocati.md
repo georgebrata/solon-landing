@@ -46,17 +46,19 @@ Zero-trust nu este un slogan de marketing, ci un model documentat în standarde 
 6. Autentificarea și autorizarea sunt **stricte și dinamice**, aplicate înainte de fiecare acces.
 7. Organizația colectează permanent date despre starea rețelei și o folosește pentru a-și îmbunătăți politica de securitate.
 
-**Modelul de maturitate CISA (Zero Trust Maturity Model, v2.0)** - publicat de agenția americană de securitate cibernetică, este mai practic și organizează implementarea în **cinci piloni**: Identitate, Dispozitive, Rețele, Aplicații și sarcini de lucru, Date. Peste acești piloni se adaugă trei capabilități transversale: vizibilitate și analiză, automatizare și orchestrare, guvernanță. CISA descrie patru stadii de maturitate (tradițional, inițial, avansat, optim), ceea ce îți permite să evaluezi unde se află cabinetul tău și ce ai de făcut mai departe.
+**Modelul de maturitate CISA (Zero Trust Maturity Model, v2.0)** - publicat de agenția americană de securitate cibernetică, este mai practic și organizează implementarea în **cinci piloni**: Identitate, Dispozitive, Rețele, Aplicații și sarcini de lucru, Date. Peste acești piloni se adaugă trei capabilități transversale: vizibilitate și analiză, automatizare și orchestrare, guvernanță.
+
+CISA descrie patru stadii de maturitate (tradițional, inițial, avansat, optim), ceea ce îți permite să evaluezi unde se află cabinetul tău și ce ai de făcut mai departe.
 
 Aceste piloni sunt și structura pe care o urmăm în restul ghidului.
 
 ## 3. Pilonul Identitate: piatra de temelie
 
-Peste 80% dintre breșele de securitate implică credențiale compromise. De aceea, identitatea este primul și cel mai important pilon zero-trust. Pentru un cabinet, asta înseamnă:
+Peste 80% dintre breșele de securitate implică credențiale compromise. Așa că, identitatea este primul și cel mai important pilon zero-trust. Pentru un cabinet, asta înseamnă:
 
 - **Autentificare multifactorială (MFA) obligatorie** pe toate conturile, fără excepție. Preferă MFA rezistent la phishing: chei hardware **FIDO2/WebAuthn** (de exemplu YubiKey) sau passkeys, în locul codurilor prin SMS, care pot fi interceptate. Aplicațiile de autentificare (Microsoft Authenticator, Google Authenticator, Authy) sunt un compromis bun.
 - **Identity Provider (IdP) centralizat și Single Sign-On (SSO)**: un singur punct de identitate (Microsoft Entra ID, Google Workspace, Okta) prin care intri în toate aplicațiile. Paradoxal, SSO crește securitatea, pentru că elimină zecile de parole slabe și permite aplicarea unei politici unice.
-- **Acces condiționat (Conditional Access)**: reguli care decid în timp real dacă acorzi accesul. Exemplu: „permite accesul la dosarele cloud doar de pe un dispozitiv gestionat, din România, cu MFA confirmat; altfel, blochează sau cere verificare suplimentară".
+- **Acces condiționat (Conditional Access)**: reguli care decid în timp real dacă acorzi accesul. Exemplu. „permite accesul la dosarele cloud doar de pe un dispozitiv gestionat, din România, cu MFA confirmat. altfel, blochează sau cere verificare suplimentară".
 - **Manager de parole** pentru tot ce nu intră în SSO (1Password, Bitwarden), cu generare de parole unice și lungi.
 
 Acesta este punctul unde majoritatea cabinetelor obțin cel mai mare câștig de securitate cu cel mai mic efort. Activarea MFA și a accesului condiționat reduce dramatic riscul de preluare a contului.
@@ -74,7 +76,7 @@ Principiul **privilegiului minim (least privilege)** spune că fiecare persoană
 Mecanisme concrete:
 
 - **Control al accesului bazat pe rol (RBAC)**: definești roluri (avocat coordonator, avocat colaborator, paralegal, secretariat, contabilitate externă) și atașezi fiecărui rol un set de permisiuni. Secretariatul poate vedea calendarul și facturile, dar nu și strategia de litigiu dintr-un dosar sensibil.
-- **Acces pe dosar, nu pe tot arhivajul**: structurează folderele cloud astfel încât accesul să se acorde per dosar sau per client. Vezi modul de organizare a permisiunilor descris în ghidul [Cum să folosești Google Drive ca avocat](../cum-sa-folosesti-google-drive-ca-avocat/).
+- **Acces pe dosar, nu pe tot arhivajul**: structurează folderele cloud ca să accesul să se acorde per dosar sau per client. Vezi modul de organizare a permisiunilor descris în ghidul [Cum să folosești Google Drive ca avocat](../cum-sa-folosesti-google-drive-ca-avocat/).
 - **Acces just-in-time (JIT) și revizuiri periodice**: acordă drepturi temporare pentru o sarcină punctuală și retrage-le după. Fă trimestrial o revizuire a accesului - cine mai are nevoie de ce? Revocă imediat accesul colaboratorilor care pleacă.
 - **Separarea conturilor administrative**: contul cu care administrezi platformele nu este același cu cel de zi cu zi. Conturile de admin sunt cele mai râvnite de atacatori.
 
@@ -84,7 +86,7 @@ Multe cabinete încă folosesc un **VPN** pentru accesul la distanță. Problema
 
 Soluția modernă este **ZTNA (Zero Trust Network Access)**: în loc să te conectezi la rețea, te conectezi direct la aplicația de care ai nevoie, după ce identitatea și dispozitivul au fost verificate. Aplicațiile rămân „invizibile” pentru oricine nu este autorizat explicit.
 
-- **Micro-segmentarea** împarte rețeaua în zone mici și izolate, astfel încât o breșă într-o zonă (de exemplu, calculatorul de la recepție) să nu se propage la serverul cu dosare.
+- **Micro-segmentarea** împarte rețeaua în zone mici și izolate, ca să o breșă într-o zonă (de exemplu, calculatorul de la recepție) să nu se propage la serverul cu dosare.
 - **SASE (Secure Access Service Edge)** combină ZTNA cu filtrarea traficului web și protecția DNS într-un singur serviciu cloud - util pentru cabinetele complet remote.
 - Pentru un cabinet mic, ZTNA poate fi implementat rapid cu servicii precum **Cloudflare Zero Trust** sau **Twingate**, fără infrastructură proprie complexă.
 
@@ -133,16 +135,16 @@ Nu ai nevoie să construiești totul de la zero. Marile ecosisteme oferă deja c
 | **1Password / Bitwarden** | Manager de parole și secrete | Browser, mobil, SSO |
 | **YubiKey (Yubico)** | Cheie hardware FIDO2 rezistentă la phishing | Entra ID, Google, Okta, Duo |
 
-Pentru majoritatea cabinetelor din România, punctul de plecare firesc este ecosistemul pe care îl folosesc deja: cei pe **Microsoft 365** activează Entra ID Conditional Access și Intune; cei pe **Google Workspace** activează context-aware access și verificarea în 2 pași. Cheia este ca aceste platforme să fie integrate, nu folosite izolat - identitatea din IdP devine „cheia” care guvernează accesul la e-mail, dosare, semnătură electronică și instrumente de management. Vezi cum se leagă aceste piese în [Cum să folosești Gmail ca avocat](../cum-sa-folosesti-gmail-ca-avocat/) și [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
+Pentru majoritatea cabinetelor din România, punctul de plecare firesc este ecosistemul pe care îl folosesc deja: cei pe **Microsoft 365** activează Entra ID Conditional Access și Intune. cei pe **Google Workspace** activează context-aware access și verificarea în 2 pași. Cheia este ca aceste platforme să fie integrate, nu folosite izolat - identitatea din IdP devine „cheia” care guvernează accesul la e-mail, dosare, semnătură electronică și instrumente de management. Vezi cum se leagă aceste piese în [Cum să folosești Gmail ca avocat](../cum-sa-folosesti-gmail-ca-avocat/) și [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
 
 ## 10. Cazuri de utilizare concrete în avocatură
 
 Cum arată zero-trust în ziua de lucru a unui avocat? Câteva scenarii reale:
 
 - **Avocat în instanță**: deschizi un dosar de pe tabletă din sala de așteptare. Sistemul verifică automat că tableta este criptată, are codul de blocare activ și că ai confirmat MFA - abia apoi îți acordă acces, doar la dosarul respectiv, nu la întreaga arhivă.
-- **Colaborator extern temporar**: aduci un avocat colaborator pe un litigiu pentru trei luni. Îi acorzi acces just-in-time doar la dosarele relevante; la finalul mandatului, accesul expiră automat.
+- **Colaborator extern temporar**: aduci un avocat colaborator pe un litigiu pentru trei luni. Îi acorzi acces just-in-time doar la dosarele relevante. la finalul mandatului, accesul expiră automat.
 - **Tentativă de phishing**: un atacator obține parola unui paralegal printr-un e-mail fals. Fără al doilea factor (cheia FIDO2) și fără un dispozitiv gestionat, accesul este refuzat - parola furată devine inutilă.
-- **Laptop pierdut**: un avocat își uită laptopul în tren. Discul este criptat, iar prin MDM declanșezi ștergerea de la distanță. Datele clienților rămân protejate, iar obligația de notificare GDPR se evaluează în consecință.
+- **Laptop pierdut**: un avocat își uită laptopul în tren. Discul este criptat, iar prin MDM declanșezi ștergerea de la distanță. Datele clienților rămân protejate, iar obligația de notificare GDPR se evaluează așa că.
 - **Trimitere accidentală**: un asistent vrea să atașeze din greșeală un document marcat „secret profesional” către un destinatar extern. Regula DLP blochează acțiunea și avertizează expeditorul.
 
 Aceste scenarii arată de ce zero-trust este o traducere directă a obligației de confidențialitate într-o arhitectură tehnică verificabilă.
@@ -178,7 +180,7 @@ Câteva recomandări concrete care fac diferența între un zero-trust real și 
 
 - **Pornește de la identitate, nu de la firewall**: cel mai mare câștig vine din MFA rezistent la phishing și SSO. Lasă rețeaua pe locul doi.
 - **Folosește passkeys sau chei FIDO2** acolo unde poți - codurile SMS sunt vulnerabile la SIM swapping.
-- **Nu acorda niciodată drepturi „de admin” conturilor de zi cu zi**; ține un cont administrativ separat, cu MFA hardware.
+- **Nu acorda niciodată drepturi „de admin” conturilor de zi cu zi**. ține un cont administrativ separat, cu MFA hardware.
 - **Activează jurnalele de audit din prima zi**, chiar dacă nu le citești încă - vei avea nevoie de istoric în caz de incident.
 - **Testează revocarea accesului**: simulează plecarea unui colaborator și verifică în cât timp îi dispare accesul la toate sistemele.
 - **Evită „MFA fatigue”**: configurează number matching în aplicația de autentificare, ca utilizatorul să nu aprobe din reflex o cerere falsă.
@@ -188,7 +190,9 @@ Câteva recomandări concrete care fac diferența între un zero-trust real și 
 
 ## 14. Concluzie
 
-Zero-trust nu este un produs pe care îl cumperi, ci un mod de a gândi securitatea: nu te încrede în nimeni implicit, verifică fiecare acces, acordă minimul necesar și presupune mereu că breșa e posibilă. Pentru un avocat, acest model traduce direct obligațiile de confidențialitate și secret profesional într-o arhitectură tehnică verificabilă, ancorată în standarde recunoscute - NIST SP 800-207 și modelul de maturitate CISA - și aliniată cerințelor GDPR. Câștigul concret este uriaș: o parolă furată prin phishing nu mai dărâmă tot cabinetul, un laptop pierdut nu mai înseamnă o breșă de date, iar accesul colaboratorilor rămâne mereu sub control.
+Zero-trust nu este un produs pe care îl cumperi, ci un mod de a gândi securitatea: nu te încrede în nimeni implicit, verifică fiecare acces, acordă minimul necesar și presupune mereu că breșa e posibilă. Pentru un avocat, acest model traduce direct obligațiile de confidențialitate și secret profesional într-o arhitectură tehnică verificabilă, ancorată în standarde recunoscute - NIST SP 800-207 și modelul de maturitate CISA - și aliniată cerințelor GDPR.
+
+Câștigul concret este uriaș: o parolă furată prin phishing nu mai dărâmă tot cabinetul, un laptop pierdut nu mai înseamnă o breșă de date, iar accesul colaboratorilor rămâne mereu sub control.
 
 Trade-off-ul real este efortul de implementare și o ușoară frecare în experiența zilnică - mai multe verificări, mai puține scurtături. Pentru cabinetele mici, riscul este și supra-inginerizarea: nu ai nevoie de un centru de operațiuni de securitate, ci de pașii fundamentali (MFA rezistent la phishing, privilegiu minim, criptare, jurnale de audit) aplicați corect și consecvent. Cheia este să avansezi gradual, pe nivelurile de maturitate, fără să copleșești echipa.
 

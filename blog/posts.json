@@ -1,5 +1,28 @@
 [
   {
+    "title": "Flux digital sigur pentru avocatul din România",
+    "date": "2026-09-01",
+    "slug": "flux-digital-sigur-pentru-avocatul-din-romania",
+    "description": "Ghid practic pentru avocați: documente organizate, semnare electronică, termene controlate și acces securizat.",
+    "read_time": 13,
+    "categories": [
+      "digitalizare",
+      "legaltech",
+      "management",
+      "securitate"
+    ],
+    "tags": [
+      "avocați",
+      "flux digital",
+      "documente",
+      "semnătură electronică",
+      "termene",
+      "securitate",
+      "românia"
+    ],
+    "url": "flux-digital-sigur-pentru-avocatul-din-romania/"
+  },
+  {
     "title": "Cum să folosești LinkedIn ca avocat",
     "date": "2026-08-28",
     "slug": "cum-sa-folosesti-linkedin-ca-avocat",
@@ -19,6 +42,29 @@
       "vizibilitate"
     ],
     "url": "cum-sa-folosesti-linkedin-ca-avocat/"
+  },
+  {
+    "title": "Cum să folosești Slack ca avocat",
+    "date": "2026-08-28",
+    "slug": "cum-sa-folosesti-slack-ca-avocat",
+    "description": "Ghid Slack pentru avocați: canale pe dosare, securitate, fluxuri automate, integrări juridice și comunicare fără haos.",
+    "read_time": 14,
+    "categories": [
+      "digitalizare",
+      "productivitate",
+      "automatizări",
+      "management"
+    ],
+    "tags": [
+      "slack",
+      "avocați",
+      "comunicare",
+      "productivitate",
+      "dosare",
+      "colaborare",
+      "automatizări"
+    ],
+    "url": "cum-sa-folosesti-slack-ca-avocat/"
   },
   {
     "title": "Bonus: top 10 seriale cu și pentru avocați",

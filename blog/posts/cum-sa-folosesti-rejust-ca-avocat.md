@@ -77,7 +77,7 @@ Pentru arhivare și permisiuni, poți lega acest sistem de ghidul nostru despre 
 
 ## 4. Creează o clasificare vizuală simplă pentru rezultate
 
-Când găsești zece sau douăzeci de hotărâri, devine esențial să le poți evalua vizual rapid. ReJust îți arată conținutul; clasificarea trebuie făcută de tine.
+Când găsești zece sau douăzeci de hotărâri, devine esențial să le poți evalua vizual rapid. ReJust îți arată conținutul. clasificarea trebuie făcută de tine.
 
 Poți folosi un cod de culori în notițele interne sau în aplicația ta de task management:
 
@@ -88,7 +88,7 @@ Poți folosi un cod de culori în notițele interne sau în aplicația ta de tas
 | Roșu | Contra-argument | Hotărâre care îți arată riscul sau practica nefavorabilă |
 | Albastru | De verificat | Ai nevoie de lectură integrală sau de confruntare cu textul legal |
 
-Important: nu marca doar hotărârile care te ajută. Un litigant bun își construiește și dosarul de contra-argumente.
+Important. nu marca doar hotărârile care te ajută. Un litigant bun își construiește și dosarul de contra-argumente.
 
 ## 5. Folosește micro-automatizări în afara platformei
 
@@ -205,14 +205,14 @@ Regula sănătoasă este:
   </div>
 </div>
 
-Mobilul este bun pentru viteză; analiza serioasă rămâne pe ecran mare.
+Mobilul este bun pentru viteză. analiza serioasă rămâne pe ecran mare.
 
 ## 12. Tips and tricks care economisesc timp real
 
 Mai jos sunt câteva obiceiuri simple, dar foarte profitabile:
 
 - Deschide rezultatele promițătoare în tab-uri separate și compară-le în paralel.
-- Notează imediat de ce ai salvat o hotărâre; peste 48 de ore contextul se pierde.
+- Notează imediat de ce ai salvat o hotărâre. peste 48 de ore contextul se pierde.
 - Caută și practica nefavorabilă, nu doar confirmări pentru teza ta.
 - Fă un fișier separat cu formulări bune de motivare pe care le poți adapta.
 - Leagă fiecare hotărâre de o întrebare concretă din dosar.

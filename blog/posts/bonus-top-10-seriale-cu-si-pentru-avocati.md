@@ -12,7 +12,7 @@ tags: ["seriale juridice", "avocați", "procese", "etică profesională", "strea
 
 Unele filme juridice îți oferă două ore de strategie și o concluzie. Serialele despre avocați îți oferă zeci de ore de cazuri, negocieri, crize de firmă și decizii discutabile luate, de obicei, cu cinci minute înainte de termen. Dacă ești avocat sau pur și simplu cauți seriale bune despre procese, lista de mai jos combină recomandările din ghidul SOLON cu trei completări care acoperă mai multe stiluri și epoci.
 
-Important: televiziunea iubește comprimarea timpului, avocații care apar simultan la trei ședințe și dezvăluirile-surpriză din ultimul minut. Nu lua fiecare procedură ca pe un model de practică. Ia, în schimb, ideile despre etică, negociere, relația cu clientul, cultura organizațională și presiunea unei profesii care nu se închide mereu când se termină programul.
+Important. televiziunea iubește comprimarea timpului, avocații care apar simultan la trei ședințe și dezvăluirile-surpriză din ultimul minut. Nu lua fiecare procedură ca pe un model de practică. Ia, în schimb, ideile despre etică, negociere, relația cu clientul, cultura organizațională și presiunea unei profesii care nu se închide mereu când se termină programul.
 
 Dacă preferi filmele, vezi [topul celor 10 filme de dinainte de 2000](../top-10-filme-cu-si-pentru-avocati-inainte-de-anul-2000/) și [topul filmelor de după anul 2000](../top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/).
 

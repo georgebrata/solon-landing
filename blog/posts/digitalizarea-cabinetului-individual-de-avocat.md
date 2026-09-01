@@ -196,7 +196,9 @@ Fără măsurare, nu știi ce funcționează și ce consumă buget degeaba. Pent
 
 **Google Search Console**: ce interogări apar pe site în căutările Google, ce poziție medie ocupi, ce pagini sunt indexate și ce erori tehnice există. Verifică lunar.
 
-**Google Business Profile Insights**: câte căutări a generat profilul tău (căutări directe vs. căutări de descoperire), câte click-uri spre site, câte cereri de indicații rutiere, câte apeluri inițiate direct din Maps. Acesta este cel mai relevant indicator pentru clienții locali.
+**Google Business Profile Insights**: câte căutări a generat profilul tău (căutări directe vs. căutări de descoperire), câte click-uri spre site, câte cereri de indicații rutiere, câte apeluri inițiate direct din Maps.
+
+Acesta este cel mai relevant indicator pentru clienții locali.
 
 **Ce urmărești lunar:**
 - Număr de vizite pe site și sursa lor (organic, direct, social, referral)

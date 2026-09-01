@@ -34,7 +34,7 @@ Profilul complet (fotografie, titlu, despre, experiență, educație, cel puțin
 
 ## 2. Titlul profesional (headline) - primele 220 de caractere
 
-**Headline**-ul este textul de sub numele tău - LinkedIn îți permite până la 220 de caractere. Nu repeta doar funcția („Avocat definitiv”); folosește formula: **rol + specializare + valoare pentru client**.
+**Headline**-ul este textul de sub numele tău - LinkedIn îți permite până la 220 de caractere. Nu repeta doar funcția („Avocat definitiv”). folosește formula: **rol + specializare + valoare pentru client**.
 
 Exemple adaptate deontologic:
 
@@ -51,7 +51,9 @@ Secțiunea **About** acceptă până la 2.600 de caractere. Structura recomandat
 2. **Listă scurtă** (3-5 bullet points): tipuri de spețe, proceduri, industrii.
 3. **Call-to-action discret**: link către site, formular de programare sau e-mail de contact al cabinetului.
 
-La **Experience**, completează fiecare poziție cu descrieri concrete, nu doar titlul. Menționează tipurile de dosare gestionate, proiectele reprezentative (fără date care identifică clienții) și colaborările interdisciplinare. Dacă ești partener într-o societate de avocatură, asociază profilul personal cu **pagina companiei** (vezi secțiunea 9).
+La **Experience**, completează fiecare poziție cu descrieri concrete, nu doar titlul. Menționează tipurile de dosare gestionate, proiectele reprezentative (fără date care identifică clienții) și colaborările interdisciplinare.
+
+Dacă ești partener într-o societate de avocatură, asociază profilul personal cu **pagina companiei** (vezi secțiunea 9).
 
 **Education** și **Licenses & Certifications** (baroul, cursuri CPD, LL.M.) întăresc legitimitatea. **Skills** - adaugă minimum 10 competențe relevante (`Drept comercial`, `Litigii`, `Negociere`, `GDPR`, `Arbitraj`) și solicită **Endorsements** de la colegi cu care ai colaborat.
 
@@ -64,7 +66,7 @@ La **Experience**, completează fiecare poziție cu descrieri concrete, nu doar 
 - Link către pagina de servicii de pe site.
 - Document PDF (de exemplu un ghid despre drepturile angajaților) - util ca lead magnet discret.
 
-Adaugă elemente din **Add profile section → Recommended → Add featured link / media**. Reordonează-le cu drag & drop astfel încât primul element să fie cel mai actual și relevant. Dacă ai un blog juridic indexat în Google, un articol bine scris din secțiunea Featured poate completa strategia SEO descrisă în ghidul despre [Google Search Console](../cum-sa-folosesti-google-search-console-ca-avocat/).
+Adaugă elemente din **Add profile section → Recommended → Add featured link / media**. Reordonează-le cu drag & drop ca să primul element să fie cel mai actual și relevant. Dacă ai un blog juridic indexat în Google, un articol bine scris din secțiunea Featured poate completa strategia SEO descrisă în ghidul despre [Google Search Console](../cum-sa-folosesti-google-search-console-ca-avocat/).
 
 ## 5. Strategia de conținut - ce, când și cât
 
@@ -186,7 +188,7 @@ Profilul tău LinkedIn poate deveni ținta phishing-ului sau a tentativelor de f
 - **Autentificare în doi pași (2FA)**: **Settings → Sign in & security → Two-step verification** - activează prin aplicație autentificator sau SMS.
 - **Vizibilitate conexiuni**: **Settings → Visibility → Who can see your connections** - setează **Only you** pentru a proteja rețeaua clienților tăi.
 - **Notificări de login**: activează alertele pentru autentificări din locații noi.
-- **Mesaje**: nu deschide atașamente de la necunoscuți; verifică URL-urile înainte de a introduce credențiale.
+- **Mesaje**: nu deschide atașamente de la necunoscuți. verifică URL-urile înainte de a introduce credențiale.
 - **Modul incognito la vizualizarea profilurilor**: **Settings → Visibility → Profile viewing options → Private mode** - util când cercetezi un adversar sau un potențial client fără a lăsa urmă.
 
 Despre principii mai largi de securitate digitală în practica juridică, vezi articolul despre [importanța securității cibernetice în avocatura digitală](../importanta-securitatii-cibernetice-practica-avocaturii-digitale/).
@@ -217,6 +219,8 @@ Limitări pe mobil: editarea detaliată a profilului, crearea de newsletter și 
 
 LinkedIn este, pentru un avocat din România, cel mai eficient canal de vizibilitate profesională B2B: profilul optimizat funcționează ca vitrină permanentă, conținutul educativ construiește încredere fără a încălca regulile deontologice, iar rețeaua bine cultivată aduce recomandări și oportunități pe termen lung. Investiția inițială - fotografie profesională, profil complet, 30 de minute pe săptămână pentru o postare - se amortizează rapid comparativ cu costul altor forme de marketing juridic.
 
-Limita reală este timpul: LinkedIn răsplătește consistența, nu campaniile sporadice, iar algoritmul favorizează engagement autentic, nu conținut promoțional agresiv. Platforma nu înlocuiește site-ul cabinetului, SEO-ul sau relațiile directe - le completează. Fără o prezență web proprie, ești dependent de algoritmul LinkedIn pentru vizibilitate.
+Limita reală este timpul: LinkedIn răsplătește consistența, nu campaniile sporadice, iar algoritmul favorizează engagement autentic, nu conținut promoțional agresiv. Platforma nu înlocuiește site-ul cabinetului, SEO-ul sau relațiile directe - le completează.
+
+Fără o prezență web proprie, ești dependent de algoritmul LinkedIn pentru vizibilitate.
 
 Dacă dorești să implementezi LinkedIn pentru cabinetul tău - cu profil optimizat, strategie de conținut conformă deontologic, pagină de companie și integrare cu site-ul și SEO-ul existent - echipa **SOLON** oferă consultanță de digitalizare adaptată specificului practicii tale juridice.
