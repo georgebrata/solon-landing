@@ -1,0 +1,37 @@
+# Banned Romanian LLM Clichés & Tropes
+# Lines starting with # are comments. Empty lines are ignored.
+# Matches are case-insensitive.
+
+în peisajul dinamic
+peisajul digital
+peisajul juridic dinamic
+în continuă schimbare
+fără doar și poate
+este crucial să înțelegem
+este de o importanță capitală
+este important de menționat că
+merită subliniat faptul că
+trebuie să menționăm că
+nu în ultimul rând
+în era digitală
+în lumea de astăzi
+în societatea modernă
+revoluționează modul
+revoluționat modul
+o privire de ansamblu
+la sfârșitul zilei
+un pas important înainte
+este de la sine înțeles
+o sabie cu două tăișuri
+piatra de temelie
+un catalizator pentru
+un rol pivot
+o călătorie fascinantă
+fără precedent
+schimbă regulile jocului
+de la bun început
+navigarea prin complexitatea
+deblocarea potențialului
+în concluzie, putem spune
+așa cum am văzut mai sus
+după cum am menționat anterior

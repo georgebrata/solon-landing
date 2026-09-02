@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="canonical" href="https://solon.agency/blog/implementare-crm-juridic-pentru-avocati/" />
+
+  <!-- Primary Meta Tags -->
+  <title>Cum să implementezi un CRM juridic ca avocat | SOLON Blog</title>
+  <meta name="title" content="Cum să implementezi un CRM juridic ca avocat | SOLON Blog" />
+  <meta name="description" content="Ghid practic de CRM juridic pentru avocați: gestiunea clienților, pipeline de dosare, automatizări de contact și conformitate cu secretul profesional." />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://solon.agency/blog/implementare-crm-juridic-pentru-avocati/" />
+  <meta property="og:title" content="Cum să implementezi un CRM juridic ca avocat | SOLON Blog" />
+  <meta property="og:description" content="Ghid practic de CRM juridic pentru avocați: gestiunea clienților, pipeline de dosare, automatizări de contact și conformitate cu secretul profesional." />
+  <meta property="og:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://solon.agency/blog/implementare-crm-juridic-pentru-avocati/" />
+  <meta property="twitter:title" content="Cum să implementezi un CRM juridic ca avocat | SOLON Blog" />
+  <meta property="twitter:description" content="Ghid practic de CRM juridic pentru avocați: gestiunea clienților, pipeline de dosare, automatizări de contact și conformitate cu secretul profesional." />
+  <meta property="twitter:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="../../assets/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="../../assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="../../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../../assets/css/style.min.css" rel="stylesheet">
+  <link href="../../assets/css/blog.css" rel="stylesheet">
+
+  <style>
+    /* Ensure the header is visible on blog pages */
+    .breadcrumbs {
+      margin-top: 70px;
+    }
+  </style>
+
+  <!-- ahrefs analytics tracking code for SOLON -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
+
+  <!-- clarity -->
+  <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "w9hin0o1ua");
+  </script>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top header-inner-pages">
+    <div class="container d-flex align-items-center">
+
+      <div class="logo me-auto"><a href="../../" class="hover-no-underline" aria-label="SOLON - pagina principală">
+          <img alt="Logo SOLON, agenția digitală pentru avocați" src="../../assets/img/solon-logo.png" width="250" height="250" />
+          <span aria-hidden="true">SOLON</span></a></div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link" href="../../#servicii">Servicii</a></li>
+          <li><a class="nav-link" href="../../studii-de-caz/">Studii de caz</a></li>
+          <li><a class="nav-link active" href="../../blog/">Blog</a></li>
+          <li><a class="getstarted scrollto mr-1" href="../../programare-consultanta-gratuita/">Programează consultanță
+              gratuită</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <section class="breadcrumbs">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Blog LegalTech</h2>
+      <ol>
+        <li><a href="../../">Home</a></li>
+        <li><a href="../">Blog LegalTech</a></li>
+        <li>Cum să implementezi un CRM juridic ca avocat</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="blog-post" class="blog-post">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
+      <div class="col-lg-7">
+        <article class="entry entry-single">
+          <h1 class="entry-title">Cum să implementezi un CRM juridic ca avocat</h1>
+          <div class="entry-meta">
+            <ul>
+              <li class="d-flex align-items-center"><i class="bi bi-calendar"></i> <time datetime="2026-09-02">2026-09-02</time></li>
+              <li class="d-flex align-items-center"><i class="bi bi-clock"></i> lectură de 11 min</li>
+            </ul>
+          </div>
+          <div class="entry-tags">
+            <i class="bi bi-tags"></i>
+            <ul class="tags">
+              <li><a href="../?tag=crm">crm</a></li><li><a href="../?tag=management cabinet">management cabinet</a></li><li><a href="../?tag=avocați">avocați</a></li><li><a href="../?tag=clienți">clienți</a></li><li><a href="../?tag=marketing juridic">marketing juridic</a></li>
+            </ul>
+          </div>
+          <div class="entry-content">
+            <p>În majoritatea cabinetelor de avocatură din România, relația cu clienții este gestionată printr-un mozaic fragmentat: câteva numere salvate în agenda telefonului, conversații îngropate pe WhatsApp, e-mailuri arhivate pe fugă și tabele Excel actualizate sporadic. Când volumul de dosare crește, această lipsă de centralizare devine o frână majoră: oportunități pierdute, termene de follow-up uitate și clienți care simt că nu primesc atenția cuvenită.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_add-information_06qr.png" alt="Ilustrație: Implementarea unui sistem CRM dedicat practicii juridice și gestiunii clienților" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<p>Un sistem de Customer Relationship Management (CRM) adaptat specificului juridic nu este un moft corporatist, ci mecanismul prin care transformi fiecare contact într-o relație profesională structurată și predictibilă. În acest ghid detaliat, analizăm pas cu pas cum să alegi, configurezi și folosești un CRM în activitatea ta de zi cu zi, respectând deontologia profesională și standardele stricte de securitate.</p>
+<h2>1. De ce CRM-ul generalist eșuează în practica avocațială</h2>
+<p>Soluțiile CRM clasice (cum ar fi variantele standard de HubSpot sau Salesforce gândite pentru vânzări agresive de retail) nu se potrivesc din oficiu practicii juridice. Relația dintre un avocat și clientul său este reglementată de reguli stricte de confidențialitate, interdicția racolării și noțiunea de conflict de interese.</p>
+<p>Un CRM juridic eficient trebuie să gestioneze entități particulare:</p>
+<ul>
+<li><p><strong>Părți adverse și persoane legate</strong>: identificarea automată a potențialelor conflicte înainte de preluarea cauzei.</p>
+</li>
+<li><p><strong>Istoric granular de dosare</strong>: legătura directă între persoana fizică sau juridică și multitudinea de mandate avocațiale derulate de-a lungul anilor.</p>
+</li>
+<li><p><strong>Categorisirea strictă a calității</strong>: distincția clară între simplu solicitant de ofertă, client activ, parte adversă, martor sau colaborator extern.</p>
+</li>
+</ul>
+<p>Dacă vrei să înțelegi costurile ascunse ale metodelor tradiționale pe hârtie, consultă analiza noastră despre <a href="../cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/">cât te costă, de fapt, un cabinet de avocatură nedigitalizat</a>.</p>
+<h2>2. Arhitectura de bază: Entități, Câmpuri și Relații</h2>
+<p>Pentru a construi un sistem coerent, trebuie să configurezi baza de date pe patru niveluri interconectate:</p>
+<pre><code>[Contact / Persoană Fizică] ─── (Angajat / Reprezentant) ───► [Companie / Entitate Juridică]
+             │                                                                │
+             ▼                                                                ▼
+      [Oportunitate / Intake] ────────────────────────────────────► [Dosar / Proiect Activ]
+</code></pre>
+<ol>
+<li><strong>Persoane Fizice (Contacts)</strong>: Nume, prenume, telefon securizat, adresă de e-mail, CNP (doar când este mandatat), funcție și compania reprezentată.</li>
+<li><strong>Companii (Accounts)</strong>: Denumire fiscală, CUI, sediu social, industrie, persoană de contact decidentă și cifra de afaceri estimată.</li>
+<li><strong>Oportunități (Deals / Intake)</strong>: Solicitarea concretă înainte de semnarea contractului (obiectul consultanței, urgența, onorariul propus).</li>
+<li><strong>Dosare (Cases / Matters)</strong>: Mandatele contractate, conectate la sistemul tău operațional.</li>
+</ol>
+<h2>3. Pipeline-ul de Client Intake: de la primul contact la contract</h2>
+<p>Procesul de preluare a unui client nou trebuie să urmeze etape clare, fără blocaje și fără timp mort. Iată schema recomandată pentru pipeline-ul tău în CRM:</p>
+<table>
+<thead>
+<tr>
+<th>Fază Pipeline</th>
+<th>Obiectiv principal</th>
+<th>Acțiuni automatizate recomandate</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. Solicitare Nouă</strong></td>
+<td>Înregistrare date primare</td>
+<td>Confirmare automată prin e-mail de primire a mesajului</td>
+</tr>
+<tr>
+<td><strong>2. Conflict Check</strong></td>
+<td>Verificare automată a părților</td>
+<td>Notificare către parteneri cu numele părții adverse</td>
+</tr>
+<tr>
+<td><strong>3. Consultanță Inițială</strong></td>
+<td>Clarificare strategie și onorariu</td>
+<td>Link de programare direct în calendar</td>
+</tr>
+<tr>
+<td><strong>4. Ofertă Transmisă</strong></td>
+<td>Trimiterea contractului de asistență</td>
+<td>Reminder automat după 48 de ore dacă oferta nu e deschisă</td>
+</tr>
+<tr>
+<td><strong>5. Contractat / Câștigat</strong></td>
+<td>Deschiderea dosarului</td>
+<td>Creare folder dedicat în cloud și generare fișă dosar</td>
+</tr>
+<tr>
+<td><strong>6. Închis / Refuzat</strong></td>
+<td>Arhivare și clasificare motiv</td>
+<td>Marcare motiv: incompatibilitate, onorariu, termen nerealist</td>
+</tr>
+</tbody></table>
+<p>Prin stabilirea unor astfel de etape clare, niciun potențial dosar nu mai rămâne nesoluționat din cauza neatenției.</p>
+<h2>4. Verificarea conflictului de interese direct în baza de date</h2>
+<p>Una dintre cele mai mari responsabilități profesionale este evitarea conflictelor de interese. Într-un sistem tradițional, verificarea se face prin memoria colegilor sau căutări disperate în e-mailuri vechi.</p>
+<p>În CRM, configurează o regulă obligatorie la introducerea oricărui nou dosar:</p>
+<ol>
+<li>Completează câmpul obligatoriu <strong>Parte adversă</strong> și <strong>Reprezentant parte adversă</strong>.</li>
+<li>Rularea unei căutări globale automate pe toate modulele: dacă numele apare ca și client activ, fost client sau chiar prospect cu care ai discutat confidențial, sistemul generează un avertisment roșu vizibil: <code>Atenție: Parte adversă detectată în istoricul cabinetului</code>.</li>
+<li>Notifică instant partenerul coordonator pentru luarea unei decizii documentate.</li>
+</ol>
+<h2>5. Șabloane de comunicare și mesaje automate de etapă</h2>
+<p>Un CRM performant îți permite să standardizezi comunicarea fără să pierzi nota personală. În loc să scrii de fiecare dată aceleași e-mailuri de la zero, creează o bibliotecă de șabloane profesionale:</p>
+<ul>
+<li><strong>E-mail de primire solicitare</strong>: Confirmă că solicitarea a fost recepționată de un avocat și specifică termenul estimat de răspuns (ex. 4 ore lucrătoare).</li>
+<li><strong>Checklist documente preliminare</strong>: Listă clară cu actele necesare înainte de ședința de consultanță (acte de stare civilă, contracte contestate, încheieri de ședință).</li>
+<li><strong>Instrucțiuni de plată onorariu</strong>: Datele bancare, instrucțiunile pentru confirmarea transferului și link către factura emisă.</li>
+</ul>
+<p>Integrarea acestor fluxuri funcționează perfect cu semnarea electronică. descoperă detalii concrete în ghidul nostru despre <a href="../cum-sa-folosesti-docusign-ca-avocat/">cum să folosești DocuSign ca avocat</a>.</p>
+<h2>6. Sincronizarea cu e-mailul și calendarul cabinetului</h2>
+<p>Un CRM este util doar dacă este actualizat fără efort suplimentar. Asigură-te că activezi pluginul dedicat pentru clientul tău de e-mail (Google Workspace sau Microsoft Outlook):</p>
+<ul>
+<li><strong>Înregistrare automată (Two-Way Sync)</strong>: Orice mesaj primit de la un client asociat unui dosar se indexează automat în cronologia acelui contact.</li>
+<li><strong>Creare contact dintr-un click</strong>: Dacă primești un mesaj de la o adresă nouă, butonul <strong>Add to CRM</strong> extrage automat semnătura electronică, numele și numărul de telefon.</li>
+<li><strong>Sincronizare termene</strong>: Întâlnirile stabilite în CRM apar instantaneu pe smartphone-ul tău în Google Calendar sau Outlook, blocând intervalele aglomerate.</li>
+</ul>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_security-on_btwg.png" alt="Ilustrație: Securitatea datelor confidențiale și controlul accesului în sistemul CRM al cabinetului" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<h2>7. Securitate, confidențialitate și conformitate GDPR</h2>
+<p>Datele stocate într-un CRM juridic au un caracter foarte sensibil. Confidențialitatea este fundamentul etic al profesiei de avocat, iar breșele de securitate pot atrage răspunderea disciplinară și civilă.</p>
+<p>Măsuri tehnice obligatorii la implementarea CRM-ului:</p>
+<ul>
+<li><p><strong>Autentificare cu doi factori (2FA / MFA)</strong>: Obligatorie pentru toți utilizatorii din cabinet, preferabil prin aplicație de tip authenticator (Google Authenticator, Microsoft Authenticator) și nu prin SMS.</p>
+</li>
+<li><p><strong>Control granular al permisiunilor (Role-Based Access Control)</strong>:</p>
+</li>
+<li><p>Avocații colaboratori văd doar dosarele și contactele la care lucrează activ.</p>
+</li>
+<li><p>Asistenții sau secretariatul văd datele de contact și facturare, dar nu au acces la notele strategice de dosar.</p>
+</li>
+<li><p>Partenerii au acces complet la rapoarte financiare și portofoliu global.</p>
+</li>
+<li><p><strong>Localizarea serverelor în Uniunea Europeană</strong>: Optează pentru furnizori care garantează stocarea datelor pe centre din UE (Frankfurt, Dublin, Amsterdam) pentru a respecta strict GDPR și normele naționale.</p>
+</li>
+</ul>
+<p>Pentru o privire detaliată asupra securității infrastructurii, parcurge ghidul nostru despre <a href="../zero-trust-security-explicat-pentru-avocati/">Zero Trust Security explicat pentru avocați</a>.</p>
+<h2>8. Segmentarea portofoliului și fidelizarea clienților existenți</h2>
+<p>Atragerea unui client nou costă de 5 până la 7 ori mai mult decât păstrarea și reactivarea unui client existent. CRM-ul îți oferă vizibilitate completă asupra valorii portofoliului tău:</p>
+<ul>
+<li><strong>Segmentare după domeniu de practică</strong>: Grupează contactele în <code>Drept Societar</code>, <code>Litigii Civile</code>, <code>Proprietate Intelectuală</code> sau <code>Real Estate</code>.</li>
+<li><strong>Alerte de noutăți legislative personalizate</strong>: Când apare o modificare fiscală sau legislativă majoră, poți transmite o informare utilă strict clienților vizați direct de acea schimbare, consolidându-ți statutul de consilier de încredere.</li>
+<li><strong>Monitorizarea relațiilor inactive</strong>: Filtrează companiile care nu au mai solicitat asistență în ultimele 6 luni și programează un apel de curtoazie pentru a verifica stadiul proiectelor curente.</li>
+</ul>
+<h2>9. Măsurarea indicatorilor cheie de performanță (KPIs)</h2>
+<p>Fără date măsurabile, deciziile manageriale ale cabinetului se bazează exclusiv pe intuiție. Un CRM bine setat îți afișează în timp real un tablou de bord (dashboard) cu metrice esențiale:</p>
+<pre><code>+-----------------------------------------------------------------------+
+| DASHBOARD CABINET AVOCATURĂ                                           |
++------------------------------------+----------------------------------+
+| Rata de conversie lead -&gt; client:  | Timp mediu de răspuns la contact:|
+| 38% (+5% față de trimestrul trecut)| 1.8 ore lucrătoare               |
++------------------------------------+----------------------------------+
+| Valoare totală pipeline activ:     | Top sursă clienți calificați:    |
+| 45.000 EUR                         | Recomandări clienți vechi (54%)  |
++------------------------------------+----------------------------------+
+</code></pre>
+<p>Monitorizarea săptămânală a acestor cifre te ajută să identifici exact unde se pierd potențialele dosare: la primul răspuns, la transmiterea ofertei sau în negocierea contractului.</p>
+<h2>10. Integrarea CRM-ului cu ecosistemul digital al cabinetului</h2>
+<p>CRM-ul nu trebuie să funcționeze ca o insulă izolată. El devine inima operațională a biroului atunci când este legat de celelalte unelte pe care le folosești:</p>
+<ul>
+<li><strong>Formularul de pe website</strong>: Solicitările trimise de potențialii clienți prin pagina de contact a site-ului ajung direct în CRM ca oportunitate nouă, fără copiere manuală.</li>
+<li><strong>Sistemul de facturare și contabilitate</strong>: La bifarea statusului <code>Contract semnat</code>, datele de facturare se sincronizează automat către aplicația ta de facturare (ex. SmartBill, FGO) pentru emiterea facturii de avans.</li>
+<li><strong>Sistemul de gestiune a documentelor</strong>: Crearea automată a unui director securizat în cloud (Google Drive, OneDrive sau soluție on-premise) cu permisiunile configurate conform echipei asignate.</li>
+</ul>
+<p>Pentru o perspectivă completă asupra tuturor pilonilor de modernizare, citește ghidul nostru <a href="../digitalizarea-cabinetului-individual-de-avocat/">digitalizarea cabinetului individual de avocat</a>.</p>
+<h2>11. Erori frecvente la implementare și cum să le eviți</h2>
+<p>Multe cabinete investesc în software de top, dar abandonează utilizarea după câteva luni. Iată capcanele pe care trebuie să le eviți:</p>
+<ol>
+<li><strong>Supracomplicarea câmpurilor din prima zi</strong>: Dacă ceri echipei să completeze 30 de câmpuri la fiecare contact nou, nimeni nu le va completa. Începe cu 5 câmpuri obligatorii și adaugă complexitate treptat.</li>
+<li><strong>Lipsa de disciplină la nivel de parteneri</strong>: Dacă partenerii continuă să noteze contacte pe șervețele și să trimită oferte din conturi personale fără înregistrare în CRM, stagiarii și colaboratorii vor abandona sistemul rapid.</li>
+<li><strong>Ignorarea curățeniei datelor (Data Hygiene)</strong>: Alocă 30 de minute la fiecare final de lună pentru a fuziona duplicatele, a șterge contactele inactive și a valida datele fără număr de telefon sau adresă validă.</li>
+</ol>
+<h2>12. Plan de adoptare în 30 de zile</h2>
+<p>Implementarea nu trebuie să paralizeze activitatea cabinetului. Urmează un calendar progresiv:</p>
+<ul>
+<li><strong>Săptămâna 1: Curățare și Configurare</strong>: Exportă contactele din telefoane și e-mail, elimină duplicatele și definește etapele specifice ale pipeline-ului tău.</li>
+<li><strong>Săptămâna 2: Pilot pe o singură arie de practică</strong>: Folosește CRM-ul pentru dosarele noi dintr-o singură specializare (de exemplu, consultanță comercială).</li>
+<li><strong>Săptămâna 3: Integrare e-mail și șabloane</strong>: Instalează extensiile de sincronizare și încarcă cele 5 șabloane principale de e-mail.</li>
+<li><strong>Săptămâna 4: Adoptare completă și prim audit</strong>: Treci toate dosarele și contactele active în noul sistem și analizează primele statistici de activitate.</li>
+</ul>
+<h2>Concluzie</h2>
+<p>Implementarea unui CRM juridic transformă cabinetul dintr-o structură reactivă, care stinge incendii și depinde de memoria individuală, într-o organizație predictibilă, capabilă să ofere clienților o experiență impecabilă de la primul contact până la închiderea mandatului. Sistemul elimină timpii morți, securizează datele confidențiale și eliberează ore prețioase pentru analiza juridică de fond.</p>
+<p>Principalul compromis constă în efortul inițial de disciplină: un CRM valorează exact atât cât valorează datele introduse în el. Fără o rutină asumată de întreaga echipă și fără proceduri interne clare, riscă să devină o altă agendă electronică abandonată.</p>
+<p>Dacă dorești să implementezi un sistem CRM adaptat specificului practicii tale juridice, cu fluxuri automate de preluare a clienților și integrări securizate cu e-mailul și dosarele de lucru, echipa <strong>SOLON</strong> oferă consultanță de digitalizare și dezvoltare dedicată exclusiv societăților și cabinetelor de avocați.</p>
+<hr>
+<blockquote>
+<p><em>Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul Legii nr. 51/1995. Pentru asistență personalizată, vă recomandăm consultarea unui avocat specializat.</em></p>
+</blockquote>
+<!-- AI-Assisted Content | Verified by SOLON Editorial | Model: Gemini / Claude | Compliance: EU AI Act Art. 50 -->
+
+          </div>
+        </article>
+      </div>
+      <aside class="col-lg-4 d-none d-lg-block blog-sidebar" aria-label="Sidebar blog">
+        <div class="" data-blog-sidebar>
+          <!-- <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-search-title">
+            <h3 id="blog-sidebar-search-title" class="blog-sidebar-title">Caută</h3>
+            <form class="blog-sidebar-search-form" data-blog-sidebar-search role="search">
+              <label class="visually-hidden" for="blog-sidebar-search-input">Caută articole</label>
+              <div class="blog-sidebar-search-input-wrap">
+                <input id="blog-sidebar-search-input" type="search" class="form-control" placeholder="Caută articole..." aria-label="Caută articole">
+                <button type="submit" class="btn btn-sm blog-sidebar-search-button">Caută</button>
+              </div>
+            </form>
+          </section> -->
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-recent-title">
+            <h3 id="blog-sidebar-recent-title" class="blog-sidebar-title">Articole recente</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-recent></ul>
+          </section>
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-tags-title">
+            <h3 id="blog-sidebar-tags-title" class="blog-sidebar-title">Taguri populare</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-tags></ul>
+          </section>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="blog-article-extras">
+  <div class="container" data-aos="fade-up">
+    <div class="blog-recent-articles">
+      <h2>ARTICOLE RECENTE</h2>
+      <ul>
+        <li><a href="../flux-digital-sigur-pentru-avocatul-din-romania/">Flux digital sigur pentru avocatul din România</a>, 1 septembrie 2026</li>
+<li><a href="../cum-sa-folosesti-linkedin-ca-avocat/">Cum să folosești LinkedIn ca avocat</a>, 28 august 2026</li>
+<li><a href="../cum-sa-folosesti-slack-ca-avocat/">Cum să folosești Slack ca avocat</a>, 28 august 2026</li>
+<li><a href="../bonus-top-10-seriale-cu-si-pentru-avocati/">Bonus: top 10 seriale cu și pentru avocați</a>, 15 august 2026</li>
+<li><a href="../top-10-filme-cu-si-pentru-avocati-dupa-anul-2000/">Top 10 filme cu și pentru avocați (după 2000)</a>, 15 august 2026</li>
+      </ul>
+    </div>
+
+    <div class="blog-services">
+      <div class="section-title text-start">
+        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+      </div>
+      <div class="row gy-4">
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-headset"></i></div>
+            <h3>Consultanță digitală</h3>
+            <p>Transformăm expertiza ta juridică în succes digital, ghidându-vă spre inovație și eficiență cu soluții digitale personalizate.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-brush"></i></div>
+            <h3>Branding</h3>
+            <p>Sculptăm identitatea brandului dvs. cu măiestrie și viziune pentru a crea o amprentă memorabilă în lumea juridică.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-puzzle"></i></div>
+            <h3>Marketing</h3>
+            <p>Strategiile noastre de marketing vorbesc direct la publicul țintă, crescând respectul pentru brandul dvs. juridic.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-laptop"></i></div>
+            <h3>Development</h3>
+            <p>Website-ul dumneavoastră devine mai mult decât o carte de vizită online; este o capodoperă live care spune povestea firmei dumneavoastră de avocatură.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <!-- ======= Newsletter Section ======= -->
+    <div class="footer-newsletter blog-newsletter">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="section-title">
+            <h2>Newsletter</h2>
+          </div>
+          <div class="col-lg-7">
+            <h3>Abonează-te la noutăți din domeniul LegalTech</h3>
+            <p>Poți câștiga un pachet de servicii GOLD în valoare de 349€</p>
+            <div id="mc_embed_shell">
+              <div id="mc_embed_signup">
+                <form
+                  action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=c9db637b01&amp;f_id=00a6f8e6f0"
+                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+                  target="_self" novalidate="">
+                  <div id="mc_embed_signup_scroll">
+                    <div class="mc-field-group">
+                      <label for="mce-EMAIL-newsletter" class="form-label visually-hidden">Adresă de email pentru
+                        newsletter</label>
+                      <input type="email" name="EMAIL" class="required email" id="mce-EMAIL-newsletter" required=""
+                        value="" autocomplete="email">
+                    </div>
+                    <div hidden=""><input type="hidden" name="tags" value="3016574"></div>
+                    <div id="mce-responses" class="clear">
+                      <div class="response" id="mce-error-response" style="display: none;"></div>
+                      <div class="response" id="mce-success-response" style="display: none;"></div>
+                    </div>
+                    <div aria-hidden="true" style="position: absolute; left: -5000px;"><input type="text"
+                        name="b_8cfcf6d7f1f80308125058838_c9db637b01" tabindex="-1" value=""></div>
+                    <div class="clear"><input type="submit" name="subscribe" id="mc-embedded-subscribe-newsletter"
+                        class="button" value="Subscribe"></div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Newsletter Section -->
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6 footer-links">
+            <h3>Follow us</h3>
+            <ul>
+              <li>
+                  <i class="bx bxl-instagram" aria-hidden="true" ></i>
+                  <a href="https://www.instagram.com/solon.agency" target="_blank">Instagram</a>
+              </li>
+              <li>
+                  <i class="bx bxl-facebook" aria-hidden="true"></i>
+                  <a href="https://www.facebook.com/people/SOLON-Agency/61554025732235/" target="_blank">Facebook</a>
+              </li>
+              <li>
+                  <i class="bx bxl-linkedin" aria-hidden="true"></i> 
+                  <a href="https://www.linkedin.com/company/solonagency/" target="_blank">LinkedIn</a>
+              </li>
+              <li>
+                  <i class="bx bxl-twitter" aria-hidden="true"></i> 
+                  <a href="https://www.twitter.com/solon_agency" target="_blank">Twitter</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-6 col-sm-6 footer-links">
+            <h3>Linkuri utile</h3>
+            <ul>
+              <li> <a href="/blog/">Blog LegalTech</a></li>
+              <li> <a target="_blank" href="../../terms/">Termeni și condiții</a></li>
+              <li> <a target="_blank" href="../../cookies/">Politica cookie</a></li>
+              <li> <a target="_blank" href="../../privacy/">Politică de confidențialitate</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-12 footer-contact">
+            <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
+            <h3>SOLON</h3>
+            <p>
+              <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
+              <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        <b>SOLON</b> &copy; <span data-current-year></span>
+      </div>
+      <div class="credits">
+        Servicii digitale complete pentru mediul juridic
+      </div>
+    </div>
+  </footer>
+  <!-- End Footer -->
+
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    aria-label="Înapoi la începutul paginii"><i class="bi bi-arrow-up-short" aria-hidden="true"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../../assets/vendor/aos/aos.js"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="../../assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="../../assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="../../assets/js/main.min.js"></script>
+  <script src="../../assets/js/dynamic-year.min.js"></script>
+  <script src="../../assets/js/blog-sidebar.js"></script>
+</body>
+
+</html>
