@@ -1,5 +1,66 @@
 [
   {
+    "title": "Client Intake automatizat pentru avocați",
+    "date": "2026-09-09",
+    "slug": "client-intake-automatizat-pentru-avocati",
+    "description": "Ghid de automatizare a preluării clienților noi: formulare inteligente, verificare de conflicte, colectare preliminară de acte și contractare.",
+    "read_time": 14,
+    "categories": [
+      "digitalizare",
+      "automatizări",
+      "management"
+    ],
+    "tags": [
+      "avocați",
+      "client intake",
+      "automatizări",
+      "formulare",
+      "productivitate"
+    ],
+    "url": "client-intake-automatizat-pentru-avocati/"
+  },
+  {
+    "title": "WhatsApp Business pentru avocați: ghid și etică",
+    "date": "2026-09-08",
+    "slug": "whatsapp-business-pentru-avocati-ghid-si-etica",
+    "description": "Cum folosești WhatsApp Business respectând secretul profesional: mesaje automate de întâmpinare, etichete pe clienți și separarea vieții personale.",
+    "read_time": 14,
+    "categories": [
+      "digitalizare",
+      "productivitate",
+      "comunicare"
+    ],
+    "tags": [
+      "whatsapp business",
+      "avocați",
+      "comunicare",
+      "securitate",
+      "productivitate"
+    ],
+    "url": "whatsapp-business-pentru-avocati-ghid-si-etica/"
+  },
+  {
+    "title": "Arhivarea electronică a dosarelor pentru avocați",
+    "date": "2026-09-07",
+    "slug": "arhivarea-electronica-a-dosarelor-pentru-avocati",
+    "description": "Cum organizezi arhiva digitală a cabinetului: norme UNBR, politici de retenție a documentelor, criptare și căutare indexată fără hârtii inutile.",
+    "read_time": 14,
+    "categories": [
+      "digitalizare",
+      "securitate",
+      "management"
+    ],
+    "tags": [
+      "arhivare",
+      "dosare",
+      "avocați",
+      "securitate",
+      "unbr",
+      "digitalizare"
+    ],
+    "url": "arhivarea-electronica-a-dosarelor-pentru-avocati/"
+  },
+  {
     "title": "Time tracking și măsurarea rentabilității dosarelor",
     "date": "2026-09-04",
     "slug": "time-tracking-rentabilitate-dosare-avocati",
