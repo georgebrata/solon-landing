@@ -141,6 +141,7 @@ Succesul ține de modul în care prezinți și introduci instrumentul în relaț
 
 Pași recomandați pentru un onboarding eficient:
 1. **Inserarea clauzei de comunicare în contract**: adaugă în Contractul de Asistență Juridică o clauză standardizată care specifică faptul că spațiul oficial și securizat de transmitere a actelor și a informărilor este portalul dedicat al cabinetului.
+
 2. **Mesajul de bun venit automatizat**: imediat după deschiderea dosarului, clientul primește un e-mail elegant cu datele de conectare, un link direct către portal și un ghid video scurt care îi prezintă funcțiile de bază.
 
 3. **Ghidul rapid pe o singură pagină**: un document PDF simplu, cu capturi de ecran care arată exact unde găsește termenele, cum încarcă un fișier și cum trimite un mesaj echipei.
