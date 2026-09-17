@@ -73,93 +73,55 @@ if (randomTemp < 0.79) {
 // 3. Pool of high-value candidate topics for Romanian lawyers
 const candidateTopics = [
   {
+    title: "Asistent AI local și privat pentru avocați",
+    slug: "asistent-ai-local-privat-pentru-avocati",
+    description: "Ghid complet de rulare a modelelor AI locale în cabinet: confidențialitate absolută, sinteză de dosare offline și protecția secretului profesional.",
+    categories: ["legaltech", "inteligenta-artificiala", "securitate"],
+    tags: ["ai local", "avocați", "securitate", "secret profesional", "legaltech", "confidențialitate"],
+    keywords: ["ai local", "ollama", "modele lingvistice", "secret profesional", "dosare offline"]
+  },
+  {
+    title: "Agenți AI autonomi în practica avocațială",
+    slug: "agenti-ai-autonomi-in-practica-avocatilor",
+    description: "Cum folosesc societățile de avocați agenții AI pentru triaj de corespondență, generare de drafturi și cercetare jurisprudențială autonomă.",
+    categories: ["legaltech", "automatizări", "digitalizare"],
+    tags: ["agenti ai", "automatizări", "avocați", "legaltech", "productivitate"],
+    keywords: ["agenti ai", "automatizare juridica", "triaj dosare", "fluxuri autonome"]
+  },
+  {
+    title: "Semnătura electronică calificată pentru avocați",
+    slug: "semnatura-electronica-calificata-pentru-avocati",
+    description: "Ghid complet eIDAS pentru avocați: valoare probatorie, depunerea actelor în instanță, împuterniciri avocațiale și fluxuri contractuale 100% digitale.",
+    categories: ["digitalizare", "legaltech", "securitate"],
+    tags: ["semnătură electronică", "eidas", "avocați", "contracte", "instanță"],
+    keywords: ["semnatura electronica", "eidas", "certificat calificat", "semnare contracte", "instanta"]
+  },
+  {
+    title: "Gestionarea cunoștințelor juridice în cabinet",
+    slug: "gestionarea-cunostintelor-juridice-knowledge-management",
+    description: "Cum construiești o bază internă de precedent și modele de contracte: Knowledge Management eficient pentru transferul de expertiză între avocați.",
+    categories: ["management", "productivitate", "digitalizare"],
+    tags: ["knowledge management", "avocați", "precedente", "management cabinet", "productivitate"],
+    keywords: ["knowledge management", "modele contracte", "baza de date interna", "management dosare"]
+  },
+  {
     title: "e-Factura pentru avocați: ghid complet de integrare",
     slug: "e-factura-pentru-avocati-ghid-integrare",
     description: "Ghid practic e-Factura pentru cabinete de avocatură: configurare SPV, certificat digital calificat, automatizarea facturării și conformitate ANAF.",
     categories: ["digitalizare", "management", "automatizări"],
     tags: ["e-factura", "avocați", "anaf", "facturare", "digitalizare", "management"],
     keywords: ["e-factura", "anaf", "spv", "facturare electronica", "certificat digital"]
-  },
-  {
-    title: "Arhivarea electronică a dosarelor pentru avocați",
-    slug: "arhivarea-electronica-a-dosarelor-pentru-avocati",
-    description: "Cum organizezi arhiva digitală a cabinetului: norme UNBR, politici de retenție a documentelor, criptare și căutare indexată fără hârtii inutile.",
-    categories: ["digitalizare", "securitate", "management"],
-    tags: ["arhivare", "dosare", "avocați", "securitate", "unbr", "digitalizare"],
-    keywords: ["arhivare electronica", "unbr", "pastrare dosare", "cloud juridic", "criptare"]
-  },
-  {
-    title: "Client Intake automatizat pentru societăți de avocați",
-    slug: "client-intake-automatizat-pentru-avocati",
-    description: "Ghid de automatizare a preluării clienților noi: formulare inteligente, verificare de conflicte, colectare preliminară de acte și contractare.",
-    categories: ["automatizări", "digitalizare", "management"],
-    tags: ["client intake", "automatizări", "avocați", "formulare", "productivitate"],
-    keywords: ["client intake", "onboarding clienti", "formulare inteligente", "conflict check"]
-  },
-  {
-    title: "Portal securizat pentru clienți în practica juridică",
-    slug: "portal-securizat-clienti-avocatura",
-    description: "Cum implementezi un spațiu digital securizat pentru clienți: partajare de documente, statusul dosarelor în timp real și reducerea apelurilor repetate.",
-    categories: ["digitalizare", "securitate", "productivitate"],
-    tags: ["portal clienti", "avocați", "comunicare", "securitate", "transparenta"],
-    keywords: ["portal clienti", "client portal", "dosar online", "colaborare securizata"]
-  },
-  {
-    title: "Cum să folosești OCR și AI pentru scanarea dosarelor",
-    slug: "cum-sa-folosesti-ocr-si-ai-pentru-dosare-avocat",
-    description: "Transformarea volumelor de acte scanate în text căutabil: unelte OCR avansate, extragere automată de termene și sinteză inteligentă de probe.",
-    categories: ["legaltech", "productivitate", "digitalizare"],
-    tags: ["ocr", "ai", "avocați", "dosare scanate", "cercetare", "productivitate"],
-    keywords: ["ocr", "scanare dosare", "recunoastere text", "sinteza documente", "ai juridic"]
-  },
-  {
-    title: "Prevenirea atacurilor Ransomware în cabinete de avocat",
-    slug: "prevenirea-ransomware-in-cabinete-de-avocatura",
-    description: "Ghid de securitate defensivă: protecția fișierelor confidențiale, strategii de backup imuabil, igiena parolelor și prevenirea extorcării digitale.",
-    categories: ["securitate", "digitalizare", "management"],
-    tags: ["ransomware", "securitate", "avocați", "backup", "gdpr", "protectie date"],
-    keywords: ["ransomware", "atac cibernetic", "backup securizat", "confidentialitate", "antivirus"]
-  },
-  {
-    title: "WhatsApp Business pentru avocați: ghid și etică",
-    slug: "whatsapp-business-pentru-avocati-ghid-si-etica",
-    description: "Cum folosești WhatsApp Business respectând secretul profesional: mesaje automate de întâmpinare, etichete pe clienți și separarea vieții personale.",
-    categories: ["digitalizare", "productivitate", "comunicare"],
-    tags: ["whatsapp business", "avocați", "comunicare", "securitate", "productivitate"],
-    keywords: ["whatsapp business", "comunicare clienti", "secret profesional", "mesaje automate"]
-  },
-  {
-    title: "Time tracking și măsurarea rentabilității dosarelor",
-    slug: "time-tracking-rentabilitate-dosare-avocati",
-    description: "De la estimări oarbe la cifre exacte: cum monitorizezi timpul consumat pe fiecare dosar, identifici clienții nerentabili și optimizezi tarifele.",
-    categories: ["management", "productivitate", "digitalizare"],
-    tags: ["time tracking", "rentabilitate", "avocați", "management cabinet", "onorarii"],
-    keywords: ["time tracking", "pontaj avocat", "calcul onorariu", "rentabilitate dosar", "eficienta"]
-  },
-  {
-    title: "Semnătura electronică calificată conform eIDAS pentru avocați",
-    slug: "semnatura-electronica-calificata-eidas-avocati",
-    description: "Tot ce trebuie să știe un avocat despre semnătura digitală calificată: valoare probatorie, depunerea actelor în instanță și fluxuri contractuale.",
-    categories: ["digitalizare", "legaltech", "securitate"],
-    tags: ["semnătură electronică", "eidas", "avocați", "contracte", "securitate"],
-    keywords: ["semnatura electronica", "eidas", "certificat calificat", "semnare contracte", "instanta"]
-  },
-  {
-    title: "Implementarea unui CRM juridic pentru cabinete de avocați",
-    slug: "implementare-crm-juridic-pentru-avocati",
-    description: "Cum alegi și configurezi un CRM adaptat practicii juridice: gestiunea lead-urilor, istoricul interacțiunilor cu clienții și fidelizarea portofoliului.",
-    categories: ["digitalizare", "management", "marketing juridic"],
-    tags: ["crm", "management cabinet", "avocați", "clienți", "marketing juridic"],
-    keywords: ["crm juridic", "gestiune clienti", "vanzari servicii juridice", "pipeline dosare"]
   }
 ];
 
 // 4. Filter out any topic whose slug or similar title already exists
+const stopWords = new Set(['pentru', 'avocați', 'avocati', 'avocat', 'ghid', 'complet', 'despre', 'cum', 'este', 'unui', 'unei', 'care', 'practica', 'cabinet']);
+
 const availableTopics = candidateTopics.filter(t => {
   if (existingSlugs.has(t.slug)) return false;
   const isTitleClose = existingTitles.some(et => {
-    // Check keyword overlap
-    const titleWords = t.title.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+    const titleWords = t.title.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !stopWords.has(w));
+    if (titleWords.length === 0) return false;
     const matches = titleWords.filter(w => et.includes(w));
     return matches.length >= 3;
   });
@@ -169,14 +131,7 @@ const availableTopics = candidateTopics.filter(t => {
 // Pick candidate topic (using pseudo-random choice from available)
 const selectedTopic = availableTopics.length > 0
   ? availableTopics[Math.floor(Math.random() * availableTopics.length)]
-  : {
-      title: "Ghid de securitate a dispozitivelor mobile pentru avocați",
-      slug: "securitatea-dispozitivelor-mobile-pentru-avocati",
-      description: "Protecția datelor clienților pe smartphone și tabletă: MDM, criptare la nivel de fișier, Wi-Fi public securizat și backup automat.",
-      categories: ["securitate", "digitalizare", "productivitate"],
-      tags: ["smartphone", "securitate mobilă", "avocați", "criptare", "gdpr"],
-      keywords: ["securitate mobil", "mdm", "protectie smartphone", "avocat la distanta"]
-    };
+  : candidateTopics[0];
 
 // 5. Select Undraw Images based on topic relevance
 const imageUsageMap = {

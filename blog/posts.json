@@ -1,5 +1,45 @@
 [
   {
+    "title": "Agenți AI autonomi în practica avocațială",
+    "date": "2026-09-17",
+    "slug": "agenti-ai-autonomi-in-practica-avocatilor",
+    "description": "Cum folosesc societățile de avocați agenții AI pentru triaj de corespondență, generare de drafturi și cercetare jurisprudențială autonomă.",
+    "read_time": 15,
+    "categories": [
+      "legaltech",
+      "automatizări",
+      "digitalizare"
+    ],
+    "tags": [
+      "agenti ai",
+      "automatizări",
+      "avocați",
+      "legaltech",
+      "productivitate"
+    ],
+    "url": "agenti-ai-autonomi-in-practica-avocatilor/"
+  },
+  {
+    "title": "Securitatea dispozitivelor mobile pentru avocați",
+    "date": "2026-09-16",
+    "slug": "securitatea-dispozitivelor-mobile-pentru-avocati",
+    "description": "Protecția datelor clienților pe smartphone și tabletă: MDM, criptare la nivel de fișier, Wi-Fi public securizat și backup automat.",
+    "read_time": 14,
+    "categories": [
+      "securitate",
+      "digitalizare",
+      "management"
+    ],
+    "tags": [
+      "avocați",
+      "securitate mobilă",
+      "smartphone",
+      "criptare",
+      "gdpr"
+    ],
+    "url": "securitatea-dispozitivelor-mobile-pentru-avocati/"
+  },
+  {
     "title": "Prevenirea atacurilor Ransomware în cabinete de avocat",
     "date": "2026-09-14",
     "slug": "prevenirea-ransomware-in-cabinete-de-avocatura",
