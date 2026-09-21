@@ -3,6 +3,10 @@
   "private": true,
   "scripts": {
     "minify": "node scripts/minify-assets.js",
+    "flags": "node scripts/apply-feature-flags.js",
+    "flags:dry": "node scripts/apply-feature-flags.js --dry-run",
+    "flags:status": "node scripts/apply-feature-flags.js --status",
+    "test:flags": "node scripts/test-feature-flags.js",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "devDependencies": {

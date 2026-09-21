@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Feature flags configuration for SOLON homepage sections",
+  "settings": {
+    "syncNav": false
+  },
+  "homepage": {
+    "sections": {
+      "hero": {
+        "enabled": true,
+        "label": "Hero Section (banner principal)"
+      },
+      "clients": {
+        "enabled": true,
+        "label": "Clienți (slider logo-uri)"
+      },
+      "servicii": {
+        "enabled": true,
+        "label": "Servicii (prezentare servicii juridice)"
+      },
+      "skills": {
+        "enabled": true,
+        "label": "Skills / Expertiză (grafice și statistici)"
+      },
+      "why-us": {
+        "enabled": true,
+        "label": "De ce noi (acordeon argumente)"
+      },
+      "portofoliu": {
+        "enabled": true,
+        "label": "Portofoliu (proiecte și studii de caz)"
+      },
+      "testimonials": {
+        "enabled": true,
+        "label": "Testimoniale (recenzii avocați)"
+      },
+      "echipa": {
+        "enabled": false,
+        "label": "Echipă (membrii echipei SOLON)"
+      },
+      "pricing": {
+        "enabled": true,
+        "label": "Prețuri / Abonamente"
+      },
+      "contact": {
+        "enabled": true,
+        "label": "Contact (formular inline)"
+      },
+      "cta": {
+        "enabled": true,
+        "label": "Call to Action (solicită apel telefonic)"
+      },
+      "faq": {
+        "enabled": true,
+        "label": "Întrebări frecvente (FAQ)"
+      },
+      "blog": {
+        "enabled": true,
+        "label": "Blog Carousel (ultimele articole)"
+      },
+      "newsletter": {
+        "enabled": false,
+        "label": "Newsletter (formular abonare noutăți)"
+      }
+    }
+  }
+}
