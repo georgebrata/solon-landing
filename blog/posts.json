@@ -1,5 +1,46 @@
 [
   {
+    "title": "Gestionarea cunoștințelor juridice în cabinet",
+    "date": "2026-09-21",
+    "slug": "gestionarea-cunostintelor-juridice-knowledge-management",
+    "description": "Cum construiești o bază internă de precedent și modele de contracte: Knowledge Management eficient pentru transferul de expertiză între avocați.",
+    "read_time": 14,
+    "categories": [
+      "management",
+      "productivitate",
+      "digitalizare"
+    ],
+    "tags": [
+      "knowledge management",
+      "avocați",
+      "precedente",
+      "management cabinet",
+      "productivitate"
+    ],
+    "url": "gestionarea-cunostintelor-juridice-knowledge-management/"
+  },
+  {
+    "title": "Asistent AI local și privat pentru avocați",
+    "date": "2026-09-19",
+    "slug": "asistent-ai-local-privat-pentru-avocati",
+    "description": "Ghid complet de rulare a modelelor AI locale în cabinet: confidențialitate absolută, sinteză de dosare offline și protecția secretului profesional.",
+    "read_time": 14,
+    "categories": [
+      "legaltech",
+      "inteligenta-artificiala",
+      "securitate"
+    ],
+    "tags": [
+      "ai local",
+      "avocați",
+      "securitate",
+      "secret profesional",
+      "legaltech",
+      "confidențialitate"
+    ],
+    "url": "asistent-ai-local-privat-pentru-avocati/"
+  },
+  {
     "title": "Semnătura electronică calificată pentru avocați",
     "date": "2026-09-18",
     "slug": "semnatura-electronica-calificata-pentru-avocati",
