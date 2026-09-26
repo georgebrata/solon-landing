@@ -73,44 +73,44 @@ if (randomTemp < 0.79) {
 // 3. Pool of high-value candidate topics for Romanian lawyers
 const candidateTopics = [
   {
-    title: "Asistent AI local și privat pentru avocați",
-    slug: "asistent-ai-local-privat-pentru-avocati",
-    description: "Ghid complet de rulare a modelelor AI locale în cabinet: confidențialitate absolută, sinteză de dosare offline și protecția secretului profesional.",
-    categories: ["legaltech", "inteligenta-artificiala", "securitate"],
-    tags: ["ai local", "avocați", "securitate", "secret profesional", "legaltech", "confidențialitate"],
-    keywords: ["ai local", "ollama", "modele lingvistice", "secret profesional", "dosare offline"]
+    title: "Kitul minim de legaltech pentru un avocat litigant",
+    slug: "kitul-minim-de-legaltech-pentru-un-avocat-litigant",
+    description: "Ghid practic pentru avocați: instrumentele digitale esențiale în litigii, gestionarea dosarelor și automatizarea activității zilnice.",
+    categories: ["legaltech", "productivitate", "digitalizare"],
+    tags: ["kit legaltech", "avocați", "litigii", "productivitate", "digitalizare"],
+    keywords: ["kit legaltech", "avocat litigant", "instrumente digitale", "dosare instanta"]
   },
   {
-    title: "Agenți AI autonomi în practica avocațială",
-    slug: "agenti-ai-autonomi-in-practica-avocatilor",
-    description: "Cum folosesc societățile de avocați agenții AI pentru triaj de corespondență, generare de drafturi și cercetare jurisprudențială autonomă.",
-    categories: ["legaltech", "automatizări", "digitalizare"],
-    tags: ["agenti ai", "automatizări", "avocați", "legaltech", "productivitate"],
-    keywords: ["agenti ai", "automatizare juridica", "triaj dosare", "fluxuri autonome"]
-  },
-  {
-    title: "Semnătura electronică calificată pentru avocați",
-    slug: "semnatura-electronica-calificata-pentru-avocati",
-    description: "Ghid complet eIDAS pentru avocați: valoare probatorie, depunerea actelor în instanță, împuterniciri avocațiale și fluxuri contractuale 100% digitale.",
-    categories: ["digitalizare", "legaltech", "securitate"],
-    tags: ["semnătură electronică", "eidas", "avocați", "contracte", "instanță"],
-    keywords: ["semnatura electronica", "eidas", "certificat calificat", "semnare contracte", "instanta"]
-  },
-  {
-    title: "Gestionarea cunoștințelor juridice în cabinet",
-    slug: "gestionarea-cunostintelor-juridice-knowledge-management",
-    description: "Cum construiești o bază internă de precedent și modele de contracte: Knowledge Management eficient pentru transferul de expertiză între avocați.",
+    title: "Dashboard zilnic pentru dosare, termene și ședințe",
+    slug: "dashboard-zilnic-pentru-dosare-termene-si-sedinte",
+    description: "Cum construiești un tablou de comandă digital pentru cabinet: monitorizarea termenelor de judecată, ședințelor și sarcinilor prioritare.",
     categories: ["management", "productivitate", "digitalizare"],
-    tags: ["knowledge management", "avocați", "precedente", "management cabinet", "productivitate"],
-    keywords: ["knowledge management", "modele contracte", "baza de date interna", "management dosare"]
+    tags: ["dashboard", "avocați", "termene", "management cabinet", "productivitate"],
+    keywords: ["dashboard avocați", "tablou de comanda", "termene judecata", "organizare cabinet"]
   },
   {
-    title: "e-Factura pentru avocați: ghid complet de integrare",
-    slug: "e-factura-pentru-avocati-ghid-integrare",
-    description: "Ghid practic e-Factura pentru cabinete de avocatură: configurare SPV, certificat digital calificat, automatizarea facturării și conformitate ANAF.",
-    categories: ["digitalizare", "management", "automatizări"],
-    tags: ["e-factura", "avocați", "anaf", "facturare", "digitalizare", "management"],
-    keywords: ["e-factura", "anaf", "spv", "facturare electronica", "certificat digital"]
+    title: "Dosar digital de litigiu: termene, probe și jurisprudență",
+    slug: "dosar-digital-de-litigiu-termene-probe-si-jurisprudenta",
+    description: "Arhitectura unui dosar digital de litigiu: structurarea probelor, indexarea înscrisurilor și conectarea cu jurisprudența relevantă.",
+    categories: ["legaltech", "management", "digitalizare"],
+    tags: ["dosar digital", "avocați", "litigii", "jurisprudență", "securitate"],
+    keywords: ["dosar digital", "litigiu", "probe", "jurisprudenta", "instante"]
+  },
+  {
+    title: "Flux săptămânal de jurisprudență cu ReJust și AI",
+    slug: "flux-saptamanal-de-jurisprudenta-cu-rejust-si-ai",
+    description: "Cum automatizezi monitorizarea jurisprudenței noi: integrarea ReJust, Portalul Instanțelor și modele AI pentru sinteze juridice rapide.",
+    categories: ["legaltech", "inteligenta-artificiala", "productivitate"],
+    tags: ["jurisprudență", "rejust", "ai", "avocați", "legaltech"],
+    keywords: ["rejust", "jurisprudenta", "ai juridic", "cercetare juridica"]
+  },
+  {
+    title: "Automatizarea raportării și pontajului în avocatură",
+    slug: "automatizarea-raportarii-si-pontajului-in-avocatura",
+    description: "Sisteme moderne de time-tracking și raportare pentru avocați: transparență față de clienți, facturare precisă și optimizarea orelor nefacturabile.",
+    categories: ["management", "productivitate", "automatizări"],
+    tags: ["pontaj", "time tracking", "avocați", "facturare", "management"],
+    keywords: ["pontaj avocați", "time tracking", "raportare clienti", "ore facturabile"]
   }
 ];
 
