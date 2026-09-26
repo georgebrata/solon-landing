@@ -1902,14 +1902,147 @@ img[width][height] {
   width: 100%;
   box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.1);
 }
-.contact iframe {
-  width: 100%;
-  height: 950px;
-  overflow: hidden;
-  scroll-margin-bottom: 100px;
+.contact .solon-contact-shell {
+  box-sizing: border-box;
+  min-height: 950px;
+  padding: 24px 20px 94px;
+  background: #e2e9ed;
+  font-family: "Graphik Web", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+  color: #21262a;
 }
 
-.footerBarContent-FG6O1 {
+.contact .solon-contact-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 700px;
+  min-height: 650px;
+  margin: 0 auto;
+  padding: 48px;
+  background: #fff;
+}
+
+.contact .solon-contact-card h2 {
+  margin: 0 0 28px;
+  color: #21262a;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.contact .solon-contact-card .solon-field {
+  margin-bottom: 24px;
+}
+
+.contact .solon-contact-card label {
+  display: block;
+  margin-bottom: 10px;
+  color: #21262a;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.contact .solon-contact-card input[type="text"],
+.contact .solon-contact-card input[type="email"],
+.contact .solon-contact-card textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #c3ced5;
+  border-radius: 6px;
+  background: #fff;
+  color: #21262a;
+  font: 14px/20px "Graphik Web", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+}
+
+.contact .solon-contact-card input[type="text"],
+.contact .solon-contact-card input[type="email"] {
+  height: 40px;
+}
+
+.contact .solon-contact-card textarea {
+  min-height: 156px;
+  resize: vertical;
+}
+
+.contact .solon-contact-card .solon-opt-in {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+  color: #4c555b;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.contact .solon-contact-card .solon-opt-in input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.contact .solon-contact-card button[type="submit"] {
+  display: block;
+  margin: 0 auto;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #fff;
+  font: 14px/20px "Graphik Web", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+  cursor: pointer;
+}
+
+.contact .solon-contact-card button[type="submit"]:hover {
+  background: #174329;
+}
+
+@media (max-width: 600px) {
+  .contact .solon-contact-shell {
+    padding: 16px 12px 64px;
+  }
+
+  .contact .solon-contact-card {
+    min-height: 650px;
+    padding: 32px 24px;
+  }
+
+  .contact .solon-contact-card h2 {
+    font-size: 32px;
+  }
+}
+
+.contact .solon-contact-card button:disabled,
+.contact-phone input[type="submit"]:disabled,
+#footer .footer-newsletter input[type="submit"]:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.solon-form-status {
+  margin: 12px 0 0;
+  color: #174329;
+  font-size: 14px;
+}
+
+.solon-form-status.is-error {
+  color: #a12622;
+}
+
+.solon-newsletter-retry {
+  margin-top: 8px;
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.solon-form-status[hidden] {
   display: none;
 }
 

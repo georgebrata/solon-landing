@@ -1053,7 +1053,31 @@
 
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact section-bg" style="padding: 0;">
-      <!-- mailchimp iframe injected here by contact.js -->
+      <div class="solon-contact-shell">
+  <div class="solon-contact-card">
+    <h2>Contact</h2>
+    <form data-solon-form="Contact">
+      <div class="solon-field">
+      <label for="contact-name">Nume</label>
+        <input id="contact-name" name="Nume" type="text" autocomplete="name">
+      </div>
+      <div class="solon-field">
+      <label for="contact-email">Email *</label>
+        <input id="contact-email" name="Email" type="email" autocomplete="email" required>
+      </div>
+      <div class="solon-field">
+      <label for="contact-message">Mesaj *</label>
+      <textarea id="contact-message" name="Mesaj" required></textarea>
+      </div>
+      <label class="solon-opt-in" for="contact-newsletter-opt-in">
+        <input id="contact-newsletter-opt-in" name="NewsletterOptIn" type="checkbox">
+        Abonare la newsletter LegalTech
+      </label>
+    <button type="submit">Trimite</button>
+    </form>
+    <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
+  </div>
+</div>
     </section>
     <!-- End Contact Section -->
 
@@ -1069,22 +1093,15 @@
           <div class="col-lg-12 cta-btn-container text-center contact-phone">
             <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
 
-            <form
-              action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=b3fd62ff7a&amp;f_id=0023f8e6f0"
-              method="POST" style="width: 100%;">
-              <input type="email" name="EMAIL" class="required email" required="" value="undefined@gmail.com"
-                style="display:none;" aria-hidden="true" tabindex="-1">
-              <label for="mce-PHONE" class="form-label visually-hidden">Număr de telefon pentru contact
-                telefonic</label>
-              <input type="tel" name="PHONE" class="REQ_CSS" id="mce-PHONE" value="" placeholder="07......"
-                autocomplete="tel">
-
-              <div aria-hidden="true" style="position: absolute; left: -5000px;">
-                <input type="text" name="b_8cfcf6d7f1f80308125058838_b3fd62ff7a" tabindex="-1" value="">
-              </div>
-              <input type="submit" name="subscribe" id="mc-embedded-subscribe-cta" class="button"
-                value="Vreau să fiu sunat 📞">
+            <form data-solon-form="Telefon" class="solon-phone-form" style="width: 100%;">
+              <label for="solon-phone" class="form-label visually-hidden">Număr de telefon pentru contact
+              telefonic</label>
+              <input type="tel" value="" placeholder="07......"
+              autocomplete="tel" id="solon-phone" name="Telefon" required="required">
+              <input type="submit" id="solon-phone-submit" class="button"
+              value="Vreau să fiu sunat 📞">
             </form>
+            <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
           </div>
         </div>
 
@@ -1131,6 +1148,36 @@
           <div class="carousel-inner">
             <!-- BLOG_CAROUSEL_ITEMS_START -->
             <div class="carousel-item active">
+              <div class="row">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
+                  <div class="box featured">
+                    <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/audit-contracte-due-diligence-ai-avocati/" target="_blank" rel="noopener noreferrer">Audit de contracte și due diligence cu AI</a></h3>
+                    <p>Ghid de Due Diligence și analiză contractuală cu AI: extragere automată de clauze, scoring de risc juridic și conformitate în cabinete de avocatură.</p>
+                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                      <a href="blog/?tag=due%20diligence" class="badge badge-tag me-1">due diligence</a>
+                      <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
+                      <a href="blog/?tag=legaltech" class="badge badge-tag me-1">legaltech</a>
+                      <a href="blog/?tag=inteligenta%20artificiala" class="badge badge-tag me-1">inteligenta artificiala</a>
+                      <a href="blog/?tag=contracte" class="badge badge-tag me-1">contracte</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
+                  <div class="box featured">
+                    <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/dosarul-electronic-si-automatizarea-ecris/" target="_blank" rel="noopener noreferrer">Dosarul electronic și automatizarea ECRIS</a></h3>
+                    <p>Ghid practic de integrare și monitorizare automată a portalului instanțelor și a dosarului electronic: alerte de termene, extragere citații și proceduri.</p>
+                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                      <a href="blog/?tag=dosar%20electronic" class="badge badge-tag me-1">dosar electronic</a>
+                      <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
+                      <a href="blog/?tag=ecris" class="badge badge-tag me-1">ecris</a>
+                      <a href="blog/?tag=automatiz%C4%83ri" class="badge badge-tag me-1">automatizări</a>
+                      <a href="blog/?tag=portal%20just" class="badge badge-tag me-1">portal just</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
               <div class="row">
                 <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
                   <div class="box featured">
@@ -1191,37 +1238,6 @@
                 </div>
               </div>
             </div>
-            <div class="carousel-item">
-              <div class="row">
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
-                  <div class="box featured">
-                    <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/securitatea-dispozitivelor-mobile-pentru-avocati/" target="_blank" rel="noopener noreferrer">Securitatea dispozitivelor mobile pentru avocați</a></h3>
-                    <p>Protecția datelor clienților pe smartphone și tabletă: MDM, criptare la nivel de fișier, Wi-Fi public securizat și backup automat.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
-                      <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
-                      <a href="blog/?tag=securitate%20mobil%C4%83" class="badge badge-tag me-1">securitate mobilă</a>
-                      <a href="blog/?tag=smartphone" class="badge badge-tag me-1">smartphone</a>
-                      <a href="blog/?tag=criptare" class="badge badge-tag me-1">criptare</a>
-                      <a href="blog/?tag=gdpr" class="badge badge-tag me-1">gdpr</a>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
-                  <div class="box featured">
-                    <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/prevenirea-ransomware-in-cabinete-de-avocatura/" target="_blank" rel="noopener noreferrer">Prevenirea atacurilor Ransomware în cabinete de avocat</a></h3>
-                    <p>Ghid de securitate defensivă: protecția fișierelor confidențiale, strategii de backup imuabil, igiena parolelor și prevenirea extorcării digitale.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
-                      <a href="blog/?tag=ransomware" class="badge badge-tag me-1">ransomware</a>
-                      <a href="blog/?tag=securitate" class="badge badge-tag me-1">securitate</a>
-                      <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
-                      <a href="blog/?tag=backup" class="badge badge-tag me-1">backup</a>
-                      <a href="blog/?tag=gdpr" class="badge badge-tag me-1">gdpr</a>
-                      <a href="blog/?tag=protectie%20date" class="badge badge-tag me-1">protectie date</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           <!-- BLOG_CAROUSEL_ITEMS_END -->
           </div>
         </div>
@@ -1248,30 +1264,19 @@
           <div class="col-lg-7">
             <h3>Abonează-te la noutăți din domeniul LegalTech</h3>
             <p>Poți câștiga un pachet de servicii GOLD în valoare de 349€</p>
-            <div id="mc_embed_shell">
-              <div id="mc_embed_signup">
-                <form
-                  action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=c9db637b01&amp;f_id=00a6f8e6f0"
-                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
-                  target="_self" novalidate="">
-                  <div id="mc_embed_signup_scroll">
-                    <div class="mc-field-group">
-                      <label for="mce-EMAIL-newsletter" class="form-label visually-hidden">Adresă de email pentru
-                        newsletter</label>
-                      <input type="email" name="EMAIL" class="required email" id="mce-EMAIL-newsletter" required=""
-                        value="" autocomplete="email">
-                    </div>
-                    <div hidden=""><input type="hidden" name="tags" value="3016574"></div>
-                    <div id="mce-responses" class="clear">
-                      <div class="response" id="mce-error-response" style="display: none;"></div>
-                      <div class="response" id="mce-success-response" style="display: none;"></div>
-                    </div>
-                    <div aria-hidden="true" style="position: absolute; left: -5000px;"><input type="text"
-                        name="b_8cfcf6d7f1f80308125058838_c9db637b01" tabindex="-1" value=""></div>
-                    <div class="clear"><input type="submit" name="subscribe" id="mc-embedded-subscribe-newsletter"
-                        class="button" value="Subscribe"></div>
+            <div>
+              <div>
+                <form data-solon-form="Newsletter" class="solon-newsletter-form">
+                  <div class="mc-field-group">
+                    <label for="solon-newsletter-email" class="form-label visually-hidden">Adresă de email pentru
+                    newsletter</label>
+                    <input type="email" class="required email"
+                    value="" autocomplete="email" name="Email" required="required" id="solon-newsletter-email">
                   </div>
+                  <div class="clear"><input type="submit" id="solon-newsletter-submit"
+                  class="button" value="Subscribe"></div>
                 </form>
+                <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
               </div>
             </div>
           </div>
@@ -1382,8 +1387,8 @@
   <script src="assets/js/price-toggle.min.js"></script>
   <script src="assets/js/typeahead.min.js"></script>
   <script src="assets/js/faq.min.js"></script>
-  <script src="assets/js/contact.min.js"></script>
   <!-- <script src="assets/js/links-active-state.min.js"></script> -->
+  <script src="assets/js/forms.min.js"></script>
 </body>
 
 

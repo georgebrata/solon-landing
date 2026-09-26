@@ -150,7 +150,7 @@
 
                     <br>
                     <h3>Categorii de date cu caracter personal</h3>
-                    <p class="px-lg-5">SOLON prelucrează în acest context datele dumneavoastră cu caracter personal direct transmise de dumneavoastră [Nume, Prenume, Telefon, E-mail] în cazul trimiterii unui mesaj dar și datele cu caracter personal culese automat, respectiv datele cu caracter personal culese prin Google Analytics, Mailchimp și Counter.dev.</p>
+                    <p class="px-lg-5">Prin formularele SOLON sunt prelucrate datele introduse (nume, e-mail, telefon și mesaj, în funcție de formular). La trimitere, adresa IP poate fi obținută prin ipify și transmisă împreună cu datele către Google Apps Script pentru înregistrarea în Google Sheets. Datele de trafic sunt colectate prin Google Analytics și Counter.dev.</p>
                     
                     <br>
                     <h3>Durata prelucrării</h3>
@@ -273,16 +273,12 @@
                     <div class="col-lg-12 cta-btn-container text-center contact-phone">
                       <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
                       
-                      <form action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=b3fd62ff7a&amp;f_id=0023f8e6f0" method="POST" style="width: 100%;">
-                        <input type="email" name="EMAIL" class="required email" required="" value="undefined@gmail.com" style="display:none;" aria-hidden="true" tabindex="-1">
-                        <label for="mce-PHONE" class="form-label visually-hidden">Număr de telefon pentru contact telefonic</label>
-                        <input type="tel" name="PHONE" class="REQ_CSS" id="mce-PHONE" value="" placeholder="07......" autocomplete="tel">
-          
-                        <div aria-hidden="true" style="position: absolute; left: -5000px;">
-                          <input type="text" name="b_8cfcf6d7f1f80308125058838_b3fd62ff7a" tabindex="-1" value="">
-                        </div>
-                          <input type="submit" name="subscribe" id="mc-embedded-subscribe-cta" class="button" value="Vreau să fiu sunat 📞">
+                      <form data-solon-form="Telefon" class="solon-phone-form" style="width: 100%;">
+                      <label for="solon-phone" class="form-label visually-hidden">Număr de telefon pentru contact telefonic</label>
+                        <input type="tel" value="" placeholder="07......" autocomplete="tel" id="solon-phone" name="Telefon" required="required">
+                        <input type="submit" id="solon-phone-submit" class="button" value="Vreau să fiu sunat 📞">
                       </form>
+                      <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
                     </div>
                   </div>
 
@@ -398,6 +394,7 @@
             position: absolute !important;
         }
     </style>
+  <script src="../assets/js/forms.min.js"></script>
 </body>
 
 </html>

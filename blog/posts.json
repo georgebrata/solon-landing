@@ -1,5 +1,45 @@
 [
   {
+    "title": "Audit de contracte și due diligence cu AI",
+    "date": "2026-09-23",
+    "slug": "audit-contracte-due-diligence-ai-avocati",
+    "description": "Ghid de Due Diligence și analiză contractuală cu AI: extragere automată de clauze, scoring de risc juridic și conformitate în cabinete de avocatură.",
+    "read_time": 14,
+    "categories": [
+      "legaltech",
+      "inteligenta-artificiala",
+      "management"
+    ],
+    "tags": [
+      "due diligence",
+      "avocați",
+      "legaltech",
+      "inteligenta artificiala",
+      "contracte"
+    ],
+    "url": "audit-contracte-due-diligence-ai-avocati/"
+  },
+  {
+    "title": "Dosarul electronic și automatizarea ECRIS",
+    "date": "2026-09-22",
+    "slug": "dosarul-electronic-si-automatizarea-ecris",
+    "description": "Ghid practic de integrare și monitorizare automată a portalului instanțelor și a dosarului electronic: alerte de termene, extragere citații și proceduri.",
+    "read_time": 14,
+    "categories": [
+      "digitalizare",
+      "automatizări",
+      "legaltech"
+    ],
+    "tags": [
+      "dosar electronic",
+      "avocați",
+      "ecris",
+      "automatizări",
+      "portal just"
+    ],
+    "url": "dosarul-electronic-si-automatizarea-ecris/"
+  },
+  {
     "title": "Gestionarea cunoștințelor juridice în cabinet",
     "date": "2026-09-21",
     "slug": "gestionarea-cunostintelor-juridice-knowledge-management",

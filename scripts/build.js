@@ -94,7 +94,7 @@ function generatePostHTML(post, posts, marked) {
     .replace(/{{slug}}/g, frontmatter.slug)
     .replace(/{{slugWithTrailingSlash}}/g, `${frontmatter.slug}/`)
     .replace(/{{body}}/g, postHtml)
-    .replace(/{{scripts}}/g, '<script src="../../assets/js/blog-sidebar.js"></script>');
+    .replace(/{{scripts}}/g, '<script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
 }
 
 function generateListHTML(posts) {
@@ -150,7 +150,7 @@ ${tagsBlock}
         </div>
       </div>
     `;
-  }).join('');
+  }).join('').replace(/[ \t]+$/gm, '');
 
   const indexRedirectScript = `
     <script>
@@ -174,7 +174,7 @@ ${tagsBlock}
     .replace(/{{slug}}/g, '')
     .replace(/{{slugWithTrailingSlash}}/g, '')
     .replace(/{{body}}/g, listBody)
-    .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>');
+    .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
 }
 
 async function build() {

@@ -323,9 +323,7 @@
                     <p>10.1. SOLON adoptă toate măsurile de securitate pentru a asigura un grad ridicat de securitate a
                         datelor care ne sunt furnizate de către Utilizatorii platformei <a href="https://solon.agency"
                             target="_blank">https://solon.agency</a>.</p>
-                    <p>10.2. SOLON prelucrează în acest context datele dumneavoastră cu caracter personal direct
-                        transmise de dumneavoastră [Nume, Prenume, Telefon, E-mail] în cazul trimiterii unui mesaj prin
-                        Mailchimp dar și datele anonimizate culese automat culese prin Google Analytics Counter.dev.</p>
+                    <p>10.2. Prin formularele SOLON sunt prelucrate datele introduse (nume, e-mail, telefon și mesaj, în funcție de formular). La trimitere, adresa IP poate fi obținută prin ipify și transmisă împreună cu datele către Google Apps Script pentru înregistrarea în Google Sheets. Datele de trafic sunt colectate prin Google Analytics și Counter.dev.</p>
                     <p>10.3. Pentru mai multe informații referitoare la acest aspect, vă rugăm să citiți și Politica
                         privind prelucrarea datelor cu caracter personal, publicată în format electronic la adresa: <a
                             href="https://solon.agency/privacy/" target="_blank">https://solon.agency/privacy/</a>.</p>
@@ -416,22 +414,15 @@
                     <div class="col-lg-12 cta-btn-container text-center contact-phone">
                         <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
 
-                        <form
-                            action="https://agency.us21.list-manage.com/subscribe/post?u=8cfcf6d7f1f80308125058838&amp;id=b3fd62ff7a&amp;f_id=0023f8e6f0"
-                            method="POST" style="width: 100%;">
-                            <input type="email" name="EMAIL" class="required email" required=""
-                                value="undefined@gmail.com" style="display:none;" aria-hidden="true" tabindex="-1">
-                            <label for="mce-PHONE" class="form-label visually-hidden">Număr de telefon pentru contact
-                                telefonic</label>
-                            <input type="tel" name="PHONE" class="REQ_CSS" id="mce-PHONE" value=""
-                                placeholder="07......" autocomplete="tel">
-
-                            <div aria-hidden="true" style="position: absolute; left: -5000px;">
-                                <input type="text" name="b_8cfcf6d7f1f80308125058838_b3fd62ff7a" tabindex="-1" value="">
-                            </div>
-                            <input type="submit" name="subscribe" id="mc-embedded-subscribe-cta" class="button"
-                                value="Vreau să fiu sunat 📞">
+                        <form data-solon-form="Telefon" class="solon-phone-form" style="width: 100%;">
+                          <label for="solon-phone" class="form-label visually-hidden">Număr de telefon pentru contact
+                          telefonic</label>
+                          <input type="tel" value=""
+                          placeholder="07......" autocomplete="tel" id="solon-phone" name="Telefon" required="required">
+                          <input type="submit" id="solon-phone-submit" class="button"
+                          value="Vreau să fiu sunat 📞">
                         </form>
+                        <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
                     </div>
                 </div>
 
@@ -547,6 +538,7 @@
             position: absolute !important;
         }
     </style>
+  <script src="../assets/js/forms.min.js"></script>
 </body>
 
 </html>

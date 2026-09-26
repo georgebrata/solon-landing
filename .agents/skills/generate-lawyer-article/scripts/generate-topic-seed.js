@@ -111,6 +111,46 @@ const candidateTopics = [
     categories: ["digitalizare", "management", "automatizări"],
     tags: ["e-factura", "avocați", "anaf", "facturare", "digitalizare", "management"],
     keywords: ["e-factura", "anaf", "spv", "facturare electronica", "certificat digital"]
+  },
+  {
+    title: "Audit de contracte și due diligence cu AI",
+    slug: "audit-contracte-due-diligence-ai-avocati",
+    description: "Ghid de Due Diligence și analiză contractuală cu AI: extragere automată de clauze, scoring de risc juridic și conformitate în cabinete de avocatură.",
+    categories: ["legaltech", "inteligenta-artificiala", "management"],
+    tags: ["due diligence", "avocați", "legaltech", "inteligenta artificiala", "contracte"],
+    keywords: ["due diligence", "audit contracte", "analiza clauze", "ai contracte", "contract intelligence"]
+  },
+  {
+    title: "Prompt engineering juridic pentru avocați",
+    slug: "prompt-engineering-juridic-pentru-avocati",
+    description: "Ghid practic de redactare a prompturilor pentru avocați: formulare de cereri de dosar, limitarea halucinațiilor și extragerea de argumente de sinteză.",
+    categories: ["legaltech", "inteligenta-artificiala", "productivitate"],
+    tags: ["prompt engineering", "avocați", "inteligenta artificiala", "legaltech", "productivitate"],
+    keywords: ["prompt engineering", "prompturi juridice", "instrucțiuni ai", "sinteze dosar"]
+  },
+  {
+    title: "EU AI Act explicat pentru cabinete de avocați",
+    slug: "eu-ai-act-pentru-cabinete-de-avocati",
+    description: "Ghid practic EU AI Act pentru cabinete de avocatură: clasificarea riscurilor AI, obligații de transparență, interdicții și protecția secretului profesional.",
+    categories: ["legaltech", "inteligenta-artificiala", "securitate"],
+    tags: ["eu ai act", "avocați", "conformitate", "legaltech", "securitate"],
+    keywords: ["eu ai act", "regulament ai", "conformitate inteligenta artificiala", "secret profesional"]
+  },
+  {
+    title: "Generarea automată a contractelor pentru avocați",
+    slug: "generarea-automata-a-contractelor-pentru-avocati",
+    description: "Ghid de document automation pentru avocați: șabloane dinamice, clauze condiționate, integrare CRM și reducerea timpului de redactare a contractelor.",
+    categories: ["automatizări", "legaltech", "productivitate"],
+    tags: ["document automation", "avocați", "contracte", "automatizări", "legaltech"],
+    keywords: ["document automation", "sabloane contracte", "redactare automata", "clauze dinamice"]
+  },
+  {
+    title: "Dosarul electronic și automatizarea ECRIS",
+    slug: "dosarul-electronic-si-automatizarea-ecris",
+    description: "Ghid practic de integrare și monitorizare automată a portalului instanțelor și a dosarului electronic: alerte de termene, extragere citații și proceduri.",
+    categories: ["digitalizare", "automatizări", "legaltech"],
+    tags: ["dosar electronic", "avocați", "ecris", "automatizări", "portal just"],
+    keywords: ["dosar electronic", "ecris", "portal just", "alerte termene", "monitorizare sedinte"]
   }
 ];
 

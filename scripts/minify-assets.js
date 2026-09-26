@@ -16,7 +16,7 @@ const jsFiles = [
   "price-toggle.js",
   "typeahead.js",
   "faq.js",
-  "contact.js",
+  "forms.js",
   "effects.js",
   "links-active-state.js",
   "testimonials.js",

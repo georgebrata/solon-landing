@@ -12,7 +12,7 @@ Optional: use [http-server]([url](https://github.com/http-party/http-server)) fo
 
 ## Features
 - Responsive design
-- Mailchimp Integration - multiple audiences (phone, contact, newsletter)
+- Contact, callback, and newsletter forms submit directly to Google Apps Script using vanilla JavaScript. See [form integration documentation](docs/forms.md).
 - Stripe Integration
 - Wordpress Blog support (but different domain)
 - FAQ section with dinamic content from Google Sheets
@@ -47,5 +47,4 @@ Conținutul articolului tău aici...
 
 ### Automation
 A Git pre-commit hook is configured to automatically run the build script and stage the generated files whenever you commit changes.
-
 
