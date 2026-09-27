@@ -1787,7 +1787,8 @@ img[width][height] {
   outline: none;
 }
 
-.contact-phone form input[type=submit] {
+.contact-phone form input[type=submit],
+.contact-phone form button[type=submit] {
   position: absolute;
   top: 0;
   right: 0;
@@ -1803,7 +1804,8 @@ img[width][height] {
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
 
-.contact-phone form input[type=submit]:hover {
+.contact-phone form input[type=submit]:hover,
+.contact-phone form button[type=submit]:hover {
   background: var(--tertiary-darker);
 }
 
@@ -2016,9 +2018,38 @@ img[width][height] {
 
 .contact .solon-contact-card button:disabled,
 .contact-phone input[type="submit"]:disabled,
-#footer .footer-newsletter input[type="submit"]:disabled {
+.contact-phone button[type="submit"]:disabled,
+#footer .footer-newsletter input[type="submit"]:disabled,
+#footer .footer-newsletter button[type="submit"]:disabled {
   cursor: wait;
   opacity: .65;
+}
+
+.solon-btn-spinner {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  vertical-align: -0.1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: solon-btn-spin 0.65s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes solon-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+form[data-solon-form] button[type="submit"].is-loading,
+form[data-solon-form] input[type="submit"].is-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  cursor: wait;
 }
 
 .solon-form-status {
@@ -2349,7 +2380,8 @@ img[width][height] {
   outline: none;
 }
 
-#footer .footer-newsletter form input[type=submit] {
+#footer .footer-newsletter form input[type=submit],
+#footer .footer-newsletter form button[type=submit] {
   position: absolute;
   top: 0;
   right: 0;
@@ -2374,7 +2406,8 @@ img[width][height] {
 }
 
 
-#footer .footer-newsletter form input[type=submit]:hover {
+#footer .footer-newsletter form input[type=submit]:hover,
+#footer .footer-newsletter form button[type=submit]:hover {
   background: var(--tertiary-darker);
 }
 

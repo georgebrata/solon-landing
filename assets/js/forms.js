@@ -90,7 +90,7 @@
       });
       if (!response.ok) throw new Error("Request failed");
       const result = await response.json();
-      if (result.success !== true) throw new Error("The API did not confirm the save");
+      if (!result || result.ok !== true) throw new Error("The API did not confirm the save");
     } finally {
       clearTimeout(timer);
     }
@@ -105,15 +105,60 @@
     return values;
   }
 
+  function setupFormButtons(form) {
+    form.querySelectorAll('input[type="submit"]').forEach((input) => {
+      if (typeof document !== "undefined" && document.createElement) {
+        const button = document.createElement("button");
+        button.type = "submit";
+        if (input.id) button.id = input.id;
+        if (input.className) button.className = input.className;
+        button.textContent = input.value;
+        if (input.replaceWith) {
+          input.replaceWith(button);
+        }
+      }
+    });
+  }
+
   function lock(form, locked) {
     form.querySelectorAll('[type="submit"]').forEach((button) => {
       button.disabled = locked;
+      if (!button.dataset) button.dataset = {};
+
+      if (locked) {
+        if (button.dataset.originalHtml === undefined && button.innerHTML !== undefined) {
+          button.dataset.originalHtml = button.innerHTML;
+        }
+        if (button.dataset.originalValue === undefined && button.value !== undefined) {
+          button.dataset.originalValue = button.value;
+        }
+        if (button.classList && button.classList.add) {
+          button.classList.add("is-loading");
+        }
+        if (button.tagName === "INPUT") {
+          button.value = "Se trimite...";
+        } else if (button.innerHTML !== undefined) {
+          const label = button.dataset.originalHtml || button.textContent || "Trimite";
+          button.innerHTML = `<span class="solon-btn-spinner" aria-hidden="true"></span><span class="solon-btn-label">${label}</span>`;
+        }
+      } else {
+        if (button.classList && button.classList.remove) {
+          button.classList.remove("is-loading");
+        }
+        if (button.tagName === "INPUT" && button.dataset.originalValue !== undefined) {
+          button.value = button.dataset.originalValue;
+        } else if (button.dataset.originalHtml !== undefined && button.innerHTML !== undefined) {
+          button.innerHTML = button.dataset.originalHtml;
+        }
+      }
     });
   }
 
   document.querySelectorAll("form[data-solon-form]").forEach((form) => {
     const type = form.dataset.solonForm;
     if (!SCHEMAS[type]) return;
+
+    setupFormButtons(form);
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -122,7 +167,7 @@
 
       form.dataset.submitting = "true";
       lock(form, true);
-      showStatus(form, "Se trimite...", false);
+      showStatus(form, "", false);
 
       const date = today();
       const ip = await getIP();
