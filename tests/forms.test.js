@@ -25,7 +25,17 @@ function harness(types, options = {}) {
       classList: { toggle() {} },
       append(...children) { this.children.push(...children); },
     };
-    const submit = { disabled: false };
+    const submitClassList = new Set();
+    const submit = {
+      disabled: false,
+      innerHTML: "Trimite",
+      textContent: "Trimite",
+      classList: {
+        add(cls) { submitClassList.add(cls); },
+        remove(cls) { submitClassList.delete(cls); },
+        contains(cls) { return submitClassList.has(cls); },
+      },
+    };
     const form = {
       dataset: { solonForm: type },
       parentElement: { querySelector(selector) { return selector === "[data-form-status]" ? status : null; } },
@@ -81,7 +91,7 @@ function harness(types, options = {}) {
       requests.push({ url: String(url), init });
       if (options.fetch) return options.fetch(String(url), init, requests.length);
       if (String(url).includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
-      return { ok: true, json: async () => ({ success: true }) };
+      return { ok: true, json: async () => ({ ok: true }) };
     },
     AbortController,
     Intl,
@@ -149,25 +159,31 @@ test("sends an empty IP when public IP lookup fails", async () => {
   const { forms, requests } = harness(["Newsletter"], {
     fetch: async (url) => {
       if (url.includes("ipify")) throw new Error("offline");
-      return { ok: true, json: async () => ({ success: true }) };
+      return { ok: true, json: async () => ({ ok: true }) };
     },
   });
   await forms[0].dispatch();
   assert.equal(JSON.parse(dataRequests(requests)[0].init.body).data.IP, "");
 });
 
-test("shows success only for an explicit API confirmation", async () => {
-  const { forms } = harness(["Newsletter"]);
+test("shows success only for an explicit API confirmation with ok: true", async () => {
+  const { forms } = harness(["Newsletter"], {
+    fetch: async (url) => {
+      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
+      return { ok: true, json: async () => ({ ok: true }) };
+    },
+  });
   await forms[0].dispatch();
   assert.match(forms[0].status.textContent, /înregistrată/);
   assert.equal(forms[0].status.hidden, false);
   assert.equal(forms[0].values.Email, "");
 });
 
-test("retains fields and shows an error for rejected, unsuccessful, or malformed responses", async (t) => {
+test("retains fields and shows an error for ok: false, missing ok, or malformed responses", async (t) => {
   for (const response of [
-    { ok: false, json: async () => ({ success: true }) },
-    { ok: true, json: async () => ({ success: false, error: "No" }) },
+    { ok: false, json: async () => ({ ok: true }) },
+    { ok: true, json: async () => ({ ok: false, error: "Failed" }) },
+    { ok: true, json: async () => ({ error: "No ok property" }) },
     { ok: true, json: async () => { throw new SyntaxError("bad JSON"); } },
   ]) {
     await t.test("response fails", async () => {
@@ -182,6 +198,25 @@ test("retains fields and shows an error for rejected, unsuccessful, or malformed
       assert.equal(forms[0].submit.disabled, false);
     });
   }
+});
+
+test("adds modern loading state with spinner to button during submit and restores afterwards", async () => {
+  let inFlightCheck = false;
+  const { forms } = harness(["Newsletter"], {
+    fetch: async (url) => {
+      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
+      assert.equal(forms[0].submit.disabled, true);
+      assert.equal(forms[0].submit.classList.contains("is-loading"), true);
+      assert.match(forms[0].submit.innerHTML, /solon-btn-spinner/);
+      inFlightCheck = true;
+      return { ok: true, json: async () => ({ ok: true }) };
+    },
+  });
+  await forms[0].dispatch();
+  assert.equal(inFlightCheck, true);
+  assert.equal(forms[0].submit.disabled, false);
+  assert.equal(forms[0].submit.classList.contains("is-loading"), false);
+  assert.equal(forms[0].submit.innerHTML, "Trimite");
 });
 
 test("does not submit invalid forms", async () => {
@@ -207,7 +242,7 @@ test("applies the 20-second timeout signal to submission requests", async () => 
       if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
       submissionSignal = init.signal;
       if (init.signal.aborted) throw new Error("aborted");
-      return { ok: true, json: async () => ({ success: true }) };
+      return { ok: true, json: async () => ({ ok: true }) };
     },
   });
   await forms[0].dispatch();
@@ -224,10 +259,10 @@ test("prevents concurrent submissions and retries only Newsletter after partial 
     fetch: async (url) => {
       if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
       if (url.includes("sheet=Contact")) {
-        return new Promise((resolve) => { releaseContact = () => resolve({ ok: true, json: async () => ({ success: true }) }); });
+        return new Promise((resolve) => { releaseContact = () => resolve({ ok: true, json: async () => ({ ok: true }) }); });
       }
       newsletterCalls += 1;
-      return { ok: newsletterCalls > 1, json: async () => ({ success: newsletterCalls > 1 }) };
+      return { ok: newsletterCalls > 1, json: async () => ({ ok: newsletterCalls > 1 }) };
     },
   });
   const first = forms[0].dispatch();
