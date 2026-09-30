@@ -1833,8 +1833,13 @@ img[width][height] {
   position: relative;
 }
 
-.faq .faq-list a {
+.faq .faq-list a,
+.faq .faq-list button {
   display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
   position: relative;
   font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
@@ -1853,7 +1858,8 @@ img[width][height] {
   color: var(--primary);
 }
 
-.faq .faq-list a.collapse {
+.faq .faq-list a.collapse,
+.faq .faq-list button.collapse {
   color: var(--primary);
 }
 
@@ -1874,16 +1880,19 @@ img[width][height] {
   display: none;
 }
 
-.faq .faq-list a.collapsed {
+.faq .faq-list a.collapsed,
+.faq .faq-list button.collapsed {
   color: var(--primary);
   transition: 0.3s;
 }
 
-.faq .faq-list a.collapsed .icon-show {
+.faq .faq-list a.collapsed .icon-show,
+.faq .faq-list button.collapsed .icon-show {
   display: inline-block;
 }
 
-.faq .faq-list a.collapsed .icon-close {
+.faq .faq-list a.collapsed .icon-close,
+.faq .faq-list button.collapsed .icon-close {
   display: none;
 }
 
