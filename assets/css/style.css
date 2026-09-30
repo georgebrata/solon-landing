@@ -748,7 +748,7 @@ section {
 }
 
 .btn-learn-more {
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: 500;
   font-size: 14px;
   letter-spacing: 1px;
@@ -833,7 +833,7 @@ section {
 .why-us .accordion-list a {
   display: block;
   position: relative;
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
@@ -921,7 +921,7 @@ section {
   font-weight: 700;
   font-size: 32px;
   color: var(--primary);
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .skills .content ul {
@@ -956,7 +956,7 @@ section {
   text-transform: uppercase;
   display: block;
   font-weight: 600;
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: var(--primary);
 }
 
@@ -1296,7 +1296,7 @@ section {
   transition: all 0.3s;
   padding: 8px 20px;
   border-radius: 50px;
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .portfolio #portfolio-flters li:hover,
@@ -1841,7 +1841,7 @@ img[width][height] {
   border: none;
   text-align: left;
   position: relative;
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
@@ -1918,7 +1918,6 @@ img[width][height] {
   min-height: 950px;
   padding: 24px 20px 94px;
   background: #e2e9ed;
-  font-family: "Graphik Web", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
   color: #21262a;
 }
 
@@ -1964,7 +1963,7 @@ img[width][height] {
   border-radius: 6px;
   background: #fff;
   color: #21262a;
-  font: 14px/20px "Graphik Web", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+  font: 14px/20px "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .contact .solon-contact-card input[type="text"],
@@ -2002,7 +2001,7 @@ img[width][height] {
   border-radius: 6px;
   background: var(--primary);
   color: #fff;
-  font: 14px/20px "Graphik Web", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+  font: 14px/20px "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   cursor: pointer;
 }
 
