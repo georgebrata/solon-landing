@@ -95,7 +95,7 @@ if __name__ == '__main__':
     misc = [
         ('assets/img/solon-logo.png', 'assets/img/solon-logo.webp', 250),
         ('assets/img/solon-logo-dark.png', 'assets/img/solon-logo-dark.webp', 250),
-        ('assets/img/circuits-down.png', 'assets/img/circuits-down.webp', 100),
+        ('assets/img/circuits-down.png', 'assets/img/circuits-down.webp', 300),
         ('assets/img/why-us.png', 'assets/img/why-us.webp', 800),
         ('assets/img/anpc-sal.png', 'assets/img/anpc-sal.webp', 500),
     ]
