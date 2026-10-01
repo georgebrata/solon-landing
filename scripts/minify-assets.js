@@ -20,6 +20,7 @@ const jsFiles = [
   "effects.js",
   "links-active-state.js",
   "testimonials.js",
+  "support-chat.js",
 ];
 
 function minifyStyleMerged() {

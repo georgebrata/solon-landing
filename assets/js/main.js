@@ -277,4 +277,19 @@
     });
   });
 
+  /**
+   * Support chat widget (loaded from same directory as main.js / main.min.js)
+   */
+  (function loadSupportChat() {
+    const current = document.currentScript
+    if (!current || !current.src) return
+    const chatSrc = current.src
+      .replace(/main\.min\.js(\?.*)?$/i, 'support-chat.min.js$1')
+      .replace(/main\.js(\?.*)?$/i, 'support-chat.js$1')
+    const script = document.createElement('script')
+    script.src = chatSrc
+    script.defer = true
+    document.body.appendChild(script)
+  })()
+
 })()
