@@ -161,6 +161,67 @@
     }
   }
 
+  function parseApiResponse(data) {
+    var payload = data;
+    if (data && data.reply) {
+      if (typeof data.reply === "string") {
+        try {
+          payload = JSON.parse(data.reply);
+        } catch (e) {
+          payload = data.reply;
+        }
+      } else if (typeof data.reply === "object") {
+        payload = data.reply;
+      }
+    }
+
+    var content =
+      payload && typeof payload === "object" && payload.content
+        ? payload.content
+        : payload;
+
+    var messages = [];
+    if (content && Array.isArray(content.messages)) {
+      messages = content.messages.slice(0, 10);
+    } else if (payload && Array.isArray(payload.messages)) {
+      messages = payload.messages.slice(0, 10);
+    } else if (data && Array.isArray(data.messages)) {
+      messages = data.messages.slice(0, 10);
+    } else if (typeof payload === "string" && payload.trim()) {
+      messages = [{ type: "text", text: payload.trim() }];
+    } else if (data && typeof data.reply === "string" && data.reply.trim()) {
+      messages = [{ type: "text", text: data.reply.trim() }];
+    }
+
+    var quickReplies =
+      content && Array.isArray(content.quick_replies)
+        ? content.quick_replies
+        : payload && Array.isArray(payload.quick_replies)
+        ? payload.quick_replies
+        : data && Array.isArray(data.quick_replies)
+        ? data.quick_replies
+        : [];
+
+    var actions =
+      content && Array.isArray(content.actions)
+        ? content.actions
+        : payload && Array.isArray(payload.actions)
+        ? payload.actions
+        : data && Array.isArray(data.actions)
+        ? data.actions
+        : [];
+
+    var needsHuman = actions.some(function (a) {
+      return a && a.tag_name === "needs_human";
+    });
+
+    return {
+      messages: messages,
+      quickReplies: quickReplies,
+      needsHuman: needsHuman,
+    };
+  }
+
   async function fetchReply(text) {
     var ctrl = new AbortController();
     var timer = setTimeout(function () {
@@ -179,18 +240,7 @@
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
       var data = await res.json();
-      var content = data && data.content ? data.content : {};
-      var messages = Array.isArray(content.messages)
-        ? content.messages.slice(0, 10)
-        : [];
-      var quickReplies = Array.isArray(content.quick_replies)
-        ? content.quick_replies
-        : [];
-      var actions = Array.isArray(content.actions) ? content.actions : [];
-      var needsHuman = actions.some(function (a) {
-        return a && a.tag_name === "needs_human";
-      });
-      return { messages: messages, quickReplies: quickReplies, needsHuman: needsHuman };
+      return parseApiResponse(data);
     } finally {
       clearTimeout(timer);
     }
@@ -396,9 +446,15 @@
     getSessionId();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = { parseApiResponse: parseApiResponse };
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
   }
 })();

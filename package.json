@@ -8,7 +8,8 @@
     "flags:status": "node scripts/apply-feature-flags.js --status",
     "test:flags": "node scripts/test-feature-flags.js",
     "test:forms": "node --test tests/forms.test.js",
-    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
+    "test:chat": "node --test tests/support-chat.test.js"
   },
   "devDependencies": {
     "clean-css": "^5.3.3",
