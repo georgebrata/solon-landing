@@ -36,7 +36,7 @@
       if (!raw) return [];
       var parsed = JSON.parse(raw);
       return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
+    } catch (_err) {
       return [];
     }
   }
@@ -50,7 +50,7 @@
     try {
       var u = new URL(url.trim());
       return u.protocol === "http:" || u.protocol === "https:";
-    } catch (e) {
+    } catch (_err) {
       return false;
     }
   }
@@ -161,13 +161,23 @@
     }
   }
 
+  /**
+   * Parses API response payload from the n8n webhook.
+   *
+   * @param {Object} data The raw response object from the webhook API.
+   * @returns {{messages: Array, quickReplies: Array, needsHuman: boolean}} Standardized response object.
+   */
   function parseApiResponse(data) {
+    if (!data || typeof data !== "object") {
+      return { messages: [], quickReplies: [], needsHuman: false };
+    }
+
     var payload = data;
-    if (data && data.reply) {
+    if (data.reply) {
       if (typeof data.reply === "string") {
         try {
           payload = JSON.parse(data.reply);
-        } catch (e) {
+        } catch (_err) {
           payload = data.reply;
         }
       } else if (typeof data.reply === "object") {
@@ -300,7 +310,7 @@
       });
       saveHistory(history);
       renderQuickReplies(result.quickReplies);
-    } catch (e) {
+    } catch (_err) {
       showTyping(false);
       var errEntry = { role: "bot", text: ERROR_MSG };
       history.push(errEntry);
