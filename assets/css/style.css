@@ -112,7 +112,7 @@ h6 {
   position: fixed;
   visibility: hidden;
   opacity: 0;
-  right: 15px;
+  left: 15px;
   bottom: 15px;
   z-index: 996;
   background: var(--tertiary);
@@ -2784,10 +2784,6 @@ a.details-link:focus-visible,
 /*--------------------------------------------------------------
 # Support chat widget
 --------------------------------------------------------------*/
-body.solon-support-chat-active .back-to-top {
-  bottom: 84px;
-}
-
 .solon-support-chat {
   position: fixed;
   right: 15px;
