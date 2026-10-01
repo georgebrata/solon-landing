@@ -48,3 +48,33 @@ Conținutul articolului tău aici...
 ### Automation
 A Git pre-commit hook is configured to automatically run the build script and stage the generated files whenever you commit changes.
 
+## CI/CD Pipeline
+
+Three GitHub Actions workflows run automatically on every push and pull request to `main`.
+
+| Workflow | File | What it checks |
+|---|---|---|
+| **Tests** | `.github/workflows/test.yml` | Form validation tests (`npm run test:forms`) and feature flag tests (`npm run test:flags`) |
+| **Validate** | `.github/workflows/validate.yml` | Minified assets are up to date, feature flags dry-run passes, HTML structure is valid, blog build output is in sync |
+| **Lighthouse CI** | `.github/workflows/lighthouse.yml` | Performance (≥ 80), Accessibility (≥ 90), Best Practices (≥ 90), SEO (≥ 90) scores on the homepage |
+
+### Running checks locally
+
+```bash
+# Install dependencies
+npm ci
+
+# Run all tests
+npm run test:forms
+npm run test:flags
+
+# Rebuild minified assets
+npm run minify
+
+# Preview feature flag changes without writing to disk
+npm run flags:dry
+
+# Rebuild blog
+node scripts/build.js
+```
+

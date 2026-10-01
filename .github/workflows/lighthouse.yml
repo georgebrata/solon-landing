@@ -1,0 +1,53 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    name: Lighthouse performance audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install http-server and Lighthouse CI
+        run: npm install -g http-server @lhci/cli
+
+      - name: Start local server
+        run: http-server . -p 8080 --silent &
+        shell: bash
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:8080 --timeout 30000
+
+      - name: Run Lighthouse CI
+        run: |
+          lhci autorun \
+            --collect.url=http://localhost:8080 \
+            --collect.numberOfRuns=1 \
+            --assert.assertions.categories:performance="['warn', {minScore: 0.8}]" \
+            --assert.assertions.categories:accessibility="['warn', {minScore: 0.9}]" \
+            --assert.assertions.categories:best-practices="['warn', {minScore: 0.9}]" \
+            --assert.assertions.categories:seo="['warn', {minScore: 0.9}]" \
+            --upload.target=temporary-public-storage
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+          retention-days: 30
