@@ -7,8 +7,13 @@ def process_image(src_path, dest_path, max_width=None, max_height=None, quality=
         return
 
     with Image.open(src_path) as img:
-        if img.mode not in ('RGB', 'RGBA'):
-            img = img.convert('RGBA') if 'A' in img.mode else img.convert('RGB')
+        # Palette PNGs store transparency in tRNS, not as an alpha mode.
+        # Converting those to RGB flattens transparent pixels to black.
+        has_alpha = img.mode in ('RGBA', 'LA', 'PA') or 'transparency' in img.info
+        if has_alpha and img.mode != 'RGBA':
+            img = img.convert('RGBA')
+        elif not has_alpha and img.mode != 'RGB':
+            img = img.convert('RGB')
 
         orig_w, orig_h = img.size
         new_w, new_h = orig_w, orig_h
