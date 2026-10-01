@@ -190,44 +190,44 @@
         : payload;
 
     let messages = [];
-    if (content && Array.isArray(content.messages)) {
+    if (Array.isArray(content?.messages)) {
       messages = content.messages.slice(0, 10);
-    } else if (payload && Array.isArray(payload.messages)) {
+    } else if (Array.isArray(payload?.messages)) {
       messages = payload.messages.slice(0, 10);
-    } else if (data && Array.isArray(data.messages)) {
+    } else if (Array.isArray(data?.messages)) {
       messages = data.messages.slice(0, 10);
     } else if (typeof payload === "string" && payload.trim()) {
       messages = [{ type: "text", text: payload.trim() }];
-    } else if (data && typeof data.reply === "string" && data.reply.trim()) {
+    } else if (typeof data?.reply === "string" && data.reply.trim()) {
       messages = [{ type: "text", text: data.reply.trim() }];
     }
 
-    const quickReplies =
-      content && Array.isArray(content.quick_replies)
-        ? content.quick_replies
-        : payload && Array.isArray(payload.quick_replies)
-        ? payload.quick_replies
-        : data && Array.isArray(data.quick_replies)
-        ? data.quick_replies
-        : [];
+    let quickReplies = [];
+    if (Array.isArray(content?.quick_replies)) {
+      quickReplies = content.quick_replies;
+    } else if (Array.isArray(payload?.quick_replies)) {
+      quickReplies = payload.quick_replies;
+    } else if (Array.isArray(data?.quick_replies)) {
+      quickReplies = data.quick_replies;
+    }
 
-    const actions =
-      content && Array.isArray(content.actions)
-        ? content.actions
-        : payload && Array.isArray(payload.actions)
-        ? payload.actions
-        : data && Array.isArray(data.actions)
-        ? data.actions
-        : [];
+    let actions = [];
+    if (Array.isArray(content?.actions)) {
+      actions = content.actions;
+    } else if (Array.isArray(payload?.actions)) {
+      actions = payload.actions;
+    } else if (Array.isArray(data?.actions)) {
+      actions = data.actions;
+    }
 
     const needsHuman = actions.some(
       (a) => a && a.tag_name === "needs_human"
     );
 
     return {
-      messages: messages,
-      quickReplies: quickReplies,
-      needsHuman: needsHuman,
+      messages,
+      quickReplies,
+      needsHuman,
     };
   }
 
@@ -449,7 +449,7 @@
   }
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { parseApiResponse: parseApiResponse };
+    module.exports = { parseApiResponse };
   }
 
   if (typeof document !== "undefined") {
