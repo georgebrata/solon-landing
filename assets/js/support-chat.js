@@ -1,28 +1,27 @@
 (function () {
   "use strict";
 
-  var API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent";
-  var SESSION_KEY = "chat_session_id";
-  var HISTORY_KEY = "chat_history";
-  var GREETING =
-    "Bună! Sunt asistentul SOLON. Spune-mi cu ce te pot ajuta.";
-  var ERROR_MSG = "Sorry, something went wrong. Please try again.";
-  var NEEDS_HUMAN_MSG = "Un coleg din echipă te va contacta.";
+  const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent";
+  const SESSION_KEY = "chat_session_id";
+  const HISTORY_KEY = "chat_history";
+  const GREETING = "Bună! Sunt asistentul SOLON. Spune-mi cu ce te pot ajuta.";
+  const ERROR_MSG = "Sorry, something went wrong. Please try again.";
+  const NEEDS_HUMAN_MSG = "Un coleg din echipă te va contacta.";
 
-  var pending = false;
-  var isOpen = false;
-  var root;
-  var launcher;
-  var panel;
-  var messagesEl;
-  var typingEl;
-  var quickRepliesEl;
-  var inputEl;
-  var sendBtn;
-  var closeBtn;
+  let pending = false;
+  let isOpen = false;
+  let root;
+  let launcher;
+  let panel;
+  let messagesEl;
+  let typingEl;
+  let quickRepliesEl;
+  let inputEl;
+  let sendBtn;
+  let closeBtn;
 
   function getSessionId() {
-    var id = localStorage.getItem(SESSION_KEY);
+    let id = localStorage.getItem(SESSION_KEY);
     if (!id) {
       id = crypto.randomUUID();
       localStorage.setItem(SESSION_KEY, id);
@@ -32,11 +31,11 @@
 
   function loadHistory() {
     try {
-      var raw = localStorage.getItem(HISTORY_KEY);
+      const raw = localStorage.getItem(HISTORY_KEY);
       if (!raw) return [];
-      var parsed = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
       return Array.isArray(parsed) ? parsed : [];
-    } catch (_err) {
+    } catch {
       return [];
     }
   }
@@ -48,9 +47,9 @@
   function isAllowedUrl(url) {
     if (typeof url !== "string" || !url.trim()) return false;
     try {
-      var u = new URL(url.trim());
+      const u = new URL(url.trim());
       return u.protocol === "http:" || u.protocol === "https:";
-    } catch (_err) {
+    } catch {
       return false;
     }
   }
@@ -67,24 +66,24 @@
   }
 
   function appendBubbleToDom(entry) {
-    var wrap = document.createElement("div");
+    const wrap = document.createElement("div");
     wrap.className =
       "solon-chat-msg solon-chat-msg--" +
       (entry.role === "user" ? "user" : "bot");
 
     if (entry.text) {
-      var text = document.createElement("div");
+      const text = document.createElement("div");
       text.className = "solon-chat-msg__text";
       text.textContent = entry.text;
       wrap.appendChild(text);
     }
 
     if (entry.role === "bot" && entry.buttons && entry.buttons.length) {
-      var actions = document.createElement("div");
+      const actions = document.createElement("div");
       actions.className = "solon-chat-msg__actions";
-      entry.buttons.forEach(function (btn) {
+      entry.buttons.forEach((btn) => {
         if (!btn || btn.type !== "url" || !isAllowedUrl(btn.url)) return;
-        var a = document.createElement("a");
+        const a = document.createElement("a");
         a.className = "solon-chat-msg__link-btn";
         a.href = btn.url.trim();
         a.target = "_blank";
@@ -96,7 +95,7 @@
     }
 
     if (entry.role === "bot" && entry.needsHuman) {
-      var note = document.createElement("p");
+      const note = document.createElement("p");
       note.className = "solon-chat-msg__note";
       note.textContent = NEEDS_HUMAN_MSG;
       wrap.appendChild(note);
@@ -108,7 +107,7 @@
 
   function renderHistory(history) {
     messagesEl.innerHTML = "";
-    history.forEach(function (entry) {
+    history.forEach((entry) => {
       appendBubbleToDom(entry);
     });
     scrollMessagesToBottom();
@@ -116,7 +115,7 @@
 
   function ensureGreeting(history) {
     if (history.length > 0) return history;
-    var next = [
+    const next = [
       {
         role: "bot",
         text: GREETING,
@@ -141,14 +140,14 @@
   function renderQuickReplies(replies) {
     clearQuickReplies();
     if (!replies || !replies.length) return;
-    var list = replies.slice(0, 11);
-    list.forEach(function (qr) {
+    const list = replies.slice(0, 11);
+    list.forEach((qr) => {
       if (!qr || typeof qr.caption !== "string" || !qr.caption.trim()) return;
-      var chip = document.createElement("button");
+      const chip = document.createElement("button");
       chip.type = "button";
       chip.className = "solon-chat-chip";
       chip.textContent = qr.caption.trim();
-      chip.addEventListener("click", function () {
+      chip.addEventListener("click", () => {
         if (pending) return;
         clearQuickReplies();
         sendUserMessage(qr.caption.trim());
@@ -172,12 +171,12 @@
       return { messages: [], quickReplies: [], needsHuman: false };
     }
 
-    var payload = data;
+    let payload = data;
     if (data.reply) {
       if (typeof data.reply === "string") {
         try {
           payload = JSON.parse(data.reply);
-        } catch (_err) {
+        } catch {
           payload = data.reply;
         }
       } else if (typeof data.reply === "object") {
@@ -185,12 +184,12 @@
       }
     }
 
-    var content =
+    const content =
       payload && typeof payload === "object" && payload.content
         ? payload.content
         : payload;
 
-    var messages = [];
+    let messages = [];
     if (content && Array.isArray(content.messages)) {
       messages = content.messages.slice(0, 10);
     } else if (payload && Array.isArray(payload.messages)) {
@@ -203,7 +202,7 @@
       messages = [{ type: "text", text: data.reply.trim() }];
     }
 
-    var quickReplies =
+    const quickReplies =
       content && Array.isArray(content.quick_replies)
         ? content.quick_replies
         : payload && Array.isArray(payload.quick_replies)
@@ -212,7 +211,7 @@
         ? data.quick_replies
         : [];
 
-    var actions =
+    const actions =
       content && Array.isArray(content.actions)
         ? content.actions
         : payload && Array.isArray(payload.actions)
@@ -221,9 +220,9 @@
         ? data.actions
         : [];
 
-    var needsHuman = actions.some(function (a) {
-      return a && a.tag_name === "needs_human";
-    });
+    const needsHuman = actions.some(
+      (a) => a && a.tag_name === "needs_human"
+    );
 
     return {
       messages: messages,
@@ -233,12 +232,12 @@
   }
 
   async function fetchReply(text) {
-    var ctrl = new AbortController();
-    var timer = setTimeout(function () {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => {
       ctrl.abort();
     }, 60000);
     try {
-      var res = await fetch(API, {
+      const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -249,7 +248,7 @@
         signal: ctrl.signal,
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
-      var data = await res.json();
+      const data = await res.json();
       return parseApiResponse(data);
     } finally {
       clearTimeout(timer);
@@ -257,23 +256,17 @@
   }
 
   function botEntriesFromResponse(result) {
-    var entries = [];
-    var msgs = (result.messages || []).filter(function (m) {
-      return m && m.type === "text";
-    });
-    msgs.forEach(function (m, idx) {
-      var buttons = Array.isArray(m.buttons)
+    const entries = [];
+    const msgs = (result.messages || []).filter((m) => m && m.type === "text");
+    msgs.forEach((m, idx) => {
+      const buttons = Array.isArray(m.buttons)
         ? m.buttons
-            .filter(function (b) {
-              return b && b.type === "url" && isAllowedUrl(b.url);
-            })
-            .map(function (b) {
-              return {
-                type: "url",
-                caption: b.caption,
-                url: b.url,
-              };
-            })
+            .filter((b) => b && b.type === "url" && isAllowedUrl(b.url))
+            .map((b) => ({
+              type: "url",
+              caption: b.caption,
+              url: b.url,
+            }))
         : [];
       entries.push({
         role: "bot",
@@ -286,10 +279,10 @@
   }
 
   async function sendUserMessage(text) {
-    var trimmed = (text || "").trim();
+    const trimmed = (text || "").trim();
     if (!trimmed || pending) return;
 
-    var history = loadHistory();
+    const history = loadHistory();
     history.push({ role: "user", text: trimmed });
     saveHistory(history);
     appendBubbleToDom(history[history.length - 1]);
@@ -301,18 +294,18 @@
     showTyping(true);
 
     try {
-      var result = await fetchReply(trimmed);
+      const result = await fetchReply(trimmed);
       showTyping(false);
-      var botEntries = botEntriesFromResponse(result);
-      botEntries.forEach(function (entry) {
+      const botEntries = botEntriesFromResponse(result);
+      botEntries.forEach((entry) => {
         history.push(entry);
         appendBubbleToDom(entry);
       });
       saveHistory(history);
       renderQuickReplies(result.quickReplies);
-    } catch (_err) {
+    } catch {
       showTyping(false);
-      var errEntry = { role: "bot", text: ERROR_MSG };
+      const errEntry = { role: "bot", text: ERROR_MSG };
       history.push(errEntry);
       saveHistory(history);
       appendBubbleToDom(errEntry);
@@ -329,7 +322,7 @@
     launcher.setAttribute("aria-expanded", "true");
     document.body.classList.add("solon-chat-panel-open");
 
-    var history = loadHistory();
+    let history = loadHistory();
     if (history.length === 0) {
       history = ensureGreeting(history);
     }
@@ -367,8 +360,7 @@
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-controls", "solon-chat-panel");
     launcher.setAttribute("aria-label", "Deschide chat-ul de suport SOLON");
-    launcher.innerHTML =
-      '<i class="bi bi-chat-dots" aria-hidden="true"></i>';
+    launcher.innerHTML = '<i class="bi bi-chat-dots" aria-hidden="true"></i>';
 
     panel = document.createElement("div");
     panel.id = "solon-chat-panel";
@@ -378,10 +370,10 @@
     panel.setAttribute("aria-modal", "true");
     panel.setAttribute("aria-labelledby", "solon-chat-panel-title");
 
-    var header = document.createElement("div");
+    const header = document.createElement("div");
     header.className = "solon-chat-panel__header";
 
-    var title = document.createElement("h2");
+    const title = document.createElement("h2");
     title.id = "solon-chat-panel-title";
     title.className = "solon-chat-panel__title";
     title.textContent = "SOLON";
@@ -408,7 +400,7 @@
     quickRepliesEl.className = "solon-chat-panel__quick-replies";
     quickRepliesEl.hidden = true;
 
-    var form = document.createElement("form");
+    const form = document.createElement("form");
     form.className = "solon-chat-panel__form";
 
     inputEl = document.createElement("input");
@@ -442,7 +434,7 @@
     closeBtn.addEventListener("click", closePanel);
     form.addEventListener("submit", onFormSubmit);
 
-    document.addEventListener("keydown", function (e) {
+    document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && isOpen) {
         e.preventDefault();
         closePanel();
