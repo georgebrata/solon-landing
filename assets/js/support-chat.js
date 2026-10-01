@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var API = "https://solon-agency.app.n8n.cloud/webhook-test/customer-support-agent";
+  var API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent";
   var SESSION_KEY = "chat_session_id";
   var HISTORY_KEY = "chat_history";
   var GREETING =
