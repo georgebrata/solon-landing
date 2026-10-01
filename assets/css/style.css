@@ -2567,6 +2567,17 @@ a.details-link:focus-visible,
   float: left;
 }
 
+.footer-contact__logo {
+  height: 70px;
+  width: auto;
+}
+
+.copyright__logo {
+  height: 15px;
+  width: auto;
+  margin-bottom: 3px;
+}
+
 .circuits-img {
   position: absolute;
   width: 4.5rem;
