@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="canonical" href="https://solon.agency/blog/prompt-engineering-juridic-pentru-avocati/" />
+
+  <!-- Primary Meta Tags -->
+  <title>Prompt engineering juridic pentru avocați | SOLON Blog</title>
+  <meta name="title" content="Prompt engineering juridic pentru avocați | SOLON Blog" />
+  <meta name="description" content="Ghid practic de redactare a prompturilor pentru avocați: formulare de cereri de dosar, limitarea halucinațiilor și extragerea de argumente de sinteză." />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://solon.agency/blog/prompt-engineering-juridic-pentru-avocati/" />
+  <meta property="og:title" content="Prompt engineering juridic pentru avocați | SOLON Blog" />
+  <meta property="og:description" content="Ghid practic de redactare a prompturilor pentru avocați: formulare de cereri de dosar, limitarea halucinațiilor și extragerea de argumente de sinteză." />
+  <meta property="og:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://solon.agency/blog/prompt-engineering-juridic-pentru-avocati/" />
+  <meta property="twitter:title" content="Prompt engineering juridic pentru avocați | SOLON Blog" />
+  <meta property="twitter:description" content="Ghid practic de redactare a prompturilor pentru avocați: formulare de cereri de dosar, limitarea halucinațiilor și extragerea de argumente de sinteză." />
+  <meta property="twitter:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="../../assets/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="../../assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+    <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="../../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../../assets/css/style.min.css" rel="stylesheet">
+  <link href="../../assets/css/blog.css" rel="stylesheet">
+
+  <style>
+    /* Ensure the header is visible on blog pages */
+    .breadcrumbs {
+      margin-top: 70px;
+    }
+  </style>
+
+  <!-- ahrefs analytics tracking code for SOLON -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
+
+  <!-- clarity -->
+  <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "w9hin0o1ua");
+  </script>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top header-inner-pages">
+    <div class="container d-flex align-items-center">
+
+      <div class="logo me-auto"><a href="../../" class="hover-no-underline" aria-label="SOLON - pagina principală">
+          <img alt="Logo SOLON, agenția digitală pentru avocați" src="../../assets/img/solon-logo.png" width="250" height="250" />
+          <span aria-hidden="true">SOLON</span></a></div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link" href="../../#servicii">Servicii</a></li>
+          <li><a class="nav-link" href="../../studii-de-caz/">Studii de caz</a></li>
+          <li><a class="nav-link active" href="../../blog/">Blog</a></li>
+          <li><a class="getstarted scrollto mr-1" href="../../programare-consultanta-gratuita/">Programează consultanță
+              gratuită</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <section class="breadcrumbs">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Blog LegalTech</h2>
+      <ol>
+        <li><a href="../../">Home</a></li>
+        <li><a href="../">Blog LegalTech</a></li>
+        <li>Prompt engineering juridic pentru avocați</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="blog-post" class="blog-post">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
+      <div class="col-lg-7">
+        <article class="entry entry-single">
+          <h1 class="entry-title">Prompt engineering juridic pentru avocați</h1>
+          <div class="entry-meta">
+            <ul>
+              <li class="d-flex align-items-center"><i class="bi bi-calendar"></i> <time datetime="2026-10-03">2026-10-03</time></li>
+              <li class="d-flex align-items-center"><i class="bi bi-clock"></i> lectură de 15 min</li>
+            </ul>
+          </div>
+          <div class="entry-tags">
+            <i class="bi bi-tags"></i>
+            <ul class="tags">
+              <li><a href="../?tag=prompt engineering">prompt engineering</a></li><li><a href="../?tag=avocați">avocați</a></li><li><a href="../?tag=inteligenta artificiala">inteligenta artificiala</a></li><li><a href="../?tag=legaltech">legaltech</a></li><li><a href="../?tag=productivitate">productivitate</a></li>
+            </ul>
+          </div>
+          <div class="entry-content">
+            <p>Eficiența utilizării modelelor de inteligență artificială în cabinetul tău de avocatură nu depinde doar de versiunea de software aleasă, ci mai ales de modul în care formulezi instrucțiunile transmise asistentului virtual. Formularea vagă a cerințelor duce la răspunsuri generice sau inexacte, pe când o tehnică riguroasă de construcție a promptului transformă motorul AI într-un colaborator capabil să analizeze volume mari de documente, să creeze schițe de acte procesuale și să identifice neconcordanțe în probele dosarului.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_add-information_06qr.png" alt="Ilustrație: Prompt engineering juridic pentru avocați în practica judiciară modernă" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<p>În acest ghid practic vei descoperi tehnicile fundamentale de prompt engineering adaptate rigorilor dreptului românesc. Vei învăța cum să structurezi contextul, cum să controlezi formatul de ieșire și cum să previi halucinațiile pentru a obține rezultate utile în activitatea de zi cu zi.</p>
+<h2>1. Ce înseamnă prompt engineering în practica juridică</h2>
+<p>Prompt engineering reprezintă disciplina de a proiecta, optimiza și structura instrucțiunile text pe care le introduci într-un model lingvistic (LLM) pentru a obține un răspuns exact, coerent și direct aplicabil. În activitatea avocațială, un prompt nu este o simplă căutare pe Google, ci mai multe directive logice care stabilesc rolul asistentului, cadrul normativ de referință, datele de intrare și formatul final al răspunsului.</p>
+<p>Diferența dintre o cerere obișnuită și un prompt optimizat este majoră:</p>
+<ul>
+<li><strong>Prompt slab</strong>: <em>„Scrie o întâmpinare pentru un litigiu comercial.”</em> (Rezultatul va fi o schiță teoretică plină de generalități, inutilizabilă într-o instanță).</li>
+<li><strong>Prompt optimizat</strong>: <em>„Acționează ca un avocat specializat în drept comercial român. Analizează clauzele din contractul anexat și formulează excepția de neexecutare a contractului, structurată pe trei argumente distincte, citând dispozițiile din Codul Civil.”</em></li>
+</ul>
+<p>Înțelegerea acestei diferențe îți permite să reduci timpul dedicat redactării preliminare și să te concentrezi pe analiza strategică a cauzei.</p>
+<p>Dacă dorești să evaluezi impactul lipsei instrumentelor digitale asupra bugetului cabinetului tău, citește analiza despre <a href="../cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/">Cât te costă, de fapt, un cabinet de avocatură nedigitalizat?</a>.</p>
+<h2>2. Anatomia unui prompt juridic de înaltă precizie</h2>
+<p>Un prompt juridic eficient trebuie construit din componente clare care elimină ambiguitățile. Absența uneia dintre aceste componente obligă modelul să facă ipoteze, crescând riscul de a genera informații irelevante.</p>
+<p>Arhitectura recomandată a unui prompt juridic cuprinde 5 elemente cheie:</p>
+<ol>
+<li><strong>Atribuirea rolului (Persona)</strong>: Definește profilul profesional al asistentului (ex. <em>„Ești un avocat pleadant specializat în dreptul muncii...”</em>).</li>
+<li><strong>Obiectivul clar (Task)</strong>: Descrie exact ce trebuie să genereze modelul (ex. <em>„Extrage toate clauzele penale din contract...”</em>).</li>
+<li><strong>Contextul și datele de intrare (Context &amp; Data)</strong>: Furnizează textul relevant, faptele sau transcrierea întâlnirii.</li>
+<li><strong>Constrângerile și regulile (Constraints)</strong>: Precizează ce NU are voie să facă modelul (ex. <em>„Nu inventa articole de lege, folosește doar textul furnizat...”</em>).</li>
+<li><strong>Formatul de ieșire (Output Format)</strong>: Specifică modul de prezentare (tabel markdown, listă numerotată, schiță de cerere).</li>
+</ol>
+<pre><code>Arhitectura unui Prompt Juridic:
+┌────────────────────────────────────────────────────────┐
+│ 1. ROL: Profilul profesional dorit                      │
+├────────────────────────────────────────────────────────┤
+│ 2. OBIECTIV: Acțiunea exactă de executat              │
+├────────────────────────────────────────────────────────┤
+│ 3. CONTEXT: Datele din dosar / textul de analizat       │
+├────────────────────────────────────────────────────────┤
+│ 4. CONSTRÂNGERI: Reguli de securitate și limitări       │
+├────────────────────────────────────────────────────────┤
+│ 5. FORMAT: Structura vizuală a răspunsului             │
+└────────────────────────────────────────────────────────┘
+</code></pre>
+<h2>3. Tehnica System Prompting și definirea rolului avocațial</h2>
+<p>System Prompting este instrucțiunea de fond oferită modelului la începutul unei sesiuni de lucru sau în setările aplicației (cum ar fi LM Studio, AnythingLLM sau interfața de chat). Aceasta stabilește conduita generală a asistentului pe parcursul întregii conversații.</p>
+<p>Pentru cabinetul tău, un System Prompt configurat corect asigură aplicarea riguroasă a diacriticelor și raportarea permanentă la sistemul de drept românesc:</p>
+<pre><code class="language-text">Ești un asistent de cercetare juridică și redactare pentru un cabinet de avocatură din România.
+Reguli obligatorii:
+1. Răspunde exclusiv în limba română, folosind diacritice corecte (ă, â, î, ș, ț).
+2. Bazează-ți argumentele pe legislația din România și cadrul normativ european aplicabil.
+3. Menține un ton profesional, sobru și precis.
+4. Când datele furnizate sunt insuficiente, precizează clar ce informații lipsesc în loc să presupui.
+</code></pre>
+<p>Prin salvarea acestui profil, eviti repetarea regulilor de bază la fiecare întrebare nouă.</p>
+<h2>4. Structurarea contextului: furnizarea datelor din dosar</h2>
+<p>Un model lingvistic oferă răspunsuri exacte doar dacă îi pui la dispoziție un context bine organizat. Dacă introduci în prompt text neprelucrat sau fragmente trunchiate, modelul poate pierde firul logic al cauzei.</p>
+<p>Organizarea textului introdus se realizează eficient prin utilizarea blocurilor delimitate explicit prin marcaje precum ``` sau xml tags (ex. <code>&lt;dosar&gt;</code>, <code>&lt;contract&gt;</code>):</p>
+<pre><code class="language-text">Analizează textul contractului de mai jos și identifică riscurile juridice pentru achizitor.
+
+&lt;contract&gt;
+[Aici inserezi textul extras prin OCR sau copiat din document]
+&lt;/contract&gt;
+
+Răspunde sub formă de tabel cu coloanele: Clauză, Nivel Risc (Scăzut/Mediu/Ridicat), Explicație, Propunere de Modificare.
+</code></pre>
+<p>Delimitarea clară previne confundarea instrucțiunilor de lucru cu conținutul propriu-zis al documentului analizat.</p>
+<p>Pentru o viziune completă asupra modului în care poți construi un flux de lucru complet digitalizat în practica ta, consultă ghidul <a href="../digitalizarea-cabinetului-individual-de-avocat/">Digitalizarea cabinetului individual de avocat: ghid integral</a>.</p>
+<h2>5. Tehnici de Few-Shot Prompting cu exemple de acte procesuale</h2>
+<p>Modelul înțelege mai bine stilul și redactarea dorită dacă îi oferi în prompt 1-2 exemple concrete de rezultate de calitate. Această tehnică se numește <strong>Few-Shot Prompting</strong>.</p>
+<p>Dacă vrei ca modelul să creeze o sinteză a martorilor în formatul specific cabinetului tău, include un exemplu în cerere:</p>
+<pre><code class="language-text">Formatează depoziția martorului Ionescu conform modelului de mai jos:
+
+Exemplu de format dorit:
+- Martor: Popescu Vasile
+- Declarație din data: 12.03.2025
+- Contradicții identificate: A afirmat că nu cunoaște pârâtul, dar e-mailul din 10.01.2025 arată o corespondență directă.
+
+Acum aplică exact același format pentru următoarea depoziție:
+[Inserare text depoziție Ionescu]
+</code></pre>
+<p>Oferirea unui model de urmat reduce vizibil timpul necesar editării ulterioare a textului generat.</p>
+<h2>6. Chain-of-Thought în raționamentul juridic secvențial</h2>
+<p>Logica juridică presupune parcurgerea mai multor etape: verificarea admisibilității, analiza excepțiilor procesuale și abia apoi analiza fondului. Tehnica <strong>Chain-of-Thought (Llanțul de raționament)</strong> obligă modelul să parcurgă pașii logici în mod vizibil înainte de a formula concluzia.</p>
+<p>Prin adăugarea instrucțiunii <em>„Gândește pas cu pas”</em>, asistentul nu mai sare direct la un răspuns, ci își expune raționamentul intermediar:</p>
+<pre><code class="language-text">Analizează cererea de chemare în judecată atașată.
+Gândește pas cu pas:
+Pasul 1: Verifică dacă cererea îndeplinește condițiile de formă prevăzute de Codul de Procedură Civilă.
+Pasul 2: Identifică eventualele excepții procesuale de ordine publică sau privată.
+Pasul 3: Analizează temeinicia pretențiilor pe fond.
+Pasul 4: Formulează concluzia finală și recomandările pentru întâmpinare.
+</code></pre>
+<p>Această metodă crește serios acuratețea analizei pe cauze complexe.</p>
+<h2>7. Prevenirea și eliminarea halucinațiilor în textele generate</h2>
+<p>Cea mai mare provocare în utilizarea inteligenței artificiale în avocatură este apariția halucinațiilor - situațiile în care modelul inventează numere de articole, decizii ale Înaltei Curți de Casație și Justiție sau sintagme legislative inexistente.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_security-on_btwg.png" alt="Ilustrație: flux operațional și măsuri practice pentru Prompt engineering juridic pentru avocați" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<p>Strategii verificate pentru eliminarea halucinațiilor:</p>
+<ol>
+<li><strong>Restricționarea sursei (Grounded Generation)</strong>: Obligă modelul să utilizeze <em>exclusiv</em> textul furnizat în prompt.</li>
+<li><strong>Instrucțiunea de rezervă</strong>: Cere-i explicit: <em>„Dacă nu găsești răspunsul în textul furnizat, spune &#39;Nu există informații în document&#39;. Nu încerca să ghicești.”</em></li>
+<li><strong>Validarea prin citate</strong>: Cere modelului să extragă citatul exact din text pentru fiecare afirmație făcută.</li>
+</ol>
+<p>Măsurile de securitate ale datelor și izolarea sistemelor sunt detaliate în materialul nostru <a href="../zero-trust-security-explicat-pentru-avocati/">Zero Trust Security explicat pentru avocați</a>.</p>
+<h2>8. Formatarea structurată a rezultatelor: tabele și liste</h2>
+<p>Pentru a parcurge rapid informațiile generate, solicită modelului să livreze răspunsul în formate structurate: tabele markdown, liste ierarhice sau cod JSON pentru integrarea în alte aplicații.</p>
+<p>Exemplu de solicitare pentru analiza comparativă a două versiuni contractuale:</p>
+<pre><code class="language-text">Compară versiunea draft A cu versiunea finală B a contractului.
+Generează un tabel markdown cu 4 coloane:
+1. Clauza / Articolul
+2. Text Versiunea A
+3. Text Versiunea B
+4. Impactul juridic al modificării
+</code></pre>
+<p>Rezultatul obținut va fi clar și ușor de analizat:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Clauză / Articol</th>
+<th align="left">Text Versiunea A</th>
+<th align="left">Text Versiunea B</th>
+<th align="left">Impact juridic</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Art. 4.2 - Penalități</strong></td>
+<td align="left">0,05% pe zi de întârziere</td>
+<td align="left">0,1% pe zi de întârziere</td>
+<td align="left">Dublarea sarcinii financiare a debitorului</td>
+</tr>
+<tr>
+<td align="left"><strong>Art. 8.1 - Jurisdicție</strong></td>
+<td align="left">Judecătoria Sector 1</td>
+<td align="left">Tribunalul București</td>
+<td align="left">Schimbarea competenței materiale și teritoriale</td>
+</tr>
+<tr>
+<td align="left"><strong>Art. 12 - Reziliere</strong></td>
+<td align="left">Preaviz 30 de zile</td>
+<td align="left">Preaviz 10 zile</td>
+<td align="left">Reducerea intervalului de remediere a culpei</td>
+</tr>
+</tbody></table>
+<h2>9. Template-uri gata de folosit pentru cereri, întâmpinări și analize</h2>
+<p>Iată trei șabloane de prompturi concepute pentru activitățile frecvente din cabinet pe care le poți adapta rapid.</p>
+<h3>Template A: Sinteza unui dosar stufos</h3>
+<pre><code class="language-text">Rol: Asistent cercetare juridică.
+Task: Analizează cele 15 pagini ale înscrisului atașat și creează un rezumat executiv.
+Format:
+1. Părțile implicate și calitatea lor procesuală.
+2. Obiectul principal al cererii și valoarea pretențiilor.
+3. Cronologia faptelor (tabel cu dată, eveniment, probă).
+4. Principalele 3 argumente ale reclamantului.
+Restrictie: Folosește doar informațiile din textul anexat.
+</code></pre>
+<h3>Template B: Pregătirea întrebărilor pentru martor</h3>
+<pre><code class="language-text">Rol: Avocat pleading în litigii civile.
+Task: Pe baza declarației martorului [Nume] din dosar, identifică 3 neconcordanțe și redactează 5 întrebări de clarificare pentru ședința de judecată.
+Format: Listă numerotată cu întrebarea formulată direct și obiectivul urmărit prin adresarea ei.
+</code></pre>
+<h3>Template C: Verificarea clauzelor abuzive în contracte B2C</h3>
+<pre><code class="language-text">Rol: Specialist în dreptul consumului.
+Task: Verifică dacă clauzele din contractul atașat respectă Legea nr. 193/2000.
+Format: Tabel cu Clauza suspectă, Articolul din lege încălcat, Argumentul de nulitate.
+</code></pre>
+<h2>10. Integrarea prompturilor în fluxurile zilnice ale cabinetului</h2>
+<p>Pentru a nu redacta prompturile de la zero de fiecare dată, merită să creezi o bibliotecă internă de șabloane.</p>
+<p>Pași pentru integrare:</p>
+<ul>
+<li>Salvează prompturile validate într-un manager de text sau într-un instrument de organizare a cunoștințelor din cabinet.</li>
+<li>Folosește scurtături de tastatură pentru inserarea rapidă a structurilor complexe.</li>
+<li>Standardizează denumirea variabilelor din prompturi (ex. <code>[Nume_Client]</code>, <code>[Numar_Dosar]</code>, <code>[Text_Contract]</code>).</li>
+</ul>
+<p>Dacă dorești să eficientizezi și fluxul de semnare și validare a documentelor rezultate, citește articolul <a href="../cum-sa-folosesti-docusign-ca-avocat/">Cum să folosești DocuSign ca avocat</a>.</p>
+<h2>11. Bune practici de securitate și confidențialitate</h2>
+<p>Aplicarea tehnicilor de prompt engineering trebuie făcută cu respectarea strictă a normelor de protecție a datelor și a secretului profesional.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Regulă de securitate</th>
+<th align="left">Acțiune practică în prompt</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Anonimizarea datelor</strong></td>
+<td align="left">Înlocuiește numele reale, CNP-urile și adresele cu pseudonime (ex. <em>[Reclamant X]</em>, <em>[Societatea Y]</em>) înainte de trimiterea către servicii cloud.</td>
+</tr>
+<tr>
+<td align="left"><strong>Izolarea locală</strong></td>
+<td align="left">Folosește modele AI locale (Ollama / AnythingLLM) când lucrezi cu documente confidențiale din dosare penale sau comerciale sensibile.</td>
+</tr>
+<tr>
+<td align="left"><strong>Fără date financiare brute</strong></td>
+<td align="left">Înlocuiește sumele exacte sau conturile bancare cu valori generice dacă nu sunt relevante pentru analiza juridică.</td>
+</tr>
+</tbody></table>
+<p>Respectarea acestor reguli previne orice scurgere accidentală de informații confidențiale.</p>
+<h2>12. Checklist operațional pentru formularea prompturilor juridice</h2>
+<p>Înainte de a trimite un prompt către asistentul AI, parcurge această listă de verificare rapidă:</p>
+<ol>
+<li><input disabled="" type="checkbox"> <strong>Ai atribuit un rol clar?</strong> (<em>„Ești un avocat specializat în...”</em>)</li>
+<li><input disabled="" type="checkbox"> <strong>Obiectivul este specific și fără ambiguități?</strong></li>
+<li><input disabled="" type="checkbox"> <strong>Ai delimitat clar textul de analizat de instrucțiunile tale?</strong></li>
+<li><input disabled="" type="checkbox"> <strong>Ai adăugat restricția de a nu inventa date din afara textului?</strong></li>
+<li><input disabled="" type="checkbox"> <strong>Ai cerut un format de ieșire structurat (tabel/listă)?</strong></li>
+<li><input disabled="" type="checkbox"> <strong>Ai anonimizat datele cu caracter personal sensibile?</strong></li>
+<li><input disabled="" type="checkbox"> <strong>Ai specificat că dorești răspunsul în limba română cu diacritice?</strong></li>
+</ol>
+<h2>Concluzie</h2>
+<p>Masteratul tehnicilor de prompt engineering transformă inteligența artificială dintr-o curiozitate tehnologică într-un instrument de lucru de bază pentru cabinetul tău. Formularea structurată, utilizarea exemplelor de calitate și aplicarea tehnicilor de raționament secvențial îți permit să obții analize clare și drafturi de calitate în timp record.</p>
+<p>Totuși, e esențial să reții că orice rezultat generat de un model AI reprezintă o schiță de lucru. Verificarea finală a raționamentului juridic, validarea textelor de lege și adaptarea la particularitățile cauzei rămân atributul exclusiv al avocatului.</p>
+<p>Dacă dorești să implementezi fluxuri automatizate de prompt engineering și asistenți AI adaptați specificului cabinetului tău, echipa <strong>SOLON</strong> oferă consultanță de digitalizare și dezvoltare dedicată profesioniștilor din domeniul juridic.</p>
+<hr>
+<blockquote>
+<p><em>Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul Legii nr. 51/1995. Pentru asistență personalizată, vă recomandăm consultarea unui avocat specializat.</em></p>
+</blockquote>
+<!-- AI-Assisted Content | Verified by SOLON Editorial | Model: Gemini / Claude | Compliance: EU AI Act Art. 50 -->
+
+          </div>
+        </article>
+      </div>
+      <aside class="col-lg-4 d-none d-lg-block blog-sidebar" aria-label="Sidebar blog">
+        <div class="" data-blog-sidebar>
+          <!-- <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-search-title">
+            <h3 id="blog-sidebar-search-title" class="blog-sidebar-title">Caută</h3>
+            <form class="blog-sidebar-search-form" data-blog-sidebar-search role="search">
+              <label class="visually-hidden" for="blog-sidebar-search-input">Caută articole</label>
+              <div class="blog-sidebar-search-input-wrap">
+                <input id="blog-sidebar-search-input" type="search" class="form-control" placeholder="Caută articole..." aria-label="Caută articole">
+                <button type="submit" class="btn btn-sm blog-sidebar-search-button">Caută</button>
+              </div>
+            </form>
+          </section> -->
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-recent-title">
+            <h3 id="blog-sidebar-recent-title" class="blog-sidebar-title">Articole recente</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-recent></ul>
+          </section>
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-tags-title">
+            <h3 id="blog-sidebar-tags-title" class="blog-sidebar-title">Taguri populare</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-tags></ul>
+          </section>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="blog-article-extras">
+  <div class="container" data-aos="fade-up">
+    <div class="blog-recent-articles">
+      <h2>ARTICOLE RECENTE</h2>
+      <ul>
+        <li><a href="../dosar-digital-de-litigiu-probe-si-jurisprudenta/">Dosar digital de litigiu: probe și jurisprudență</a>, 29 septembrie 2026</li>
+<li><a href="../generarea-automata-a-contractelor-pentru-avocati/">Generarea automată a contractelor pentru avocați</a>, 28 septembrie 2026</li>
+<li><a href="../audit-contracte-due-diligence-ai-avocati/">Audit de contracte și due diligence cu AI</a>, 23 septembrie 2026</li>
+<li><a href="../dosarul-electronic-si-automatizarea-ecris/">Dosarul electronic și automatizarea ECRIS</a>, 22 septembrie 2026</li>
+<li><a href="../gestionarea-cunostintelor-juridice-knowledge-management/">Gestionarea cunoștințelor juridice în cabinet</a>, 21 septembrie 2026</li>
+      </ul>
+    </div>
+
+    <div class="blog-services">
+      <div class="section-title text-start">
+        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+      </div>
+      <div class="row gy-4">
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-headset"></i></div>
+            <h3>Consultanță digitală</h3>
+            <p>Transformăm expertiza ta juridică în succes digital, ghidându-vă spre inovație și eficiență cu soluții digitale personalizate.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-brush"></i></div>
+            <h3>Branding</h3>
+            <p>Sculptăm identitatea brandului dvs. cu măiestrie și viziune pentru a crea o amprentă memorabilă în lumea juridică.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-puzzle"></i></div>
+            <h3>Marketing</h3>
+            <p>Strategiile noastre de marketing vorbesc direct la publicul țintă, crescând respectul pentru brandul dvs. juridic.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-laptop"></i></div>
+            <h3>Development</h3>
+            <p>Website-ul dumneavoastră devine mai mult decât o carte de vizită online; este o capodoperă live care spune povestea firmei dumneavoastră de avocatură.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <!-- ======= Newsletter Section ======= -->
+    <div class="footer-newsletter blog-newsletter">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="section-title">
+            <h2>Newsletter</h2>
+          </div>
+          <div class="col-lg-7">
+            <h3>Abonează-te la noutăți din domeniul LegalTech</h3>
+            <p>Poți câștiga un pachet de servicii GOLD în valoare de 349€</p>
+            <div>
+              <div>
+                <form data-solon-form="Newsletter" class="solon-newsletter-form">
+                  <div class="mc-field-group">
+                    <label for="solon-newsletter-email" class="form-label visually-hidden">Adresă de email pentru
+                    newsletter</label>
+                    <input type="email" class="required email"
+                    value="" autocomplete="email" name="Email" required="required" id="solon-newsletter-email">
+                  </div>
+                  <div class="clear"><input type="submit" id="solon-newsletter-submit"
+                  class="button" value="Subscribe"></div>
+                </form>
+                <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Newsletter Section -->
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6 footer-links">
+            <h3>Follow us</h3>
+            <ul>
+              <li>
+                  <i class="bx bxl-instagram" aria-hidden="true" ></i>
+                  <a href="https://www.instagram.com/solon.agency" target="_blank">Instagram</a>
+              </li>
+              <li>
+                  <i class="bx bxl-facebook" aria-hidden="true"></i>
+                  <a href="https://www.facebook.com/people/SOLON-Agency/61554025732235/" target="_blank">Facebook</a>
+              </li>
+              <li>
+                  <i class="bx bxl-linkedin" aria-hidden="true"></i>
+                  <a href="https://www.linkedin.com/company/solonagency/" target="_blank">LinkedIn</a>
+              </li>
+              <li>
+                  <i class="bx bxl-twitter" aria-hidden="true"></i>
+                  <a href="https://www.twitter.com/solon_agency" target="_blank">Twitter</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-6 col-sm-6 footer-links">
+            <h3>Linkuri utile</h3>
+            <ul>
+              <li> <a href="/blog/">Blog LegalTech</a></li>
+              <li> <a target="_blank" href="../../terms/">Termeni și condiții</a></li>
+              <li> <a target="_blank" href="../../cookies/">Politica cookie</a></li>
+              <li> <a target="_blank" href="../../privacy/">Politică de confidențialitate</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-12 footer-contact">
+            <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
+            <h3>SOLON</h3>
+            <p>
+              <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
+              <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        <b>SOLON</b> &copy; <span data-current-year></span>
+      </div>
+      <div class="credits">
+        Servicii digitale complete pentru mediul juridic
+      </div>
+    </div>
+  </footer>
+  <!-- End Footer -->
+
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    aria-label="Înapoi la începutul paginii"><i class="bi bi-arrow-up-short" aria-hidden="true"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../../assets/vendor/aos/aos.js"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="../../assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="../../assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="../../assets/js/main.min.js"></script>
+  <script src="../../assets/js/dynamic-year.min.js"></script>
+  <script src="../../assets/js/blog-sidebar.js"></script>
+  <script src="../../assets/js/forms.min.js"></script>
+</body>
+
+</html>
