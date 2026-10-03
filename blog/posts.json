@@ -1,5 +1,25 @@
 [
   {
+    "title": "Prompt engineering juridic pentru avocați",
+    "date": "2026-10-03",
+    "slug": "prompt-engineering-juridic-pentru-avocati",
+    "description": "Ghid practic de redactare a prompturilor pentru avocați: formulare de cereri de dosar, limitarea halucinațiilor și extragerea de argumente de sinteză.",
+    "read_time": 15,
+    "categories": [
+      "legaltech",
+      "inteligenta-artificiala",
+      "productivitate"
+    ],
+    "tags": [
+      "prompt engineering",
+      "avocați",
+      "inteligenta artificiala",
+      "legaltech",
+      "productivitate"
+    ],
+    "url": "prompt-engineering-juridic-pentru-avocati/"
+  },
+  {
     "title": "Dosar digital de litigiu: probe și jurisprudență",
     "date": "2026-09-29",
     "slug": "dosar-digital-de-litigiu-probe-si-jurisprudenta",
