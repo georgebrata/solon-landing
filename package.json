@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "minify": "node scripts/minify-assets.js",
+    "stamp-assets": "node scripts/stamp-asset-refs.js",
+    "test:assets": "node --test tests/stamp-asset-refs.test.js",
     "flags": "node scripts/apply-feature-flags.js",
     "flags:dry": "node scripts/apply-feature-flags.js --dry-run",
     "flags:status": "node scripts/apply-feature-flags.js --status",

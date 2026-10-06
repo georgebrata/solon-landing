@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const { stampHtml } = require('./stamp-asset-refs');
 
 const POSTS_DIR = path.join(__dirname, '../blog/posts');
 const OUTPUT_DIR = path.join(__dirname, '../blog');
@@ -192,14 +193,16 @@ async function build() {
     const postDir = path.join(OUTPUT_DIR, post.frontmatter.slug);
     if (!fs.existsSync(postDir)) fs.mkdirSync(postDir, { recursive: true });
 
-    const html = generatePostHTML(post, posts, marked);
-    fs.writeFileSync(path.join(postDir, 'index.html'), html);
+    const outPath = path.join(postDir, 'index.html');
+    const html = stampHtml(generatePostHTML(post, posts, marked), outPath);
+    fs.writeFileSync(outPath, html);
     console.log(`Generated: /blog/${post.frontmatter.slug}/index.html`);
   });
 
   // Generate list page
-  const listHtml = generateListHTML(posts);
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), listHtml);
+  const listPath = path.join(OUTPUT_DIR, 'index.html');
+  const listHtml = stampHtml(generateListHTML(posts), listPath);
+  fs.writeFileSync(listPath, listHtml);
   console.log('Generated: /blog/index.html');
 
   // Generate posts.json for client-side use

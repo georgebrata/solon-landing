@@ -4,11 +4,15 @@ const fs = require("fs");
 const path = require("path");
 const CleanCSS = require("clean-css");
 const { minify: terserMinify } = require("terser");
+const { stampAllHtmlFiles } = require("./stamp-asset-refs");
 
 const root = path.join(__dirname, "..");
 
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
 const cssFiles = ["toggle.css", "two-up.css", "consent.css"];
+/** Sources to minify. Cache-busting is NOT this list: stamp-asset-refs.js
+ *  rewrites any HTML href/src under assets/css, assets/js, or assets/vendor,
+ *  including files added later (e.g. consent.min.js). */
 const jsFiles = [
   "error-log.js",
   "dynamic-year.js",
@@ -135,4 +139,7 @@ const minifyJs = async function minifyJs(relPath) {
       return;
     }
   }
+  // Refresh ?v=<content-hash> on HTML/CSS/JS refs so long-cache stays safe.
+  // Path-based: new files such as consent.min.js are stamped when HTML links them.
+  stampAllHtmlFiles();
 })();

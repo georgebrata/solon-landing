@@ -32,3 +32,6 @@ jobs:
 
       - name: Run feature flag tests
         run: npm run test:flags
+
+      - name: Run asset cache-busting tests
+        run: npm run test:assets

@@ -46,6 +46,9 @@ jobs:
       - name: Test feature flags
         run: npm run test:flags
 
+      - name: Test asset cache-busting
+        run: npm run test:assets
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
