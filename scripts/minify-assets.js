@@ -8,11 +8,16 @@ const { minify: terserMinify } = require("terser");
 const root = path.join(__dirname, "..");
 
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
-const cssFiles = ["toggle.css", "two-up.css"];
+const cssFiles = ["toggle.css", "two-up.css", "consent.css"];
 const jsFiles = [
   "error-log.js",
   "dynamic-year.js",
   "meta-pixel.js",
+  "consent.js",
+  "gtag-config.js",
+  "clarity-init.js",
+  "metricool-init.js",
+  "brevo-init.js",
   "main.js",
   "price-toggle.js",
   "typeahead.js",
@@ -24,7 +29,11 @@ const jsFiles = [
   "support-chat.js",
 ];
 
-function minifyStyleMerged() {
+/**
+ * Merges toggle.css into style.css and writes style.min.css.
+ * @returns {boolean}
+ */
+const minifyStyleMerged = function minifyStyleMerged() {
   const cssDir = path.join(root, "assets/css");
   const togglePath = path.join(cssDir, "toggle.css");
   const stylePath = path.join(cssDir, "style.css");
@@ -39,7 +48,7 @@ function minifyStyleMerged() {
     level: 2,
     relativeTo: cssDir,
   }).minify(input);
-  if (out.errors && out.errors.length) {
+  if (out.errors?.length) {
     console.error(out.errors);
     return false;
   }
@@ -49,9 +58,13 @@ function minifyStyleMerged() {
     `OK style.css (+ toggle.css) → style.min.css (${input.length} → ${out.styles.length} bytes)`
   );
   return true;
-}
+};
 
-function minifyCss(relPath) {
+/**
+ * @param {string} relPath
+ * @returns {boolean}
+ */
+const minifyCss = function minifyCss(relPath) {
   const full = path.join(root, "assets/css", relPath);
   if (!fs.existsSync(full)) {
     console.warn(`Skip missing CSS: ${relPath}`);
@@ -64,7 +77,7 @@ function minifyCss(relPath) {
     relativeTo: cssDir,
     inline: false,
   }).minify(input);
-  if (out.errors && out.errors.length) {
+  if (out.errors?.length) {
     console.error(out.errors);
     return false;
   }
@@ -75,9 +88,13 @@ function minifyCss(relPath) {
     `OK ${relPath} → ${base}.min.css (${input.length} → ${out.styles.length} bytes)`
   );
   return true;
-}
+};
 
-async function minifyJs(relPath) {
+/**
+ * @param {string} relPath
+ * @returns {Promise<boolean>}
+ */
+const minifyJs = async function minifyJs(relPath) {
   const full = path.join(root, "assets/js", relPath);
   if (!fs.existsSync(full)) {
     console.warn(`Skip missing JS: ${relPath}`);
@@ -99,7 +116,7 @@ async function minifyJs(relPath) {
   const outLen = Buffer.byteLength(result.code, "utf8");
   console.log(`OK ${relPath} → ${base}.min.js (${input.length} → ${outLen} bytes)`);
   return true;
-}
+};
 
 (async () => {
   if (!minifyStyleMerged()) {
