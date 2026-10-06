@@ -49,6 +49,9 @@ jobs:
       - name: Test asset cache-busting
         run: npm run test:assets
 
+      - name: Test error pages
+        run: npm run test:error-pages
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 

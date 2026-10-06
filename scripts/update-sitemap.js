@@ -5,6 +5,32 @@ const BASE_URL = "https://solon.agency";
 const BLOG_PRIORITY = "0.80";
 const BLOG_POST_PRIORITY = "0.50";
 
+const SITEMAP_EXCLUDED_PATHS = new Set([
+  "/404.html",
+  "/500.html",
+  "/403.html",
+  "/404/",
+  "/500/",
+  "/403/",
+]);
+
+/**
+ * True when a sitemap loc is an error document that must not be listed.
+ * @param {string} loc Absolute sitemap URL.
+ * @returns {boolean}
+ */
+const isExcludedFromSitemap = (loc) => {
+  if (typeof loc !== "string" || !loc.startsWith(`${BASE_URL}/`)) {
+    return false;
+  }
+  let pathname = loc.slice(BASE_URL.length);
+  const queryIndex = pathname.indexOf("?");
+  if (queryIndex !== -1) {
+    pathname = pathname.slice(0, queryIndex);
+  }
+  return SITEMAP_EXCLUDED_PATHS.has(pathname);
+};
+
 const now = new Date().toISOString();
 const sitemapPath = path.join(__dirname, "../sitemap.xml");
 const postsJsonPath = path.join(__dirname, "../blog/posts.json");
@@ -62,6 +88,7 @@ const normalizeTrailingSlash = (url) =>
 const existingByLoc = new Map(existingEntries.map((entry) => [entry.loc, entry]));
 const updatedEntries = existingEntries
   .filter((entry) => !entry.loc.startsWith(`${BASE_URL}/blog/`))
+  .filter((entry) => !isExcludedFromSitemap(entry.loc))
   .map((entry) => ({ ...entry, loc: normalizeTrailingSlash(entry.loc) }));
 
 const existingBlogIndex = existingByLoc.get(blogIndexLoc);

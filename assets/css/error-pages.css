@@ -1,0 +1,226 @@
+/**
+ * Layout for branded Apache error documents (403 / 404 / 500).
+ * Loaded only on those pages; does not change marketing-page styles.
+ *
+ * Jost and Open Sans are self-hosted (SIL OFL) so error documents make
+ * no third-party webfont request before consent.
+ */
+
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/jost-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/jost-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/jost-latin-ext-700-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/jost-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/open-sans-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/open-sans-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/open-sans-latin-ext-600-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/open-sans-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+button.mobile-nav-toggle {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -100%;
+  z-index: 10000;
+  padding: 0.5rem 1rem;
+  background: var(--tertiary);
+  color: var(--primary);
+  font-weight: 600;
+  border-radius: 0.375rem;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0.75rem;
+  outline: 2px solid var(--tertiary-darkeeer);
+  outline-offset: 2px;
+}
+
+.error-page {
+  padding: 7.5rem 0 4rem;
+  min-height: 60vh;
+  background: var(--white);
+}
+
+.error-page__inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.error-page__code {
+  font-family: "Jost", system-ui, sans-serif;
+  font-size: clamp(4rem, 12vw, 7rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--primary);
+  margin: 0 0 0.5rem;
+}
+
+.error-page h1 {
+  color: var(--primary);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  margin-bottom: 1rem;
+}
+
+.error-page__lead {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: #444444;
+  margin-bottom: 2rem;
+}
+
+.error-page__lead a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.error-page__lead a:hover,
+.error-page__lead a:focus-visible {
+  color: var(--secondary);
+}
+
+.error-page__links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.error-page__links a {
+  display: block;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--secondary-light);
+  border-radius: 0.375rem;
+  color: var(--primary);
+  font-weight: 600;
+  background: var(--white);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.error-page__links a:hover,
+.error-page__links a:focus-visible {
+  background: var(--tertiary);
+  border-color: var(--tertiary-darker);
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.error-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 1rem;
+}
+
+.error-page__actions .btn-get-started {
+  margin: 0;
+}
+
+.error-page__actions .btn-learn-more {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+#footer .footer-top h2 {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary);
+  position: relative;
+  padding-bottom: 12px;
+}
+
+#footer .footer-top .footer-contact h2 {
+  font-size: 20px;
+  margin: 0 0 10px 0;
+  padding: 2px 0 2px 0;
+  line-height: 1;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+@media (max-width: 575.98px) {
+  .error-page {
+    padding: 6.5rem 0 3rem;
+  }
+
+  .error-page__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .error-page__actions a {
+    text-align: center;
+  }
+}

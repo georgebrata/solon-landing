@@ -35,3 +35,6 @@ jobs:
 
       - name: Run asset cache-busting tests
         run: npm run test:assets
+
+      - name: Run error page tests
+        run: npm run test:error-pages
