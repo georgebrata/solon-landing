@@ -1,0 +1,11 @@
+(function () {
+  "use strict";
+
+  window.Brevo = window.Brevo || [];
+  window.Brevo.push([
+    "init",
+    {
+      client_key: "mwgotrl8mb9d4jf2rit2omjt",
+    },
+  ]);
+})();
