@@ -1,5 +1,6 @@
+"use strict";
+
 (function () {
-  "use strict";
 
   const header = document.getElementById("header");
   const navbar = document.getElementById("navbar");
