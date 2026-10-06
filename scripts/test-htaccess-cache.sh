@@ -6,10 +6,18 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${APACHE_TEST_PORT:-18080}"
 TMP="$(mktemp -d)"
+WELL_KNOWN_CLEANUP=0
+APACHE_PID=""
+
 cleanup() {
-  if [[ -n "${APACHE_PID:-}" ]] && kill -0 "$APACHE_PID" 2>/dev/null; then
+  if [[ -n "${APACHE_PID}" ]] && kill -0 "$APACHE_PID" 2>/dev/null; then
     kill "$APACHE_PID" 2>/dev/null || true
     wait "$APACHE_PID" 2>/dev/null || true
+  fi
+  if [[ "${WELL_KNOWN_CLEANUP}" == "1" ]]; then
+    rm -f "$ROOT/.well-known/acme-challenge/cache-test"
+    rmdir "$ROOT/.well-known/acme-challenge" 2>/dev/null || true
+    rmdir "$ROOT/.well-known" 2>/dev/null || true
   fi
   rm -rf "$TMP"
 }
@@ -24,18 +32,6 @@ fi
 mkdir -p "$TMP/tmp" "$TMP/logs" "$ROOT/.well-known/acme-challenge"
 echo "ok" > "$ROOT/.well-known/acme-challenge/cache-test"
 WELL_KNOWN_CLEANUP=1
-cleanup() {
-  if [[ -n "${APACHE_PID:-}" ]] && kill -0 "$APACHE_PID" 2>/dev/null; then
-    kill "$APACHE_PID" 2>/dev/null || true
-    wait "$APACHE_PID" 2>/dev/null || true
-  fi
-  if [[ "${WELL_KNOWN_CLEANUP:-0}" == "1" ]]; then
-    rm -f "$ROOT/.well-known/acme-challenge/cache-test"
-    rmdir "$ROOT/.well-known/acme-challenge" 2>/dev/null || true
-    rmdir "$ROOT/.well-known" 2>/dev/null || true
-  fi
-  rm -rf "$TMP"
-}
 
 # Module paths differ between Debian apache2 and generic httpd.
 MOD_DIR=""

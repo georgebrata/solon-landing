@@ -178,7 +178,7 @@ ${tagsBlock}
     .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
 }
 
-async function build() {
+const build = async () => {
   console.log('Building blog...');
 
   const { marked } = await import('marked');

@@ -17,7 +17,7 @@
  * /blog/posts.json, and sitemap.xml are not long-cached; see .htaccess.
  */
 
-const crypto = require("crypto");
+const nodeCrypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -39,33 +39,41 @@ const ASSET_REF_RE =
 
 const hashCache = new Map();
 
-function hashFile(absPath) {
+/** SHA-256 prefix (10 hex chars) of a file, cached per absolute path. */
+const hashFile = (absPath) => {
   if (hashCache.has(absPath)) {
     return hashCache.get(absPath);
   }
-  const digest = crypto
+  const digest = nodeCrypto
     .createHash("sha256")
     .update(fs.readFileSync(absPath))
     .digest("hex")
     .slice(0, 10);
   hashCache.set(absPath, digest);
   return digest;
-}
+};
 
-function clearHashCache() {
+/** Drop memoized hashes (needed when tests rewrite fixture files). */
+const clearHashCache = () => {
   hashCache.clear();
-}
+};
 
-function stripQueryAndHash(url) {
-  const q = url.indexOf("?");
-  const h = url.indexOf("#");
+/** Strip `?query` and `#fragment` from a URL. */
+const stripQueryAndHash = (url) => {
+  const queryIndex = url.indexOf("?");
+  const hashIndex = url.indexOf("#");
   let end = url.length;
-  if (q !== -1) end = Math.min(end, q);
-  if (h !== -1) end = Math.min(end, h);
+  if (queryIndex !== -1) end = Math.min(end, queryIndex);
+  if (hashIndex !== -1) end = Math.min(end, hashIndex);
   return url.slice(0, end);
-}
+};
 
-function resolveAssetPath(htmlFile, assetUrl) {
+/**
+ * Resolve an HTML asset URL to a file on disk.
+ * Extra `../` is valid in the browser (cannot leave the origin) but can
+ * leave the repo for templates/layout.html and blog/index.html.
+ */
+const resolveAssetPath = (htmlFile, assetUrl) => {
   const clean = stripQueryAndHash(assetUrl);
   const candidates = [];
 
@@ -75,14 +83,11 @@ function resolveAssetPath(htmlFile, assetUrl) {
     candidates.push(path.resolve(path.dirname(htmlFile), clean));
   }
 
-  // Browser URL resolution cannot climb above the site root, but path.resolve
-  // can leave the repo (templates/layout.html and blog/index.html both use
-  // ../../assets/...). Walk parents and always try repo-root assets/.
   const assetsAt = clean.indexOf("assets/");
   if (assetsAt !== -1) {
     const fromAssets = clean.slice(assetsAt);
     let dir = path.dirname(htmlFile);
-    for (let i = 0; i < 8; i += 1) {
+    for (let depth = 0; depth < 8; depth += 1) {
       candidates.push(path.join(dir, fromAssets));
       const parent = path.dirname(dir);
       if (parent === dir) break;
@@ -101,9 +106,10 @@ function resolveAssetPath(htmlFile, assetUrl) {
     }
   }
   return candidates[0];
-}
+};
 
-function stampHtml(html, htmlFile) {
+/** Rewrite CSS/JS/vendor href/src in one HTML string with `?v=<hash>`. */
+const stampHtml = (html, htmlFile) => {
   ASSET_REF_RE.lastIndex = 0;
   return html.replace(ASSET_REF_RE, (match, attr, quote, url) => {
     const cleanUrl = stripQueryAndHash(url);
@@ -117,32 +123,34 @@ function stampHtml(html, htmlFile) {
     const version = hashFile(abs);
     return `${attr}${quote}${cleanUrl}?v=${version}${quote}`;
   });
-}
+};
 
-function collectHtmlFiles(dir, acc = []) {
+/** Recursively collect `.html` files, skipping VCS and tooling dirs. */
+const collectHtmlFiles = (dir, acc = []) => {
   let entries;
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch {
     return acc;
   }
-  for (const ent of entries) {
-    if (ent.name.startsWith(".") && ent.name !== ".") {
+  for (const entry of entries) {
+    if (entry.name.startsWith(".") && entry.name !== ".") {
       continue;
     }
-    if (ent.isDirectory()) {
-      if (SKIP_DIR_NAMES.has(ent.name)) continue;
-      collectHtmlFiles(path.join(dir, ent.name), acc);
+    if (entry.isDirectory()) {
+      if (SKIP_DIR_NAMES.has(entry.name)) continue;
+      collectHtmlFiles(path.join(dir, entry.name), acc);
       continue;
     }
-    if (ent.isFile() && ent.name.endsWith(".html")) {
-      acc.push(path.join(dir, ent.name));
+    if (entry.isFile() && entry.name.endsWith(".html")) {
+      acc.push(path.join(dir, entry.name));
     }
   }
   return acc;
-}
+};
 
-function stampFile(htmlFile) {
+/** Stamp one HTML file in place. Returns true when the file changed. */
+const stampFile = (htmlFile) => {
   const original = fs.readFileSync(htmlFile, "utf8");
   const stamped = stampHtml(original, htmlFile);
   if (stamped !== original) {
@@ -150,9 +158,10 @@ function stampFile(htmlFile) {
     return true;
   }
   return false;
-}
+};
 
-function stampAllHtmlFiles({ silent = false } = {}) {
+/** Stamp every HTML page under the repo root. */
+const stampAllHtmlFiles = ({ silent = false } = {}) => {
   clearHashCache();
   const files = collectHtmlFiles(root);
   let changed = 0;
@@ -170,11 +179,7 @@ function stampAllHtmlFiles({ silent = false } = {}) {
     );
   }
   return { scanned: files.length, changed };
-}
-
-function main() {
-  stampAllHtmlFiles();
-}
+};
 
 module.exports = {
   ASSET_REF_RE,
@@ -189,5 +194,5 @@ module.exports = {
 };
 
 if (require.main === module) {
-  main();
+  stampAllHtmlFiles();
 }
