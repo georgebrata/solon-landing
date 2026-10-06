@@ -1,6 +1,6 @@
-(function () {
-    "use strict";
+"use strict";
 
+(function () {
     const URL = "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
     const faqList = document.getElementById("faq-list");
     const faqListParent = document.getElementById("faq");
@@ -13,7 +13,7 @@
     };
 
     const createFaqTemplate = (faqObject, index) => {
-        let { intrebare, raspuns } = faqObject;
+        const { intrebare, raspuns } = faqObject;
 
         return `<li data-aos="fade-in" data-aos-delay="${index*100}">
             <i class="bx bx-help-circle icon-help"></i>
@@ -30,31 +30,28 @@
     };
 
     const hideLoading = () => {
-        const loading = document.getElementById("loading");
-        if (loading) loading.classList.add("hidden");
+        document.getElementById("loading")?.classList.add("hidden");
     };
 
-    function logFaqError(error) {
-        const logger = typeof globalThis !== "undefined" ? globalThis.SolonLog : null;
-        if (logger && typeof logger.error === "function") {
+    const logFaqError = (error) => {
+        const logger = globalThis?.SolonLog;
+        if (typeof logger?.error === "function") {
             logger.error({
                 type: "faq_load_error",
-                message: error && error.message,
-                name: error && error.name,
+                message: error?.message,
+                name: error?.name,
             });
             return;
         }
-        if (typeof console !== "undefined" && typeof console.error === "function") {
-            console.error("[solon error]", { type: "faq_load_error", name: error && error.name });
-        }
-    }
+        console?.error("[solon error]", { type: "faq_load_error", name: error?.name });
+    };
 
-    async function renderLibraryItems() {
+    const renderLibraryItems = async () => {
         if (!faqList || !faqListParent) return;
 
-        let response, items;
+        let items;
         try {
-            response = await fetch(URL);
+            const response = await fetch(URL);
             if (!response.ok) throw new Error("FAQ request failed");
             items = await response.json();
         } catch (error) {
@@ -65,7 +62,7 @@
         }
 
         hideLoading();
-        const visibleItems = Array.isArray(items) ? items.filter(item => item.Visible) : [];
+        const visibleItems = Array.isArray(items) ? items.filter((item) => item.Visible) : [];
 
         if (visibleItems.length === 0) {
             faqListParent.classList.add("hidden");
@@ -81,11 +78,11 @@
                 appendItem(createFaqTemplate(element, index));
             }
         });
-    }
+    };
 
     renderLibraryItems().catch((error) => {
         logFaqError(error);
         hideLoading();
-        if (faqListParent) faqListParent.classList.add("hidden");
+        faqListParent?.classList.add("hidden");
     });
 })();

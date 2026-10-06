@@ -1,6 +1,6 @@
-(function () {
-  "use strict";
+"use strict";
 
+(function () {
   const API_URL =
     "https://script.google.com/macros/s/AKfycbzE0XZ-FU4FRdJXoFWUhgSsCrRPZKHRCaOpwZ16Ww9M7Ffgy0O6Xi2QvgxQNhplZxsd/exec";
   const IP_URL = "https://api64.ipify.org?format=json";
@@ -33,27 +33,25 @@
       day: "2-digit",
     }).format(new Date());
 
-  function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  function logEvent(level, details) {
+  const logEvent = (level, details) => {
     try {
-      const logger = (typeof globalThis !== "undefined" && globalThis.SolonLog) || null;
-      if (logger && typeof logger[level] === "function") {
+      const logger = globalThis?.SolonLog;
+      if (typeof logger?.[level] === "function") {
         logger[level](details);
         return;
       }
       const method = level === "error" || level === "critical" ? "error" : level === "warn" ? "warn" : "info";
-      if (typeof console !== "undefined" && typeof console[method] === "function") {
-        console[method]("[solon " + level + "]", details);
+      if (typeof console?.[method] === "function") {
+        console[method](`[solon ${level}]`, details);
       }
-    } catch (_) {
-      /* logging must never break submit */
+    } catch {
+      return;
     }
-  }
+  };
 
-  function classifySubmitError(error) {
+  const classifySubmitError = (error) => {
     if (!error) return "unknown";
     if (error.solonCode) return error.solonCode;
     const name = error.name || "";
@@ -64,14 +62,14 @@
     if (message === "Request failed") return "http";
     if (message === "The API did not confirm the save") return "unconfirmed";
     return "unknown";
-  }
+  };
 
-  function taggedError(solonCode, error) {
+  const taggedError = (solonCode, error) => {
     if (error && typeof error === "object") error.solonCode = solonCode;
     return error;
-  }
+  };
 
-  async function getIP() {
+  const getIP = async () => {
     if (cachedIP) return cachedIP;
     for (let attempt = 0; attempt < IP_RETRY_DELAYS_MS.length; attempt++) {
       if (IP_RETRY_DELAYS_MS[attempt]) await wait(IP_RETRY_DELAYS_MS[attempt]);
@@ -92,7 +90,7 @@
           logEvent("warn", {
             type: "ip_lookup_failed",
             reason: classifySubmitError(error),
-            name: error && error.name,
+            name: error?.name,
           });
           return "";
         }
@@ -101,9 +99,9 @@
       }
     }
     return "";
-  }
+  };
 
-  function showStatus(form, message, isError, retry) {
+  const showStatus = (form, message, isError, retry) => {
     const status = form.parentElement.querySelector("[data-form-status]");
     if (!status) return;
     status.hidden = !message;
@@ -114,8 +112,8 @@
 
     const retryFn = typeof retry === "function" ? retry : retry.run;
     const retryLabel =
-      (retry && retry.label) || (typeof retry === "function" ? "Reîncearcă abonarea" : "Încearcă din nou");
-    const managed = Boolean(retry && retry.managed);
+      retry?.label || (typeof retry === "function" ? "Reîncearcă abonarea" : "Încearcă din nou");
+    const managed = Boolean(retry?.managed);
     const button = document.createElement("button");
     button.type = "button";
     button.className = managed ? "solon-form-retry" : "solon-newsletter-retry";
@@ -128,7 +126,7 @@
           form.reset();
           showStatus(form, "Mesajul a fost trimis, iar adresa a fost înregistrată.", false);
         }
-      } catch (_) {
+      } catch {
         if (!managed) {
           showStatus(
             form,
@@ -140,9 +138,9 @@
       }
     });
     status.append(" ", button);
-  }
+  };
 
-  async function postForm(type, values) {
+  const postForm = async (type, values) => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
@@ -165,23 +163,23 @@
         throw taggedError("unconfirmed", new Error("The API did not confirm the save"));
       }
     } catch (error) {
-      if (error && error.solonCode) throw error;
+      if (error?.solonCode) throw error;
       throw taggedError(classifySubmitError(error), error);
     } finally {
       clearTimeout(timer);
     }
-  }
+  };
 
-  function valuesFor(form, type, ip, date) {
+  const valuesFor = (form, type, ip, date) => {
     const values = { Data: date, IP: ip };
     SCHEMAS[type].fields.forEach((name) => {
       const field = form.elements.namedItem(name);
       values[name] = (field ? field.value : "").trim();
     });
     return values;
-  }
+  };
 
-  function setupFormButtons(form) {
+  const setupFormButtons = (form) => {
     form.querySelectorAll('input[type="submit"]').forEach((input) => {
       if (typeof document !== "undefined" && document.createElement) {
         const button = document.createElement("button");
@@ -194,9 +192,9 @@
         }
       }
     });
-  }
+  };
 
-  function lock(form, locked) {
+  const lock = (form, locked) => {
     form.querySelectorAll('[type="submit"]').forEach((button) => {
       button.disabled = locked;
       if (!button.dataset) button.dataset = {};
@@ -208,7 +206,7 @@
         if (button.dataset.originalValue === undefined && button.value !== undefined) {
           button.dataset.originalValue = button.value;
         }
-        if (button.classList && button.classList.add) {
+        if (button.classList?.add) {
           button.classList.add("is-loading");
         }
         if (button.tagName === "INPUT") {
@@ -218,7 +216,7 @@
           button.innerHTML = `<span class="solon-btn-spinner" aria-hidden="true"></span><span class="solon-btn-label">${label}</span>`;
         }
       } else {
-        if (button.classList && button.classList.remove) {
+        if (button.classList?.remove) {
           button.classList.remove("is-loading");
         }
         if (button.tagName === "INPUT" && button.dataset.originalValue !== undefined) {
@@ -228,9 +226,9 @@
         }
       }
     });
-  }
+  };
 
-  async function handleSubmit(form, type) {
+  const handleSubmit = async (form, type) => {
     if (form.dataset.submitting === "true") return;
     if (!form.reportValidity()) return;
 
@@ -252,7 +250,7 @@
             type: "form_submit_error",
             form: "Newsletter",
             reason: classifySubmitError(newsletterError),
-            name: newsletterError && newsletterError.name,
+            name: newsletterError?.name,
             partial: "contact_ok",
           });
           form.reset();
@@ -275,8 +273,8 @@
       logEvent("error", {
         type: "form_submit_error",
         form: type,
-        reason: reason,
-        name: error && error.name,
+        reason,
+        name: error?.name,
       });
       showStatus(form, USER_ERRORS[reason] || USER_ERRORS.unknown, true, {
         run: () => handleSubmit(form, type),
@@ -287,7 +285,7 @@
       form.dataset.submitting = "false";
       lock(form, false);
     }
-  }
+  };
 
   document.querySelectorAll("form[data-solon-form]").forEach((form) => {
     const type = form.dataset.solonForm;
@@ -298,13 +296,13 @@
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const pending = handleSubmit(form, type);
-      if (pending && typeof pending.catch === "function") {
+      if (typeof pending?.catch === "function") {
         pending.catch((error) => {
           logEvent("error", {
             type: "form_submit_error",
             form: type,
             reason: "unknown",
-            name: error && error.name,
+            name: error?.name,
           });
         });
       }

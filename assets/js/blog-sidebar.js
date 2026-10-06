@@ -116,15 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   fetchPosts()
     .then(renderSidebar)
-    .catch((error) => {
-      const logger = typeof globalThis !== "undefined" ? globalThis.SolonLog : null;
-      if (logger && typeof logger.warn === "function") {
-        logger.warn({
-          type: "blog_sidebar_error",
-          message: error && error.message,
-          name: error && error.name,
-        });
-      }
+    .catch(() => {
       recentList.innerHTML = '<li>Momentan nu există articole disponibile.</li>';
       tagsList.innerHTML = '<li>Momentan nu există taguri disponibile.</li>';
     });

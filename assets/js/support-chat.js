@@ -305,12 +305,12 @@
       renderQuickReplies(result.quickReplies);
     } catch (error) {
       showTyping(false);
-      const logger = typeof globalThis !== "undefined" ? globalThis.SolonLog : null;
-      if (logger && typeof logger.error === "function") {
+      const logger = globalThis?.SolonLog;
+      if (typeof logger?.error === "function") {
         logger.error({
           type: "support_chat_error",
-          message: error && error.message,
-          name: error && error.name,
+          message: error?.message,
+          name: error?.name,
         });
       }
       const errEntry = { role: "bot", text: ERROR_MSG };

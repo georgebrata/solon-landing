@@ -29,7 +29,7 @@ const DEFAULT_HTML_PATH = path.join(ROOT_DIR, 'index.html');
 
 const ESCAPED_HYPHEN_TOKEN = '__FF_DOUBLE_HYPHEN__';
 
-function logScriptError(payload, error) {
+const logScriptError = (payload, error) => {
   const body = Object.assign(
     {
       ok: false,
@@ -42,13 +42,13 @@ function logScriptError(payload, error) {
     if (error.stack) body.stack = error.stack;
   }
   console.error(JSON.stringify(body));
-  if (error && error.stack) console.error(error.stack);
-}
+  if (error?.stack) console.error(error.stack);
+};
 
-function fail(message, extra, error) {
-  logScriptError(Object.assign({ message: message }, extra || {}), error);
+const fail = (message, extra, error) => {
+  logScriptError(Object.assign({ message }, extra || {}), error);
   process.exit(1);
-}
+};
 
 function parseArgs() {
   const args = process.argv.slice(2);

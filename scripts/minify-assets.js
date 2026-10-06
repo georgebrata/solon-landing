@@ -24,7 +24,7 @@ const jsFiles = [
   "support-chat.js",
 ];
 
-function logScriptError(payload, error) {
+const logScriptError = (payload, error) => {
   const body = Object.assign(
     {
       ok: false,
@@ -39,8 +39,8 @@ function logScriptError(payload, error) {
     if (error.stack) body.stack = error.stack;
   }
   console.error(JSON.stringify(body));
-  if (error && error.stack) console.error(error.stack);
-}
+  if (error?.stack) console.error(error.stack);
+};
 
 function minifyStyleMerged() {
   const cssDir = path.join(root, "assets/css");
