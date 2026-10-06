@@ -2070,7 +2070,8 @@ form[data-solon-form] input[type="submit"].is-loading {
   color: #a12622;
 }
 
-.solon-newsletter-retry {
+.solon-newsletter-retry,
+.solon-form-retry {
   margin-top: 8px;
   border: 0;
   padding: 4px 0;
@@ -2083,6 +2084,21 @@ form[data-solon-form] input[type="submit"].is-loading {
 
 .solon-form-status[hidden] {
   display: none;
+}
+
+/* Off-screen honeypot (not display:none) so naive bots still fill it.
+   Hidden from AT via aria-hidden + inert, and from the keyboard via tabindex=-1. */
+.solon-hp {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.solon-turnstile {
+  margin: 0.75rem 0;
 }
 
 .contact .info i {
