@@ -6,6 +6,7 @@
   const IP_URL = "https://api64.ipify.org?format=json";
   // Replace the placeholder with the Cloudflare Turnstile site key (never the secret).
   // Leave "TURNSTILE_SITE_KEY" to skip the widget; honeypot and timing still apply.
+  // CAPTCHA is enforced only when this key is real AND Apps Script has TURNSTILE_SECRET.
   const TURNSTILE_SITE_KEY = "TURNSTILE_SITE_KEY";
   const TURNSTILE_PLACEHOLDER = "TURNSTILE_SITE_KEY";
   const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
@@ -284,9 +285,6 @@
 
     setupFormButtons(form);
     form.dataset.formLoadedAt = String(Date.now());
-    form.addEventListener("focusin", () => {
-      if (!form.dataset.formFocusedAt) form.dataset.formFocusedAt = String(Date.now());
-    });
     turnstileReady.set(form, mountTurnstile(form));
 
     form.addEventListener("submit", async (event) => {

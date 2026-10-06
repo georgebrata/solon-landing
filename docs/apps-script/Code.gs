@@ -8,9 +8,11 @@
  * Script Properties (Project Settings → Script properties):
  *   TURNSTILE_SECRET = <Cloudflare Turnstile secret key>
  *
- * If TURNSTILE_SECRET is missing, Turnstile verification is skipped so the
- * site key placeholder in forms.js can ship first. Honeypot, timing, and
- * rate limits still apply. Set the secret before going live with Turnstile.
+ * Enforce Turnstile only when BOTH this secret and a client token are present.
+ * The live forms.js sends a token only after TURNSTILE_SITE_KEY is replaced.
+ * Either side missing → skip CAPTCHA (honeypot + timing + rate limit still
+ * apply). Do not fail-open after both exist: siteverify must return success.
+ * Keep error codes captcha / too_fast / rate_limited (PR #40 maps them).
  *
  * Bind this script to the Google Sheet that holds Contact / Telefon /
  * Newsletter tabs (or set SPREADSHEET_ID below).
@@ -66,30 +68,51 @@ function timingRejected_(data) {
   return elapsed < MIN_SUBMIT_MS - CLOCK_SKEW_MS;
 }
 
-function verifyTurnstile_(token, remoteIp) {
-  var secret = PropertiesService.getScriptProperties().getProperty('TURNSTILE_SECRET');
-  if (!secret) return true;
-  if (!token) return false;
-  var payload = {
-    secret: secret,
-    response: token
-  };
-  if (remoteIp) payload.remoteip = remoteIp;
-  var res = UrlFetchApp.fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'post',
-    payload: payload,
-    muteHttpExceptions: true
-  });
-  var body = JSON.parse(res.getContentText() || '{}');
-  return body.success === true;
+function filled_(value) {
+  return Boolean(value && String(value).trim());
 }
 
-function enforceRateLimit_(ip, sheet) {
+function turnstileShouldVerify_(secret, token) {
+  // Keep in sync with tests/turnstile-gate.js serverTurnstileDecision.
+  // Secret without token: site key still placeholder — do not captcha-block.
+  // Token without secret: site key already live — do not reject the token.
+  return filled_(secret) && filled_(token);
+}
+
+function verifyTurnstile_(token, remoteIp) {
+  var secret = PropertiesService.getScriptProperties().getProperty('TURNSTILE_SECRET');
+  if (!turnstileShouldVerify_(secret, token)) return true;
+  try {
+    var payload = {
+      secret: secret,
+      response: token
+    };
+    if (remoteIp) payload.remoteip = remoteIp;
+    var res = UrlFetchApp.fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'post',
+      payload: payload,
+      muteHttpExceptions: true
+    });
+    var body = JSON.parse(res.getContentText() || '{}');
+    return body.success === true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function enforceRateLimit_(ip, sheet, data) {
   var cache = CacheService.getScriptCache();
-  var key = 'rl:' + sheet + ':' + (ip || 'unknown');
-  var count = Number(cache.get(key) || '0');
-  if (count >= RATE_LIMIT_MAX) return false;
-  cache.put(key, String(count + 1), RATE_LIMIT_SECONDS);
+  var identity = data && String(data.Email || data.Telefon || '').trim().toLowerCase();
+  var keys = ['rl:' + sheet + ':' + (ip || 'unknown')];
+  if (identity) keys.push('rl:' + sheet + ':id:' + identity);
+  var i;
+  for (i = 0; i < keys.length; i++) {
+    if (Number(cache.get(keys[i]) || '0') >= RATE_LIMIT_MAX) return false;
+  }
+  for (i = 0; i < keys.length; i++) {
+    var count = Number(cache.get(keys[i]) || '0');
+    cache.put(keys[i], String(count + 1), RATE_LIMIT_SECONDS);
+  }
   return true;
 }
 
@@ -143,7 +166,7 @@ function doPost(e) {
       return jsonOutput_({ ok: false, error: 'captcha' });
     }
 
-    if (!enforceRateLimit_(data.IP, sheet)) {
+    if (!enforceRateLimit_(data.IP, sheet, data)) {
       return jsonOutput_({ ok: false, error: 'rate_limited' });
     }
 
