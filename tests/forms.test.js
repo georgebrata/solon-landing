@@ -174,9 +174,11 @@ const harness = (types, options = {}) => {
 
 const dataRequests = (requests) => requests.filter(({ url }) => !url.includes("ipify"));
 
-const spamFetch = (errorCode) => async (url) => {
-  if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
-  return { ok: true, json: async () => ({ ok: false, error: errorCode }) };
+const spamFetch = (errorCode) => (url) => {
+  if (url.includes("ipify")) {
+    return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+  }
+  return Promise.resolve({ ok: true, json: () => ({ ok: false, error: errorCode }) });
 };
 
 test("maps Contact, Telefon, and Newsletter to their sheet payloads", async () => {
@@ -483,11 +485,15 @@ test("skips Turnstile when the site key is the placeholder and still sends after
 test("shows a Romanian captcha error and allows a user-initiated retry", async () => {
   let submits = 0;
   const { forms, requests } = harness(["Newsletter"], {
-    fetch: async (url) => {
-      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
+    fetch: (url) => {
+      if (url.includes("ipify")) {
+        return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      }
       submits += 1;
-      if (submits === 1) return { ok: true, json: async () => ({ ok: false, error: "captcha" }) };
-      return { ok: true, json: async () => ({ ok: true }) };
+      if (submits === 1) {
+        return Promise.resolve({ ok: true, json: () => ({ ok: false, error: "captcha" }) });
+      }
+      return Promise.resolve({ ok: true, json: () => ({ ok: true }) });
     },
   });
   await forms[0].dispatch();

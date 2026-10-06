@@ -126,6 +126,12 @@
       .catch(() => null);
   };
 
+  /** Attach a solonCode to an error without wrapping it. */
+  const taggedError = (solonCode, error) => {
+    if (error && typeof error === "object") error.solonCode = solonCode;
+    return error;
+  };
+
   /**
    * Consume a Turnstile token for one Apps Script post, then reset the widget.
    * @param {HTMLFormElement} form
@@ -194,12 +200,6 @@
     if (message === "Request failed") return "http";
     if (message === "The API did not confirm the save") return "unconfirmed";
     return "unknown";
-  };
-
-  /** Attach a solonCode to an error without wrapping it. */
-  const taggedError = (solonCode, error) => {
-    if (error && typeof error === "object") error.solonCode = solonCode;
-    return error;
   };
 
   /** Look up the public IP, retrying GET failures with backoff. */
