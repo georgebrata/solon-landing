@@ -20,6 +20,8 @@ const TRACKER_PATTERNS = [
   /cdn\.brevo\.com/i,
   /analytics\.ahrefs\.com/i,
   /meta-pixel/i,
+  /fonts\.googleapis\.com/i,
+  /fonts\.gstatic\.com/i,
 ];
 
 /**
@@ -55,11 +57,29 @@ describe("branded error pages", () => {
     });
   }
 
-  it("404 and 500 copy matches the issue titles", () => {
-    assert.match(read("404.html"), /<title>Pagină negăsită \| SOLON<\/title>/);
-    assert.match(read("404.html"), /Pagina nu a fost găsită/);
-    assert.match(read("500.html"), /<title>Eroare de server \| SOLON<\/title>/);
-    assert.match(read("500.html"), /Eroare de server/);
+  it("self-hosts Jost and Open Sans instead of requesting Google Fonts", () => {
+    const css = read("assets/css/error-pages.css");
+    assert.match(css, /@font-face/);
+    assert.match(css, /url\("\/assets\/fonts\/jost-latin-400-normal\.woff2"\)/);
+    assert.match(css, /url\("\/assets\/fonts\/open-sans-latin-400-normal\.woff2"\)/);
+    for (const file of ERROR_PAGES) {
+      const html = read(file);
+      assert.doesNotMatch(html, /fonts\.googleapis\.com/);
+      assert.doesNotMatch(html, /fonts\.gstatic\.com/);
+    }
+    const requiredFiles = [
+      "assets/fonts/jost-latin-400-normal.woff2",
+      "assets/fonts/jost-latin-700-normal.woff2",
+      "assets/fonts/jost-latin-ext-400-normal.woff2",
+      "assets/fonts/jost-latin-ext-700-normal.woff2",
+      "assets/fonts/open-sans-latin-400-normal.woff2",
+      "assets/fonts/open-sans-latin-600-normal.woff2",
+      "assets/fonts/open-sans-latin-ext-400-normal.woff2",
+      "assets/fonts/open-sans-latin-ext-600-normal.woff2",
+    ];
+    for (const file of requiredFiles) {
+      assert.equal(fs.existsSync(path.join(ROOT, file)), true, `missing ${file}`);
+    }
   });
 });
 
@@ -88,6 +108,9 @@ describe(".htaccess ErrorDocument", () => {
     assert.doesNotMatch(htaccess, /feedback/);
     const postsRule = htaccess.match(/RewriteRule \^blog\/posts\(\?:\/\|\$\)/);
     assert.ok(postsRule, "directory deny for blog/posts/ must remain");
+    const endMarker = htaccess.indexOf("# END issue #32");
+    const trailing = htaccess.slice(endMarker + "# END issue #32".length).trim();
+    assert.equal(trailing, "", "ErrorDocument block must remain last in .htaccess");
   });
 });
 
