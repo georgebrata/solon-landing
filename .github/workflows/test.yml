@@ -27,5 +27,8 @@ jobs:
       - name: Run form validation tests
         run: npm run test:forms
 
+      - name: Run consent tests
+        run: npm run test:consent
+
       - name: Run feature flag tests
         run: npm run test:flags

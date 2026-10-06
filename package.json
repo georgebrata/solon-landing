@@ -8,6 +8,8 @@
     "flags:status": "node scripts/apply-feature-flags.js --status",
     "test:flags": "node scripts/test-feature-flags.js",
     "test:forms": "node --test tests/forms.test.js",
+    "test:consent": "node --test tests/consent.test.js",
+    "test": "node --test tests/*.test.js && node scripts/test-feature-flags.js",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "test:chat": "node --test tests/support-chat.test.js"
   },

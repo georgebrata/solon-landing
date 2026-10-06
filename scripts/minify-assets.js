@@ -8,10 +8,11 @@ const { minify: terserMinify } = require("terser");
 const root = path.join(__dirname, "..");
 
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
-const cssFiles = ["toggle.css", "two-up.css"];
+const cssFiles = ["toggle.css", "two-up.css", "consent.css"];
 const jsFiles = [
   "dynamic-year.js",
   "meta-pixel.js",
+  "consent.js",
   "main.js",
   "price-toggle.js",
   "typeahead.js",

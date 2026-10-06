@@ -56,20 +56,22 @@
     <!-- Template Main CSS File -->
     <link href="../assets/css/style.min.css" rel="stylesheet">
 
-    <!-- counter.dev -->
-    <script src="https://cdn.counter.dev/script.js" data-id="03bd5925-48e2-4d33-ae59-d66aaf6acba0" data-utcoffset="2"></script>
+      <link href="/assets/css/consent.min.css" rel="stylesheet">
+  <script src="/assets/js/consent.min.js"></script>
+
+<!-- counter.dev -->
+    <script type="text/plain" data-consent-category="analytics" src="https://cdn.counter.dev/script.js" data-id="03bd5925-48e2-4d33-ae59-d66aaf6acba0" data-utcoffset="2"></script>
 
     <!--metricool-->
-    <script>function loadScript(a) { var b = document.getElementsByTagName("head")[0], c = document.createElement("script"); c.type = "text/javascript", c.src = "https://tracker.metricool.com/resources/be.js", c.onreadystatechange = a, c.onload = a, b.appendChild(c) } loadScript(function () { beTracker.t({ hash: "f006699806524d7916ff1fdce3cf8c9c" }) });</script>
+    <script type="text/plain" data-consent-category="analytics">function loadScript(a) { var b = document.getElementsByTagName("head")[0], c = document.createElement("script"); c.type = "text/javascript", c.src = "https://tracker.metricool.com/resources/be.js", c.onreadystatechange = a, c.onload = a, b.appendChild(c) } loadScript(function () { beTracker.t({ hash: "5eff58c72e852f80d27f8f1735299845" }) });</script>
 
         <!-- Meta Pixel Code -->
-    <script src="../assets/js/meta-pixel.min.js" defer></script>
-    <noscript><img alt="" height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=400022442507673&ev=PageView&noscript=1" /></noscript>
+    <script type="text/plain" data-consent-category="marketing" src="../assets/js/meta-pixel.min.js" defer></script>
     <!-- End Meta Pixel Code -->
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"></script>
-    <script>
+    <script type="text/plain" data-consent-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"></script>
+    <script type="text/plain" data-consent-category="analytics">
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
@@ -80,10 +82,10 @@
     </script>
 
     <!-- ahrefs analytics tracking code for SOLON -->
-  <script src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
+  <script type="text/plain" data-consent-category="analytics" src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
 
   <!-- clarity -->
-    <script type="text/javascript">
+    <script type="text/plain" data-consent-category="analytics">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
@@ -139,10 +141,21 @@
                 <div>
                     <h3>Introducere</h3>
                     <p class="px-lg-5">Website-ul https://solon.agency folosește cookie-uri și tehnologii similare (împreună denumite în mod generic cookie-uri). Informațiile de mai jos au scopul de a oferi utilizatorilor mai multe detalii cu privire la plasarea, utilizarea și gestionarea cookie-urilor utilizate de Website.</p>
-                    <p class="px-lg-5">Utilizăm cookie-uri pentru a asigura funcționarea corespunzătoare a website-ului și pentru a optimiza conținutul acestora, precum și pentru a analiza traficul și a îmbunătăți experiența de navigare a vizitatorilor. Nu desfășurăm activități de tip publicitate personalizată sau activități de marketing pe baza cookie-urilor sau a datelor generate prin cookie-uri.</p>
+                    <p class="px-lg-5">Utilizăm cookie-uri necesare pentru funcționarea site-ului. Cookie-urile de analiză și de marketing sunt folosite doar dacă îți dai acordul în bannerul de consimțământ. Categoria de marketing (Meta Pixel și Brevo) poate implica măsurarea campaniilor publicitare; aceste instrumente nu pornesc fără opțiunea ta.</p>
                     <p class="px-lg-5">Cookie-urile oferă titularilor website-urilor informații utile cu privire la modul în care utilizatorii navighează pe website-uri, pentru a spori eficiența și accesibilitatea acestora.</p>
-                    
-                    
+
+                    <br><br>
+                    <h3 id="preferinte">Preferințele tale de cookie-uri</h3>
+                    <p class="px-lg-5">La prima vizită afișăm un banner cu trei opțiuni la fel de vizibile: <strong>Acceptă toate</strong>, <strong>Respinge toate</strong> și <strong>Personalizează</strong>. Până nu alegi, nu încărcăm instrumente de analiză sau marketing (nu există cereri către Google Analytics, Meta, Microsoft Clarity, Brevo, Metricool, Ahrefs sau counter.dev).</p>
+                    <p class="px-lg-5">Categoriile din panoul <em>Personalizează</em> sunt:</p>
+                    <ul>
+                        <li><strong>Necesare</strong> — mereu active. Stochează alegerea ta de consimțământ (versiune și dată) și țin site-ul funcțional.</li>
+                        <li><strong>Analiză</strong> — Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev.</li>
+                        <li><strong>Marketing</strong> — Meta Pixel (Facebook) și Brevo (email / urmărire campanii), doar pe paginile unde sunt instalate.</li>
+                    </ul>
+                    <p class="px-lg-5">Alegerea este salvată 12 luni, cu un număr de versiune. Dacă schimbăm politica de consimțământ, bannerul reapare. Îți poți retrage sau modifica acordul oricând din subsol, linkul <strong>Setări cookie</strong> (lângă Politica cookie), sau din această pagină. „Respinge toate” oprește încărcarea ulterioară a tag-urilor non-esențiale și actualizează Google Consent Mode v2 la stare refuzată.</p>
+                    <p class="px-lg-5">Poți deschide din nou setările: <a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a>.</p>
+
                     <br><br>
                     <h3>Colectarea și stocarea datelor cu caracter personal precum și tipul și scopul utilizării acestora</h3>
                     <h4></h4>
@@ -171,13 +184,13 @@
                     <h3>Cookie-uri</h3>
                     <p class="px-lg-5">Utilizăm cookie-uri pe website-ul nostru pentru a îmbunătăți experiența finală a tuturor utilizatorilor. Aici este vorba despre mici fișiere pe care le construiește în mod automat browserul dvs. și care sunt stocate pe terminalul dvs. (notebook, tabletă, smartphone sau altele), dacă vizitați site-ul nostru. Fișierele cookie nu cauzează nici o daună terminalului dvs., nu conțin viruși, troieni sau alte programe informatice nocive. În fișierul cookie sunt stocate informații care rezultă în fiecare caz în legătură cu terminalul specific folosit. Aceasta, însă, nu înseamnă că prin utilizarea website-ului vă cunoaștem în mod nemijlocit identitatea. Utilizarea fișierelor cookie servește pe de o parte la a configura oferta noastră pentru a vă fi mai plăcută. Astfel folosim așa numite session-cookies pentru a determina dacă ați vizitat deja paginile individuale ale website-ului nostru. În plus, folosim de asemenea pentru optimizarea caracterului prietenos cu utilizatorii fișiere cookie temporare care sunt stocate pentru anumită o perioadă pe terminalul dvs. În cazul în care vizitați din nou website-ul nostru pentru a vă folosi de serviciile noastre, se detectează în mod automat că ați mai fost la noi și ce inputuri și setări ați instituit pentru a nu mai trebui să le introduceți din nou.</p>
                     <p class="px-lg-5">Pe de altă parte, folosim cookies pentru a determina statistic utilizarea website-ului nostru și a evalua utilizarea website-ului nostru în scopuri de optimizare a ofertei noastre. Aceste fișiere cookie ne dau posibilitatea să determinăm în mod automat, în cazul unei noi vizite a website-ului nostru, că ați mai fost la noi. Aceste fișiere cookie sunt șterse după un timp definit în fiecare caz în mod automat.</p>
-                    <p class="px-lg-5">Datele prelucrate prin fișierele cookie sunt necesare pentru scopurile indicate pentru protejarea intereselor noastre legitime ca și ale terților conform art. 6 alin (1) lit.f GDPR.</p>
-                    <p class="px-lg-5">Cele mai multe browsere acceptă fișiere cookie în mod automat. Puteți, însă, configura browserul dvs. în așa fel încât să nu fie stocate fișiere cookie pe computerul dvs. sau să apară întotdeauna o indicație înainte de a se instala un nou fișier cookie. Dezactivarea completă a fișierelor cookie poate, însă, să ducă la aceea că nu puteți folosi toate funcțiile website-ului nostru.</p>
+                    <p class="px-lg-5">Cookie-urile necesare (inclusiv stocarea preferinței de consimțământ) au ca bază legală art. 6 alin (1) lit. f GDPR (interes legitim: funcționarea site-ului și reținerea alegerii tale). Cookie-urile și scripturile de analiză și marketing se bazează pe consimțământ, art. 6 alin (1) lit. a GDPR; fără acord, nu sunt activate.</p>
+                    <p class="px-lg-5">Cele mai multe browsere acceptă fișiere cookie în mod automat. Puteți, însă, configura browserul dvs. în așa fel încât să nu fie stocate fișiere cookie pe computerul dvs. sau să apară întotdeauna o indicație înainte de a se instala un nou fișier cookie. Dezactivarea completă a fișierelor cookie poate, însă, să ducă la aceea că nu puteți folosi toate funcțiile website-ului nostru. Controlul principal pentru analize și marketing pe acest site rămâne bannerul și linkul <strong>Setări cookie</strong>.</p>
 
                     <br><br>
                     <h3>Unelte de analiză</h3>
                     <h4>Unelte de tracking</h4>
-                    <p class="px-lg-5">Măsurile de tracking menționate mai jos și folosite de noi sunt instituite pe baza art. 6 alin (1) lit. f GDPR. Prin măsurile de tracking utilizate vrem să asigurăm configurarea potrivită necesităților și optimizarea continuă a website-ului nostru. Pe de altă parte, ne folosim de măsurile de tracking anonimizat pentru a determina statistic utilizarea website-ului nostru și de a-l evalua în scopul optimizării ofertei noastre pentru dvs. Aceste interese trebuie considerate ca fiind legitime în sensul prevederii de mai sus. Scopurile respective de prelucrare a datelor și categoriile de date trebuie obținute din uneltele de tracking corespunzătoare.</p>
+                    <p class="px-lg-5">Măsurile de tracking de mai jos sunt folosite doar după consimțământul tău pentru categoria Analiză (art. 6 alin (1) lit. a GDPR). Google Consent Mode v2 pornește cu stocare respinsă (analytics_storage, ad_storage, ad_user_data, ad_personalization) și se actualizează după alegerea ta.</p>
                     
                     <br>
                     <h4>Google Analytics </h4>
@@ -189,7 +202,7 @@
                         <li>Hostname al computerului care accesează (adresă IP)</li>
                         <li>Ora accesării serverului</li>
                     </ul>
-                    <p class="px-lg-5">Aceste informatii sunt transferate la un server al Google în SUA și stocate acolo. Informațiile sunt folosite pentru a evalua folosirea website-ului, pentru a întocmi rapoarte privitoare la activitățile website-ului și pentru a furniza alte servicii legate de utilizarea website-ului și rețelei de internet în scop de cercetare de piață și configurarea corespunzătoare a acestui website de Internet. De asemenea aceste informații sunt transferate după caz către terți în măsura în care aceasta se prevede legal sau în măsura în care terții prelucrează aceste date la comandă. În nici un caz adresa dvs. IP nu este combinată cu alte date de la Google. Adresele IP sunt anonimizate în așa fel încât să nu se poată face o identificare a utilizatorului (IP Masking). Puteți să împiedicați instalarea de cookies printr-o setare corespunzătoare a software-ului browserului; vă indicăm, însă, că în acest caz să nu se vor putea utiliza toate funcțiile acestui website în întregimea lor. Puteți, în plus, să împiedicați colectarea datelor produse prin cookie și a datelor legate de utilizarea website-ului (inclusiv adresa IP) ca și prelucrarea acestor date prin intermediul Google, descărcând și instalând un browser add-on.</p>
+                    <p class="px-lg-5">Aceste informatii sunt transferate la un server al Google în SUA și stocate acolo. Informațiile sunt folosite pentru a evalua folosirea website-ului, pentru a întocmi rapoarte privitoare la activitățile website-ului și pentru a furniza alte servicii legate de utilizarea website-ului și rețelei de internet în scop de cercetare de piață și configurarea corespunzătoare a acestui website de Internet. De asemenea aceste informații sunt transferate după caz către terți în măsura în care aceasta se prevede legal sau în măsura în care terții prelucrează aceste date la comandă. În nici un caz adresa dvs. IP nu este combinată cu alte date de la Google. Adresele IP sunt anonimizate în așa fel încât să nu se poată face o identificare a utilizatorului (IP Masking). Google Analytics (G-H41D7KCWHX) se încarcă doar dacă accepți categoria Analiză; poți retrage acordul din Setări cookie.</p>
                     
                     
                     
@@ -201,20 +214,35 @@
                         <li>Mărimea ecranului</li>
                         <li>Țara și limba de origine</li>
                     </ul>
-                    <p class="px-lg-5">Informațiile sunt folosite pentru a evalua folosirea website-ului, pentru a întocmi rapoarte privitoare la activitățile website-ului și pentru a furniza alte servicii legate de utilizarea website-ului și rețelei de internet în scop de cercetare de piață și configurarea corespunzătoare a acestui website de Internet.</p>
+                    <p class="px-lg-5">counter.dev se încarcă doar cu categoria Analiză. Informațiile sunt folosite pentru statistici agregate de trafic.</p>
 
+                    <br>
+                    <h4>Microsoft Clarity</h4>
+                    <p class="px-lg-5">Microsoft Clarity (proiect w9hin0o1ua) înregistrează, cu acordul pentru Analiză, date despre sesiune (pagini vizitate, interacțiuni, dispozitiv) pentru a înțelege cum este folosit site-ul și unde apar fricțiuni. Datele pot fi prelucrate de Microsoft în afara UE, conform politicii Clarity.</p>
+
+                    <br>
+                    <h4>Ahrefs Analytics</h4>
+                    <p class="px-lg-5">Ahrefs Analytics (analytics.ahrefs.com) măsoară, cu acordul pentru Analiză, vizite și surse de trafic pentru SEO. Nu pornește fără categoria Analiză.</p>
+
+                    <br>
+                    <h4>Metricool</h4>
+                    <p class="px-lg-5">Metricool (tracker.metricool.com, hash 5eff58c72e852f80d27f8f1735299845) măsoară, cu acordul pentru Analiză, prezența digitală și traficul. Nu pornește fără categoria Analiză.</p>
 
                     <br><br>
-                    <h3>Plugin-uri de social media</h3>
-                    <p class="px-lg-5">Folosim pe website-ul nostru pe baza art. 6 alin (1) lit. f GDPR plug-in-uri ale rețelelor sociale Instagram, Facebook și LinkedIn pentru a ne face societatea mai cunoscută prin intermediul lor. Scopul publicitar care stă la baza acestei promovări se consideră ca fiind interes legitim în sensul GDPR. Răspunderea pentru funcționarea conformă din punct de vedere a protecției datelor trebuie garantată de către furnizorii respectivi.</p>
+                    <h3>Marketing și rețele sociale</h3>
+                    <p class="px-lg-5">Instrumentele de marketing de mai jos se încarcă doar cu acordul pentru categoria <strong>Marketing</strong> (art. 6 alin (1) lit. a GDPR). Linkurile către paginile noastre de Instagram, Facebook, LinkedIn sau Twitter din subsol sunt simple hyperlinkuri; nu încarcă SDK-uri de social media până la un click către acel site.</p>
 
                     <br>
-                    <h4>Facebook</h4>
-                    <p class="px-lg-5">Pe website-ul nostru este utilizat așa-numitul social plug-in FB Pixel de la Facebook, care este operat de către Meta Inc., 1601 S. California Ave, Palo Alto, CA 94304, USA („Facebook“). Dacă nu doriți ca platforma Meta să asocieze datele colectate prin intermediul website-ului nostru direct cu contul dvs. de Facebook, trebuie să vă deconectați de la Facebook înainte de a vizita website-ul nostru. Pentru mai multe informații referitoare la protecția datelor, vă recomandăm să consultați Politică de confidențialitate a Facebook.</p>
+                    <h4>Meta Pixel (Facebook)</h4>
+                    <p class="px-lg-5">Meta Pixel (identificator 400022442507673), operat de Meta Platforms, poate măsura vizite și conversii și poate sprijini publicitate pe platformele Meta. Se încarcă doar dacă accepți Marketing. Dacă vrei să limitezi asocierea cu un cont Meta, deconectează-te de la Facebook înainte de a accepta această categorie. Detalii: politica de confidențialitate Meta.</p>
 
                     <br>
-                    <h4>Instagram</h4>
-                    <p class="px-lg-5">Pe website-ul nostru sunt utilizate așa numitele social plug-in-uri („plugins“) de la Instagram, care este operat de către Instagram LLC., 1601 Willow Road, Menlo Park, CA 94025, USA („Instagram“). Plug-in-urile sunt marcate cu o siglă Instagram de exemplu în forma unei „camere Instagram“. Dacă accesați o pagină din website-ul nostru, care conține un asemenea plug-in, browserul dvs. creează o legătură directă la serverele Instagram. Conținutul plug-in-ului este transmis de către Instagram direct la browserul dvs. și integrat în pagină. Dacă interacționați cu plugin-ul, de exemplu acționați butonul „Instagram“, această informație se transmite de asemenea direct la un server al Instagram și se stochează acolo. Informațiile sunt publicate, în plus, pe contul dvs. de Instagram și afișate acolo la contactele dvs. Dacă nu doriți ca Instagram să aloce toate datele colectate prin website-ul nostru direct contului dvs. de Instagram, trebuie să vă delogați de la Instagram înainte de a vizita website-ul nostru. Alte informații referitoare la aceasta găsiți în declarația de protecție a datelor de la Instagram.</p>
+                    <h4>Brevo</h4>
+                    <p class="px-lg-5">SDK-ul Brevo (client_key mwgotrl8mb9d4jf2rit2omjt) este instalat pe pagina principală și se încarcă doar cu acordul pentru Marketing. Este folosit pentru automatizări și măsurarea interacțiunilor legate de email și campanii.</p>
+
+                    <br>
+                    <h4>Instagram, LinkedIn, Twitter</h4>
+                    <p class="px-lg-5">În subsol există linkuri către profilele SOLON. Acestea nu încarcă plugin-uri de social media pe pagină. Datele sunt transmise rețelei respective doar dacă urmezi linkul.</p>
 
                     <br><br>
                     <h3>Drepturile persoanelor vizate</h3>
@@ -232,7 +260,7 @@
                     </ul>
 
 
-                    <p class="px-lg-5">În măsura în care, pe lângă informațiile prezentate mai sus, apreciați că vă sunt necesare clarificări sau informații suplimentare, ne puteți contacta la adresa: <a href="mailto:dpo@solon.agency">dpo@solon.agency</a>.</p>
+                    <p class="px-lg-5">Vă puteți retrage consimțământul pentru analize și marketing oricând din <a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a>, fără a afecta legalitatea prelucrării anterioare. În măsura în care, pe lângă informațiile prezentate mai sus, apreciați că vă sunt necesare clarificări sau informații suplimentare, ne puteți contacta la adresa: <a href="mailto:dpo@solon.agency">dpo@solon.agency</a>.</p>
                     <p class="px-lg-5">De asemenea, mai multe detalii privind modul în care sunt prelucrate datele dumneavoastră cu caracter personal pot fi regăsite în <a href="../privacy/">Politică de Confidențialitate</a>.</p>
                 </div>
             </div>
@@ -365,6 +393,7 @@
                             <li> <a href="/blog/">Blog</a></li>
                             <li> <a target="_blank" href="../terms/">Termeni și condiții</a></li>
                             <li> <a target="_blank" href=".">Politica cookie</a></li>
+              <li><a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a></li>
                             <li> <a target="_blank" href="../privacy/">Politică de confidențialitate</a></li>
                         </ul>
                     </div>
