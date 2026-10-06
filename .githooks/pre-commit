@@ -58,5 +58,8 @@ for f in assets/css/*.min.css assets/js/*.min.js; do
   fi
 done
 
+# Cache-busting ?v= tokens on HTML (including pages minify stamped)
+git ls-files | grep -E '\.html$' | xargs -r git add
+
 node scripts/update-sitemap.js
 git add sitemap.xml

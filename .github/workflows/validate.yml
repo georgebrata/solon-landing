@@ -27,10 +27,10 @@ jobs:
       - name: Run minification
         run: npm run minify
 
-      - name: Check for unexpected changes to minified assets
+      - name: Check for unexpected changes to minified assets and cache-busting refs
         run: |
-          if ! git diff --exit-code assets/css/*.min.css assets/js/*.min.js; then
-            echo "::error::Minified assets are out of sync. Run 'npm run minify' locally and commit the result."
+          if ! git diff --exit-code -- assets/css/*.min.css assets/js/*.min.js '*.html' '**/*.html'; then
+            echo "::error::Minified assets or HTML cache-busting refs are out of sync. Run 'npm run minify' and 'node scripts/build.js' locally and commit the result."
             exit 1
           fi
 
