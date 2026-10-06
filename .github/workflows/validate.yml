@@ -1,0 +1,127 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  minify:
+    name: Minification check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run minification
+        run: npm run minify
+
+      - name: Check for unexpected changes to minified assets
+        run: |
+          if ! git diff --exit-code assets/css/*.min.css assets/js/*.min.js; then
+            echo "::error::Minified assets are out of sync. Run 'npm run minify' locally and commit the result."
+            exit 1
+          fi
+
+  feature-flags:
+    name: Feature flags dry-run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate feature flags (dry-run)
+        run: npm run flags:dry
+
+  html-validation:
+    name: HTML validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install html-validate
+        run: npm install -g html-validate
+
+      - name: Validate root index.html
+        run: html-validate --config '{"extends":["html-validate:recommended"],"rules":{"no-trailing-whitespace":"off","void-style":"off"}}' index.html || true
+
+      - name: Check sitemap structure
+        run: |
+          if [ ! -f sitemap.xml ]; then
+            echo "::error::sitemap.xml not found"
+            exit 1
+          fi
+          if ! grep -q "<urlset" sitemap.xml; then
+            echo "::error::sitemap.xml is missing <urlset> root element"
+            exit 1
+          fi
+          echo "sitemap.xml structure OK"
+
+      - name: Check all index.html files for basic structure
+        run: |
+          fail=0
+          while IFS= read -r file; do
+            if ! grep -q "<!DOCTYPE html>" "$file"; then
+              echo "::warning file=$file::Missing DOCTYPE declaration"
+            fi
+            if ! grep -q "<html" "$file"; then
+              echo "::error file=$file::Missing <html> element"
+              fail=1
+            fi
+          done < <(find . -name "index.html" -not -path "./.git/*" -not -path "./node_modules/*" -not -path "./templates/*")
+          exit $fail
+
+  build:
+    name: Blog build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run blog build
+        run: node scripts/build.js
+
+      - name: Check for unexpected changes to built blog output
+        run: |
+          if ! git diff --exit-code blog/; then
+            echo "::error::Blog output is out of sync with source. Run 'node scripts/build.js' locally and commit the result."
+            exit 1
+          fi
