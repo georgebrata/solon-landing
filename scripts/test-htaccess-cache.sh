@@ -7,6 +7,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${APACHE_TEST_PORT:-18080}"
 TMP="$(mktemp -d)"
 WELL_KNOWN_CLEANUP=0
+OUTSIDE_CSS=""
 APACHE_PID=""
 
 cleanup() {
@@ -18,6 +19,9 @@ cleanup() {
     rm -f "$ROOT/.well-known/acme-challenge/cache-test"
     rmdir "$ROOT/.well-known/acme-challenge" 2>/dev/null || true
     rmdir "$ROOT/.well-known" 2>/dev/null || true
+  fi
+  if [[ -n "${OUTSIDE_CSS}" ]]; then
+    rm -f "$OUTSIDE_CSS"
   fi
   rm -rf "$TMP"
 }
@@ -32,6 +36,8 @@ fi
 mkdir -p "$TMP/tmp" "$TMP/logs" "$ROOT/.well-known/acme-challenge"
 echo "ok" > "$ROOT/.well-known/acme-challenge/cache-test"
 WELL_KNOWN_CLEANUP=1
+OUTSIDE_CSS="$ROOT/outside-assets-probe.css"
+printf 'body{color:red}\n' > "$OUTSIDE_CSS"
 
 # Module paths differ between Debian apache2 and generic httpd.
 MOD_DIR=""
@@ -100,7 +106,9 @@ probe() {
   local expect_cache_regex="${3:-}"
   local extra_regex="${4:-}"
   local headers
-  headers="$(curl -sS -D - -o /dev/null "http://127.0.0.1:${PORT}${path}")"
+  # #33 301s plain HTTP to https://solon.agency; this header is how Hostico
+  # proxies mark TLS so the local probe can still hit 200/403 from .htaccess.
+  headers="$(curl -sS -D - -o /dev/null -H "X-Forwarded-Proto: https" "http://127.0.0.1:${PORT}${path}")"
   local status
   status="$(printf '%s\n' "$headers" | awk 'NR==1 {print $2}')"
   printf '=== %s (expect %s, got %s)\n' "$path" "$expect_status" "$status"
@@ -115,6 +123,12 @@ probe() {
       fail=1
     fi
   fi
+  if [[ -n "${5:-}" ]]; then
+    if printf '%s\n' "$headers" | grep -iE "^cache-control:.*${5}" >/dev/null; then
+      echo "FAIL Cache-Control for ${path} (must not match /${5}/)" >&2
+      fail=1
+    fi
+  fi
   if [[ -n "$extra_regex" ]]; then
     if ! printf '%s\n' "$headers" | grep -iE "$extra_regex" >/dev/null; then
       echo "FAIL extra header match for ${path} (wanted /${extra_regex}/)" >&2
@@ -126,13 +140,14 @@ probe() {
 probe /assets/css/style.min.css 200 "max-age=31536000"
 probe /assets/js/forms.min.js 200 "max-age=31536000"
 probe /assets/img/solon-logo.png 200 "max-age=31536000"
+probe /outside-assets-probe.css 200 "" "" "max-age=31536000"
 probe / 200 "no-cache" "charset=utf-8"
 probe /index.html 200 "no-cache"
 probe /feedback/ 200 "no-cache"
 probe /blog/posts.json 200 "no-cache"
 probe /sitemap.xml 200 "max-age=3600"
 probe /robots.txt 200 "max-age=3600"
-probe /.well-known/acme-challenge/cache-test 200
+probe /.well-known/acme-challenge/cache-test 200 "no-cache"
 probe /package.json 403
 probe /scripts/build.js 403
 probe /tests/forms.test.js 403

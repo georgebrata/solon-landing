@@ -101,18 +101,23 @@ Hostico Apache (`.htaccess`, issue #30) sends:
 
 | Path | `Cache-Control` |
 | --- | --- |
-| `/assets/` CSS, JS, images, fonts, PDF | `public, max-age=31536000` (1 year) |
-| HTML (including directory indexes) | `no-cache, must-revalidate` |
+| `/assets/` CSS, JS, images, fonts, PDF | `public, max-age=31536000` (1 year), **only** under `/assets/` |
+| HTML (including `/feedback/` and directory indexes) | `no-cache, must-revalidate` |
 | `/blog/posts.json` | `no-cache, must-revalidate` |
+| `/.well-known/` | `no-cache, must-revalidate` |
 | `sitemap.xml`, `robots.txt` | `public, max-age=3600` (1 hour) |
 
-`AddDefaultCharset utf-8` is set so HTML responses advertise `charset=utf-8`. `mod_expires` and `mod_headers` are wrapped in `<IfModule>` so a missing module does not 500 the site.
+`AddDefaultCharset utf-8` is set so HTML responses advertise `charset=utf-8`. `mod_expires` and `mod_headers` are wrapped in `<IfModule>` so a missing module does not 500 the site. Year-long `ExpiresByType` / `Cache-Control` apply only when `REQUEST_URI` starts with `/assets/`; a `.css` or `.js` file anywhere else is not long-cached.
 
-Long-cache is safe because HTML references first-party and vendor CSS/JS with a content-hash query string (`style.min.css?v=a1b2c3d4e5`). `scripts/stamp-asset-refs.js` computes SHA-256 of each referenced file (first 10 hex chars) and rewrites `href`/`src`. It is **path-based**, not an allowlist: any new file under `assets/css/`, `assets/js/`, or `assets/vendor/` is stamped as soon as HTML links it. Issues #26 and #31 can add `consent.min.js` or extra CSS without changing the stamp script; add the tag, then run `npm run minify` (or `npm run stamp-assets` plus `node scripts/build.js` for the blog).
+Long-cache for CSS/JS is safe because HTML references those files with a content-hash query string (`style.min.css?v=a1b2c3d4e5`). `scripts/stamp-asset-refs.js` computes SHA-256 of each referenced file (first 10 hex chars) and rewrites `href`/`src` under `assets/css/`, `assets/js/`, and `assets/vendor/`. It is **path-based**, not an allowlist: any new file there (for example `consent.min.js` from #41) is stamped as soon as HTML links it. Add the tag, then run `npm run minify` (or `npm run stamp-assets` plus `node scripts/build.js` for the blog). After branded error pages (#42) land, re-run that so `404.html` / `500.html` get `?v=` too.
+
+Images, fonts, and PDFs under `/assets/` are long-cached **without** query tokens. Do not overwrite those files in place; change the filename (or path) so browsers fetch the new object.
+
+`.htaccess` block order: redirects (#33), deny (#35), security headers (#29), caching (#30), ErrorDocument (#32).
 
 `npm run minify` minifies CSS/JS **then** stamps every HTML page, including `templates/layout.html`. `scripts/build.js` stamps generated blog pages so injected scripts (`blog-sidebar.js`, `blog-search.js`, `forms.min.js`) get tokens too. Images keep unique filenames and are not query-stamped.
 
-Do not set `immutable` on HTML. After changing CSS or JS, remminify so `?v=` changes; browsers will request the new URL without a hard refresh.
+Do not set `immutable` on HTML. After changing CSS or JS, remminify so `?v=` changes; browsers will request the new URL without a hard refresh. After later HTML PRs (consent banner #41, branded error pages #42), re-run `npm run minify` so new tags and pages are stamped.
 
 Optional local Apache probe (needs `apache2`/`httpd` with `mod_headers` and `mod_expires`):
 

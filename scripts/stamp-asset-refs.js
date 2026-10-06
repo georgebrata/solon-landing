@@ -13,8 +13,9 @@
  * You do not need to edit this script when adding those files; add the
  * <link>/<script> tag and run `npm run minify` (or `npm run stamp-assets`).
  *
- * Images under assets/img/ are left unstamped (unique filenames). HTML,
- * /blog/posts.json, and sitemap.xml are not long-cached; see .htaccess.
+ * Images, fonts, and PDFs under assets/ are long-cached without query
+ * tokens: rename the file when the bytes change. HTML, /blog/posts.json,
+ * and sitemap.xml are not long-cached; see .htaccess.
  */
 
 const nodeCrypto = require("crypto");
