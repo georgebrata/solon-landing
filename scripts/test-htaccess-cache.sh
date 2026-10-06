@@ -56,15 +56,26 @@ done
   echo "DefaultRuntimeDir ${TMP}/tmp"
   echo "Mutex file:${TMP}/tmp default"
   if [[ -n "$MOD_DIR" ]]; then
-    echo "LoadModule mpm_event_module ${MOD_DIR}/mod_mpm_event.so"
-    echo "LoadModule authz_core_module ${MOD_DIR}/mod_authz_core.so"
-    echo "LoadModule mime_module ${MOD_DIR}/mod_mime.so"
-    echo "LoadModule dir_module ${MOD_DIR}/mod_dir.so"
-    echo "LoadModule rewrite_module ${MOD_DIR}/mod_rewrite.so"
-    echo "LoadModule headers_module ${MOD_DIR}/mod_headers.so"
-    echo "LoadModule expires_module ${MOD_DIR}/mod_expires.so"
-    echo "LoadModule unixd_module ${MOD_DIR}/mod_unixd.so"
-    echo "LoadModule access_compat_module ${MOD_DIR}/mod_access_compat.so"
+    BUILTIN="$(apache2 -l 2>/dev/null || true)"
+    load_mod() {
+      local name="$1"
+      local file="$2"
+      if printf '%s\n' "$BUILTIN" | grep -q "mod_${name}.c"; then
+        return 0
+      fi
+      if [[ -f "${MOD_DIR}/${file}" ]]; then
+        echo "LoadModule ${name}_module ${MOD_DIR}/${file}"
+      fi
+    }
+    load_mod mpm_event mod_mpm_event.so
+    load_mod authz_core mod_authz_core.so
+    load_mod mime mod_mime.so
+    load_mod dir mod_dir.so
+    load_mod rewrite mod_rewrite.so
+    load_mod headers mod_headers.so
+    load_mod expires mod_expires.so
+    load_mod unixd mod_unixd.so
+    load_mod access_compat mod_access_compat.so
     echo "TypesConfig /etc/mime.types"
   fi
   echo "DocumentRoot ${ROOT}"
