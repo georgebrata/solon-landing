@@ -8,8 +8,23 @@ const test = require("node:test");
 
 const source = fs.readFileSync(path.join(__dirname, "../assets/js/forms.js"), "utf8");
 
-function harness(types, options = {}) {
+const harness = (types, options = {}) => {
   const requests = [];
+  const clock = { now: 1_700_000_000_000 };
+  const BaseDate = options.Date || Date;
+  class HarnessDate extends BaseDate {
+    constructor(...args) {
+      if (args.length) super(...args);
+      else if (options.Date) super();
+      else super(clock.now);
+    }
+    static now() {
+      return clock.now;
+    }
+  }
+  HarnessDate.parse = BaseDate.parse;
+  HarnessDate.UTC = BaseDate.UTC;
+
   const forms = types.map((type, index) => {
     const values = {
       Email: options.email || "  ada@example.com ",
@@ -18,6 +33,9 @@ function harness(types, options = {}) {
       Telefon: "  +40 777 123 456  ",
       NewsletterOptIn: { checked: type === "Contact" && options.optIn === true },
     };
+    if (Object.prototype.hasOwnProperty.call(options, "honeypot")) {
+      values.company_url = options.honeypot;
+    }
     const status = {
       hidden: true,
       textContent: "",
@@ -59,7 +77,10 @@ function harness(types, options = {}) {
       },
       addEventListener(name, fn) { this.listeners[name] = fn; },
       querySelectorAll() { return [submit]; },
-      async dispatch() {
+      querySelector() { return null; },
+      appendChild(node) { this._children = this._children || []; this._children.push(node); return node; },
+      dispatch() {
+        if (options.elapsedMs !== 0) clock.now += options.elapsedMs ?? 5000;
         let prevented = false;
         const result = this.listeners.submit({ preventDefault() { prevented = true; } });
         assert.equal(prevented, true);
@@ -73,17 +94,39 @@ function harness(types, options = {}) {
     return form;
   });
 
+  let code = source;
+  if (options.turnstileSiteKey) {
+    code = code.replace(
+      'const TURNSTILE_SITE_KEY = "TURNSTILE_SITE_KEY";',
+      `const TURNSTILE_SITE_KEY = ${JSON.stringify(options.turnstileSiteKey)};`
+    );
+  }
+
   const context = {
+    window: undefined,
     document: {
+      head: {
+        appendChild(node) {
+          if (node && typeof node.onload === "function") node.onload();
+          return node;
+        },
+      },
+      documentElement: { appendChild(node) { return node; } },
       querySelectorAll() { return forms; },
-      createElement() {
+      createElement(tag) {
         return {
+          tagName: String(tag || "div").toUpperCase(),
           type: "",
           className: "",
           textContent: "",
           disabled: false,
+          src: "",
+          async: false,
+          onload: null,
+          onerror: null,
+          setAttribute(name, value) { this.attrs = this.attrs || {}; this.attrs[name] = value; },
           addEventListener(name, fn) { this.listeners = this.listeners || {}; this.listeners[name] = fn; },
-          async click() { return this.listeners.click(); },
+          click() { return this.listeners.click(); },
         };
       },
     },
@@ -95,16 +138,18 @@ function harness(types, options = {}) {
     },
     AbortController,
     Intl,
-    Date: options.Date || Date,
+    Date: HarnessDate,
     URLSearchParams,
     setTimeout: options.setTimeout || setTimeout,
     clearTimeout: options.clearTimeout || clearTimeout,
     encodeURIComponent,
     Error,
+    turnstile: options.turnstile,
   };
-  vm.runInNewContext(source, context, { filename: "forms.js" });
-  return { forms, requests };
-}
+  context.window = context;
+  vm.runInNewContext(code, context, { filename: "forms.js" });
+  return { forms, requests, clock };
+};
 
 function dataRequests(requests) {
   return requests.filter(({ url }) => !url.includes("ipify"));
@@ -123,10 +168,13 @@ test("maps Contact, Telefon, and Newsletter to their sheet payloads", async () =
   }));
   assert.deepEqual(parsed.map((item) => item.sheet), ["Contact", "Telefon", "Newsletter"]);
   assert.deepEqual(parsed.map((item) => Object.keys(item.body.data)), [
-    ["Data", "IP", "Email", "Nume", "Mesaj"],
-    ["Data", "IP", "Telefon"],
-    ["Data", "IP", "Email"],
+    ["Data", "IP", "Email", "Nume", "Mesaj", "formLoadedAt"],
+    ["Data", "IP", "Telefon", "formLoadedAt"],
+    ["Data", "IP", "Email", "formLoadedAt"],
   ]);
+  assert.equal(typeof parsed[0].body.data.formLoadedAt, "number");
+  assert.ok(parsed[0].body.data.formLoadedAt > 0);
+  assert.equal(Object.hasOwn(parsed[0].body.data, "turnstileToken"), false);
   assert.equal(parsed[0].body.data.Nume, "Ada Lovelace");
   assert.equal(parsed[0].body.data.Mesaj, "Hello\nworld");
   assert.equal(parsed[1].body.data.Telefon, "+40 777 123 456");
@@ -280,4 +328,74 @@ test("prevents concurrent submissions and retries only Newsletter after partial 
   assert.equal(dataRequests(requests).filter(({ url }) => url.includes("sheet=Contact")).length, 1);
   assert.equal(dataRequests(requests).filter(({ url }) => url.includes("sheet=Newsletter")).length, 2);
   assert.match(forms[0].status.textContent, /înregistrată/);
+});
+
+test("does not call the API when the honeypot is filled and shows fake success", async () => {
+  const { forms, requests } = harness(["Newsletter"], { honeypot: "https://spam.example" });
+  await forms[0].dispatch();
+  assert.equal(requests.length, 0);
+  assert.match(forms[0].status.textContent, /înregistrată/);
+  assert.equal(forms[0].status.hidden, false);
+  assert.equal(forms[0].values.Email, "");
+});
+
+test("rejects submits faster than three seconds without calling the API", async () => {
+  const { forms, requests } = harness(["Telefon"], { elapsedMs: 0 });
+  await forms[0].dispatch();
+  assert.equal(requests.length, 0);
+  assert.match(forms[0].status.textContent, /prea rapidă/);
+  assert.equal(forms[0].values.Telefon, "  +40 777 123 456  ");
+});
+
+test("includes a Turnstile token in the body when the site key is configured", async () => {
+  const { forms, requests } = harness(["Newsletter"], {
+    turnstileSiteKey: "1x00000000000000000000AA",
+    turnstile: {
+      render() { return "widget-1"; },
+      getResponse() { return "turnstile-token-test"; },
+      reset() { return true; },
+    },
+  });
+  await forms[0].dispatch();
+  const sent = dataRequests(requests);
+  assert.equal(sent.length, 1);
+  assert.equal(JSON.parse(sent[0].init.body).data.turnstileToken, "turnstile-token-test");
+});
+
+test("fails when Turnstile is configured but the token is missing", async () => {
+  const { forms, requests } = harness(["Newsletter"], {
+    turnstileSiteKey: "1x00000000000000000000AA",
+    turnstile: {
+      render() { return "widget-1"; },
+      getResponse() { return ""; },
+      reset() { return true; },
+    },
+  });
+  await forms[0].dispatch();
+  assert.equal(dataRequests(requests).length, 0);
+  assert.match(forms[0].status.textContent, /nu a reușit/);
+  assert.equal(forms[0].values.Email, "  ada@example.com ");
+});
+
+test("skips Turnstile when the site key is the placeholder and still sends after the delay", async () => {
+  const { forms, requests } = harness(["Newsletter"]);
+  await forms[0].dispatch();
+  const body = JSON.parse(dataRequests(requests)[0].init.body).data;
+  assert.equal(Object.hasOwn(body, "turnstileToken"), false);
+  assert.equal(typeof body.formLoadedAt, "number");
+});
+
+test("honeypot markup is hidden from assistive tech and the keyboard", () => {
+  const pages = [
+    fs.readFileSync(path.join(__dirname, "../index.html"), "utf8"),
+    fs.readFileSync(path.join(__dirname, "../templates/layout.html"), "utf8"),
+    fs.readFileSync(path.join(__dirname, "../newsletter.html"), "utf8"),
+  ];
+  for (const html of pages) {
+    assert.match(html, /name="company_url"/);
+    assert.match(html, /class="solon-hp"/);
+    assert.match(html, /aria-hidden="true"/);
+    assert.match(html, /tabindex="-1"/);
+    assert.match(html, /\binert\b/);
+  }
 });
