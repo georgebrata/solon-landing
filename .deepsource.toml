@@ -7,7 +7,8 @@ exclude_patterns = [
   "**/*.min.css",
   "assets/img/**",
   "assets/pdfs/**",
-  "templates/**"
+  "templates/**",
+  "docs/**"
 ]
 
 test_patterns = [

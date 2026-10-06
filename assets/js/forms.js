@@ -23,6 +23,7 @@
   };
   let cachedIP = "";
   let turnstileLoader = null;
+  const turnstileReady = new WeakMap();
 
   const today = () =>
     new Intl.DateTimeFormat("en-CA", {
@@ -32,14 +33,18 @@
       day: "2-digit",
     }).format(new Date());
 
+  /** True when TURNSTILE_SITE_KEY is a real widget key, not the placeholder. */
   function isTurnstileConfigured() {
-    return Boolean(TURNSTILE_SITE_KEY) && TURNSTILE_SITE_KEY !== TURNSTILE_PLACEHOLDER;
+    return TURNSTILE_SITE_KEY !== "" && TURNSTILE_SITE_KEY !== TURNSTILE_PLACEHOLDER;
   }
 
+  /** Cloudflare Turnstile API attached to window, if loaded. */
   function turnstileApi() {
-    return typeof window !== "undefined" ? window.turnstile : undefined;
+    if (typeof window === "undefined") return undefined;
+    return window.turnstile;
   }
 
+  /** Load api.js once when Turnstile is configured. */
   function ensureTurnstileLoaded() {
     if (!isTurnstileConfigured()) return Promise.resolve(null);
     const existing = turnstileApi();
@@ -58,46 +63,57 @@
           return;
         }
         parent.appendChild(script);
-      } catch (_) {
+      } catch {
         resolve(null);
       }
     });
     return turnstileLoader;
   }
 
+  /**
+   * Render an interaction-only Turnstile widget into the form.
+   * @param {HTMLFormElement} form
+   */
   function mountTurnstile(form) {
     if (!isTurnstileConfigured()) return Promise.resolve(null);
-    return ensureTurnstileLoaded().then((api) => {
-      if (!api || typeof api.render !== "function") return null;
-      let mount = form.querySelector ? form.querySelector("[data-solon-turnstile]") : null;
-      if (!mount) {
-        mount = document.createElement("div");
-        mount.className = "solon-turnstile";
-        if (mount.setAttribute) mount.setAttribute("data-solon-turnstile", "");
-        if (typeof form.appendChild === "function") form.appendChild(mount);
-      }
-      const widgetId = api.render(mount, {
-        sitekey: TURNSTILE_SITE_KEY,
-        appearance: "interaction-only",
-        language: "ro",
-        callback: (token) => {
-          form.dataset.turnstileToken = token || "";
-        },
-        "expired-callback": () => {
-          form.dataset.turnstileToken = "";
-        },
-        "error-callback": () => {
-          form.dataset.turnstileToken = "";
-        },
-      });
-      form.dataset.turnstileWidgetId = String(widgetId);
-      return widgetId;
-    });
+    return ensureTurnstileLoaded()
+      .then((api) => {
+        if (!api || typeof api.render !== "function") return null;
+        let mount = form.querySelector("[data-solon-turnstile]");
+        if (!mount) {
+          mount = document.createElement("div");
+          mount.className = "solon-turnstile";
+          mount.setAttribute("data-solon-turnstile", "");
+          form.appendChild(mount);
+        }
+        const widgetId = api.render(mount, {
+          sitekey: TURNSTILE_SITE_KEY,
+          appearance: "interaction-only",
+          language: "ro",
+          callback: (token) => {
+            form.dataset.turnstileToken = token || "";
+          },
+          "expired-callback": () => {
+            form.dataset.turnstileToken = "";
+          },
+          "error-callback": () => {
+            form.dataset.turnstileToken = "";
+          },
+        });
+        form.dataset.turnstileWidgetId = `${widgetId}`;
+        return widgetId;
+      })
+      .catch(() => null);
   }
 
+  /**
+   * Consume a Turnstile token for one Apps Script post, then reset the widget.
+   * @param {HTMLFormElement} form
+   */
   async function getTurnstileToken(form) {
     if (!isTurnstileConfigured()) return "";
-    if (form && form._solonTurnstileReady) await form._solonTurnstileReady;
+    const ready = turnstileReady.get(form);
+    if (ready) await ready;
     const api = await ensureTurnstileLoaded();
     if (!api) throw new Error("captcha");
     const widgetId = form.dataset.turnstileWidgetId;
@@ -111,12 +127,14 @@
     return token;
   }
 
+  /** Trimmed honeypot value; empty means a human-looking submit. */
   function honeypotValue(form) {
     const field = form.elements.namedItem(HONEYPOT_NAME);
     if (!field || typeof field.value !== "string") return "";
     return field.value.trim();
   }
 
+  /** True when the form is submitted faster than MIN_SUBMIT_MS after bind. */
   function isSubmitTooFast(form) {
     const loadedAt = Number(form.dataset.formLoadedAt || 0);
     if (!loadedAt) return true;
@@ -176,9 +194,10 @@
   }
 
   async function postForm(type, values, form) {
-    const data = Object.assign({}, values, {
-      formLoadedAt: Number(form && form.dataset.formLoadedAt) || 0,
-    });
+    const data = {
+      ...values,
+      formLoadedAt: Number(form?.dataset.formLoadedAt) || 0,
+    };
     if (isTurnstileConfigured()) {
       data.turnstileToken = await getTurnstileToken(form);
     }
@@ -268,7 +287,7 @@
     form.addEventListener("focusin", () => {
       if (!form.dataset.formFocusedAt) form.dataset.formFocusedAt = String(Date.now());
     });
-    form._solonTurnstileReady = mountTurnstile(form);
+    turnstileReady.set(form, mountTurnstile(form));
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
