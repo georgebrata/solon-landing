@@ -31,6 +31,7 @@ const jsFiles = [
   "links-active-state.js",
   "testimonials.js",
   "support-chat.js",
+  "error-pages.js",
 ];
 
 /**

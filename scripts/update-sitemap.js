@@ -5,6 +5,24 @@ const BASE_URL = "https://solon.agency";
 const BLOG_PRIORITY = "0.80";
 const BLOG_POST_PRIORITY = "0.50";
 
+const SITEMAP_EXCLUDED_PATHS = new Set([
+  "/404.html",
+  "/500.html",
+  "/403.html",
+  "/404/",
+  "/500/",
+  "/403/",
+]);
+
+const isExcludedFromSitemap = (loc) => {
+  try {
+    const { pathname } = new URL(loc);
+    return SITEMAP_EXCLUDED_PATHS.has(pathname);
+  } catch {
+    return false;
+  }
+};
+
 const now = new Date().toISOString();
 const sitemapPath = path.join(__dirname, "../sitemap.xml");
 const postsJsonPath = path.join(__dirname, "../blog/posts.json");
@@ -62,6 +80,7 @@ const normalizeTrailingSlash = (url) =>
 const existingByLoc = new Map(existingEntries.map((entry) => [entry.loc, entry]));
 const updatedEntries = existingEntries
   .filter((entry) => !entry.loc.startsWith(`${BASE_URL}/blog/`))
+  .filter((entry) => !isExcludedFromSitemap(entry.loc))
   .map((entry) => ({ ...entry, loc: normalizeTrailingSlash(entry.loc) }));
 
 const existingBlogIndex = existingByLoc.get(blogIndexLoc);
