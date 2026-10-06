@@ -7,6 +7,23 @@
   RewriteEngine On
   RewriteBase /
 
+  # BEGIN issue #33: canonical host redirects
+  # Single canonical host: https://solon.agency (path + query preserved).
+  # Skip ACME HTTP-01 so cPanel AutoSSL can renew over http://.
+  RewriteRule ^\.well-known/acme-challenge/ - [L]
+
+  # HTTP → HTTPS apex. Redirect only when BOTH %{HTTPS} is off and
+  # X-Forwarded-Proto is not https, so SSL terminators / Hostico proxies
+  # cannot loop. Query string is passed through (substitution has no ?).
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+  RewriteRule ^ https://solon.agency%{REQUEST_URI} [L,R=301]
+
+  # www → apex (HTTPS, or HTTP already forwarded as HTTPS)
+  RewriteCond %{HTTP_HOST} ^www\.solon\.agency$ [NC]
+  RewriteRule ^ https://solon.agency%{REQUEST_URI} [L,R=301]
+  # END issue #33
+
   # Let's Encrypt / other well-known challenges
   RewriteRule ^\.well-known(?:/|$) - [L]
 
