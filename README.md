@@ -30,7 +30,7 @@ Deploy uses `SamKirkland/FTP-Deploy-Action` with an exclude list so VCS, `node_m
 
 `feature-flags.json` is build-time only (`scripts/apply-feature-flags.js`); the browser never fetches it. Blog sidebar JS fetches `/blog/posts.json`, which is not excluded.
 
-`.htaccess` denies HTTP access to dotfiles (except `.well-known`), `*.md`, package/lock JSON, `feature-flags.json`, and tooling directories as defence in depth.
+`.htaccess` denies HTTP access to dotfiles (except `.well-known`), `*.md`, package/lock JSON, `feature-flags.json`, and tooling directories as defence in depth. It also 301-redirects `http://` and `www.solon.agency` to the canonical host `https://solon.agency` (path and query string preserved). `/.well-known/acme-challenge/` is not redirected so cPanel AutoSSL can renew.
 
 Repo admins should make the **ci** check required on `main`: **Settings → Branches → Add/Edit branch protection rule for `main` → Require status checks to pass before merging → search for `ci`**. Agents cannot always change that setting.
 
