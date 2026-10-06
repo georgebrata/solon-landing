@@ -26,7 +26,11 @@ GitHub Actions (`.github/workflows/main.yml`) is the production pipeline. Issue 
 | Push to `main` | Yes, then deploy | Yes, after `ci` |
 | Manual **Run workflow** | Yes, then deploy | Yes, after `ci` |
 
-Deploy uses `SamKirkland/FTP-Deploy-Action` with an exclude list so VCS, `node_modules`, tests, docs, tooling, and `.DS_Store` are not uploaded. Remote deletion (`dangerous-clean-slate`) is not enabled.
+Deploy uses `SamKirkland/FTP-Deploy-Action` with an exclude list so VCS, `node_modules`, tests, docs, tooling, markdown sources, `feature-flags.json`, and `.DS_Store` are not uploaded. Runtime files stay in the publish set: HTML pages, `assets/`, `robots.txt`, `sitemap.xml`, `blog/posts.json`, and `.htaccess`. Remote deletion (`dangerous-clean-slate`) is not enabled; leftover internal files already on the server must be removed in cPanel, not by CI.
+
+`feature-flags.json` is build-time only (`scripts/apply-feature-flags.js`); the browser never fetches it. Blog sidebar JS fetches `/blog/posts.json`, which is not excluded.
+
+`.htaccess` denies HTTP access to dotfiles (except `.well-known`), `*.md`, package/lock JSON, `feature-flags.json`, and tooling directories as defence in depth.
 
 Repo admins should make the **ci** check required on `main`: **Settings → Branches → Add/Edit branch protection rule for `main` → Require status checks to pass before merging → search for `ci`**. Agents cannot always change that setting.
 
