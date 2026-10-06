@@ -8,21 +8,40 @@ Do not scatter extra `Header` directives in nested `.htaccess` files.
 
 | Header | Value | Notes |
 | --- | --- | --- |
-| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | **No `preload`.** See below. |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | **No `preload`.** `includeSubDomains` kept after verifying HTTPS on `dosargpt.solon.agency` and `link.solon.agency`. |
 | `X-Content-Type-Options` | `nosniff` | |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | Sends origin (not full URL) on HTTPS cross-origin requests so analytics still work. |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=()` | Stripe today is Payment Links (`buy.stripe.com` navigations), not embedded Checkout. If Checkout is ever embedded, allow `payment` for that origin. |
 | `X-Frame-Options` | `SAMEORIGIN` | Enforced clickjacking control. |
 | `Content-Security-Policy` | `frame-ancestors 'self'` | Enforced. Report-Only cannot apply `frame-ancestors`. |
-| `Content-Security-Policy-Report-Only` | Full allowlist | Phase 1. Does not block; DevTools console shows violations. |
+| `Content-Security-Policy-Report-Only` | Full allowlist + `report-uri` / `report-to` | Phase 1. Does not block. Collector URL is a **placeholder** until George provides one. |
+| `Report-To` / `Reporting-Endpoints` | Placeholder `csp-endpoint` | Same placeholder URL. |
 
-No `report-uri` / `report-to` is configured. QA is the browser console until a reporting endpoint exists.
+## CSP reporting placeholder
+
+The Report-Only policy includes `report-uri` and `report-to csp-endpoint`, plus `Report-To` and `Reporting-Endpoints` headers. The URL is `https://REPLACE_WITH_CSP_REPORT_COLLECTOR.invalid/` (RFC 2606 `.invalid`, so browsers will not deliver reports yet).
+
+George must:
+
+1. Create a collector (free [report-uri.com](https://report-uri.com/) project, or a dedicated n8n webhook — **not** the support-chat webhook).
+2. Replace `https://REPLACE_WITH_CSP_REPORT_COLLECTOR.invalid/` in `.htaccess` (`Report-To`, `Reporting-Endpoints`, and `report-uri`) and in this doc.
+3. Add that collector origin to `connect-src` if the Reporting API is blocked in the console.
+4. Confirm reports arrive, then consider flipping Report-Only to enforcing.
+
+Until that URL is replaced, QA is still the DevTools console.
 
 ## HSTS without preload
 
-`preload` is omitted on purpose. Submitting a domain to [hstspreload.org](https://hstspreload.org/) (and shipping `preload` in the header) is a **multi-month, hard-to-undo** commitment: browsers hard-code HTTPS for the whole registrable domain, including every subdomain. A stray HTTP-only subdomain (mail, cPanel, staging) becomes unreachable.
+`includeSubDomains` is enabled. Checked 2026-10-06:
 
-Keep `max-age=31536000; includeSubDomains` until every subdomain is HTTPS and the owner is ready to submit the preload list. Then add `; preload` to the HSTS line and submit the domain.
+| Host | HTTPS | Certificate |
+| --- | --- | --- |
+| `dosargpt.solon.agency` | HTTP/2 200 | Let's Encrypt `CN=*.solon.agency`, valid through 2026-12-28 |
+| `link.solon.agency` | HTTP/2 302 (Rebrandly, stays on HTTPS) | Let's Encrypt `CN=link.solon.agency`, valid through 2026-11-06 |
+
+`mail.solon.agency`, `cpanel.solon.agency`, `webmail.solon.agency`, and `ftp.solon.agency` also answered HTTPS with a verified certificate (`ssl_verify_result=0`).
+
+`preload` is still omitted. Submitting a domain to [hstspreload.org](https://hstspreload.org/) is a long-lived, hard-to-undo browser commitment for the whole registrable domain. Add `; preload` only after every subdomain is HTTPS **and** the owner is ready to submit the list.
 
 ## Switch CSP from Report-Only to enforcing
 
@@ -38,11 +57,9 @@ Cookie consent (#26) must remain the legal gate for trackers. Do not shrink the 
 
 ## Server signature
 
-`.htaccess` sets `ServerSignature Off` (hides the version footer on Apache-generated pages). `Header unset Server` is best-effort; many shared hosts still emit `Server: Apache` / OpenResty.
+`ServerSignature Off` is **not** shipped. It is a core Apache directive, not a module. Wrapping it in `<IfModule>` does not test whether `.htaccess` is allowed to use it; on Hostico a disallowed core directive 500s the whole site. Quality Bot flagged this as high.
 
-`ServerTokens Prod` is **not** valid in `.htaccess`. Ask Hostico to set it in httpd.conf / the Apache global config if the `Server` header must stop advertising the version.
-
-If `ServerSignature Off` returns HTTP 500 after deploy, delete that one line.
+`Header unset Server` (inside `<IfModule mod_headers.c>`) is best-effort; many shared hosts still emit `Server: Apache` / OpenResty. `ServerTokens Prod` is **not** valid in `.htaccess` — ask Hostico to set it in httpd.conf if the `Server` header must stop advertising a version.
 
 ## Third-party inventory (allowlist source)
 
@@ -77,11 +94,11 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 
 ## Coordination with other `.htaccess` issues
 
-Suggested block order:
+Suggested block order (Quality Bot):
 
-1. Redirects (#33) — www/http → `https://solon.agency`
-2. Existing deny rules (#35) — already on `main`; do not reorder
-3. Security headers (#29) — this file
+1. Redirects (#33 / PR #36) — already above this block on `main`
+2. Deny rules (#35) — already on `main`; do not reorder
+3. Security headers (#29) — this block
 4. Caching (#30)
 5. ErrorDocument (#32)
 
