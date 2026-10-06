@@ -9,7 +9,7 @@ const { stampAllHtmlFiles } = require("./stamp-asset-refs");
 const root = path.join(__dirname, "..");
 
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
-const cssFiles = ["toggle.css", "two-up.css", "consent.css"];
+const cssFiles = ["toggle.css", "two-up.css", "consent.css", "error-pages.css"];
 /** Sources to minify. Cache-busting is NOT this list: stamp-asset-refs.js
  *  rewrites any HTML href/src under assets/css, assets/js, or assets/vendor,
  *  including files added later (e.g. consent.min.js). */
