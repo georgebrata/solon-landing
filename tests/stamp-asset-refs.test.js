@@ -12,7 +12,7 @@ const {
   stampHtml,
 } = require("../scripts/stamp-asset-refs");
 
-let tmpDir;
+let tmpDir = "";
 
 beforeEach(() => {
   clearHashCache();
@@ -24,12 +24,13 @@ afterEach(() => {
   clearHashCache();
 });
 
-function write(rel, contents) {
+/** Write a fixture file under the temp directory. */
+const write = (rel, contents) => {
   const abs = path.join(tmpDir, rel);
   fs.mkdirSync(path.dirname(abs), { recursive: true });
   fs.writeFileSync(abs, contents);
   return abs;
-}
+};
 
 test("appends a content hash query string to first-party CSS and JS", () => {
   const cssPath = write("assets/css/style.min.css", "body{color:red}");

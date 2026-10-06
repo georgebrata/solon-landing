@@ -127,7 +127,7 @@ const stampHtml = (html, htmlFile) => {
 
 /** Recursively collect `.html` files, skipping VCS and tooling dirs. */
 const collectHtmlFiles = (dir, acc = []) => {
-  let entries;
+  let entries = [];
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch {

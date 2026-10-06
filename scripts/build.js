@@ -178,6 +178,7 @@ ${tagsBlock}
     .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
 }
 
+/** Compile markdown posts into static HTML under /blog/. */
 const build = async () => {
   console.log('Building blog...');
 
