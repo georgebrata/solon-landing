@@ -14,6 +14,15 @@
     Telefon: "Cererea ta a fost înregistrată. Te vom contacta telefonic.",
     Newsletter: "Adresa ta a fost înregistrată pentru newsletter.",
   };
+  const USER_ERRORS = {
+    timeout: "Conexiunea a expirat. Te rugăm să încerci din nou.",
+    network: "Nu am putut contacta serverul. Verifică conexiunea și încearcă din nou.",
+    http: "Trimiterea nu a reușit. Te rugăm să încerci din nou.",
+    invalid_response: "Trimiterea nu a reușit. Te rugăm să încerci din nou.",
+    unconfirmed: "Trimiterea nu a reușit. Te rugăm să încerci din nou.",
+    unknown: "Trimiterea nu a reușit. Verifică datele și încearcă din nou.",
+  };
+  const IP_RETRY_DELAYS_MS = [0, 250, 750];
   let cachedIP = "";
 
   const today = () =>
@@ -24,56 +33,113 @@
       day: "2-digit",
     }).format(new Date());
 
-  async function getIP() {
-    if (cachedIP) return cachedIP;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3000);
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function logEvent(level, details) {
     try {
-      const response = await fetch(IP_URL, {
-        signal: controller.signal,
-        credentials: "omit",
-      });
-      if (!response.ok) throw new Error("IP lookup failed");
-      const result = await response.json();
-      if (typeof result.ip !== "string") throw new Error("IP lookup returned no address");
-      cachedIP = result.ip;
-      return cachedIP;
+      const logger = (typeof globalThis !== "undefined" && globalThis.SolonLog) || null;
+      if (logger && typeof logger[level] === "function") {
+        logger[level](details);
+        return;
+      }
+      const method = level === "error" || level === "critical" ? "error" : level === "warn" ? "warn" : "info";
+      if (typeof console !== "undefined" && typeof console[method] === "function") {
+        console[method]("[solon " + level + "]", details);
+      }
     } catch (_) {
-      return "";
-    } finally {
-      clearTimeout(timer);
+      /* logging must never break submit */
     }
   }
 
-  function showStatus(form, message, isError, retryNewsletter) {
+  function classifySubmitError(error) {
+    if (!error) return "unknown";
+    if (error.solonCode) return error.solonCode;
+    const name = error.name || "";
+    const message = String(error.message || "");
+    if (name === "AbortError" || /aborted|timeout/i.test(message)) return "timeout";
+    if (name === "TypeError" || /failed to fetch|network/i.test(message)) return "network";
+    if (name === "SyntaxError") return "invalid_response";
+    if (message === "Request failed") return "http";
+    if (message === "The API did not confirm the save") return "unconfirmed";
+    return "unknown";
+  }
+
+  function taggedError(solonCode, error) {
+    if (error && typeof error === "object") error.solonCode = solonCode;
+    return error;
+  }
+
+  async function getIP() {
+    if (cachedIP) return cachedIP;
+    for (let attempt = 0; attempt < IP_RETRY_DELAYS_MS.length; attempt++) {
+      if (IP_RETRY_DELAYS_MS[attempt]) await wait(IP_RETRY_DELAYS_MS[attempt]);
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 3000);
+      try {
+        const response = await fetch(IP_URL, {
+          signal: controller.signal,
+          credentials: "omit",
+        });
+        if (!response.ok) throw new Error("IP lookup failed");
+        const result = await response.json();
+        if (typeof result.ip !== "string") throw new Error("IP lookup returned no address");
+        cachedIP = result.ip;
+        return cachedIP;
+      } catch (error) {
+        if (attempt === IP_RETRY_DELAYS_MS.length - 1) {
+          logEvent("warn", {
+            type: "ip_lookup_failed",
+            reason: classifySubmitError(error),
+            name: error && error.name,
+          });
+          return "";
+        }
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    return "";
+  }
+
+  function showStatus(form, message, isError, retry) {
     const status = form.parentElement.querySelector("[data-form-status]");
     if (!status) return;
     status.hidden = !message;
     status.textContent = message;
     status.classList.toggle("is-error", Boolean(isError));
     status.classList.toggle("is-success", Boolean(message) && !isError);
-    if (retryNewsletter) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "solon-newsletter-retry";
-      button.textContent = "Reîncearcă abonarea";
-      button.addEventListener("click", async () => {
-        button.disabled = true;
-        try {
-          await retryNewsletter();
+    if (!retry) return;
+
+    const retryFn = typeof retry === "function" ? retry : retry.run;
+    const retryLabel =
+      (retry && retry.label) || (typeof retry === "function" ? "Reîncearcă abonarea" : "Încearcă din nou");
+    const managed = Boolean(retry && retry.managed);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = managed ? "solon-form-retry" : "solon-newsletter-retry";
+    button.textContent = retryLabel;
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await retryFn();
+        if (!managed) {
           form.reset();
           showStatus(form, "Mesajul a fost trimis, iar adresa a fost înregistrată.", false);
-        } catch (_) {
+        }
+      } catch (_) {
+        if (!managed) {
           showStatus(
             form,
             "Mesajul a fost trimis. Abonarea la newsletter nu a putut fi confirmată.",
             true,
-            retryNewsletter
+            retry
           );
         }
-      });
-      status.append(" ", button);
-    }
+      }
+    });
+    status.append(" ", button);
   }
 
   async function postForm(type, values) {
@@ -88,9 +154,19 @@
         signal: controller.signal,
         body: JSON.stringify({ action: "append", data: values }),
       });
-      if (!response.ok) throw new Error("Request failed");
-      const result = await response.json();
-      if (!result || result.ok !== true) throw new Error("The API did not confirm the save");
+      if (!response.ok) throw taggedError("http", new Error("Request failed"));
+      let result;
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        throw taggedError("invalid_response", parseError);
+      }
+      if (!result || result.ok !== true) {
+        throw taggedError("unconfirmed", new Error("The API did not confirm the save"));
+      }
+    } catch (error) {
+      if (error && error.solonCode) throw error;
+      throw taggedError(classifySubmitError(error), error);
     } finally {
       clearTimeout(timer);
     }
@@ -154,51 +230,85 @@
     });
   }
 
+  async function handleSubmit(form, type) {
+    if (form.dataset.submitting === "true") return;
+    if (!form.reportValidity()) return;
+
+    form.dataset.submitting = "true";
+    lock(form, true);
+    showStatus(form, "", false);
+
+    try {
+      const date = today();
+      const ip = await getIP();
+      const values = valuesFor(form, type, ip, date);
+      await postForm(type, values);
+
+      if (type === "Contact" && form.elements.namedItem("NewsletterOptIn")?.checked) {
+        try {
+          await postForm("Newsletter", { Data: date, Email: values.Email, IP: ip });
+        } catch (newsletterError) {
+          logEvent("error", {
+            type: "form_submit_error",
+            form: "Newsletter",
+            reason: classifySubmitError(newsletterError),
+            name: newsletterError && newsletterError.name,
+            partial: "contact_ok",
+          });
+          form.reset();
+          form.elements.namedItem("Email").value = values.Email;
+          showStatus(
+            form,
+            "Mesajul a fost trimis. Abonarea la newsletter nu a putut fi confirmată.",
+            true,
+            () => postForm("Newsletter", { Data: date, Email: values.Email, IP: ip })
+          );
+          return;
+        }
+      }
+
+      form.reset();
+      showStatus(form, MESSAGES[type], false);
+      logEvent("info", { type: "form_submit_ok", form: type });
+    } catch (error) {
+      const reason = classifySubmitError(error);
+      logEvent("error", {
+        type: "form_submit_error",
+        form: type,
+        reason: reason,
+        name: error && error.name,
+      });
+      showStatus(form, USER_ERRORS[reason] || USER_ERRORS.unknown, true, {
+        run: () => handleSubmit(form, type),
+        label: "Încearcă din nou",
+        managed: true,
+      });
+    } finally {
+      form.dataset.submitting = "false";
+      lock(form, false);
+    }
+  }
+
   document.querySelectorAll("form[data-solon-form]").forEach((form) => {
     const type = form.dataset.solonForm;
     if (!SCHEMAS[type]) return;
 
     setupFormButtons(form);
 
-    form.addEventListener("submit", async (event) => {
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
-      if (form.dataset.submitting === "true") return;
-      if (!form.reportValidity()) return;
-
-      form.dataset.submitting = "true";
-      lock(form, true);
-      showStatus(form, "", false);
-
-      const date = today();
-      const ip = await getIP();
-      const values = valuesFor(form, type, ip, date);
-      try {
-        await postForm(type, values);
-
-        if (type === "Contact" && form.elements.namedItem("NewsletterOptIn")?.checked) {
-          try {
-            await postForm("Newsletter", { Data: date, Email: values.Email, IP: ip });
-          } catch (_) {
-            form.reset();
-            form.elements.namedItem("Email").value = values.Email;
-            showStatus(
-              form,
-              "Mesajul a fost trimis. Abonarea la newsletter nu a putut fi confirmată.",
-              true,
-              () => postForm("Newsletter", { Data: date, Email: values.Email, IP: ip })
-            );
-            return;
-          }
-        }
-
-        form.reset();
-        showStatus(form, MESSAGES[type], false);
-      } catch (_) {
-        showStatus(form, "Trimiterea nu a reușit. Verifică datele și încearcă din nou.", true);
-      } finally {
-        form.dataset.submitting = "false";
-        lock(form, false);
+      const pending = handleSubmit(form, type);
+      if (pending && typeof pending.catch === "function") {
+        pending.catch((error) => {
+          logEvent("error", {
+            type: "form_submit_error",
+            form: type,
+            reason: "unknown",
+            name: error && error.name,
+          });
+        });
       }
+      return pending;
     });
   });
 })();

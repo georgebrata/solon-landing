@@ -73,6 +73,7 @@ function harness(types, options = {}) {
     return form;
   });
 
+  const logs = [];
   const context = {
     document: {
       querySelectorAll() { return forms; },
@@ -97,13 +98,27 @@ function harness(types, options = {}) {
     Intl,
     Date: options.Date || Date,
     URLSearchParams,
-    setTimeout: options.setTimeout || setTimeout,
+    JSON,
+    Promise,
+    SyntaxError,
+    TypeError,
+    console: options.console || { info() {}, warn() {}, error() {}, log() {} },
+    SolonLog: options.SolonLog || {
+      info(event) { logs.push({ level: "info", event }); },
+      warn(event) { logs.push({ level: "warn", event }); },
+      error(event) { logs.push({ level: "error", event }); },
+    },
+    setTimeout: options.setTimeout || ((fn, ms) => {
+      if (ms > 0 && ms <= 1000) return setTimeout(fn, 0);
+      return setTimeout(fn, ms);
+    }),
     clearTimeout: options.clearTimeout || clearTimeout,
     encodeURIComponent,
     Error,
   };
+  context.globalThis = context;
   vm.runInNewContext(source, context, { filename: "forms.js" });
-  return { forms, requests };
+  return { forms, requests, logs };
 }
 
 function dataRequests(requests) {
@@ -248,7 +263,8 @@ test("applies the 20-second timeout signal to submission requests", async () => 
   await forms[0].dispatch();
   assert.equal(timeout, 20000);
   assert.equal(submissionSignal.aborted, true);
-  assert.match(forms[0].status.textContent, /nu a reușit/);
+  assert.match(forms[0].status.textContent, /expirat/);
+  assert.equal(forms[0].status.children.length, 2);
 });
 
 test("prevents concurrent submissions and retries only Newsletter after partial success", async () => {
@@ -280,4 +296,76 @@ test("prevents concurrent submissions and retries only Newsletter after partial 
   assert.equal(dataRequests(requests).filter(({ url }) => url.includes("sheet=Contact")).length, 1);
   assert.equal(dataRequests(requests).filter(({ url }) => url.includes("sheet=Newsletter")).length, 2);
   assert.match(forms[0].status.textContent, /înregistrată/);
+});
+
+test("retries public IP lookup with backoff and still submits an empty IP", async () => {
+  let ipCalls = 0;
+  const { forms, requests } = harness(["Newsletter"], {
+    fetch: async (url) => {
+      if (url.includes("ipify")) {
+        ipCalls += 1;
+        throw new Error("offline");
+      }
+      return { ok: true, json: async () => ({ ok: true }) };
+    },
+  });
+  await forms[0].dispatch();
+  assert.equal(ipCalls, 3);
+  assert.equal(JSON.parse(dataRequests(requests)[0].init.body).data.IP, "");
+});
+
+test("shows a Romanian network error and retries the same payload on demand", async () => {
+  let submits = 0;
+  const { forms, requests } = harness(["Newsletter"], {
+    fetch: async (url) => {
+      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
+      submits += 1;
+      if (submits === 1) {
+        const error = new TypeError("Failed to fetch");
+        throw error;
+      }
+      return { ok: true, json: async () => ({ ok: true }) };
+    },
+  });
+  await forms[0].dispatch();
+  assert.match(forms[0].status.textContent, /Nu am putut contacta serverul/);
+  assert.equal(forms[0].values.Email, "  ada@example.com ");
+  const retry = forms[0].status.children[1];
+  assert.equal(retry.textContent, "Încearcă din nou");
+  await retry.click();
+  assert.equal(submits, 2);
+  assert.match(forms[0].status.textContent, /înregistrată/);
+  assert.equal(forms[0].values.Email, "");
+  assert.equal(dataRequests(requests).length, 2);
+});
+
+test("logs submit failures without emails, IPs, or field values", async () => {
+  const { forms, logs } = harness(["Contact"], {
+    fetch: async (url) => {
+      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
+      return { ok: true, json: async () => ({ ok: false, error: "Failed" }) };
+    },
+  });
+  await forms[0].dispatch();
+  const errorLogs = logs.filter((entry) => entry.level === "error");
+  assert.equal(errorLogs.length, 1);
+  const serialized = JSON.stringify(errorLogs[0].event);
+  assert.equal(errorLogs[0].event.form, "Contact");
+  assert.equal(errorLogs[0].event.reason, "unconfirmed");
+  assert.doesNotMatch(serialized, /ada@example.com/i);
+  assert.doesNotMatch(serialized, /203\.0\.113\.7/);
+  assert.doesNotMatch(serialized, /Ada Lovelace/);
+  assert.doesNotMatch(serialized, /Hello/);
+});
+
+test("logs successful submissions with the form type only", async () => {
+  const { forms, logs } = harness(["Telefon"]);
+  await forms[0].dispatch();
+  const infoLogs = logs.filter((entry) => entry.level === "info" && entry.event.type === "form_submit_ok");
+  assert.equal(infoLogs.length, 1);
+  assert.equal(infoLogs[0].event.form, "Telefon");
+  const serialized = JSON.stringify(infoLogs[0].event);
+  assert.doesNotMatch(serialized, /ada@example.com/i);
+  assert.doesNotMatch(serialized, /203\.0\.113\.7/);
+  assert.doesNotMatch(serialized, /\+40 777/);
 });

@@ -10,6 +10,7 @@ const root = path.join(__dirname, "..");
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
 const cssFiles = ["toggle.css", "two-up.css"];
 const jsFiles = [
+  "error-log.js",
   "dynamic-year.js",
   "meta-pixel.js",
   "main.js",
@@ -22,6 +23,24 @@ const jsFiles = [
   "testimonials.js",
   "support-chat.js",
 ];
+
+function logScriptError(payload, error) {
+  const body = Object.assign(
+    {
+      ok: false,
+      script: "minify-assets.js",
+    },
+    payload
+  );
+  if (error) {
+    body.message = error.message || String(error);
+    if (error.line != null) body.line = error.line;
+    if (error.col != null) body.column = error.col;
+    if (error.stack) body.stack = error.stack;
+  }
+  console.error(JSON.stringify(body));
+  if (error && error.stack) console.error(error.stack);
+}
 
 function minifyStyleMerged() {
   const cssDir = path.join(root, "assets/css");
@@ -39,7 +58,12 @@ function minifyStyleMerged() {
     relativeTo: cssDir,
   }).minify(input);
   if (out.errors && out.errors.length) {
-    console.error(out.errors);
+    logScriptError(
+      {
+        file: "assets/css/style.css",
+        message: out.errors.join("; "),
+      }
+    );
     return false;
   }
   const outPath = path.join(cssDir, "style.min.css");
@@ -64,7 +88,10 @@ function minifyCss(relPath) {
     inline: false,
   }).minify(input);
   if (out.errors && out.errors.length) {
-    console.error(out.errors);
+    logScriptError({
+      file: `assets/css/${relPath}`,
+      message: out.errors.join("; "),
+    });
     return false;
   }
   const base = relPath.replace(/\.css$/, "");
@@ -83,13 +110,19 @@ async function minifyJs(relPath) {
     return true;
   }
   const input = fs.readFileSync(full, "utf8");
-  const result = await terserMinify(input, {
-    compress: true,
-    mangle: true,
-    format: { comments: false },
-  });
+  let result;
+  try {
+    result = await terserMinify(input, {
+      compress: true,
+      mangle: true,
+      format: { comments: false },
+    });
+  } catch (error) {
+    logScriptError({ file: `assets/js/${relPath}` }, error);
+    return false;
+  }
   if (result.error) {
-    console.error(result.error);
+    logScriptError({ file: `assets/js/${relPath}` }, result.error);
     return false;
   }
   const base = relPath.replace(/\.js$/, "");
@@ -101,20 +134,25 @@ async function minifyJs(relPath) {
 }
 
 (async () => {
-  if (!minifyStyleMerged()) {
+  try {
+    if (!minifyStyleMerged()) {
+      process.exitCode = 1;
+      return;
+    }
+    for (const f of cssFiles) {
+      if (!minifyCss(f)) {
+        process.exitCode = 1;
+        return;
+      }
+    }
+    for (const f of jsFiles) {
+      if (!(await minifyJs(f))) {
+        process.exitCode = 1;
+        return;
+      }
+    }
+  } catch (error) {
+    logScriptError({ file: root }, error);
     process.exitCode = 1;
-    return;
-  }
-  for (const f of cssFiles) {
-    if (!minifyCss(f)) {
-      process.exitCode = 1;
-      return;
-    }
-  }
-  for (const f of jsFiles) {
-    if (!(await minifyJs(f))) {
-      process.exitCode = 1;
-      return;
-    }
   }
 })();

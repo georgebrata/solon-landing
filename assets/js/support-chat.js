@@ -5,7 +5,7 @@
   const SESSION_KEY = "chat_session_id";
   const HISTORY_KEY = "chat_history";
   const GREETING = "Bună! Sunt asistentul SOLON. Spune-mi cu ce te pot ajuta.";
-  const ERROR_MSG = "Sorry, something went wrong. Please try again.";
+  const ERROR_MSG = "A apărut o eroare. Te rugăm să încerci din nou.";
   const NEEDS_HUMAN_MSG = "Un coleg din echipă te va contacta.";
 
   let pending = false;
@@ -303,8 +303,16 @@
       });
       saveHistory(history);
       renderQuickReplies(result.quickReplies);
-    } catch {
+    } catch (error) {
       showTyping(false);
+      const logger = typeof globalThis !== "undefined" ? globalThis.SolonLog : null;
+      if (logger && typeof logger.error === "function") {
+        logger.error({
+          type: "support_chat_error",
+          message: error && error.message,
+          name: error && error.name,
+        });
+      }
       const errEntry = { role: "bot", text: ERROR_MSG };
       history.push(errEntry);
       saveHistory(history);

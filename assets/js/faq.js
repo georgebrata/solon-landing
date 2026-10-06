@@ -31,22 +31,41 @@
 
     const hideLoading = () => {
         const loading = document.getElementById("loading");
-        loading.classList.add("hidden");
+        if (loading) loading.classList.add("hidden");
     };
 
+    function logFaqError(error) {
+        const logger = typeof globalThis !== "undefined" ? globalThis.SolonLog : null;
+        if (logger && typeof logger.error === "function") {
+            logger.error({
+                type: "faq_load_error",
+                message: error && error.message,
+                name: error && error.name,
+            });
+            return;
+        }
+        if (typeof console !== "undefined" && typeof console.error === "function") {
+            console.error("[solon error]", { type: "faq_load_error", name: error && error.name });
+        }
+    }
+
     async function renderLibraryItems() {
+        if (!faqList || !faqListParent) return;
+
         let response, items;
         try {
             response = await fetch(URL);
+            if (!response.ok) throw new Error("FAQ request failed");
             items = await response.json();
         } catch (error) {
-            console.error(error);
+            logFaqError(error);
+            hideLoading();
+            faqListParent.classList.add("hidden");
             return;
         }
 
         hideLoading();
-        let visibleItems = items.filter(item => item.Visible);
-        console.log(visibleItems);
+        const visibleItems = Array.isArray(items) ? items.filter(item => item.Visible) : [];
 
         if (visibleItems.length === 0) {
             faqListParent.classList.add("hidden");
@@ -64,5 +83,9 @@
         });
     }
 
-    renderLibraryItems();
+    renderLibraryItems().catch((error) => {
+        logFaqError(error);
+        hideLoading();
+        if (faqListParent) faqListParent.classList.add("hidden");
+    });
 })();
