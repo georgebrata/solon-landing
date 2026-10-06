@@ -54,3 +54,44 @@
     Deny from all
   </IfModule>
 </FilesMatch>
+
+# BEGIN issue #29: security headers
+# Place after any www/http redirects (#33). Caching (#30) and ErrorDocument (#32)
+# should follow this block. Do not reorder the deny rules above (#35).
+# Inventory and how to switch CSP Report-Only → enforcing: docs/security-headers.md
+#
+# HSTS is set without `preload`. Adding preload is a one-way browser commitment
+# for the whole registrable domain (including subdomains) — only add it after
+# submitting https://hstspreload.org/ and being sure every subdomain is HTTPS.
+#
+# CSP is Report-Only in this block. Clickjacking is enforced separately via
+# X-Frame-Options and a minimal `frame-ancestors 'self'` CSP (Report-Only cannot
+# enforce frame-ancestors). To enforce the full policy later: copy the
+# Report-Only value onto Content-Security-Policy (keep frame-ancestors), then
+# delete Content-Security-Policy-Report-Only and the short frame-ancestors-only
+# header so you do not ship two conflicting CSP headers.
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Content-Security-Policy "frame-ancestors 'self'"
+
+  # Temporary 'unsafe-inline' (script-src + style-src): inline gtag, Clarity,
+  # Metricool, Brevo init, font stylesheet onload=, page <style> blocks, and
+  # Bootstrap/vendor patterns. Nonces/hashes are a follow-up (out of scope).
+  # Tracker hosts stay allowlisted so #26 consent-gated loads still work; CSP
+  # is not the legal consent control.
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://www.clarity.ms https://scripts.clarity.ms https://cdn.brevo.com https://sibautomation.com https://*.brevo.com https://tracker.metricool.com https://analytics.ahrefs.com https://cdn.counter.dev https://challenges.cloudflare.com https://mny.ro https://cdn.jsdelivr.net https://unpkg.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://challenges.cloudflare.com; img-src 'self' data: https://www.facebook.com https://*.facebook.com https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.google.com https://www.google.ro https://stats.g.doubleclick.net https://www.clarity.ms https://*.clarity.ms https://tracker.metricool.com https://mny.ro https://i.ibb.co https://challenges.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://analytics.google.com https://*.analytics.google.com https://stats.g.doubleclick.net https://www.google.com https://www.google.ro https://www.facebook.com https://*.facebook.com https://connect.facebook.net https://www.clarity.ms https://*.clarity.ms https://cdn.brevo.com https://sibautomation.com https://in-automate.brevo.com https://*.brevo.com https://tracker.metricool.com https://analytics.ahrefs.com https://cdn.counter.dev https://t.counter.dev https://script.google.com https://script.googleusercontent.com https://*.script.googleusercontent.com https://api64.ipify.org https://solon-agency.app.n8n.cloud https://challenges.cloudflare.com https://mny.ro; frame-src 'self' https://calendar.google.com https://docs.google.com https://challenges.cloudflare.com https://js.stripe.com https://hooks.stripe.com; form-action 'self' https://formsubmit.co https://script.google.com https://script.googleusercontent.com; worker-src 'self' blob: https://www.clarity.ms https://scripts.clarity.ms https://challenges.cloudflare.com https://sibautomation.com"
+
+  # Shared hosts often ignore this; ServerTokens Prod needs httpd.conf.
+  Header unset Server
+  Header always unset Server
+</IfModule>
+
+# Allowed in .htaccess on typical cPanel AllowOverride All. If this line 500s
+# after deploy, delete it. Full ServerTokens Prod is not writable here — ask Hostico.
+ServerSignature Off
+# END issue #29
