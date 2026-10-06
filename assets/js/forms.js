@@ -7,6 +7,14 @@
   const API_URL =
     "https://script.google.com/macros/s/AKfycbzE0XZ-FU4FRdJXoFWUhgSsCrRPZKHRCaOpwZ16Ww9M7Ffgy0O6Xi2QvgxQNhplZxsd/exec";
   const IP_URL = "https://api64.ipify.org?format=json";
+  // Replace the placeholder with the Cloudflare Turnstile site key (never the secret).
+  // Leave "TURNSTILE_SITE_KEY" to skip the widget; honeypot and timing still apply.
+  // CAPTCHA is enforced only when this key is real AND Apps Script has TURNSTILE_SECRET.
+  const TURNSTILE_SITE_KEY = "TURNSTILE_SITE_KEY";
+  const TURNSTILE_PLACEHOLDER = "TURNSTILE_SITE_KEY";
+  const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+  const HONEYPOT_NAME = "company_url";
+  const MIN_SUBMIT_MS = 3000;
   const SCHEMAS = {
     Contact: { sheet: "Contact", fields: ["Email", "Nume", "Mesaj"] },
     Telefon: { sheet: "Telefon", fields: ["Telefon"] },
@@ -23,10 +31,16 @@
     http: "Trimiterea nu a reușit. Te rugăm să încerci din nou.",
     invalid_response: "Trimiterea nu a reușit. Te rugăm să încerci din nou.",
     unconfirmed: "Trimiterea nu a reușit. Te rugăm să încerci din nou.",
+    captcha: "Verificarea de securitate a eșuat. Reîncarcă pagina și încearcă din nou.",
+    too_fast: "Trimiterea a fost prea rapidă. Așteaptă o clipă și încearcă din nou.",
+    rate_limited: "Ai trimis prea multe cereri. Te rugăm să aștepți câteva minute și să încerci din nou.",
     unknown: "Trimiterea nu a reușit. Verifică datele și încearcă din nou.",
   };
+  const SPAM_CODES = { captcha: true, too_fast: true, rate_limited: true };
   const IP_RETRY_DELAYS_MS = [0, 250, 750];
   let cachedIP = "";
+  let turnstileLoader = null;
+  const turnstileReady = new WeakMap();
 
   /** Bucharest calendar date as YYYY-MM-DD. */
   const today = () =>
@@ -39,6 +53,116 @@
 
   /** Wait for the given delay. */
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  /** True when TURNSTILE_SITE_KEY is a real widget key, not the placeholder. */
+  const isTurnstileConfigured = () =>
+    TURNSTILE_SITE_KEY !== "" && TURNSTILE_SITE_KEY !== TURNSTILE_PLACEHOLDER;
+
+  /** Cloudflare Turnstile API attached to window, if loaded. */
+  const turnstileApi = () => {
+    if (typeof window === "undefined") return null;
+    return window.turnstile || null;
+  };
+
+  /** Load api.js once when Turnstile is configured. */
+  const ensureTurnstileLoaded = () => {
+    if (!isTurnstileConfigured()) return Promise.resolve(null);
+    const existing = turnstileApi();
+    if (existing) return Promise.resolve(existing);
+    if (turnstileLoader) return turnstileLoader;
+    turnstileLoader = new Promise((resolve) => {
+      try {
+        const script = document.createElement("script");
+        script.src = TURNSTILE_SRC;
+        script.async = true;
+        script.onload = () => resolve(turnstileApi() || null);
+        script.onerror = () => resolve(null);
+        const parent = document.head || document.documentElement;
+        if (!parent || !parent.appendChild) {
+          resolve(null);
+          return;
+        }
+        parent.appendChild(script);
+      } catch {
+        resolve(null);
+      }
+    });
+    return turnstileLoader;
+  };
+
+  /**
+   * Render an interaction-only Turnstile widget into the form.
+   * @param {HTMLFormElement} form
+   */
+  const mountTurnstile = (form) => {
+    if (!isTurnstileConfigured()) return Promise.resolve(null);
+    return ensureTurnstileLoaded()
+      .then((api) => {
+        if (!api || typeof api.render !== "function") return null;
+        let mount = form.querySelector("[data-solon-turnstile]");
+        if (!mount) {
+          mount = document.createElement("div");
+          mount.className = "solon-turnstile";
+          mount.setAttribute("data-solon-turnstile", "");
+          form.appendChild(mount);
+        }
+        const widgetId = api.render(mount, {
+          sitekey: TURNSTILE_SITE_KEY,
+          appearance: "interaction-only",
+          language: "ro",
+          callback: (token) => {
+            form.dataset.turnstileToken = token || "";
+          },
+          "expired-callback": () => {
+            form.dataset.turnstileToken = "";
+          },
+          "error-callback": () => {
+            form.dataset.turnstileToken = "";
+          },
+        });
+        form.dataset.turnstileWidgetId = `${widgetId}`;
+        return widgetId;
+      })
+      .catch(() => null);
+  };
+
+  /**
+   * Consume a Turnstile token for one Apps Script post, then reset the widget.
+   * @param {HTMLFormElement} form
+   */
+  const getTurnstileToken = async (form) => {
+    if (!isTurnstileConfigured()) return "";
+    const ready = turnstileReady.get(form);
+    if (ready) await ready;
+    const api = await ensureTurnstileLoaded();
+    if (!api) throw taggedError("captcha", new Error("captcha"));
+    const widgetId = form.dataset.turnstileWidgetId;
+    let token = form.dataset.turnstileToken || "";
+    if (!token && widgetId && typeof api.getResponse === "function") {
+      token = api.getResponse(widgetId) || "";
+    }
+    if (!token) throw taggedError("captcha", new Error("captcha"));
+    form.dataset.turnstileToken = "";
+    if (widgetId && typeof api.reset === "function") api.reset(widgetId);
+    return token;
+  };
+
+  /** Trimmed honeypot value; empty means a human-looking submit. */
+  const honeypotValue = (form) => {
+    const field = form.elements.namedItem(HONEYPOT_NAME);
+    if (!field || typeof field.value !== "string") return "";
+    return field.value.trim();
+  };
+
+  /** True when the form is submitted faster than MIN_SUBMIT_MS after bind. */
+  const isSubmitTooFast = (form) => {
+    const loadedAt = Number(form.dataset.formLoadedAt || 0);
+    if (!loadedAt) return true;
+    return Date.now() - loadedAt < MIN_SUBMIT_MS;
+  };
+
+  /** Immediate retry would skip waiting out timing or rate-limit windows. */
+  const allowsImmediateRetry = (reason) => reason !== "too_fast" && reason !== "rate_limited";
 
   /** Log a structured form event without field values. */
   const logEvent = (level, details) => {
@@ -63,6 +187,7 @@
     if (error.solonCode) return error.solonCode;
     const name = error.name || "";
     const message = String(error.message || "");
+    if (SPAM_CODES[message]) return message;
     if (name === "AbortError" || /aborted|timeout/i.test(message)) return "timeout";
     if (name === "TypeError" || /failed to fetch|network/i.test(message)) return "network";
     if (name === "SyntaxError") return "invalid_response";
@@ -151,7 +276,14 @@
   };
 
   /** POST one form payload to Apps Script and require `{ ok: true }`. */
-  const postForm = async (type, values) => {
+  const postForm = async (type, values, form) => {
+    const data = {
+      ...values,
+      formLoadedAt: Number(form?.dataset.formLoadedAt) || 0,
+    };
+    if (isTurnstileConfigured()) {
+      data.turnstileToken = await getTurnstileToken(form);
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
@@ -161,7 +293,7 @@
         credentials: "omit",
         redirect: "follow",
         signal: controller.signal,
-        body: JSON.stringify({ action: "append", data: values }),
+        body: JSON.stringify({ action: "append", data }),
       });
       if (!response.ok) throw taggedError("http", new Error("Request failed"));
       let result = null;
@@ -171,6 +303,8 @@
         throw taggedError("invalid_response", parseError);
       }
       if (!result || result.ok !== true) {
+        const code = result && typeof result.error === "string" ? result.error : "";
+        if (SPAM_CODES[code]) throw taggedError(code, new Error(code));
         throw taggedError("unconfirmed", new Error("The API did not confirm the save"));
       }
     } catch (error) {
@@ -247,6 +381,18 @@
     if (form.dataset.submitting === "true") return;
     if (!form.reportValidity()) return;
 
+    if (honeypotValue(form)) {
+      form.reset();
+      showStatus(form, MESSAGES[type], false);
+      return;
+    }
+
+    if (isSubmitTooFast(form)) {
+      logEvent("warn", { type: "form_submit_error", form: type, reason: "too_fast" });
+      showStatus(form, USER_ERRORS.too_fast, true);
+      return;
+    }
+
     form.dataset.submitting = "true";
     lock(form, true);
     showStatus(form, "", false);
@@ -255,11 +401,11 @@
       const date = today();
       const ip = await getIP();
       const values = valuesFor(form, type, ip, date);
-      await postForm(type, values);
+      await postForm(type, values, form);
 
       if (type === "Contact" && form.elements.namedItem("NewsletterOptIn")?.checked) {
         try {
-          await postForm("Newsletter", { Data: date, Email: values.Email, IP: ip });
+          await postForm("Newsletter", { Data: date, Email: values.Email, IP: ip }, form);
         } catch (newsletterError) {
           logEvent("error", {
             type: "form_submit_error",
@@ -274,7 +420,7 @@
             form,
             "Mesajul a fost trimis. Abonarea la newsletter nu a putut fi confirmată.",
             true,
-            () => postForm("Newsletter", { Data: date, Email: values.Email, IP: ip })
+            () => postForm("Newsletter", { Data: date, Email: values.Email, IP: ip }, form)
           );
           return;
         }
@@ -291,11 +437,14 @@
         reason,
         name: error?.name,
       });
-      showStatus(form, USER_ERRORS[reason] || USER_ERRORS.unknown, true, {
-        run: () => handleSubmit(form, type),
-        label: "Încearcă din nou",
-        managed: true,
-      });
+      showStatus(
+        form,
+        USER_ERRORS[reason] || USER_ERRORS.unknown,
+        true,
+        allowsImmediateRetry(reason)
+          ? { run: () => handleSubmit(form, type), label: "Încearcă din nou", managed: true }
+          : null
+      );
     } finally {
       form.dataset.submitting = "false";
       lock(form, false);
@@ -307,6 +456,11 @@
     if (!SCHEMAS[type]) return;
 
     setupFormButtons(form);
+    form.dataset.formLoadedAt = String(Date.now());
+    form.addEventListener("focusin", () => {
+      if (!form.dataset.formFocusedAt) form.dataset.formFocusedAt = String(Date.now());
+    });
+    turnstileReady.set(form, mountTurnstile(form));
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
