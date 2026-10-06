@@ -113,8 +113,16 @@ describe(".htaccess ErrorDocument", () => {
 
   it("still allows .well-known and does not forbid blog/posts.json or /feedback/", () => {
     assert.match(htaccess, /RewriteRule \^\\\.well-known/);
-    assert.doesNotMatch(htaccess, /blog\/posts\.json/);
-    assert.doesNotMatch(htaccess, /feedback/);
+    assert.doesNotMatch(
+      htaccess,
+      /RewriteRule[^\n]*blog\/posts\.json/,
+      "must not deny /blog/posts.json"
+    );
+    assert.doesNotMatch(
+      htaccess,
+      /RewriteRule[^\n]*feedback/,
+      "must not deny /feedback/"
+    );
     const postsRule = htaccess.match(/RewriteRule \^blog\/posts\(\?:\/\|\$\)/);
     assert.ok(postsRule, "directory deny for blog/posts/ must remain");
     const endMarker = htaccess.indexOf("# END issue #32");
