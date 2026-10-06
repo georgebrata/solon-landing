@@ -22,6 +22,11 @@ const TRACKER_PATTERNS = [
   /meta-pixel/i,
 ];
 
+/**
+ * Read a repository file as UTF-8 text.
+ * @param {string} rel Path relative to the repo root.
+ * @returns {string}
+ */
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), "utf8");
 
 describe("branded error pages", () => {

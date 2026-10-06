@@ -14,13 +14,21 @@ const SITEMAP_EXCLUDED_PATHS = new Set([
   "/403/",
 ]);
 
+/**
+ * True when a sitemap loc is an error document that must not be listed.
+ * @param {string} loc Absolute sitemap URL.
+ * @returns {boolean}
+ */
 const isExcludedFromSitemap = (loc) => {
-  try {
-    const { pathname } = new URL(loc);
-    return SITEMAP_EXCLUDED_PATHS.has(pathname);
-  } catch {
+  if (typeof loc !== "string" || !loc.startsWith(`${BASE_URL}/`)) {
     return false;
   }
+  let pathname = loc.slice(BASE_URL.length);
+  const queryIndex = pathname.indexOf("?");
+  if (queryIndex !== -1) {
+    pathname = pathname.slice(0, queryIndex);
+  }
+  return SITEMAP_EXCLUDED_PATHS.has(pathname);
 };
 
 const now = new Date().toISOString();
