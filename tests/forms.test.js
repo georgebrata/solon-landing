@@ -8,7 +8,7 @@ const test = require("node:test");
 
 const source = fs.readFileSync(path.join(__dirname, "../assets/js/forms.js"), "utf8");
 
-function harness(types, options = {}) {
+const harness = (types, options = {}) => {
   const requests = [];
   const clock = { now: 1_700_000_000_000 };
   const BaseDate = options.Date || Date;
@@ -22,7 +22,6 @@ function harness(types, options = {}) {
       return clock.now;
     }
   }
-  HarnessDate.now = () => clock.now;
   HarnessDate.parse = BaseDate.parse;
   HarnessDate.UTC = BaseDate.UTC;
 
@@ -80,7 +79,7 @@ function harness(types, options = {}) {
       querySelectorAll() { return [submit]; },
       querySelector() { return null; },
       appendChild(node) { this._children = this._children || []; this._children.push(node); return node; },
-      async dispatch() {
+      dispatch() {
         if (options.elapsedMs !== 0) clock.now += options.elapsedMs ?? 5000;
         let prevented = false;
         const result = this.listeners.submit({ preventDefault() { prevented = true; } });
@@ -125,9 +124,9 @@ function harness(types, options = {}) {
           async: false,
           onload: null,
           onerror: null,
-          setAttribute() {},
+          setAttribute(name, value) { this.attrs = this.attrs || {}; this.attrs[name] = value; },
           addEventListener(name, fn) { this.listeners = this.listeners || {}; this.listeners[name] = fn; },
-          async click() { return this.listeners.click(); },
+          click() { return this.listeners.click(); },
         };
       },
     },
@@ -150,7 +149,7 @@ function harness(types, options = {}) {
   context.window = context;
   vm.runInNewContext(code, context, { filename: "forms.js" });
   return { forms, requests, clock };
-}
+};
 
 function dataRequests(requests) {
   return requests.filter(({ url }) => !url.includes("ipify"));
@@ -175,7 +174,7 @@ test("maps Contact, Telefon, and Newsletter to their sheet payloads", async () =
   ]);
   assert.equal(typeof parsed[0].body.data.formLoadedAt, "number");
   assert.ok(parsed[0].body.data.formLoadedAt > 0);
-  assert.equal(parsed[0].body.data.turnstileToken, undefined);
+  assert.equal(Object.hasOwn(parsed[0].body.data, "turnstileToken"), false);
   assert.equal(parsed[0].body.data.Nume, "Ada Lovelace");
   assert.equal(parsed[0].body.data.Mesaj, "Hello\nworld");
   assert.equal(parsed[1].body.data.Telefon, "+40 777 123 456");
@@ -354,7 +353,7 @@ test("includes a Turnstile token in the body when the site key is configured", a
     turnstile: {
       render() { return "widget-1"; },
       getResponse() { return "turnstile-token-test"; },
-      reset() {},
+      reset() { return true; },
     },
   });
   await forms[0].dispatch();
@@ -369,7 +368,7 @@ test("fails when Turnstile is configured but the token is missing", async () => 
     turnstile: {
       render() { return "widget-1"; },
       getResponse() { return ""; },
-      reset() {},
+      reset() { return true; },
     },
   });
   await forms[0].dispatch();
@@ -382,7 +381,7 @@ test("skips Turnstile when the site key is the placeholder and still sends after
   const { forms, requests } = harness(["Newsletter"]);
   await forms[0].dispatch();
   const body = JSON.parse(dataRequests(requests)[0].init.body).data;
-  assert.equal(body.turnstileToken, undefined);
+  assert.equal(Object.hasOwn(body, "turnstileToken"), false);
   assert.equal(typeof body.formLoadedAt, "number");
 });
 

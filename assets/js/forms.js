@@ -40,7 +40,7 @@
 
   /** Cloudflare Turnstile API attached to window, if loaded. */
   function turnstileApi() {
-    if (typeof window === "undefined") return undefined;
+    if (typeof window === "undefined") return;
     return window.turnstile;
   }
 
