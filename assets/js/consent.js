@@ -389,7 +389,7 @@
       '<p class="solon-consent__hint">Meta Pixel și Brevo — măsurarea campaniilor. Pot implica publicitate măsurată.</p>' +
       "</div></div>" +
       '<div class="solon-consent__actions">' +
-      '<button type="button" class="solon-consent__btn solon-consent__btn--accept" data-consent-action="save">Salvează preferințele</button>' +
+      '<button type="button" class="solon-consent__btn solon-consent__btn--accept" data-consent-action="save">Salvează</button>' +
       '<button type="button" class="solon-consent__btn solon-consent__btn--reject" data-consent-action="reject">Respinge toate</button>' +
       '<button type="button" class="solon-consent__btn solon-consent__btn--customize" data-consent-action="close">Închide</button>' +
       "</div></div></div>";
@@ -469,6 +469,7 @@
   function openPreferences() {
     buildUi();
     syncToggles();
+    hideBanner();
     ui.lastFocus = doc.activeElement;
     if (ui.overlay) ui.overlay.hidden = false;
     if (ui.dialog) {
@@ -482,6 +483,7 @@
   function closeDialog() {
     if (ui.dialog) ui.dialog.hidden = true;
     if (ui.overlay) ui.overlay.hidden = true;
+    if (!readStored()) showBanner();
     if (ui.lastFocus && typeof ui.lastFocus.focus === "function") {
       ui.lastFocus.focus();
     }
