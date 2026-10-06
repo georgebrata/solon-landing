@@ -1,8 +1,9 @@
+"use strict";
+
 /**
  * Metricool tracker loader. Activated only after analytics consent.
  */
 (function () {
-  "use strict";
 
   const DEFAULT_HASH = "5eff58c72e852f80d27f8f1735299845";
   const current = document.currentScript;
@@ -21,7 +22,7 @@
    * @returns {void}
    */
   tag.onload = function onMetricoolLoad() {
-    if (window.beTracker && typeof window.beTracker.t === "function") {
+    if (typeof window.beTracker?.t === "function") {
       window.beTracker.t({ hash });
     }
   };

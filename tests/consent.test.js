@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const http = require("node:http");
 const path = require("node:path");
 const vm = require("node:vm");
 const test = require("node:test");
@@ -14,7 +15,7 @@ const source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
  * @param {Record<string, string>} [attrs]
  * @returns {object}
  */
-function createInertScript(category, attrs) {
+const createInertScript = function createInertScript(category, attrs) {
   const attributeList = [
     { name: "type", value: "text/plain" },
     { name: "data-consent-category", value: category },
@@ -48,13 +49,13 @@ function createInertScript(category, attrs) {
     },
   };
   return el;
-}
+};
 
 /**
  * @param {{store?: object, inertScripts?: object[], cookie?: string}} [options]
  * @returns {{api: object, context: object, store: object, created: object[], inertScripts: object[], listeners: object}}
  */
-function loadConsent(options = {}) {
+const loadConsent = function loadConsent(options = {}) {
   const store = options.store || {};
   const inertScripts = options.inertScripts || [];
   const created = [];
@@ -64,8 +65,16 @@ function loadConsent(options = {}) {
   const document = {
     readyState: "loading",
     cookie: "",
-    body: { appendChild() {} },
-    head: { appendChild() {} },
+    body: {
+      appendChild(node) {
+        return node;
+      },
+    },
+    head: {
+      appendChild(node) {
+        return node;
+      },
+    },
     getElementById() {
       return null;
     },
@@ -153,7 +162,7 @@ function loadConsent(options = {}) {
   vm.createContext(context);
   vm.runInContext(source, context);
   return { api: context.SolonConsent, context, store, created, inertScripts, listeners };
-}
+};
 
 test("default state denies analytics and marketing", () => {
   const { api, context } = loadConsent();
@@ -236,14 +245,14 @@ test("inert analytics scripts stay inert until analytics consent", () => {
   });
   api.activateInertScripts(api.getConsent());
   assert.equal(created.length, 0);
-  assert.equal(analytics.activated, undefined);
+  assert.equal(typeof analytics.activated, "undefined");
 
   api.saveCustom({ analytics: true, marketing: false });
   const activated = created.filter((el) => el.src);
   assert.equal(activated.length, 1);
   assert.equal(activated[0].src, "https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX");
   assert.equal(analytics.activated, "true");
-  assert.equal(marketing.activated, undefined);
+  assert.equal(typeof marketing.activated, "undefined");
 });
 
 test("accept all activates analytics and marketing inert tags", () => {
@@ -270,7 +279,7 @@ test("accept all activates analytics and marketing inert tags", () => {
 /**
  * @returns {string[]}
  */
-function htmlFiles() {
+const htmlFiles = function htmlFiles() {
   const files = [];
   const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs"]);
   /**
@@ -291,7 +300,7 @@ function htmlFiles() {
   }
   walk(root);
   return files;
-}
+};
 
 const SKIP_GATING = new Set([
   path.join(root, "100/index.html"),
@@ -304,7 +313,7 @@ const SKIP_GATING = new Set([
  * @param {string} html
  * @returns {boolean}
  */
-function hasLiveTracker(html) {
+const hasLiveTracker = function hasLiveTracker(html) {
   const re = /<script(\s[\s\S]*?)?>([\s\S]*?)<\/script>/gi;
   let match = re.exec(html);
   while (match) {
@@ -315,7 +324,7 @@ function hasLiveTracker(html) {
     if (!isInert && !isConsent) {
       const haystack = `${attrs}\n${body}`;
       if (
-        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker/.test(
+        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker|mny\.ro/.test(
           haystack
         )
       ) {
@@ -325,7 +334,7 @@ function hasLiveTracker(html) {
     match = re.exec(html);
   }
   return /<noscript>[\s\S]*facebook\.com\/tr[\s\S]*<\/noscript>/i.test(html);
-}
+};
 
 test("non-essential tracker tags are inert on source and generated pages", () => {
   const offenders = [];
@@ -338,6 +347,64 @@ test("non-essential tracker tags are inert on source and generated pages", () =>
     }
   }
   assert.deepEqual(offenders, []);
+});
+
+test("clean visit does not request mny.ro", async () => {
+  const widget = createInertScript("analytics", {
+    src: "https://mny.ro/npId.js?p=143413",
+  });
+  const { created } = loadConsent({ inertScripts: [widget] });
+  assert.equal(created.length, 0);
+  assert.equal(typeof widget.activated, "undefined");
+
+  const live = [];
+  for (const file of htmlFiles()) {
+    if (!SKIP_GATING.has(file)) {
+      const html = fs.readFileSync(file, "utf8");
+      const re = /<script([^>]*)>/gi;
+      let match = re.exec(html);
+      while (match) {
+        const attrs = match[1] || "";
+        const mentionsMny = /mny\.ro/i.test(attrs);
+        const isInert = /type\s*=\s*["']text\/plain["']/i.test(attrs);
+        if (mentionsMny && !isInert) {
+          live.push(path.relative(root, file));
+        }
+        match = re.exec(html);
+      }
+    }
+  }
+  assert.deepEqual(live, []);
+
+  const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const server = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(homepage);
+  });
+  await new Promise((resolve) => {
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  try {
+    const address = server.address();
+    let port = 0;
+    if (address && typeof address === "object") {
+      port = address.port;
+    }
+    const res = await fetch(`http://127.0.0.1:${port}/`);
+    const body = await res.text();
+    const liveOnVisit = /<script(?![^>]*type=["']text\/plain["'])[^>]*mny\.ro/i.test(body);
+    assert.equal(liveOnVisit, false);
+  } finally {
+    await new Promise((resolve, reject) => {
+      server.close((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 });
 
 test("pages with trackers or site footer include the consent manager", () => {
@@ -379,6 +446,7 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
     "Ahrefs",
     "Metricool",
     "counter.dev",
+    "mny.ro",
     "Meta Pixel",
     "Brevo",
     "Consent Mode",

@@ -1,8 +1,9 @@
+"use strict";
+
 /**
  * Brevo JS SDK init. Activated only after marketing consent (homepage).
  */
 (function () {
-  "use strict";
 
   if (!window.Brevo) {
     window.Brevo = [];

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * SOLON cookie consent manager (GDPR / ePrivacy).
  *
@@ -7,7 +9,7 @@
  *     version: number,          // CONSENT_VERSION below; bump to re-prompt everyone
  *     timestamp: string,        // ISO-8601
  *     necessary: true,          // always on
- *     analytics: boolean,       // GA4, Clarity, Ahrefs, Metricool, counter.dev
+ *     analytics: boolean,       // GA4, Clarity, Ahrefs, Metricool, counter.dev, mny.ro ANPC widget
  *     marketing: boolean        // Meta Pixel, Brevo
  *   }
  *   Retention: 12 months from timestamp. Version mismatch or expiry → re-prompt.
@@ -16,25 +18,7 @@
  * gtag/GTM tag is activated. Tracker <script type="text/plain" data-consent-category="...">
  * tags stay inert until the matching category is granted.
  */
-
-/** @returns {object} */
-function resolveConsentGlobal() {
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  return globalThis;
-}
-
-/** @returns {Document|null} */
-function resolveConsentDocument() {
-  if (typeof document !== "undefined") {
-    return document;
-  }
-  return null;
-}
-
-(function (root) {
-  "use strict";
+(function () {
 
   const CONSENT_VERSION = 1;
   const STORAGE_KEY = "solon_cookie_consent";
@@ -61,8 +45,14 @@ function resolveConsentDocument() {
     "data-consent-activated": true,
   };
 
-  const win = root;
-  const doc = resolveConsentDocument();
+  let win = globalThis;
+  if (typeof window !== "undefined") {
+    win = window;
+  }
+  let doc = null;
+  if (typeof document !== "undefined") {
+    doc = document;
+  }
   const ui = {
     root: null,
     banner: null,
@@ -227,7 +217,7 @@ function resolveConsentDocument() {
       return;
     }
     let secure = "";
-    if (win.location && win.location.protocol === "https:") {
+    if (win.location?.protocol === "https:") {
       secure = "; Secure";
     }
     doc.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
@@ -333,7 +323,7 @@ function resolveConsentDocument() {
     if (category === "necessary") {
       return true;
     }
-    return isGrantedFlag(current && current[category]);
+    return isGrantedFlag(current?.[category]);
   }
 
   /** @returns {object} */
@@ -418,10 +408,10 @@ function resolveConsentDocument() {
    * @returns {void}
    */
   function expireTrackerCookies() {
-    if (!doc || !doc.cookie) {
+    if (!doc?.cookie) {
       return;
     }
-    const host = (win.location && win.location.hostname) || "";
+    const host = win.location?.hostname || "";
     const parts = String(doc.cookie).split(";");
     for (const part of parts) {
       const name = part.split("=")[0].trim();
@@ -542,10 +532,10 @@ function resolveConsentDocument() {
     const marketingEl = qs("#solon-consent-marketing");
     let analyticsOn = false;
     let marketingOn = false;
-    if (analyticsEl && analyticsEl.checked) {
+    if (analyticsEl?.checked) {
       analyticsOn = true;
     }
-    if (marketingEl && marketingEl.checked) {
+    if (marketingEl?.checked) {
       marketingOn = true;
     }
     saveCustom({
@@ -567,7 +557,7 @@ function resolveConsentDocument() {
 
   /** @returns {string} */
   function cookiesPolicyHref() {
-    const path = (win.location && win.location.pathname) || "/";
+    const path = win.location?.pathname || "/";
     if (path === "/" || path === "/index.html") {
       return "./cookies/";
     }
@@ -757,7 +747,7 @@ function resolveConsentDocument() {
           createCategory({
             id: "solon-consent-analytics",
             label: "Analiză",
-            hint: "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare.",
+            hint: "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool, counter.dev și widget-ul ANPC (mny.ro).",
             input: analyticsInput,
           }),
           createCategory({
@@ -796,7 +786,7 @@ function resolveConsentDocument() {
    * @returns {void}
    */
   function buildUi() {
-    if (!doc || !doc.body || ui.root) {
+    if (!doc?.body || ui.root) {
       return;
     }
     const rootEl = h("div", { id: "solon-consent", className: "solon-consent" });
@@ -824,7 +814,7 @@ function resolveConsentDocument() {
     if (event.target instanceof Element) {
       return event.target;
     }
-    if (event.target && event.target.parentElement) {
+    if (event.target?.parentElement) {
       return event.target.parentElement;
     }
     return null;
@@ -1082,4 +1072,4 @@ function resolveConsentDocument() {
   if (doc) {
     boot();
   }
-})(resolveConsentGlobal());
+})();

@@ -1,8 +1,9 @@
+"use strict";
+
 /**
  * Microsoft Clarity loader. Activated only after analytics consent.
  */
 (function () {
-  "use strict";
 
   const PROJECT_ID = "w9hin0o1ua";
   /**
@@ -22,7 +23,7 @@
   tag.async = true;
   tag.src = `https://www.clarity.ms/tag/${PROJECT_ID}`;
   const first = document.getElementsByTagName("script")[0];
-  if (first && first.parentNode) {
+  if (first?.parentNode) {
     first.parentNode.insertBefore(tag, first);
   } else {
     document.head.appendChild(tag);

@@ -1,8 +1,9 @@
+"use strict";
+
 /**
  * GA4 config command. Activated only after analytics consent.
  */
 (function () {
-  "use strict";
 
   if (!window.dataLayer) {
     window.dataLayer = [];
