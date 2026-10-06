@@ -1,0 +1,39 @@
+# Defence in depth for Hostico cPanel Apache (public_html).
+# Forbids HTTP access to VCS, build tooling, and sources that must not be public.
+# Does not rewrite or redirect existing HTML routes; DirectoryIndex still serves
+# /blog/<slug>/, /studii-de-caz/, etc. .well-known stays allowed for ACME.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Let's Encrypt / other well-known challenges
+  RewriteRule ^\.well-known(?:/|$) - [L]
+
+  # Dotfiles and dot-directories (.git, .github, .ftp-deploy-sync-state.json, ...)
+  RewriteRule (^|/)\. - [F,L]
+
+  # Tooling directories (not part of the runtime site)
+  RewriteRule ^(?:tests|scripts|templates|docs|node_modules|skills)(?:/|$) - [F,L]
+  RewriteRule ^blog/posts(?:/|$) - [F,L]
+</IfModule>
+
+<FilesMatch "\.(md|markdown|toml|jsonl|yml|yaml)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(package\.json|package-lock\.json|feature-flags\.json|LICENSE)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

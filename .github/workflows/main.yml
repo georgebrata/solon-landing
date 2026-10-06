@@ -1,34 +1,106 @@
+# Production pipeline for solon.agency
+#
+# Policy: pull requests never FTP-deploy. Tests and npm audit run on every
+# push/PR to main. FTP deploy runs only after CI succeeds on push to main
+# or an intentional workflow_dispatch.
+#
+# This file supersedes the outdated claim in issue #21 that .github/workflows/
+# is empty. Lighthouse CI and W3C HTML validation from #21 remain follow-ups.
+#
+# Branch protection (human, Settings → Branches → main): mark the "ci" check
+# required before merging. Agents cannot always change org/repo rules.
+
 name: CI Production
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: [main]
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: read
+
 jobs:
-  cd:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [14]
-
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: deploy
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      # Node 22 LTS (Jod) confirmed still in LTS on https://nodejs.org as of 2026-10.
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test forms
+        run: npm run test:forms
+
+      - name: Test feature flags
+        run: npm run test:flags
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+  deploy:
+    name: deploy
+    needs: [ci]
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # dangerous-clean-slate is intentionally omitted (defaults to false).
+      # Do not enable it: that flag wipes server-dir including excluded paths.
+      # The action still deletes remote files that are in the previous sync
+      # state and no longer in the local publish set. Excluded globs are
+      # omitted from both upload and delete (applyExcludeFilter on local and
+      # server lists), so previously leaked tooling files will not be removed
+      # by CI — clean those up in cPanel. .htaccess is uploaded (not excluded).
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
         with:
           server: ftp.solon.agency
-          username: deploy@solon.agency	
-          password: ${{secrets.FTP_PASSWORD}}
+          username: deploy@solon.agency
+          password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+            **/tests/**
+            **/docs/**
+            **/.github/**
+            **/.githooks/**
+            **/.agents/**
+            **/skills/**
+            **/.cursorrules
+            **/AGENTS.md
+            **/package.json
+            **/package-lock.json
+            **/.gitignore
+            **/.deepsource.toml
+            **/feature-flags.json
+            **/scripts/**
+            **/templates/**
+            **/blog/posts/**
+            **/*.md
+            !**/assets/**/*.md
+            **/LICENSE
+            **/*.jsonl
+            **/assets/scss/**
+            **/.ftp-deploy-sync-state.json
+            !**/.htaccess
