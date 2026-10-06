@@ -34,6 +34,28 @@ Deploy uses `SamKirkland/FTP-Deploy-Action` with an exclude list so VCS, `node_m
 
 Repo admins should make the **ci** check required on `main`: **Settings → Branches → Add/Edit branch protection rule for `main` → Require status checks to pass before merging → search for `ci`**. Agents cannot always change that setting.
 
+## Error reporting
+
+Client JavaScript uses a small logger in `assets/js/error-log.js` (no Sentry SDK). It:
+
+- writes structured console lines: `[solon <level>]` plus `{ ts, level, type, message, context }`
+- catches `window` errors and unhandled promise rejections
+- redacts emails, IP addresses, and phone numbers
+- never includes form field values in the payload
+
+Remote delivery is **off by default**. To enable it, set one or both of **before** `error-log.min.js` (Hostico: a small inline `<script>` in the page/template, or the constants at the top of `error-log.js`):
+
+| Config | How | What it does |
+| --- | --- | --- |
+| Generic webhook | `window.SOLON_ERROR_ENDPOINT = "https://…"` | POSTs JSON (`info` and above) |
+| Sentry | `window.SOLON_SENTRY_DSN = "https://<key>@<host>/<project>"` | POSTs to Sentry's Store API (`warn` and above), without loading the Sentry browser SDK |
+
+Keep the endpoint/DSN out of git if it is secret; a public Sentry DSN is designed to be used in the browser. Failed deliveries retry with backoff and never throw into page code.
+
+Form POST to Google Apps Script is **not** auto-retried (duplicate rows). Visitors get Romanian copy; **Încearcă din nou** is offered for network/timeout/HTTP/captcha failures, not for `too_fast` or `rate_limited`.
+
+See [docs/forms.md](docs/forms.md) for form-specific error states.
+
 ## Features
 - Responsive design
 - Contact, callback, and newsletter forms submit directly to Google Apps Script using vanilla JavaScript. See [form integration documentation](docs/forms.md).

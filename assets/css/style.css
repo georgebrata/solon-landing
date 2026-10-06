@@ -2070,7 +2070,8 @@ form[data-solon-form] input[type="submit"].is-loading {
   color: #a12622;
 }
 
-.solon-newsletter-retry {
+.solon-newsletter-retry,
+.solon-form-retry {
   margin-top: 8px;
   border: 0;
   padding: 4px 0;

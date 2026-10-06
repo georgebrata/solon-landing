@@ -1,10 +1,14 @@
-(function () {
-    "use strict";
+"use strict";
 
+/**
+ * Homepage FAQ list loaded from Google Sheets.
+ */
+(function () {
     const URL = "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
     const faqList = document.getElementById("faq-list");
     const faqListParent = document.getElementById("faq");
 
+    /** Append one FAQ item to the list. */
     const appendItem = (itemHtml) => {
         const newFaqListItem = document.createElement("li");
         newFaqListItem.innerHTML = itemHtml;
@@ -12,8 +16,9 @@
         faqList.appendChild(newFaqListItem);
     };
 
+    /** Build the collapse markup for one FAQ row. */
     const createFaqTemplate = (faqObject, index) => {
-        let { intrebare, raspuns } = faqObject;
+        const { intrebare, raspuns } = faqObject;
 
         return `<li data-aos="fade-in" data-aos-delay="${index*100}">
             <i class="bx bx-help-circle icon-help"></i>
@@ -29,24 +34,43 @@
         </li>`;
     };
 
+    /** Hide the FAQ loading indicator if present. */
     const hideLoading = () => {
-        const loading = document.getElementById("loading");
-        loading.classList.add("hidden");
+        document.getElementById("loading")?.classList.add("hidden");
     };
 
-    async function renderLibraryItems() {
-        let response, items;
+    /** Report a FAQ load failure without exposing payload data. */
+    const logFaqError = (error) => {
+        const logger = globalThis?.SolonLog;
+        if (typeof logger?.error === "function") {
+            logger.error({
+                type: "faq_load_error",
+                message: error?.message,
+                name: error?.name,
+            });
+            return;
+        }
+        console?.error("[solon error]", { type: "faq_load_error", name: error?.name });
+    };
+
+    /** Fetch and render visible FAQ items. */
+    const renderLibraryItems = async () => {
+        if (!faqList || !faqListParent) return;
+
+        let items = [];
         try {
-            response = await fetch(URL);
+            const response = await fetch(URL);
+            if (!response.ok) throw new Error("FAQ request failed");
             items = await response.json();
         } catch (error) {
-            console.error(error);
+            logFaqError(error);
+            hideLoading();
+            faqListParent.classList.add("hidden");
             return;
         }
 
         hideLoading();
-        let visibleItems = items.filter(item => item.Visible);
-        console.log(visibleItems);
+        const visibleItems = Array.isArray(items) ? items.filter((item) => item.Visible) : [];
 
         if (visibleItems.length === 0) {
             faqListParent.classList.add("hidden");
@@ -62,7 +86,11 @@
                 appendItem(createFaqTemplate(element, index));
             }
         });
-    }
+    };
 
-    renderLibraryItems();
+    renderLibraryItems().catch((error) => {
+        logFaqError(error);
+        hideLoading();
+        faqListParent?.classList.add("hidden");
+    });
 })();

@@ -10,6 +10,7 @@ const source = fs.readFileSync(path.join(__dirname, "../assets/js/forms.js"), "u
 
 const harness = (types, options = {}) => {
   const requests = [];
+  const logs = [];
   const clock = { now: 1_700_000_000_000 };
   const BaseDate = options.Date || Date;
   class HarnessDate extends BaseDate {
@@ -40,7 +41,7 @@ const harness = (types, options = {}) => {
       hidden: true,
       textContent: "",
       children: [],
-      classList: { toggle() {} },
+      classList: { toggle: () => undefined },
       append(...children) { this.children.push(...children); },
     };
     const submitClassList = new Set();
@@ -126,7 +127,7 @@ const harness = (types, options = {}) => {
           onerror: null,
           setAttribute(name, value) { this.attrs = this.attrs || {}; this.attrs[name] = value; },
           addEventListener(name, fn) { this.listeners = this.listeners || {}; this.listeners[name] = fn; },
-          click() { return this.listeners.click(); },
+          async click() { return this.listeners.click(); },
         };
       },
     },
@@ -140,20 +141,45 @@ const harness = (types, options = {}) => {
     Intl,
     Date: HarnessDate,
     URLSearchParams,
-    setTimeout: options.setTimeout || setTimeout,
+    JSON,
+    Promise,
+    SyntaxError,
+    TypeError,
+    WeakMap,
+    console: options.console || {
+      info: () => undefined,
+      warn: () => undefined,
+      error: () => undefined,
+      log: () => undefined,
+    },
+    SolonLog: options.SolonLog || {
+      info: (event) => { logs.push({ level: "info", event }); },
+      warn: (event) => { logs.push({ level: "warn", event }); },
+      error: (event) => { logs.push({ level: "error", event }); },
+    },
+    setTimeout: options.setTimeout || ((fn, ms) => {
+      if (ms > 0 && ms <= 1000) return setTimeout(fn, 0);
+      return setTimeout(fn, ms);
+    }),
     clearTimeout: options.clearTimeout || clearTimeout,
     encodeURIComponent,
     Error,
     turnstile: options.turnstile,
   };
   context.window = context;
+  context.globalThis = context;
   vm.runInNewContext(code, context, { filename: "forms.js" });
-  return { forms, requests, clock };
+  return { forms, requests, logs, clock };
 };
 
-function dataRequests(requests) {
-  return requests.filter(({ url }) => !url.includes("ipify"));
-}
+const dataRequests = (requests) => requests.filter(({ url }) => !url.includes("ipify"));
+
+const spamFetch = (errorCode) => (url) => {
+  if (url.includes("ipify")) {
+    return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+  }
+  return Promise.resolve({ ok: true, json: () => ({ ok: false, error: errorCode }) });
+};
 
 test("maps Contact, Telefon, and Newsletter to their sheet payloads", async () => {
   const { forms, requests } = harness(["Contact", "Telefon", "Newsletter"]);
@@ -296,7 +322,8 @@ test("applies the 20-second timeout signal to submission requests", async () => 
   await forms[0].dispatch();
   assert.equal(timeout, 20000);
   assert.equal(submissionSignal.aborted, true);
-  assert.match(forms[0].status.textContent, /nu a reușit/);
+  assert.match(forms[0].status.textContent, /expirat/);
+  assert.equal(forms[0].status.children.length, 2);
 });
 
 test("prevents concurrent submissions and retries only Newsletter after partial success", async () => {
@@ -330,6 +357,75 @@ test("prevents concurrent submissions and retries only Newsletter after partial 
   assert.match(forms[0].status.textContent, /înregistrată/);
 });
 
+test("retries public IP lookup with backoff and still submits an empty IP", async () => {
+  let ipCalls = 0;
+  const { forms, requests } = harness(["Newsletter"], {
+    fetch: (url) => {
+      if (url.includes("ipify")) {
+        ipCalls += 1;
+        return Promise.reject(new Error("offline"));
+      }
+      return Promise.resolve({ ok: true, json: () => ({ ok: true }) });
+    },
+  });
+  await forms[0].dispatch();
+  assert.equal(ipCalls, 3);
+  assert.equal(JSON.parse(dataRequests(requests)[0].init.body).data.IP, "");
+});
+
+test("shows a Romanian network error and retries the same payload on demand", async () => {
+  let submits = 0;
+  const { forms, requests } = harness(["Newsletter"], {
+    fetch: (url) => {
+      if (url.includes("ipify")) return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      submits += 1;
+      if (submits === 1) return Promise.reject(new TypeError("Failed to fetch"));
+      return Promise.resolve({ ok: true, json: () => ({ ok: true }) });
+    },
+  });
+  await forms[0].dispatch();
+  assert.match(forms[0].status.textContent, /Nu am putut contacta serverul/);
+  assert.equal(forms[0].values.Email, "  ada@example.com ");
+  const retry = forms[0].status.children[1];
+  assert.equal(retry.textContent, "Încearcă din nou");
+  await retry.click();
+  assert.equal(submits, 2);
+  assert.match(forms[0].status.textContent, /înregistrată/);
+  assert.equal(forms[0].values.Email, "");
+  assert.equal(dataRequests(requests).length, 2);
+});
+
+test("logs submit failures without emails, IPs, or field values", async () => {
+  const { forms, logs } = harness(["Contact"], {
+    fetch: (url) => {
+      if (url.includes("ipify")) return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      return Promise.resolve({ ok: true, json: () => ({ ok: false, error: "Failed" }) });
+    },
+  });
+  await forms[0].dispatch();
+  const errorLogs = logs.filter((entry) => entry.level === "error");
+  assert.equal(errorLogs.length, 1);
+  const serialized = JSON.stringify(errorLogs[0].event);
+  assert.equal(errorLogs[0].event.form, "Contact");
+  assert.equal(errorLogs[0].event.reason, "unconfirmed");
+  assert.doesNotMatch(serialized, /ada@example.com/i);
+  assert.doesNotMatch(serialized, /203\.0\.113\.7/);
+  assert.doesNotMatch(serialized, /Ada Lovelace/);
+  assert.doesNotMatch(serialized, /Hello/);
+});
+
+test("logs successful submissions with the form type only", async () => {
+  const { forms, logs } = harness(["Telefon"]);
+  await forms[0].dispatch();
+  const infoLogs = logs.filter((entry) => entry.level === "info" && entry.event.type === "form_submit_ok");
+  assert.equal(infoLogs.length, 1);
+  assert.equal(infoLogs[0].event.form, "Telefon");
+  const serialized = JSON.stringify(infoLogs[0].event);
+  assert.doesNotMatch(serialized, /ada@example.com/i);
+  assert.doesNotMatch(serialized, /203\.0\.113\.7/);
+  assert.doesNotMatch(serialized, /\+40 777/);
+});
+
 test("does not call the API when the honeypot is filled and shows fake success", async () => {
   const { forms, requests } = harness(["Newsletter"], { honeypot: "https://spam.example" });
   await forms[0].dispatch();
@@ -345,15 +441,16 @@ test("rejects submits faster than three seconds without calling the API", async 
   assert.equal(requests.length, 0);
   assert.match(forms[0].status.textContent, /prea rapidă/);
   assert.equal(forms[0].values.Telefon, "  +40 777 123 456  ");
+  assert.equal(forms[0].status.children.length, 0);
 });
 
 test("includes a Turnstile token in the body when the site key is configured", async () => {
   const { forms, requests } = harness(["Newsletter"], {
     turnstileSiteKey: "1x00000000000000000000AA",
     turnstile: {
-      render() { return "widget-1"; },
-      getResponse() { return "turnstile-token-test"; },
-      reset() { return true; },
+      render: () => "widget-1",
+      getResponse: () => "turnstile-token-test",
+      reset: () => true,
     },
   });
   await forms[0].dispatch();
@@ -366,14 +463,14 @@ test("fails when Turnstile is configured but the token is missing", async () => 
   const { forms, requests } = harness(["Newsletter"], {
     turnstileSiteKey: "1x00000000000000000000AA",
     turnstile: {
-      render() { return "widget-1"; },
-      getResponse() { return ""; },
-      reset() { return true; },
+      render: () => "widget-1",
+      getResponse: () => "",
+      reset: () => true,
     },
   });
   await forms[0].dispatch();
   assert.equal(dataRequests(requests).length, 0);
-  assert.match(forms[0].status.textContent, /nu a reușit/);
+  assert.match(forms[0].status.textContent, /Verificarea de securitate/);
   assert.equal(forms[0].values.Email, "  ada@example.com ");
 });
 
@@ -383,6 +480,49 @@ test("skips Turnstile when the site key is the placeholder and still sends after
   const body = JSON.parse(dataRequests(requests)[0].init.body).data;
   assert.equal(Object.hasOwn(body, "turnstileToken"), false);
   assert.equal(typeof body.formLoadedAt, "number");
+});
+
+test("shows a Romanian captcha error and allows a user-initiated retry", async () => {
+  let submits = 0;
+  const { forms, requests } = harness(["Newsletter"], {
+    fetch: (url) => {
+      if (url.includes("ipify")) {
+        return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      }
+      submits += 1;
+      if (submits === 1) {
+        return Promise.resolve({ ok: true, json: () => ({ ok: false, error: "captcha" }) });
+      }
+      return Promise.resolve({ ok: true, json: () => ({ ok: true }) });
+    },
+  });
+  await forms[0].dispatch();
+  assert.match(forms[0].status.textContent, /Verificarea de securitate/);
+  assert.equal(forms[0].values.Email, "  ada@example.com ");
+  const retry = forms[0].status.children[1];
+  assert.equal(retry.textContent, "Încearcă din nou");
+  await retry.click();
+  assert.equal(submits, 2);
+  assert.match(forms[0].status.textContent, /înregistrată/);
+  assert.equal(dataRequests(requests).length, 2);
+});
+
+test("maps too_fast from the API without an immediate retry control", async () => {
+  const { forms, requests } = harness(["Newsletter"], { fetch: spamFetch("too_fast") });
+  await forms[0].dispatch();
+  assert.match(forms[0].status.textContent, /prea rapidă/);
+  assert.equal(forms[0].values.Email, "  ada@example.com ");
+  assert.equal(forms[0].status.children.length, 0);
+  assert.equal(dataRequests(requests).length, 1);
+});
+
+test("maps rate_limited from the API without an immediate retry control", async () => {
+  const { forms, requests } = harness(["Newsletter"], { fetch: spamFetch("rate_limited") });
+  await forms[0].dispatch();
+  assert.match(forms[0].status.textContent, /prea multe cereri/);
+  assert.equal(forms[0].values.Email, "  ada@example.com ");
+  assert.equal(forms[0].status.children.length, 0);
+  assert.equal(dataRequests(requests).length, 1);
 });
 
 test("honeypot markup is hidden from assistive tech and the keyboard", () => {

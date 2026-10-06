@@ -7,7 +7,7 @@
     "flags:dry": "node scripts/apply-feature-flags.js --dry-run",
     "flags:status": "node scripts/apply-feature-flags.js --status",
     "test:flags": "node scripts/test-feature-flags.js",
-    "test:forms": "node --test tests/forms.test.js tests/turnstile-gate.test.js",
+    "test:forms": "node --test tests/forms.test.js tests/error-log.test.js tests/turnstile-gate.test.js",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "test:chat": "node --test tests/support-chat.test.js"
   },
