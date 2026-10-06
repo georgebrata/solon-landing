@@ -10,7 +10,9 @@ exclude_patterns = [
   "templates/**"
 ]
 
-test_patterns = []
+test_patterns = [
+  "tests/**"
+]
 
 [[analyzers]]
 name = "javascript"
