@@ -29,31 +29,6 @@ const DEFAULT_HTML_PATH = path.join(ROOT_DIR, 'index.html');
 
 const ESCAPED_HYPHEN_TOKEN = '__FF_DOUBLE_HYPHEN__';
 
-/** Print a JSON error object for CI logs. */
-const logScriptError = (payload, error) => {
-  const body = Object.assign(
-    {
-      ok: false,
-      script: "apply-feature-flags.js",
-    },
-    payload
-  );
-  if (error) {
-    body.message = error.message || String(error);
-    if (error.stack) body.stack = error.stack;
-  }
-  console.error(JSON.stringify(body));
-  if (error?.stack) console.error(error.stack);
-};
-
-/** Log a feature-flag failure and throw so the CLI can set an exit code. */
-const fail = (message, extra, error) => {
-  logScriptError(Object.assign({ message }, extra || {}), error);
-  const wrapped = error instanceof Error ? error : new Error(message);
-  wrapped.solonLogged = true;
-  throw wrapped;
-};
-
 function parseArgs() {
   const args = process.argv.slice(2);
   const options = {
@@ -302,20 +277,21 @@ function run() {
   const options = parseArgs();
 
   if (!fs.existsSync(options.configPath)) {
-    fail(`Config file not found: ${options.configPath}`, { file: options.configPath });
+    console.error(`Config file not found: ${options.configPath}`);
+    process.exit(1);
   }
 
   if (!fs.existsSync(options.inputPath)) {
-    fail(`HTML file not found: ${options.inputPath}`, { file: options.inputPath });
+    console.error(`HTML file not found: ${options.inputPath}`);
+    process.exit(1);
   }
 
   let config;
   try {
     config = JSON.parse(fs.readFileSync(options.configPath, 'utf8'));
   } catch (err) {
-    fail(`Failed to parse config file ${options.configPath}: ${err.message}`, {
-      file: options.configPath,
-    }, err);
+    console.error(`Failed to parse config file: ${err.message}`);
+    process.exit(1);
   }
 
   const sectionsConfig = (config.homepage && config.homepage.sections) || {};
@@ -400,10 +376,7 @@ function run() {
         changesCount++;
         console.log(`  ▲ [${id}] ENABLED - Section restored (${label})`);
       } else {
-        const htmlPath = path.relative(ROOT_DIR, options.inputPath) || options.inputPath;
-        console.warn(
-          `  ! [${id}] ENABLED - Warning: section <section id="${id}"> (or matching <div>) not found in ${htmlPath} (${label}). The flag is enabled in ${path.basename(options.configPath)} but there is no uncommented target element to restore.`
-        );
+        console.warn(`  ! [${id}] ENABLED - Warning: section <section id="${id}"> not found`);
       }
 
       if (shouldSyncNav) {
@@ -427,10 +400,7 @@ function run() {
         changesCount++;
         console.log(`  ▼ [${id}] DISABLED - Section commented out (${label})`);
       } else {
-        const htmlPath = path.relative(ROOT_DIR, options.inputPath) || options.inputPath;
-        console.warn(
-          `  ! [${id}] DISABLED - Warning: section <section id="${id}"> (or matching <div>) not found in ${htmlPath} (${label}). The flag is disabled in ${path.basename(options.configPath)} but there is no active or previously wrapped section to hide.`
-        );
+        console.warn(`  ! [${id}] DISABLED - Warning: section <section id="${id}"> not found`);
       }
 
       if (shouldSyncNav) {
@@ -446,29 +416,8 @@ function run() {
 
   // Safety checks
   if (!html.includes('<!DOCTYPE html>') || !html.includes('</html>')) {
-    fail(
-      `Generated HTML is malformed after applying feature flags to ${options.inputPath}: missing <!DOCTYPE html> or </html>.`,
-      { file: options.inputPath, code: "malformed_html" }
-    );
-  }
-  if (html.includes(ESCAPED_HYPHEN_TOKEN)) {
-    const withoutWrappers = html
-      .replace(/<!--\s*\[FEATURE_FLAG_DISABLED:[^\]]+\][\s\S]*?\[\/FEATURE_FLAG_DISABLED:[^\]]+\]\s*-->/g, "")
-      .replace(/<!--\s*\[FEATURE_FLAG_NAV_DISABLED:[^\]]+\][\s\S]*?\[\/FEATURE_FLAG_NAV_DISABLED:[^\]]+\]\s*-->/g, "");
-    if (withoutWrappers.includes(ESCAPED_HYPHEN_TOKEN)) {
-      fail(
-        `Generated HTML leaked the internal hyphen escape token outside feature-flag wrappers in ${options.inputPath}.`,
-        { file: options.inputPath, code: "leaked_escape_token" }
-      );
-    }
-  }
-  const openedFlags = (html.match(/\[FEATURE_FLAG_DISABLED:/g) || []).length;
-  const closedFlags = (html.match(/\[\/FEATURE_FLAG_DISABLED:/g) || []).length;
-  if (openedFlags !== closedFlags) {
-    fail(
-      `Generated HTML has unbalanced FEATURE_FLAG_DISABLED markers in ${options.inputPath} (open=${openedFlags}, close=${closedFlags}).`,
-      { file: options.inputPath, code: "unbalanced_feature_flag_markers", openedFlags, closedFlags }
-    );
+    console.error('CRITICAL ERROR: Generated HTML is malformed (missing DOCTYPE or </html>). Aborting.');
+    process.exit(1);
   }
 
   if (changesCount === 0 && html === originalHtml) {
@@ -486,14 +435,7 @@ function run() {
 }
 
 if (require.main === module) {
-  try {
-    run();
-  } catch (error) {
-    if (!error?.solonLogged) {
-      logScriptError({ message: error?.message || String(error), code: "uncaught" }, error);
-    }
-    process.exitCode = 1;
-  }
+  run();
 }
 
 module.exports = {

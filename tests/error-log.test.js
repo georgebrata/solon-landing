@@ -60,7 +60,7 @@ test("posts structured events to a configured webhook and retries network failur
   assert.equal(body.level, "error");
   assert.equal(body.type, "form_submit_error");
   assert.equal(body.context.form, "Newsletter");
-  assert.equal(body.context.email, undefined);
+  assert.equal("email" in body.context, false);
   assert.doesNotMatch(JSON.stringify(body), /ada@example.com/i);
 });
 

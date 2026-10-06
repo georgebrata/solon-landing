@@ -8,7 +8,7 @@ const test = require("node:test");
 
 const source = fs.readFileSync(path.join(__dirname, "../assets/js/forms.js"), "utf8");
 
-function harness(types, options = {}) {
+const harness = (types, options = {}) => {
   const requests = [];
   const forms = types.map((type, index) => {
     const values = {
@@ -22,7 +22,7 @@ function harness(types, options = {}) {
       hidden: true,
       textContent: "",
       children: [],
-      classList: { toggle() {} },
+      classList: { toggle: () => undefined },
       append(...children) { this.children.push(...children); },
     };
     const submitClassList = new Set();
@@ -102,11 +102,16 @@ function harness(types, options = {}) {
     Promise,
     SyntaxError,
     TypeError,
-    console: options.console || { info() {}, warn() {}, error() {}, log() {} },
+    console: options.console || {
+      info: () => undefined,
+      warn: () => undefined,
+      error: () => undefined,
+      log: () => undefined,
+    },
     SolonLog: options.SolonLog || {
-      info(event) { logs.push({ level: "info", event }); },
-      warn(event) { logs.push({ level: "warn", event }); },
-      error(event) { logs.push({ level: "error", event }); },
+      info: (event) => { logs.push({ level: "info", event }); },
+      warn: (event) => { logs.push({ level: "warn", event }); },
+      error: (event) => { logs.push({ level: "error", event }); },
     },
     setTimeout: options.setTimeout || ((fn, ms) => {
       if (ms > 0 && ms <= 1000) return setTimeout(fn, 0);
@@ -119,11 +124,9 @@ function harness(types, options = {}) {
   context.globalThis = context;
   vm.runInNewContext(source, context, { filename: "forms.js" });
   return { forms, requests, logs };
-}
+};
 
-function dataRequests(requests) {
-  return requests.filter(({ url }) => !url.includes("ipify"));
-}
+const dataRequests = (requests) => requests.filter(({ url }) => !url.includes("ipify"));
 
 test("maps Contact, Telefon, and Newsletter to their sheet payloads", async () => {
   const { forms, requests } = harness(["Contact", "Telefon", "Newsletter"]);

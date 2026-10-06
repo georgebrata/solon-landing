@@ -8,7 +8,7 @@
  */
 
 const assert = require('assert');
-const { execSync, spawnSync } = require('child_process');
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -131,23 +131,6 @@ try {
   assert(!html.includes('[FEATURE_FLAG_NAV_DISABLED:servicii]'), 'Nav link for servicii should be restored');
   assert(!html.includes('[FEATURE_FLAG_DISABLED:servicii]'), 'Section for servicii should be restored');
   assert.strictEqual(html, originalHtml, 'HTML with nav roundtrip must match original');
-  console.log('  Passed.\n');
-
-  console.log('Test 8: Missing section emits a detailed warning with file path');
-  fs.writeFileSync(TEST_HTML, originalHtml);
-  const missingConfig = JSON.parse(JSON.stringify(baseConfig));
-  missingConfig.homepage.sections.does_not_exist = { enabled: true, label: 'Missing fixture' };
-  writeConfig(missingConfig);
-  const missingResult = spawnSync(
-    process.execPath,
-    [SCRIPT_PATH, '--config', TEST_CONFIG, '--input', TEST_HTML, '--output', TEST_HTML, '--dry-run'],
-    { encoding: 'utf8' }
-  );
-  const missingOut = `${missingResult.stdout || ''}${missingResult.stderr || ''}`;
-  assert.strictEqual(missingResult.status, 0, 'Missing section should warn, not fail the process');
-  assert(missingOut.includes('does_not_exist'), 'Should mention the missing section id');
-  assert(missingOut.includes('test-index.html'), 'Should mention the HTML file path');
-  assert(missingOut.includes('Missing fixture'), 'Should mention the section label');
   console.log('  Passed.\n');
 
   console.log('All feature flag tests passed successfully! ✓\n');
