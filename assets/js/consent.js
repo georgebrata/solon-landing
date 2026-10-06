@@ -9,8 +9,8 @@
  *     version: number,          // CONSENT_VERSION below; bump to re-prompt everyone
  *     timestamp: string,        // ISO-8601
  *     necessary: true,          // always on
- *     analytics: boolean,       // GA4, Clarity, Ahrefs, Metricool, counter.dev, mny.ro ANPC widget
- *     marketing: boolean        // Meta Pixel, Brevo
+ *     analytics: boolean,       // GA4, Clarity, Ahrefs, Metricool, counter.dev
+ *     marketing: boolean        // Meta Pixel, Brevo, mny.ro ANPC widget
  *   }
  *   Retention: 12 months from timestamp. Version mismatch or expiry → re-prompt.
  *
@@ -747,13 +747,13 @@
           createCategory({
             id: "solon-consent-analytics",
             label: "Analiză",
-            hint: "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool, counter.dev și widget-ul ANPC (mny.ro).",
+            hint: "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare.",
             input: analyticsInput,
           }),
           createCategory({
             id: "solon-consent-marketing",
             label: "Marketing",
-            hint: "Meta Pixel și Brevo — măsurarea campaniilor. Pot implica publicitate măsurată.",
+            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Pot implica publicitate măsurată.",
             input: marketingInput,
           }),
         ]),

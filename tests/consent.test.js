@@ -349,15 +349,24 @@ test("non-essential tracker tags are inert on source and generated pages", () =>
   assert.deepEqual(offenders, []);
 });
 
-test("clean visit does not request mny.ro", async () => {
-  const widget = createInertScript("analytics", {
+test("clean visit does not request mny.ro until Acceptă toate", async () => {
+  const widget = createInertScript("marketing", {
     src: "https://mny.ro/npId.js?p=143413",
   });
-  const { created } = loadConsent({ inertScripts: [widget] });
-  assert.equal(created.length, 0);
+  const denied = loadConsent({ inertScripts: [widget] });
+  assert.equal(denied.created.length, 0);
   assert.equal(typeof widget.activated, "undefined");
 
+  denied.api.saveCustom({ analytics: true, marketing: false });
+  assert.equal(typeof widget.activated, "undefined");
+
+  denied.api.acceptAll();
+  const activated = denied.created.filter((el) => el.src === "https://mny.ro/npId.js?p=143413");
+  assert.equal(activated.length, 1);
+  assert.equal(widget.activated, "true");
+
   const live = [];
+  const wrongCategory = [];
   for (const file of htmlFiles()) {
     if (!SKIP_GATING.has(file)) {
       const html = fs.readFileSync(file, "utf8");
@@ -367,14 +376,19 @@ test("clean visit does not request mny.ro", async () => {
         const attrs = match[1] || "";
         const mentionsMny = /mny\.ro/i.test(attrs);
         const isInert = /type\s*=\s*["']text\/plain["']/i.test(attrs);
+        const isMarketing = /data-consent-category\s*=\s*["']marketing["']/i.test(attrs);
         if (mentionsMny && !isInert) {
           live.push(path.relative(root, file));
+        }
+        if (mentionsMny && !isMarketing) {
+          wrongCategory.push(path.relative(root, file));
         }
         match = re.exec(html);
       }
     }
   }
   assert.deepEqual(live, []);
+  assert.deepEqual(wrongCategory, []);
 
   const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const server = http.createServer((req, res) => {
@@ -394,6 +408,7 @@ test("clean visit does not request mny.ro", async () => {
     const body = await res.text();
     const liveOnVisit = /<script(?![^>]*type=["']text\/plain["'])[^>]*mny\.ro/i.test(body);
     assert.equal(liveOnVisit, false);
+    assert.match(body, /data-consent-category="marketing" src="https:\/\/mny\.ro\/npId\.js/);
   } finally {
     await new Promise((resolve, reject) => {
       server.close((err) => {
