@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * Lightweight SOLON client logger. Console always; webhook/Sentry are optional.
+ */
 (function (root) {
   const LEVELS = { debug: 10, info: 20, warn: 30, error: 40, critical: 50 };
   const DEFAULT_ENDPOINT = "";
@@ -9,6 +12,7 @@
   const REPORT_TIMEOUT_MS = 4000;
   const RETRY_DELAYS_MS = [0, 400, 1200];
 
+  /** Redact emails, IPs, and phone numbers from a log string. */
   const sanitize = (value) => {
     if (value == null) return "";
     return String(value)
@@ -19,6 +23,7 @@
       .slice(0, MAX_MESSAGE);
   };
 
+  /** Copy context keys while dropping PII field names. */
   const sanitizeContext = (context) => {
     const safe = {};
     if (!context || typeof context !== "object") return safe;
@@ -37,6 +42,7 @@
     return safe;
   };
 
+  /** Parse a Sentry DSN into a Store API URL and public key. */
   const parseSentryDsn = (dsn) => {
     if (!dsn || typeof dsn !== "string") return null;
     try {
@@ -53,14 +59,22 @@
     }
   };
 
+  /** Delay using the injected sleep function. */
   const wait = (ms, sleep) => sleep(ms);
 
+  /** Default sleep used when the logger is not under test. */
   const defaultSleep = (ms) => new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 
+  /** ISO timestamp for structured log events. */
   const defaultNow = () => new Date().toISOString();
 
+  /**
+   * Create a logger with optional fetch, endpoint, DSN, and console overrides.
+   * @param {object} [options]
+   * @returns {object}
+   */
   const createLogger = (options) => {
     const settings = options || {};
     const fetchImpl = settings.fetch || (typeof fetch === "function" ? fetch : null);
@@ -70,6 +84,7 @@
     const pending = [];
     const consoleImpl = settings.console || (typeof console !== "undefined" ? console : null);
 
+    /** Resolve the optional JSON webhook URL. */
     const endpoint = () => {
       if (typeof settings.endpoint === "string") return settings.endpoint.trim();
       if (typeof root?.SOLON_ERROR_ENDPOINT === "string") {
@@ -78,6 +93,7 @@
       return DEFAULT_ENDPOINT;
     };
 
+    /** Resolve the optional Sentry DSN. */
     const sentryDsn = () => {
       if (typeof settings.sentryDsn === "string") return settings.sentryDsn.trim();
       if (typeof root?.SOLON_SENTRY_DSN === "string") {
@@ -86,6 +102,7 @@
       return DEFAULT_SENTRY_DSN;
     };
 
+    /** Build a sanitized log payload. */
     const toPayload = (level, event) => {
       const source = event && typeof event === "object" ? event : { message: event };
       const href = typeof root?.location?.href === "string"
@@ -101,6 +118,7 @@
       };
     };
 
+    /** Write one structured line to the console. */
     const writeConsole = (level, payload) => {
       if (!consoleImpl) return;
       const method =
@@ -114,6 +132,7 @@
       }
     };
 
+    /** POST once with a timeout; never throw. */
     const postOnce = async (url, init) => {
       if (!fetchImpl) return false;
       const controller = typeof AbortController === "function" ? new AbortController() : null;
@@ -137,6 +156,7 @@
       }
     };
 
+    /** Deliver an event to the webhook and/or Sentry with backoff. */
     const deliver = async (payload) => {
       if (sentCount >= MAX_EVENTS) return;
 
@@ -181,8 +201,10 @@
       }
     };
 
+    /** Ignore a rejected reporting promise. */
     const swallow = () => undefined;
 
+    /** Record a console event and optionally report it. */
     const record = (level, event) => {
       try {
         const payload = toPayload(level, event);
@@ -198,6 +220,7 @@
       }
     };
 
+    /** Attach window error and unhandledrejection listeners. */
     const install = (target) => {
       const host = target || root;
       if (typeof host?.addEventListener !== "function") return;

@@ -4,6 +4,10 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const { createLogger, sanitize, parseSentryDsn } = require("../assets/js/error-log.js");
 
+const noop = () => undefined;
+const silentConsole = { info: noop, warn: noop, error: noop };
+const noSleep = () => Promise.resolve();
+
 test("redacts emails, IPs, and phone numbers from logged strings", () => {
   const sample =
     "user ada@example.com from 203.0.113.7 called +40 777 123 456";
@@ -19,12 +23,12 @@ test("redacts emails, IPs, and phone numbers from logged strings", () => {
 test("does not POST anywhere when no endpoint or DSN is configured", async () => {
   const calls = [];
   const logger = createLogger({
-    fetch: async (url, init) => {
+    fetch: (url, init) => {
       calls.push({ url, init });
-      return { ok: true };
+      return Promise.resolve({ ok: true });
     },
-    console: { info() {}, warn() {}, error() {} },
-    sleep: async () => {},
+    console: silentConsole,
+    sleep: noSleep,
   });
   logger.error({ type: "form_submit_error", message: "offline", form: "Contact" });
   await logger.flush();
@@ -35,13 +39,13 @@ test("posts structured events to a configured webhook and retries network failur
   const calls = [];
   const logger = createLogger({
     endpoint: "https://example.com/errors",
-    fetch: async (url, init) => {
+    fetch: (url, init) => {
       calls.push({ url, init });
-      if (calls.length === 1) throw new TypeError("Failed to fetch");
-      return { ok: true };
+      if (calls.length === 1) return Promise.reject(new TypeError("Failed to fetch"));
+      return Promise.resolve({ ok: true });
     },
-    console: { info() {}, warn() {}, error() {} },
-    sleep: async () => {},
+    console: silentConsole,
+    sleep: noSleep,
   });
   logger.error({
     type: "form_submit_error",
@@ -67,12 +71,12 @@ test("sends Sentry store events from a DSN without embedding the key in the body
   assert.equal(parsed.storeUrl, "https://o123.ingest.sentry.io/api/456/store/");
   const logger = createLogger({
     sentryDsn: dsn,
-    fetch: async (url, init) => {
+    fetch: (url, init) => {
       calls.push({ url, init });
-      return { ok: true };
+      return Promise.resolve({ ok: true });
     },
-    console: { info() {}, warn() {}, error() {} },
-    sleep: async () => {},
+    console: silentConsole,
+    sleep: noSleep,
   });
   logger.error({ type: "window_error", message: "boom" });
   await logger.flush();
@@ -84,7 +88,7 @@ test("sends Sentry store events from a DSN without embedding the key in the body
   assert.doesNotMatch(JSON.stringify(body), /publickey/);
 });
 
-test("installs an unhandledrejection listener that logs without PII", async () => {
+test("installs an unhandledrejection listener that logs without PII", () => {
   const records = [];
   const listeners = {};
   const target = {
@@ -94,11 +98,13 @@ test("installs an unhandledrejection listener that logs without PII", async () =
   };
   const logger = createLogger({
     console: {
-      info() {},
-      warn() {},
-      error(...args) { records.push(args[1]); },
+      info: noop,
+      warn: noop,
+      error: (...args) => {
+        records.push(args[1]);
+      },
     },
-    sleep: async () => {},
+    sleep: noSleep,
   });
   logger.install(target);
   listeners.unhandledrejection({

@@ -1,10 +1,14 @@
 "use strict";
 
+/**
+ * Homepage FAQ list loaded from Google Sheets.
+ */
 (function () {
     const URL = "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
     const faqList = document.getElementById("faq-list");
     const faqListParent = document.getElementById("faq");
 
+    /** Append one FAQ item to the list. */
     const appendItem = (itemHtml) => {
         const newFaqListItem = document.createElement("li");
         newFaqListItem.innerHTML = itemHtml;
@@ -12,6 +16,7 @@
         faqList.appendChild(newFaqListItem);
     };
 
+    /** Build the collapse markup for one FAQ row. */
     const createFaqTemplate = (faqObject, index) => {
         const { intrebare, raspuns } = faqObject;
 
@@ -29,10 +34,12 @@
         </li>`;
     };
 
+    /** Hide the FAQ loading indicator if present. */
     const hideLoading = () => {
         document.getElementById("loading")?.classList.add("hidden");
     };
 
+    /** Report a FAQ load failure without exposing payload data. */
     const logFaqError = (error) => {
         const logger = globalThis?.SolonLog;
         if (typeof logger?.error === "function") {
@@ -46,10 +53,11 @@
         console?.error("[solon error]", { type: "faq_load_error", name: error?.name });
     };
 
+    /** Fetch and render visible FAQ items. */
     const renderLibraryItems = async () => {
         if (!faqList || !faqListParent) return;
 
-        let items;
+        let items = [];
         try {
             const response = await fetch(URL);
             if (!response.ok) throw new Error("FAQ request failed");

@@ -301,12 +301,12 @@ test("prevents concurrent submissions and retries only Newsletter after partial 
 test("retries public IP lookup with backoff and still submits an empty IP", async () => {
   let ipCalls = 0;
   const { forms, requests } = harness(["Newsletter"], {
-    fetch: async (url) => {
+    fetch: (url) => {
       if (url.includes("ipify")) {
         ipCalls += 1;
-        throw new Error("offline");
+        return Promise.reject(new Error("offline"));
       }
-      return { ok: true, json: async () => ({ ok: true }) };
+      return Promise.resolve({ ok: true, json: () => ({ ok: true }) });
     },
   });
   await forms[0].dispatch();
@@ -317,14 +317,11 @@ test("retries public IP lookup with backoff and still submits an empty IP", asyn
 test("shows a Romanian network error and retries the same payload on demand", async () => {
   let submits = 0;
   const { forms, requests } = harness(["Newsletter"], {
-    fetch: async (url) => {
-      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
+    fetch: (url) => {
+      if (url.includes("ipify")) return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
       submits += 1;
-      if (submits === 1) {
-        const error = new TypeError("Failed to fetch");
-        throw error;
-      }
-      return { ok: true, json: async () => ({ ok: true }) };
+      if (submits === 1) return Promise.reject(new TypeError("Failed to fetch"));
+      return Promise.resolve({ ok: true, json: () => ({ ok: true }) });
     },
   });
   await forms[0].dispatch();
@@ -341,9 +338,9 @@ test("shows a Romanian network error and retries the same payload on demand", as
 
 test("logs submit failures without emails, IPs, or field values", async () => {
   const { forms, logs } = harness(["Contact"], {
-    fetch: async (url) => {
-      if (url.includes("ipify")) return { ok: true, json: async () => ({ ip: "203.0.113.7" }) };
-      return { ok: true, json: async () => ({ ok: false, error: "Failed" }) };
+    fetch: (url) => {
+      if (url.includes("ipify")) return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      return Promise.resolve({ ok: true, json: () => ({ ok: false, error: "Failed" }) });
     },
   });
   await forms[0].dispatch();

@@ -29,6 +29,7 @@ const DEFAULT_HTML_PATH = path.join(ROOT_DIR, 'index.html');
 
 const ESCAPED_HYPHEN_TOKEN = '__FF_DOUBLE_HYPHEN__';
 
+/** Print a JSON error object for CI logs. */
 const logScriptError = (payload, error) => {
   const body = Object.assign(
     {
@@ -45,9 +46,12 @@ const logScriptError = (payload, error) => {
   if (error?.stack) console.error(error.stack);
 };
 
+/** Log a feature-flag failure and throw so the CLI can set an exit code. */
 const fail = (message, extra, error) => {
   logScriptError(Object.assign({ message }, extra || {}), error);
-  process.exit(1);
+  const wrapped = error instanceof Error ? error : new Error(message);
+  wrapped.solonLogged = true;
+  throw wrapped;
 };
 
 function parseArgs() {
@@ -485,7 +489,10 @@ if (require.main === module) {
   try {
     run();
   } catch (error) {
-    fail(error.message || String(error), { code: "uncaught" }, error);
+    if (!error?.solonLogged) {
+      logScriptError({ message: error?.message || String(error), code: "uncaught" }, error);
+    }
+    process.exitCode = 1;
   }
 }
 

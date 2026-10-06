@@ -24,6 +24,7 @@ const jsFiles = [
   "support-chat.js",
 ];
 
+/** Print a JSON error object for CI logs. */
 const logScriptError = (payload, error) => {
   const body = Object.assign(
     {
@@ -110,7 +111,7 @@ async function minifyJs(relPath) {
     return true;
   }
   const input = fs.readFileSync(full, "utf8");
-  let result;
+  let result = null;
   try {
     result = await terserMinify(input, {
       compress: true,

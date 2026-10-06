@@ -35,7 +35,7 @@ function calculateReadTime(content) {
 }
 
 function parseMarkdown(filePath) {
-  let fileContent;
+  let fileContent = "";
   try {
     fileContent = fs.readFileSync(filePath, 'utf8');
   } catch (error) {
@@ -48,7 +48,7 @@ function parseMarkdown(filePath) {
     throw new Error(`Invalid frontmatter in ${filePath}`);
   }
 
-  let frontmatter;
+  let frontmatter = {};
   try {
     frontmatter = yaml.load(match[1]);
   } catch (error) {
@@ -229,10 +229,10 @@ build().catch((error) => {
   const payload = {
     ok: false,
     script: "build.js",
-    message: error && error.message ? error.message : String(error),
+    message: error?.message || String(error),
   };
-  if (error && error.stack) payload.stack = error.stack;
+  if (error?.stack) payload.stack = error.stack;
   console.error(JSON.stringify(payload));
-  if (error && error.stack) console.error(error.stack);
+  if (error?.stack) console.error(error.stack);
   process.exitCode = 1;
 });

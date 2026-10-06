@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * SOLON contact, callback, and newsletter form client.
+ */
 (function () {
   const API_URL =
     "https://script.google.com/macros/s/AKfycbzE0XZ-FU4FRdJXoFWUhgSsCrRPZKHRCaOpwZ16Ww9M7Ffgy0O6Xi2QvgxQNhplZxsd/exec";
@@ -25,6 +28,7 @@
   const IP_RETRY_DELAYS_MS = [0, 250, 750];
   let cachedIP = "";
 
+  /** Bucharest calendar date as YYYY-MM-DD. */
   const today = () =>
     new Intl.DateTimeFormat("en-CA", {
       timeZone: "Europe/Bucharest",
@@ -33,8 +37,10 @@
       day: "2-digit",
     }).format(new Date());
 
+  /** Wait for the given delay. */
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  /** Log a structured form event without field values. */
   const logEvent = (level, details) => {
     try {
       const logger = globalThis?.SolonLog;
@@ -51,6 +57,7 @@
     }
   };
 
+  /** Map a thrown value to a stable form error reason. */
   const classifySubmitError = (error) => {
     if (!error) return "unknown";
     if (error.solonCode) return error.solonCode;
@@ -64,11 +71,13 @@
     return "unknown";
   };
 
+  /** Attach a solonCode to an error without wrapping it. */
   const taggedError = (solonCode, error) => {
     if (error && typeof error === "object") error.solonCode = solonCode;
     return error;
   };
 
+  /** Look up the public IP, retrying GET failures with backoff. */
   const getIP = async () => {
     if (cachedIP) return cachedIP;
     for (let attempt = 0; attempt < IP_RETRY_DELAYS_MS.length; attempt++) {
@@ -101,6 +110,7 @@
     return "";
   };
 
+  /** Render inline status copy and an optional retry control. */
   const showStatus = (form, message, isError, retry) => {
     const status = form.parentElement.querySelector("[data-form-status]");
     if (!status) return;
@@ -140,6 +150,7 @@
     status.append(" ", button);
   };
 
+  /** POST one form payload to Apps Script and require `{ ok: true }`. */
   const postForm = async (type, values) => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
@@ -153,7 +164,7 @@
         body: JSON.stringify({ action: "append", data: values }),
       });
       if (!response.ok) throw taggedError("http", new Error("Request failed"));
-      let result;
+      let result = null;
       try {
         result = await response.json();
       } catch (parseError) {
@@ -170,6 +181,7 @@
     }
   };
 
+  /** Collect trimmed field values for a form type. */
   const valuesFor = (form, type, ip, date) => {
     const values = { Data: date, IP: ip };
     SCHEMAS[type].fields.forEach((name) => {
@@ -179,6 +191,7 @@
     return values;
   };
 
+  /** Replace submit inputs with buttons when the DOM allows it. */
   const setupFormButtons = (form) => {
     form.querySelectorAll('input[type="submit"]').forEach((input) => {
       if (typeof document !== "undefined" && document.createElement) {
@@ -194,6 +207,7 @@
     });
   };
 
+  /** Toggle the pending/disabled submit button state. */
   const lock = (form, locked) => {
     form.querySelectorAll('[type="submit"]').forEach((button) => {
       button.disabled = locked;
@@ -228,6 +242,7 @@
     });
   };
 
+  /** Validate, send, and report one form submission. */
   const handleSubmit = async (form, type) => {
     if (form.dataset.submitting === "true") return;
     if (!form.reportValidity()) return;
