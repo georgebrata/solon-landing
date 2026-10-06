@@ -1,7 +1,12 @@
+/**
+ * Brevo JS SDK init. Activated only after marketing consent (homepage).
+ */
 (function () {
   "use strict";
 
-  window.Brevo = window.Brevo || [];
+  if (!window.Brevo) {
+    window.Brevo = [];
+  }
   window.Brevo.push([
     "init",
     {

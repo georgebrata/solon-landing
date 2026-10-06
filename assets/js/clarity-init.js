@@ -1,12 +1,23 @@
+/**
+ * Microsoft Clarity loader. Activated only after analytics consent.
+ */
 (function () {
   "use strict";
 
   const PROJECT_ID = "w9hin0o1ua";
-  window.clarity =
-    window.clarity ||
-    function clarityStub() {
-      (window.clarity.q = window.clarity.q || []).push(arguments); // skipcq: JS-W1023
-    };
+  /**
+   * @param {...unknown} clarityArgs
+   * @returns {void}
+   */
+  function clarityStub(...clarityArgs) {
+    if (!window.clarity.q) {
+      window.clarity.q = [];
+    }
+    window.clarity.q.push(clarityArgs);
+  }
+  if (typeof window.clarity !== "function") {
+    window.clarity = clarityStub;
+  }
   const tag = document.createElement("script");
   tag.async = true;
   tag.src = `https://www.clarity.ms/tag/${PROJECT_ID}`;

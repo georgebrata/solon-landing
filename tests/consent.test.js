@@ -9,17 +9,23 @@ const test = require("node:test");
 const root = path.join(__dirname, "..");
 const source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
 
+/**
+ * @param {string} category
+ * @param {Record<string, string>} [attrs]
+ * @returns {object}
+ */
 function createInertScript(category, attrs) {
   const attributeList = [
     { name: "type", value: "text/plain" },
     { name: "data-consent-category", value: category },
   ];
-  Object.entries(attrs || {}).forEach(([name, value]) => {
-    attributeList.push({ name, value });
-  });
+  const extra = attrs || {};
+  for (const name of Object.keys(extra)) {
+    attributeList.push({ name, value: extra[name] });
+  }
   const el = {
     attributes: attributeList,
-    textContent: attrs && attrs.body ? attrs.body : "",
+    textContent: extra.body || "",
     parentNode: {
       inserted: null,
       insertBefore(next) {
@@ -32,7 +38,10 @@ function createInertScript(category, attrs) {
     getAttribute(name) {
       if (name === "data-consent-activated") return this.activated || null;
       const found = attributeList.find((item) => item.name === name);
-      return found ? found.value : null;
+      if (!found) {
+        return null;
+      }
+      return found.value;
     },
     setAttribute(name, value) {
       if (name === "data-consent-activated") this.activated = value;
@@ -41,6 +50,10 @@ function createInertScript(category, attrs) {
   return el;
 }
 
+/**
+ * @param {{store?: object, inertScripts?: object[], cookie?: string}} [options]
+ * @returns {{api: object, context: object, store: object, created: object[], inertScripts: object[], listeners: object}}
+ */
 function loadConsent(options = {}) {
   const store = options.store || {};
   const inertScripts = options.inertScripts || [];
@@ -76,7 +89,10 @@ function loadConsent(options = {}) {
         },
         getAttribute(name) {
           const found = this.attributes.find((item) => item.name === name);
-          return found ? found.value : null;
+          if (!found) {
+            return null;
+          }
+          return found.value;
         },
       };
       created.push(el);
@@ -93,7 +109,11 @@ function loadConsent(options = {}) {
       return cookieStr;
     },
     set(value) {
-      cookieStr = cookieStr ? `${cookieStr}; ${value}` : String(value);
+      if (cookieStr) {
+        cookieStr = `${cookieStr}; ${value}`;
+      } else {
+        cookieStr = String(value);
+      }
     },
   });
 
@@ -109,7 +129,10 @@ function loadConsent(options = {}) {
     document,
     localStorage: {
       getItem(key) {
-        return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+        if (Object.prototype.hasOwnProperty.call(store, key)) {
+          return store[key];
+        }
+        return null;
       },
       setItem(key, value) {
         store[key] = String(value);
@@ -234,7 +257,7 @@ test("accept all activates analytics and marketing inert tags", () => {
     inertScripts: [analytics, marketing],
   });
   api.acceptAll();
-  const srcs = created.map((el) => el.src).filter(Boolean);
+  const srcs = created.map((el) => el.src).filter((src) => src);
   assert.ok(srcs.includes("https://analytics.ahrefs.com/analytics.js"));
   assert.ok(srcs.includes("https://cdn.brevo.com/js/sdk-loader.js"));
   const last = context.dataLayer[context.dataLayer.length - 1];
@@ -244,17 +267,26 @@ test("accept all activates analytics and marketing inert tags", () => {
   assert.equal(last[2].ad_storage, "granted");
 });
 
+/**
+ * @returns {string[]}
+ */
 function htmlFiles() {
   const files = [];
+  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs"]);
+  /**
+   * @param {string} dir
+   */
   function walk(dir) {
     for (const name of fs.readdirSync(dir)) {
-      if ([".git", "node_modules", "assets", "scripts", "tests", "docs"].includes(name)) {
-        continue;
+      if (!skipDirs.has(name)) {
+        const full = path.join(dir, name);
+        const stat = fs.statSync(full);
+        if (stat.isDirectory()) {
+          walk(full);
+        } else if (name.endsWith(".html")) {
+          files.push(full);
+        }
       }
-      const full = path.join(dir, name);
-      const stat = fs.statSync(full);
-      if (stat.isDirectory()) walk(full);
-      else if (name.endsWith(".html")) files.push(full);
     }
   }
   walk(root);
@@ -268,22 +300,29 @@ const SKIP_GATING = new Set([
   path.join(root, "templates/post.html"),
 ]);
 
+/**
+ * @param {string} html
+ * @returns {boolean}
+ */
 function hasLiveTracker(html) {
   const re = /<script(\s[\s\S]*?)?>([\s\S]*?)<\/script>/gi;
-  let match;
-  while ((match = re.exec(html))) {
+  let match = re.exec(html);
+  while (match) {
     const attrs = match[1] || "";
     const body = match[2] || "";
-    if (/type\s*=\s*["']text\/plain["']/i.test(attrs)) continue;
-    if (/consent\.min\.js/.test(attrs)) continue;
-    const haystack = `${attrs}\n${body}`;
-    if (
-      /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker/.test(
-        haystack
-      )
-    ) {
-      return true;
+    const isInert = /type\s*=\s*["']text\/plain["']/i.test(attrs);
+    const isConsent = /consent\.min\.js/.test(attrs);
+    if (!isInert && !isConsent) {
+      const haystack = `${attrs}\n${body}`;
+      if (
+        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker/.test(
+          haystack
+        )
+      ) {
+        return true;
+      }
     }
+    match = re.exec(html);
   }
   return /<noscript>[\s\S]*facebook\.com\/tr[\s\S]*<\/noscript>/i.test(html);
 }
@@ -291,9 +330,12 @@ function hasLiveTracker(html) {
 test("non-essential tracker tags are inert on source and generated pages", () => {
   const offenders = [];
   for (const file of htmlFiles()) {
-    if (SKIP_GATING.has(file)) continue;
-    const html = fs.readFileSync(file, "utf8");
-    if (hasLiveTracker(html)) offenders.push(path.relative(root, file));
+    if (!SKIP_GATING.has(file)) {
+      const html = fs.readFileSync(file, "utf8");
+      if (hasLiveTracker(html)) {
+        offenders.push(path.relative(root, file));
+      }
+    }
   }
   assert.deepEqual(offenders, []);
 });
@@ -301,20 +343,22 @@ test("non-essential tracker tags are inert on source and generated pages", () =>
 test("pages with trackers or site footer include the consent manager", () => {
   const missing = [];
   for (const file of htmlFiles()) {
-    if (SKIP_GATING.has(file)) continue;
-    const rel = path.relative(root, file);
-    const html = fs.readFileSync(file, "utf8");
-    const hasTrackers =
-      html.includes("data-consent-category") ||
-      html.includes("clarity.ms") ||
-      html.includes("analytics.ahrefs");
-    const hasFooter = html.includes('id="footer"');
-    if (!hasTrackers && !hasFooter) continue;
-    if (!html.includes("/assets/js/consent.min.js")) {
-      missing.push(`${rel} (consent.js)`);
-    }
-    if (hasFooter && !html.includes("data-solon-consent-open")) {
-      missing.push(`${rel} (Setări cookie)`);
+    if (!SKIP_GATING.has(file)) {
+      const rel = path.relative(root, file);
+      const html = fs.readFileSync(file, "utf8");
+      const hasTrackers =
+        html.includes("data-consent-category") ||
+        html.includes("clarity.ms") ||
+        html.includes("analytics.ahrefs");
+      const hasFooter = html.includes('id="footer"');
+      if (hasTrackers || hasFooter) {
+        if (!html.includes("/assets/js/consent.min.js")) {
+          missing.push(`${rel} (consent.js)`);
+        }
+        if (hasFooter && !html.includes("data-solon-consent-open")) {
+          missing.push(`${rel} (Setări cookie)`);
+        }
+      }
     }
   }
   assert.deepEqual(missing, []);
@@ -322,7 +366,7 @@ test("pages with trackers or site footer include the consent manager", () => {
 
 test("cookies policy describes the banner, categories, and all trackers", () => {
   const html = fs.readFileSync(path.join(root, "cookies/index.html"), "utf8");
-  [
+  const needles = [
     "Setări cookie",
     "Acceptă toate",
     "Respinge toate",
@@ -338,8 +382,9 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
     "Meta Pixel",
     "Brevo",
     "Consent Mode",
-  ].forEach((needle) => {
+  ];
+  for (const needle of needles) {
     assert.ok(html.includes(needle), `policy missing “${needle}”`);
-  });
+  }
   assert.equal(html.includes("Nu desfășurăm activități de tip publicitate personalizată"), false);
 });
