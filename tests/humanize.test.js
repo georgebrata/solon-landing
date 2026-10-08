@@ -11,13 +11,11 @@
  */
 
 const assert = require("node:assert/strict");
-const { execSync } = require("node:child_process");
+const { execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
-
-const SCRIPTS_DIR = path.join(__dirname, "../scripts");
 
 const FIXTURE = `---
 title: "Test: semicolons, en-dashes, FAQ"
@@ -48,7 +46,7 @@ Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețur
 
 Ofertele nu descriu același produs; diferențele vin din design, numărul de pagini, cine scrie textele și nivelul de SEO.
 
-## Vrei să aflii mai multe?
+## Vrei să afli mai multe?
 
 Contactează-ne pentru o consultanță gratuită.
 
@@ -64,19 +62,14 @@ test("humanize.js rule 8: semicolons, en-dashes and FAQ text pass through unchan
   try {
     fs.writeFileSync(fixturePath, FIXTURE, "utf8");
 
-    const output = execSync(
-      `node ${path.join(SCRIPTS_DIR, "humanize.js")} --posts-dir ${tmpDir} --dry-run`,
-      { encoding: "utf8", cwd: path.join(__dirname, "..") }
+    const output = execFileSync(
+      process.execPath,
+      [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir, "--dry-run"],
+      { encoding: "utf8" }
     );
 
-    assert.match(
-      output,
-      /No humanizing changes found/,
-      `humanize.js modified the fixture — output:\n${output}`
-    );
-
-    const afterContent = fs.readFileSync(fixturePath, "utf8");
-    assert.equal(afterContent, FIXTURE, "File content changed despite --dry-run (unexpected)");
+    assert.match(output, /No humanizing changes found/);
+    assert.equal(fs.readFileSync(fixturePath, "utf8"), FIXTURE);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
