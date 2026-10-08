@@ -50,7 +50,7 @@ const rules = [
   // Romanian typography for numeric ranges (300–1.000 €) and must not be touched.
   {
     name: "Normalizeaza liniutele em (semnal AI)",
-    pattern: /[ \t]*—[ \t]*/g,
+    pattern: /[ \t]*—[ \t]*/gu,
     replacement: " - ",
   },
   // Semicolon-to-period conversion removed: it incorrectly rewrites valid prose
@@ -625,6 +625,38 @@ const rules = [
   },
 ];
 
+const protectMarkdown = (markdown) => {
+  const protectedChunks = [];
+  const protect = (match) => {
+    const token = `${PROTECTED_TOKEN}${protectedChunks.length}__`;
+    protectedChunks.push(match);
+    return token;
+  };
+
+  const text = markdown
+    .replace(/^```[\s\S]*?^```.*$/gm, protect)
+    .replace(/^~~~[\s\S]*?^~~~.*$/gm, protect)
+    // Protect entire <script> blocks (e.g. JSON-LD) so their content — including
+    // FAQ answer text and numeric ranges — is never modified by any rule.
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, protect)
+    // Protect FAQ/HowTo/DefinedTerm sections so answer text is never split or
+    // modified. These sections must stay byte-identical to their JSON-LD equivalents.
+    .replace(/\n## (?:Întrebări frecvente|FAQ)[^\n]*\n[\s\S]*?(?=\n## |\n*$)/g, protect)
+    .replace(/(?:^|\n)(?:[ \t]*<[^>\n]+>.*(?:\r?\n|$))+/g, protect)
+    .replace(/`[^`\n]+`/g, protect)
+    .replace(/\]\([^)]+\)/g, protect)
+    .replace(/https?:\/\/[^\s)]+/g, protect);
+
+  return {
+    text,
+    restore: (value) =>
+      protectedChunks.reduce(
+        (restored, chunk, index) => restored.replaceAll(`${PROTECTED_TOKEN}${index}__`, chunk),
+        value
+      ),
+  };
+};
+
 const files = fs
   .readdirSync(postsDir)
   .filter((file) => file.endsWith(".md"))
@@ -712,38 +744,6 @@ function splitFrontmatter(markdown) {
   }
 
   return { frontmatter: match[1], body: match[2] };
-}
-
-function protectMarkdown(markdown) {
-  const protectedChunks = [];
-  const protect = (match) => {
-    const token = `${PROTECTED_TOKEN}${protectedChunks.length}__`;
-    protectedChunks.push(match);
-    return token;
-  };
-
-  const text = markdown
-    .replace(/^```[\s\S]*?^```.*$/gm, protect)
-    .replace(/^~~~[\s\S]*?^~~~.*$/gm, protect)
-    // Protect entire <script> blocks (e.g. JSON-LD) so their content — including
-    // FAQ answer text and numeric ranges — is never modified by any rule.
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, protect)
-    // Protect FAQ/HowTo/DefinedTerm sections so answer text is never split or
-    // modified. These sections must stay byte-identical to their JSON-LD equivalents.
-    .replace(/\n## (?:Întrebări frecvente|FAQ)[^\n]*\n[\s\S]*?(?=\n## |\n*$)/g, protect)
-    .replace(/(?:^|\n)(?:[ \t]*<[^>\n]+>.*(?:\r?\n|$))+/g, protect)
-    .replace(/`[^`\n]+`/g, protect)
-    .replace(/\]\([^)]+\)/g, protect)
-    .replace(/https?:\/\/[^\s)]+/g, protect);
-
-  return {
-    text,
-    restore: (value) =>
-      protectedChunks.reduce(
-        (restored, chunk, index) => restored.replaceAll(`${PROTECTED_TOKEN}${index}__`, chunk),
-        value
-      ),
-  };
 }
 
 function applyRule(text, rule) {
