@@ -6,6 +6,7 @@ description: "Ghid complet SEO pentru avocați: bune practici, integrări, tool-
 read_time: 8
 categories: ["seo", "digitalizare", "marketing juridic"]
 tags: ["seo juridic", "avocați", "google business profile", "local seo", "ai"]
+cluster: "marketing-juridic"
 ---
 
 Cabinetul tău merită să fie prima opțiune în Google atunci când un potențial client caută ajutor juridic. SEO juridic profesionist nu înseamnă doar trafic, ci mai multe consultații calificate, mai puține discuții neproductive și un flux predictibil de clienți potriviți.

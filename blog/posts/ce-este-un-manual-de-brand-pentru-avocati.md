@@ -6,6 +6,7 @@ description: "Manualul de brand pentru avocați: ce conține, de ce contează, e
 read_time: 12
 categories: ["marketing juridic", "digitalizare"]
 tags: ["manual de brand", "branding", "avocați", "identitate vizuală", "marketing juridic"]
+cluster: "marketing-juridic"
 ---
 
 # Ce este un manual de brand pentru avocați?

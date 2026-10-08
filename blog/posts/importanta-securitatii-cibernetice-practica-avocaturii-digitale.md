@@ -6,6 +6,7 @@ description: "Ghid aplicabil pentru protejarea datelor juridice: 2FA/MFA, contro
 read_time: 5
 categories: ["securitate", "digitalizare"]
 tags: ["securitate", "GDPR", "digitalizare", "legaltech"]
+cluster: "securitate-cibernetica"
 ---
 
 # Importanța Securității Cibernetice pentru avocați

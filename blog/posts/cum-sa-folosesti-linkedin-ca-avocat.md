@@ -6,6 +6,7 @@ description: "Ghid LinkedIn pentru avocați: profil optimizat, conținut, networ
 read_time: 13
 categories: ["marketing juridic", "digitalizare", "productivitate"]
 tags: ["linkedin", "avocați", "marketing juridic", "networking", "branding", "vizibilitate"]
+cluster: "marketing-juridic"
 ---
 
 # Cum să folosești LinkedIn ca avocat

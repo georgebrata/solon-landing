@@ -6,6 +6,7 @@ description: "Protecția datelor clienților pe smartphone și tabletă: MDM, cr
 read_time: 14
 categories: ["securitate", "digitalizare", "management"]
 tags: ["avocați", "securitate mobilă", "smartphone", "criptare", "gdpr"]
+cluster: "securitate-cibernetica"
 ---
 
 # Securitatea dispozitivelor mobile pentru avocați

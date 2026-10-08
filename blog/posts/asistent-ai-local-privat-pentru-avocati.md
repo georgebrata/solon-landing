@@ -6,6 +6,7 @@ description: "Ghid complet de rulare a modelelor AI locale în cabinet: confiden
 read_time: 14
 categories: ["legaltech", "inteligenta-artificiala", "securitate"]
 tags: ["ai local", "avocați", "securitate", "secret profesional", "legaltech", "confidențialitate"]
+cluster: "ai-juridic"
 ---
 
 # Asistent AI local și privat pentru avocați

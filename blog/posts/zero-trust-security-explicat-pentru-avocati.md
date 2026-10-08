@@ -6,6 +6,7 @@ description: "Ghid zero-trust pentru avocați: principii, standarde NIST și CIS
 read_time: 13
 categories: ["securitate", "digitalizare", "legaltech"]
 tags: ["zero-trust", "avocați", "securitate", "GDPR", "MFA", "legaltech"]
+cluster: "securitate-cibernetica"
 ---
 
 # Zero-trust security explicat pentru avocați

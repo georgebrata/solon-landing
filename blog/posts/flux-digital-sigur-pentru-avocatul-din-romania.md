@@ -6,6 +6,7 @@ description: "Ghid practic pentru avocați: documente organizate, semnare electr
 read_time: 13
 categories: ["digitalizare", "legaltech", "management", "securitate"]
 tags: ["avocați", "flux digital", "documente", "semnătură electronică", "termene", "securitate", "românia"]
+cluster: "productivitate-cabinet"
 ---
 
 # Flux digital sigur pentru avocatul din România

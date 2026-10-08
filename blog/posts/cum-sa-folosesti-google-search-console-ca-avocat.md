@@ -6,6 +6,7 @@ description: "Ghid Google Search Console pentru avocați: verificarea proprietă
 read_time: 12
 categories: ["digitalizare", "SEO", "marketing"]
 tags: ["google search console", "avocați", "SEO", "marketing juridic", "vizibilitate online", "indexare"]
+cluster: "marketing-juridic"
 ---
 
 # Cum să folosești Google Search Console ca avocat

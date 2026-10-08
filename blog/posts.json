@@ -37,6 +37,7 @@
       "legaltech",
       "productivitate"
     ],
+    "cluster": "ai-juridic",
     "url": "prompt-engineering-juridic-pentru-avocati/"
   },
   {
@@ -77,6 +78,7 @@
       "automatizări",
       "legaltech"
     ],
+    "cluster": "ai-juridic",
     "url": "generarea-automata-a-contractelor-pentru-avocati/"
   },
   {
@@ -97,6 +99,7 @@
       "inteligenta artificiala",
       "contracte"
     ],
+    "cluster": "ai-juridic",
     "url": "audit-contracte-due-diligence-ai-avocati/"
   },
   {
@@ -158,6 +161,7 @@
       "legaltech",
       "confidențialitate"
     ],
+    "cluster": "ai-juridic",
     "url": "asistent-ai-local-privat-pentru-avocati/"
   },
   {
@@ -198,6 +202,7 @@
       "legaltech",
       "productivitate"
     ],
+    "cluster": "ai-juridic",
     "url": "agenti-ai-autonomi-in-practica-avocatilor/"
   },
   {
@@ -218,6 +223,7 @@
       "criptare",
       "gdpr"
     ],
+    "cluster": "securitate-cibernetica",
     "url": "securitatea-dispozitivelor-mobile-pentru-avocati/"
   },
   {
@@ -239,6 +245,7 @@
       "gdpr",
       "protectie date"
     ],
+    "cluster": "securitate-cibernetica",
     "url": "prevenirea-ransomware-in-cabinete-de-avocatura/"
   },
   {
@@ -259,6 +266,7 @@
       "securitate",
       "productivitate"
     ],
+    "cluster": "securitate-cibernetica",
     "url": "portal-securizat-clienti-avocatura/"
   },
   {
@@ -321,6 +329,7 @@
       "formulare",
       "productivitate"
     ],
+    "cluster": "productivitate-cabinet",
     "url": "client-intake-automatizat-pentru-avocati/"
   },
   {
@@ -382,6 +391,7 @@
       "management cabinet",
       "onorarii"
     ],
+    "cluster": "productivitate-cabinet",
     "url": "time-tracking-rentabilitate-dosare-avocati/"
   },
   {
@@ -402,6 +412,7 @@
       "clienți",
       "marketing juridic"
     ],
+    "cluster": "productivitate-cabinet",
     "url": "implementare-crm-juridic-pentru-avocati/"
   },
   {
@@ -425,6 +436,7 @@
       "securitate",
       "românia"
     ],
+    "cluster": "productivitate-cabinet",
     "url": "flux-digital-sigur-pentru-avocatul-din-romania/"
   },
   {
@@ -446,6 +458,7 @@
       "branding",
       "vizibilitate"
     ],
+    "cluster": "marketing-juridic",
     "url": "cum-sa-folosesti-linkedin-ca-avocat/"
   },
   {
@@ -550,6 +563,7 @@
       "legaltech",
       "calcul costuri"
     ],
+    "cluster": "marketing-juridic",
     "url": "cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/"
   },
   {
@@ -657,6 +671,7 @@
       "identitate vizuală",
       "marketing juridic"
     ],
+    "cluster": "marketing-juridic",
     "url": "ce-este-un-manual-de-brand-pentru-avocati/"
   },
   {
@@ -720,6 +735,7 @@
       "MFA",
       "legaltech"
     ],
+    "cluster": "securitate-cibernetica",
     "url": "zero-trust-security-explicat-pentru-avocati/"
   },
   {
@@ -783,6 +799,7 @@
       "vizibilitate online",
       "indexare"
     ],
+    "cluster": "marketing-juridic",
     "url": "cum-sa-folosesti-google-search-console-ca-avocat/"
   },
   {
@@ -846,6 +863,7 @@
       "seo local",
       "website"
     ],
+    "cluster": "marketing-juridic",
     "url": "digitalizarea-cabinetului-individual-de-avocat/"
   },
   {
@@ -932,6 +950,7 @@
       "ai",
       "productivitate"
     ],
+    "cluster": "ai-juridic",
     "url": "cum-sa-folosesti-notebooklm-ca-avocat/"
   },
   {
@@ -1028,6 +1047,7 @@
       "digitalizare",
       "legaltech"
     ],
+    "cluster": "securitate-cibernetica",
     "url": "importanta-securitatii-cibernetice-practica-avocaturii-digitale/"
   },
   {
@@ -1048,6 +1068,7 @@
       "local seo",
       "ai"
     ],
+    "cluster": "marketing-juridic",
     "url": "servicii-seo-profesionale-juridice/"
   },
   {
@@ -1095,6 +1116,7 @@
       "digitalizare",
       "seo"
     ],
+    "cluster": "marketing-juridic",
     "url": "tendinte-actuale-branding-profesionisti-juridic/"
   }
 ]

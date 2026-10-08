@@ -6,6 +6,7 @@ description: "Ghid practic de CRM juridic pentru avocați: gestiunea clienților
 read_time: 11
 categories: ["digitalizare", "management", "marketing juridic"]
 tags: ["crm", "management cabinet", "avocați", "clienți", "marketing juridic"]
+cluster: "productivitate-cabinet"
 ---
 
 # Cum să implementezi un CRM juridic ca avocat
