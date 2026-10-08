@@ -9,7 +9,6 @@ const END_MARKER = "<!-- BLOG_CAROUSEL_ITEMS_END -->";
 const POSTS_PER_SLIDE = 2;
 const MAX_POSTS = 6;
 const BLOG_BASE_URL = "https://solon.agency/blog";
-const OMITTED_CASE_STUDY = "studii-de-caz/avocat-dumitrescu-alexandru";
 
 const escapeHtml = (value) =>
   String(value || "")
@@ -138,10 +137,6 @@ const updateHomepageCarousel = () => {
   const posts = files
     .map((file) => parseMarkdownFrontmatter(path.join(POSTS_DIR, file)))
     .filter(Boolean)
-    .filter((post) => {
-      const haystack = [post.slug, post.title, post.description, ...(post.tags || [])].join("\n");
-      return !haystack.includes(OMITTED_CASE_STUDY);
-    })
     .sort((a, b) => b.date - a.date)
     .slice(0, MAX_POSTS);
 

@@ -130,10 +130,14 @@ test("real sitemap pages resolve and the file is never rewritten by this test", 
   }
 
   assert.equal(failures.length, 0, failures.join("\n"));
-  assert.ok(
-    before.includes("<loc>https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/</loc>"),
-    "the Dumitrescu case-study sitemap entry must stay"
-  );
+  const caseStudyRoot = path.join(ROOT, "studii-de-caz");
+  for (const entry of fs.readdirSync(caseStudyRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const page = path.join(caseStudyRoot, entry.name, "index.html");
+    if (!fs.existsSync(page)) continue;
+    const loc = `${BASE_URL}/studii-de-caz/${entry.name}/`;
+    assert.ok(before.includes(`<loc>${loc}</loc>`), `${loc} must stay in the sitemap`);
+  }
   assert.equal(fs.readFileSync(SITEMAP, "utf8"), before);
 });
 

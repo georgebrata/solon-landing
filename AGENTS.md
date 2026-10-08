@@ -20,4 +20,4 @@ Optional fields:
 
 Sitemap lastmod is preserved for a page whose content date is not newer than the stored value. A date after today in Europe/Bucharest is clamped to today (`YYYY-MM-DD`). Running `node scripts/update-sitemap.js` twice must not change `sitemap.xml`.
 
-Do not add links to `/studii-de-caz/avocat-dumitrescu-alexandru/` in templates, the hub, the carousel, related posts, or `llms.txt`. The page and its sitemap entry stay until Legal clears them.
+Do not add links to the Dumitrescu case-study page from templates, the hub, the carousel, related posts, or `llms.txt`. That page and its sitemap entry stay until Legal clears them.
