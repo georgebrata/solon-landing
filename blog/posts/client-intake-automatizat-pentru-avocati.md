@@ -6,6 +6,7 @@ description: "Ghid de automatizare a preluării clienților noi: formulare intel
 read_time: 14
 categories: ["digitalizare", "automatizări", "management"]
 tags: ["avocați", "client intake", "automatizări", "formulare", "productivitate"]
+cluster: "productivitate-cabinet"
 ---
 
 # Client Intake automatizat pentru avocați

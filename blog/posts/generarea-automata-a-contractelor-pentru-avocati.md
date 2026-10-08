@@ -6,6 +6,7 @@ description: "Ghid de document automation pentru avocați: șabloane dinamice, c
 read_time: 15
 categories: ["automatizări", "legaltech", "productivitate"]
 tags: ["document automation", "avocați", "contracte", "automatizări", "legaltech"]
+cluster: "ai-juridic"
 ---
 
 # Generarea automată a contractelor pentru avocați

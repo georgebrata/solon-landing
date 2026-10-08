@@ -6,6 +6,7 @@ description: "Analiză despre costul oportunității în avocatură: calculează
 read_time: 8
 categories: ["digitalizare", "management", "legaltech"]
 tags: ["cost oportunitate", "digitalizare avocați", "productivitate", "management cabinet", "legaltech", "calcul costuri"]
+cluster: "marketing-juridic"
 ---
 
 > **„Digitalizarea nu te costă bani. Lipsa ei poate costa mult mai mult.”**

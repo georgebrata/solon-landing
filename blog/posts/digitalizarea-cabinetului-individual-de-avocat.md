@@ -6,6 +6,7 @@ description: "Digitalizare pentru avocați: branding, NAP, website, optimizare S
 read_time: 9
 categories: ["digitalizare", "legaltech", "management"]
 tags: ["digitalizare", "cabinet individual", "avocați", "branding", "seo local", "website"]
+cluster: "marketing-juridic"
 ---
 
 # Digitalizarea cabinetului individual de avocat: ghid integral

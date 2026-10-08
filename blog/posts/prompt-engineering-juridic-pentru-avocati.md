@@ -6,6 +6,7 @@ description: "Ghid practic de redactare a prompturilor pentru avocați: formular
 read_time: 15
 categories: ["legaltech", "inteligenta-artificiala", "productivitate"]
 tags: ["prompt engineering", "avocați", "inteligenta artificiala", "legaltech", "productivitate"]
+cluster: "ai-juridic"
 ---
 
 # Prompt engineering juridic pentru avocați

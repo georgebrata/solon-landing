@@ -6,6 +6,7 @@ description: "Ghid de securitate defensivă: protecția fișierelor confidenția
 read_time: 14
 categories: ["securitate", "digitalizare", "management"]
 tags: ["ransomware", "securitate", "avocați", "backup", "gdpr", "protectie date"]
+cluster: "securitate-cibernetica"
 ---
 
 # Prevenirea atacurilor Ransomware în cabinete de avocat

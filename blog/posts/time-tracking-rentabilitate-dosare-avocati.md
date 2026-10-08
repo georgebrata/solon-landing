@@ -6,6 +6,7 @@ description: "De la estimări oarbe la cifre exacte: cum monitorizezi timpul con
 read_time: 12
 categories: ["management", "productivitate", "digitalizare"]
 tags: ["time tracking", "rentabilitate", "avocați", "management cabinet", "onorarii"]
+cluster: "productivitate-cabinet"
 ---
 
 # Time tracking și măsurarea rentabilității dosarelor

@@ -6,6 +6,7 @@ description: "Ghid de Due Diligence și analiză contractuală cu AI: extragere 
 read_time: 14
 categories: ["legaltech", "inteligenta-artificiala", "management"]
 tags: ["due diligence", "avocați", "legaltech", "inteligenta artificiala", "contracte"]
+cluster: "ai-juridic"
 ---
 
 # Audit de contracte și due diligence cu AI

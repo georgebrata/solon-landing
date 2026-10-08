@@ -6,6 +6,7 @@ description: "Ghid NotebookLM pentru avocați: surse și notebook-uri, setări d
 read_time: 10
 categories: ["legaltech", "productivitate", "digitalizare"]
 tags: ["notebooklm", "google", "legaltech", "avocați", "cercetare", "ai", "productivitate"]
+cluster: "ai-juridic"
 ---
 
 # Cum să folosești NotebookLM ca avocat

@@ -6,6 +6,7 @@ description: "Cum implementezi un spațiu digital securizat pentru clienți: par
 read_time: 12
 categories: ["digitalizare", "securitate", "productivitate"]
 tags: ["portal clienti", "avocați", "comunicare", "securitate", "productivitate"]
+cluster: "securitate-cibernetica"
 ---
 
 # Portal securizat pentru clienți în avocatură

@@ -6,6 +6,7 @@ description: "Branding juridic: digitalizare, identitate vizuală modernă și s
 read_time: 3
 categories: ["digitalizare", "social media"]
 tags: ["branding", "digitalizare", "seo"]
+cluster: "marketing-juridic"
 ---
 
 Într-o lume în continuă schimbare, brandingul pentru profesioniștii din domeniul juridic evoluează rapid, punând accent pe digitalizare, identitate vizuală modernă și storytelling autentic - toate menite să creeze o legătură de încredere cu clienții.

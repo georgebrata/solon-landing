@@ -6,6 +6,7 @@ description: "Cum folosesc societățile de avocați agenții AI pentru triaj de
 read_time: 15
 categories: ["legaltech", "automatizări", "digitalizare"]
 tags: ["agenti ai", "automatizări", "avocați", "legaltech", "productivitate"]
+cluster: "ai-juridic"
 ---
 
 # Agenți AI autonomi în practica avocațială
