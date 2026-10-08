@@ -1,6 +1,6 @@
 ---
 title: "Cât costă un site de avocat în 2026: intervale de preț și ce influențează costul"
-date: "2026-10-09"
+date: "2026-10-08"
 slug: "cat-costa-un-site-de-avocat-in-2026"
 description: "Cât costă un site de avocat în 2026? Intervale de preț publicate în România și factorii care influențează costul: pagini, conținut, SEO, mentenanță."
 read_time: 8
@@ -24,8 +24,8 @@ tags: ["site de prezentare preț", "website de prezentare", "creare site avocat"
         "@type": "WebPage",
         "@id": "https://solon.agency/blog/cat-costa-un-site-de-avocat-in-2026/"
       },
-      "datePublished": "2026-10-09",
-      "dateModified": "2026-10-09",
+      "datePublished": "2026-10-08",
+      "dateModified": "2026-10-08",
       "inLanguage": "ro-RO",
       "image": {
         "@type": "ImageObject",
@@ -43,7 +43,7 @@ tags: ["site de prezentare preț", "website de prezentare", "creare site avocat"
           "name": "Cât costă un site pentru un cabinet de avocatură?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pentru un site de prezentare pornesc de la câteva sute de euro la un freelancer și de la 900 € la o agenție mică. Site-urile cu design personalizat, potrivite unui birou de avocatură, se plasează de regulă în intervalul 1.500–3.500 €. Intervalele concrete și sursele lor sunt prezentate în articol."
+            "text": "Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pentru un site de prezentare pornesc de la câteva sute de euro la un freelancer și de la 900 € la o agenție mică. Aceeași sursă indică nivelul mid-range (1.500–3.500 €, design personalizat, conținut profesional și SEO) ca potrivit pentru birourile de avocatură. Intervalele concrete și sursele lor sunt prezentate în articol."
           }
         },
         {
@@ -84,7 +84,7 @@ tags: ["site de prezentare preț", "website de prezentare", "creare site avocat"
 }
 </script>
 
-Un site de prezentare în România costă, conform prețurilor publicate în 2026, între 300 și 1.000 € la un freelancer și între 900 și 2.500 € la o agenție mică (<a href="https://nordweb.ro/ghiduri/cat-costa-un-site/" target="_blank" rel="noopener">Nordweb</a>). Site-urile cu design personalizat, conținut și SEO de bază se plasează între 800 și 7.000 € (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>). Costul depinde în principal de numărul de pagini, conținut, SEO și mentenanță.
+Un site de prezentare profesional costă între 800 și 7.000 €, în funcție de complexitate și personalizare (MM Creative).
 
 *Actualizat: octombrie 2026*
 
@@ -95,7 +95,7 @@ Acest ghid este realizat de SOLON, agenția digitală pentru avocați din Român
 Prețurile de mai jos sunt cele afișate public de furnizori din România în momentul redactării. Sunt orientative, unele sunt fără TVA, iar ce include fiecare pachet diferă de la un furnizor la altul.
 
 - Un ghid de prețuri pentru 2026 estimează 300–1.000 € la un freelancer, 900–2.500 € la o agenție mică și de la 2.500 € în sus la agențiile mari (<a href="https://nordweb.ro/ghiduri/cat-costa-un-site/" target="_blank" rel="noopener">Nordweb</a>).
-- Alt ghid plasează un site de prezentare profesional între 800 € și 7.000 €, în funcție de complexitate și personalizare. Aceeași sursă menționează că birouri de avocatură se înscriu de regulă în categoria mid-range, adică 1.500–3.500 € (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
+- Alt ghid plasează un site de prezentare profesional între 800 € și 7.000 €, în funcție de complexitate și personalizare. Aceeași sursă indică nivelul mid-range (1.500–3.500 €, design personalizat, conținut profesional și SEO) ca potrivit pentru birourile de avocatură (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
 - În lei, un ghid publicat estimează 500–1.500 lei pentru un site simplu pe șablon și 1.500–4.000 lei pentru un site personalizat pe WordPress, prețuri fără TVA (<a href="https://webhat.ro/creare-site-web-pret/" target="_blank" rel="noopener">Web Hat Solutions</a>).
 
 **Costuri recurente, după lansare:** același tip de ghid enumeră găzduirea (200–2.000 lei/an), domeniul (60–150 lei/an) și mentenanța (200–800 lei/lună) (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
@@ -186,7 +186,7 @@ Regulile de publicitate ale profesiei influențează ce conținut poate apărea 
 
 ### Cât costă un site pentru un cabinet de avocatură?
 
-Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pentru un site de prezentare pornesc de la câteva sute de euro la un freelancer și de la 900 € la o agenție mică. Site-urile cu design personalizat, potrivite unui birou de avocatură, se plasează de regulă în intervalul 1.500–3.500 €. Intervalele concrete și sursele lor sunt prezentate în articol.
+Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pentru un site de prezentare pornesc de la câteva sute de euro la un freelancer și de la 900 € la o agenție mică. Aceeași sursă indică nivelul mid-range (1.500–3.500 €, design personalizat, conținut profesional și SEO) ca potrivit pentru birourile de avocatură. Intervalele concrete și sursele lor sunt prezentate în articol.
 
 ### De ce diferă atât de mult prețurile la site-urile pentru avocați?
 
