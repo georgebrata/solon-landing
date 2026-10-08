@@ -53,12 +53,16 @@
   if (typeof document !== "undefined") {
     doc = document;
   }
+  const BODY_OPEN_CLASS = "solon-consent-open";
+  const BANNER_HEIGHT_VAR = "--solon-consent-banner-height";
   const ui = {
     root: null,
     banner: null,
     dialog: null,
     overlay: null,
     lastFocus: null,
+    bannerResizeObserver: null,
+    insetListenersReady: false,
   };
 
   /** @returns {string} */
@@ -647,40 +651,35 @@
       className: "solon-consent__banner",
       role: "dialog",
       "aria-modal": "false",
-      "aria-labelledby": "solon-consent-title",
+      "aria-label": "Preferințe cookie-uri",
       "aria-describedby": "solon-consent-desc",
     });
     hideNode(banner);
     const policyLink = h("a", {
       className: "solon-consent__policy",
       href: policy,
-      text: "Politica de cookie-uri",
+      "aria-label": "Detalii despre politica de cookie-uri",
+      text: "Detalii",
     });
     const desc = h("p", { id: "solon-consent-desc", className: "solon-consent__text" }, [
-      "Folosim cookie-uri necesare pentru funcționarea site-ului și, doar cu acordul tău, cookie-uri de analiză și marketing. Citește ",
+      "Folosim cookie-uri pentru analiză, marketing și o experiență mai bună, doar cu acordul tău. ",
       policyLink,
-      ".",
     ]);
     banner.appendChild(
       h("div", { className: "solon-consent__inner" }, [
-        h("h2", {
-          id: "solon-consent-title",
-          className: "solon-consent__title",
-          text: "Cookie-uri pe solon.agency",
-        }),
         desc,
         h("div", { className: "solon-consent__actions" }, [
           h("button", {
             type: "button",
             className: "solon-consent__btn solon-consent__btn--accept",
             "data-consent-action": "accept",
-            text: "Acceptă toate",
+            text: "Accept",
           }),
           h("button", {
             type: "button",
             className: "solon-consent__btn solon-consent__btn--reject",
             "data-consent-action": "reject",
-            text: "Respinge toate",
+            text: "Refuz",
           }),
           h("button", {
             type: "button",
@@ -768,7 +767,7 @@
             type: "button",
             className: "solon-consent__btn solon-consent__btn--reject",
             "data-consent-action": "reject",
-            text: "Respinge toate",
+            text: "Refuz",
           }),
           h("button", {
             type: "button",
@@ -908,6 +907,37 @@
     }
   }
 
+  /** Lifts fixed UI (e.g. chat launcher) above the visible consent banner. */
+  function syncBannerInset() {
+    if (!doc?.documentElement || !doc.body) {
+      return;
+    }
+    const visible = ui.banner && !ui.banner.hidden;
+    if (!visible) {
+      doc.body.classList.remove(BODY_OPEN_CLASS);
+      doc.documentElement.style.removeProperty(BANNER_HEIGHT_VAR);
+      return;
+    }
+    doc.body.classList.add(BODY_OPEN_CLASS);
+    const height = Math.ceil(ui.banner.getBoundingClientRect().height);
+    doc.documentElement.style.setProperty(BANNER_HEIGHT_VAR, `${height}px`);
+  }
+
+  /** @returns {void} */
+  function ensureBannerInsetObservers() {
+    if (!ui.banner || ui.insetListenersReady || !win) {
+      return;
+    }
+    ui.insetListenersReady = true;
+    if (typeof win.ResizeObserver === "function") {
+      ui.bannerResizeObserver = new win.ResizeObserver(() => {
+        syncBannerInset();
+      });
+      ui.bannerResizeObserver.observe(ui.banner);
+    }
+    win.addEventListener("resize", syncBannerInset);
+  }
+
   /** Shows the first-layer banner.
    * @returns {void}
    */
@@ -915,6 +945,11 @@
     buildUi();
     if (ui.banner) {
       ui.banner.hidden = false;
+      ensureBannerInsetObservers();
+      syncBannerInset();
+      if (typeof win.requestAnimationFrame === "function") {
+        win.requestAnimationFrame(syncBannerInset);
+      }
     }
   }
 
@@ -925,6 +960,7 @@
     if (ui.banner) {
       ui.banner.hidden = true;
     }
+    syncBannerInset();
   }
 
   /** Syncs customize-dialog checkboxes with the current choice.
