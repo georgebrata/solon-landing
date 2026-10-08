@@ -99,8 +99,8 @@ const nodesOf = (data) => {
  * @returns {Array<{name: string, text: string}>}
  */
 const faqPairsFromNode = (node) => (node.mainEntity || []).map((item) => ({
-  name: normalize(item && item.name),
-  text: normalize(item && item.acceptedAnswer && item.acceptedAnswer.text),
+  name: normalize(item?.name),
+  text: normalize(item?.acceptedAnswer?.text),
 }));
 
 /**

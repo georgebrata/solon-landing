@@ -118,7 +118,14 @@ ${items}
 `;
 };
 
-function generatePostHTML(post, posts, marked) {
+/**
+ * Render one post page from the layout and post templates.
+ * @param {object} post Parsed post (`frontmatter` and markdown `content`).
+ * @param {object[]} posts All parsed posts, used for the sidebar and related links.
+ * @param {{ parse: function(string): string }} marked Markdown parser.
+ * @returns {string} HTML for blog/<slug>/index.html before asset stamping.
+ */
+const generatePostHTML = (post, posts, marked) => {
   const { frontmatter, content } = post;
   const parsed = marked.parse(content)
     // Keep only one document H1 (the template's .entry-title).
@@ -147,9 +154,14 @@ function generatePostHTML(post, posts, marked) {
   page = replaceToken(page, 'body', postHtml);
   page = replaceToken(page, 'scripts', '<script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
   return page;
-}
+};
 
-function generateListHTML(posts) {
+/**
+ * Render the blog index from the list template.
+ * @param {object[]} posts Parsed posts, newest first.
+ * @returns {string} HTML for blog/index.html before asset stamping.
+ */
+const generateListHTML = (posts) => {
   const tagCounts = new Map();
   posts.forEach(post => {
     const tags = Array.isArray(post.frontmatter.tags) ? post.frontmatter.tags : [];
@@ -228,7 +240,7 @@ ${tagsBlock}
   page = replaceToken(page, 'body', listBody);
   page = replaceToken(page, 'scripts', '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
   return page;
-}
+};
 
 /** Heavy front-matter that search, the sidebar, and the homepage carousel do not read. */
 const POSTS_JSON_OMIT = new Set([

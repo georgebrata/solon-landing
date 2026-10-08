@@ -162,12 +162,8 @@ const defaultArticleDocument = (frontmatter, pageUrl) => {
  * @param {string|object|undefined} jsonLdValue
  * @returns {boolean}
  */
-const isAbsentJsonLd = (jsonLdValue) => {
-  if (jsonLdValue == null) return true;
-  if (typeof jsonLdValue === "string" && jsonLdValue.trim() === "") return true;
-  if (typeof jsonLdValue === "string" && jsonLdValue.trim() === "null") return true;
-  return false;
-};
+const isAbsentJsonLd = (jsonLdValue) => jsonLdValue == null
+  || (typeof jsonLdValue === "string" && ["", "null"].includes(jsonLdValue.trim()));
 
 /**
  * Keep exactly one JSON-LD script. Front-matter wins over a script pasted in the markdown.
