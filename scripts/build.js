@@ -1,7 +1,20 @@
+"use strict";
+
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { stampHtml } = require('./stamp-asset-refs');
+const { applyPostJsonLd } = require('./json-ld');
+
+/**
+ * Substitute a {{token}} without expanding $&, $1, or other replacement patterns.
+ * @param {string} template HTML template.
+ * @param {string} token Placeholder name without braces.
+ * @param {string} value Text to insert. Returned as-is, never parsed as a replacement.
+ * @returns {string} Template with every occurrence of the token replaced.
+ */
+const replaceToken = (template, token, value) =>
+  template.replace(new RegExp(`\\{\\{${token}\\}\\}`, "g"), () => String(value));
 
 const POSTS_DIR = path.join(__dirname, '../blog/posts');
 const OUTPUT_DIR = path.join(__dirname, '../blog');
@@ -72,30 +85,68 @@ function generateRecentPostsHTML(posts, currentSlug, limit = 5) {
   }).join('\n');
 }
 
+/**
+ * "Articole similare" for every other post in the same cluster.
+ * Posts with no cluster, or a cluster of one, get an empty string.
+ * @param {object[]} posts Parsed posts.
+ * @param {string} currentSlug Slug of the post being rendered.
+ * @param {string|undefined} cluster Cluster id from front-matter.
+ * @returns {string} A section element, or "" when there is nothing to link.
+ */
+const generateRelatedPostsHTML = (posts, currentSlug, cluster) => {
+  if (!cluster) return '';
+
+  const peers = posts.filter(
+    (post) => post.frontmatter.cluster === cluster && post.frontmatter.slug !== currentSlug
+  );
+  if (peers.length === 0) return '';
+
+  const items = peers.map((post) => {
+    const { title, slug } = post.frontmatter;
+    return `          <li><a href="../${slug}/">${escapeHtml(title)}</a></li>`;
+  }).join('\n');
+
+  return `
+<section class="blog-related-posts" aria-labelledby="related-posts-heading">
+  <div class="container">
+    <h2 id="related-posts-heading" class="blog-sidebar-title">Articole similare</h2>
+    <ul class="blog-sidebar-list">
+${items}
+    </ul>
+  </div>
+</section>
+`;
+};
+
 function generatePostHTML(post, posts, marked) {
   const { frontmatter, content } = post;
-  const htmlContent = marked.parse(content)
+  const parsed = marked.parse(content)
     // Keep only one document H1 (the template's .entry-title).
     .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+  const pageUrl = `https://solon.agency/blog/${frontmatter.slug}/`;
+  const { htmlContent, headJsonLd } = applyPostJsonLd(parsed, frontmatter, pageUrl);
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
+  const relatedPostsHtml = generateRelatedPostsHTML(posts, frontmatter.slug, frontmatter.cluster);
+  const tagsHtml = (frontmatter.tags || []).map(tag => `<li><a href="../?tag=${tag}">${tag}</a></li>`).join('');
 
-  const tagsHtml = frontmatter.tags.map(tag => `<li><a href="../?tag=${tag}">${tag}</a></li>`).join('');
+  let postHtml = postTemplate;
+  postHtml = replaceToken(postHtml, 'title', frontmatter.title);
+  postHtml = replaceToken(postHtml, 'date', frontmatter.date);
+  postHtml = replaceToken(postHtml, 'read_time', frontmatter.read_time);
+  postHtml = replaceToken(postHtml, 'tags_html', tagsHtml);
+  postHtml = replaceToken(postHtml, 'recent_posts_html', recentPostsHtml);
+  postHtml = replaceToken(postHtml, 'related_posts_html', relatedPostsHtml);
+  postHtml = replaceToken(postHtml, 'content', htmlContent);
 
-  let postHtml = postTemplate
-    .replace(/{{title}}/g, frontmatter.title)
-    .replace(/{{date}}/g, frontmatter.date)
-    .replace(/{{read_time}}/g, frontmatter.read_time)
-    .replace(/{{tags_html}}/g, tagsHtml)
-    .replace(/{{recent_posts_html}}/g, recentPostsHtml)
-    .replace(/{{content}}/g, htmlContent);
-
-  return layoutTemplate
-    .replace(/{{title}}/g, frontmatter.title)
-    .replace(/{{description}}/g, frontmatter.description)
-    .replace(/{{slug}}/g, frontmatter.slug)
-    .replace(/{{slugWithTrailingSlash}}/g, `${frontmatter.slug}/`)
-    .replace(/{{body}}/g, postHtml)
-    .replace(/{{scripts}}/g, '<script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
+  let page = layoutTemplate;
+  page = replaceToken(page, 'title', frontmatter.title);
+  page = replaceToken(page, 'description', frontmatter.description);
+  page = replaceToken(page, 'slug', frontmatter.slug);
+  page = replaceToken(page, 'slugWithTrailingSlash', `${frontmatter.slug}/`);
+  page = replaceToken(page, 'json_ld', headJsonLd);
+  page = replaceToken(page, 'body', postHtml);
+  page = replaceToken(page, 'scripts', '<script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
+  return page;
 }
 
 function generateListHTML(posts) {
@@ -165,18 +216,35 @@ ${tagsBlock}
     </script>
   `;
 
-  const listBody = indexRedirectScript + listTemplate
-    .replace(/{{filters_html}}/g, filtersHtml)
-    .replace(/{{posts_html}}/g, postsHtml);
+  const listBody = indexRedirectScript
+    + replaceToken(replaceToken(listTemplate, 'filters_html', filtersHtml), 'posts_html', postsHtml);
 
-  return layoutTemplate
-    .replace(/{{title}}/g, 'Blog')
-    .replace(/{{description}}/g, 'SOLON Blog LegalTech - digitalizare juridică, unelte digitale și productivitate pentru practica avocaturii moderne')
-    .replace(/{{slug}}/g, '')
-    .replace(/{{slugWithTrailingSlash}}/g, '')
-    .replace(/{{body}}/g, listBody)
-    .replace(/{{scripts}}/g, '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
+  let page = layoutTemplate;
+  page = replaceToken(page, 'title', 'Blog');
+  page = replaceToken(page, 'description', 'SOLON Blog LegalTech - digitalizare juridică, unelte digitale și productivitate pentru practica avocaturii moderne');
+  page = replaceToken(page, 'slug', '');
+  page = replaceToken(page, 'slugWithTrailingSlash', '');
+  page = replaceToken(page, 'json_ld', '');
+  page = replaceToken(page, 'body', listBody);
+  page = replaceToken(page, 'scripts', '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
+  return page;
 }
+
+/** Heavy front-matter that search, the sidebar, and the homepage carousel do not read. */
+const POSTS_JSON_OMIT = new Set([
+  'json_ld',
+  'faq',
+  'howto',
+  'sources',
+  'internal_links',
+  'schema_types',
+  'notes_for_publisher',
+  'target_keywords',
+  'target_prompts',
+  'schema_extra',
+  'publish_date',
+  'meta_description',
+]);
 
 /** Compile markdown posts into static HTML under /blog/. */
 const build = async () => {
@@ -206,11 +274,15 @@ const build = async () => {
   fs.writeFileSync(listPath, listHtml);
   console.log('Generated: /blog/index.html');
 
-  // Generate posts.json for client-side use
-  const postsJson = posts.map(p => ({
-    ...p.frontmatter,
-    url: `${p.frontmatter.slug}/`
-  }));
+  // posts.json stays lean: url is last so existing entries do not churn.
+  const postsJson = posts.map((p) => {
+    const entry = {};
+    for (const [key, value] of Object.entries(p.frontmatter)) {
+      if (!POSTS_JSON_OMIT.has(key)) entry[key] = value;
+    }
+    entry.url = `${p.frontmatter.slug}/`;
+    return entry;
+  });
   fs.writeFileSync(path.join(OUTPUT_DIR, 'posts.json'), JSON.stringify(postsJson, null, 2));
   console.log('Generated: /blog/posts.json');
 

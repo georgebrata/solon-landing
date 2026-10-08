@@ -337,3 +337,101 @@
   margin-bottom: 0;
   color: var(--primary);
 }
+
+/* Related posts section (cluster-based) */
+.blog-related-posts {
+  background-color: var(--tertiary);
+  padding: 2rem 0;
+  margin-top: 0;
+}
+
+.blog-related-posts .blog-sidebar-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.blog-related-posts .blog-sidebar-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.blog-related-posts .blog-sidebar-list li a {
+  color: var(--secondary);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.blog-related-posts .blog-sidebar-list li a:hover {
+  color: var(--primary);
+}
+
+/* Blog hub featured section */
+.blog-hub-featured {
+  padding: 2.5rem 0 1.5rem;
+}
+
+.blog-hub-featured .blog-sidebar-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.blog-hub-featured .blog-sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.blog-hub-featured .blog-sidebar-list li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.blog-hub-featured .blog-sidebar-list li a {
+  color: var(--secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.blog-hub-featured .blog-sidebar-list li a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* Scroll wrapper for wide tables. Unwrapped tables are left alone. */
+.entry-content .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.25rem;
+}
+
+.entry-content .table-wrap table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 480px;
+}
+
+.entry-content .table-wrap th,
+.entry-content .table-wrap td {
+  border: 1px solid #dee2e6;
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  font-size: 0.9rem;
+}
+
+.entry-content .table-wrap thead th {
+  background-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
