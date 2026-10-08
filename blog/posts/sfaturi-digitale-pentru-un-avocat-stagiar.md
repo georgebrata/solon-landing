@@ -51,7 +51,7 @@ Client - Nume Dosar/
 
 Folosește aceeași logică pentru fiecare dosar. Evită foldere precum `Diverse`, `Nou`, `De vazut` sau `Acte bune`, pentru că peste trei luni nu vor mai însemna nimic. Pentru lucrul în cloud, vezi și ghidul [Cum să folosești Google Drive ca avocat](../cum-sa-folosesti-google-drive-ca-avocat/), unde structura de foldere, partajarea și versionarea sunt tratate mai detaliat.
 
-## 3. Denumește fișierele ca să să le poți găsi fără să le deschizi
+## 3. Denumește fișierele ca să le poți găsi fără să le deschizi
 
 Numele fișierului trebuie să spună ce conține documentul. O convenție bună reduce erorile și ajută la căutare.
 

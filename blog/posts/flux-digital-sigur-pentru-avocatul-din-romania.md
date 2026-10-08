@@ -289,7 +289,7 @@ Migrarea tuturor datelor dintr-o singură mișcare este rareori cea mai sigură 
 
 Măsoară rezultate concrete: timpul până la găsirea unui document, numărul versiunilor trimise greșit, procentul termenelor cu deadline intern, durata onboarding-ului și numărul accesărilor externe rămase active. Nu măsura succesul prin numărul de aplicații instalate.
 
-Începe cu dosarele noi. Migrează arhiva numai după ce structura a fost testată și după ce ai stabilit reguli de păstrare, deduplicare și verificare. Păstrează o evidență a migrării, ca să să știi ce a fost mutat, când și de către cine.
+Începe cu dosarele noi. Migrează arhiva numai după ce structura a fost testată și după ce ai stabilit reguli de păstrare, deduplicare și verificare. Păstrează o evidență a migrării, ca să știi ce a fost mutat, când și de către cine.
 
 ## 14. Concluzie
 

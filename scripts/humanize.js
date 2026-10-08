@@ -355,9 +355,12 @@ const rules = [
     replacement: "prin",
     preserveCase: true,
   },
+  // Rewrite only "astfel încât să <verb>" → "ca să <verb>", consuming the "să".
+  // Any other "astfel încât" (a noun or name before the later "să") stays put.
+  // Replacing the bare phrase yields "ca să cabinetul să" and "ca să să".
   {
-    name: "Transforma «astfel incat»",
-    pattern: boundedPhrase("astfel încât"),
+    name: "Transforma «astfel incat sa»",
+    pattern: boundedPhrase("astfel încât să"),
     replacement: "ca să",
     preserveCase: true,
   },

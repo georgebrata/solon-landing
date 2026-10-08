@@ -27,7 +27,7 @@ Acest ghid acoperă funcționalitățile reale ale DocuSign eSignature, cu setă
 - **Limba și fusul orar**: setează limba interfeței și a notificărilor în **My Preferences → Regional Settings**. Pentru semnatari din România, fusul `(UTC+02:00) Bucharest` asigură marcaje de timp corecte în pista de audit.
 - **Aspectul semnăturii**: din **My Preferences → Signatures → Add Signature** alegi stilul semnăturii și al inițialelor (font predefinit, desen cu mouse-ul/touch sau imagine încărcată). Avocații preferă de regulă o semnătură desenată, mai apropiată de cea olografă.
 - **Brand-ul cabinetului**: în planurile **Business Pro** și superioare, mergi la **Settings → Brands → Add Brand** și încarcă logo-ul, culorile și textul e-mailurilor de invitație. Documentele trimise vor purta identitatea vizuală a cabinetului, nu pe cea generică DocuSign - un detaliu de încredere pentru client.
-- **Semnătura și antetul implicit al e-mailului**: personalizează din **Settings → Email Preferences** subiectul și mesajul standard de invitație la semnare, ca să clientul să recunoască imediat expeditorul.
+- **Semnătura și antetul implicit al e-mailului**: personalizează din **Settings → Email Preferences** subiectul și mesajul standard de invitație la semnare, astfel încât clientul să recunoască imediat expeditorul.
 
 ## 2. Tipurile de semnătură electronică și valabilitatea juridică
 
@@ -131,7 +131,7 @@ Cea mai mare economie de timp pentru un cabinet vine din **șabloane** - plicuri
 - **Procură / împuternicire avocațială** - cu inițiale pe fiecare pagină și ID Verification.
 - **Acord de prelucrare a datelor (GDPR)** - clauza standard, refolosibilă pentru fiecare client nou.
 
-Poți partaja șabloanele cu întreaga echipă din **Template → Share**, ca să toți avocații să pornească de la aceleași documente verificate. Logica este similară cu cea a șabloanelor reutilizabile din alte instrumente - vezi și abordarea pe șabloane descrisă în ghidul [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
+Poți partaja șabloanele cu întreaga echipă din **Template → Share**, astfel încât toți avocații să pornească de la aceleași documente verificate. Logica este similară cu cea a șabloanelor reutilizabile din alte instrumente - vezi și abordarea pe șabloane descrisă în ghidul [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
 
 ## 8. PowerForms - formulare de auto-servire pentru clienți
 

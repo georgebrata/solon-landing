@@ -26,7 +26,7 @@ Primul pas pentru a crea un spațiu de lucru ordonat este configurarea corectă 
 
 - **Numele și URL-ul spațiului**: alege un domeniu clar și profesionist (de exemplu `cabinet-avocat-popescu.slack.com` sau `societate-juridica.slack.com`).
 - **Profilul membrilor**: impune completarea numelui complet, a rolului specific (ex. `Avocat coordonator - Litigii`, `Avocat colaborator - Drept comercial`, `Secretariat`) și a numărului direct de telefon. O fotografie de profil profesională ajută la identificarea instantă a interlocutorilor.
-- **Fusul orar și limba**: asigură-te că toți membrii au setat fusul orar `(UTC+02:00) Bucharest` în **Preferences → Language & region**, ca să mesajele programate și alertele să fie sincronizate perfect.
+- **Fusul orar și limba**: asigură-te că toți membrii au setat fusul orar `(UTC+02:00) Bucharest` în **Preferences → Language & region**, astfel încât mesajele programate și alertele să fie sincronizate perfect.
 - **Programul de notificări (Do Not Disturb)**: din **Preferences → Notifications**, setează intervalul de liniște (de pildă între orele 19:30 și 08:00). În afara acestui program, mesajele primite nu declanșează alerte sonore sau vibrații, protejând timpul de refacere al echipei, dar rămân disponibile la prima deschidere a aplicației.
 - **Filtrarea alertelor**: setează notificările implicite pe `Direct messages, mentions & keywords` în loc de `All new messages`. Astfel, avocații primesc alerte doar când sunt vizați direct sau când apare un cuvânt cheie important, eliminând zgomotul de fond.
 

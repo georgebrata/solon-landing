@@ -211,7 +211,7 @@ Ahrefs transformă crearea de conținut dintr-un exercițiu intuitiv într-un pr
 1. **Cercetare**: în Keywords Explorer, caută un subiect din practica ta (ex. `clauză penală contract`). Analizează volumul, dificultatea și intenția de căutare.
 2. **Analiza SERP**: verifică primele 10 rezultate - ce acoperă, cât de detaliate sunt, ce le lipsește.
 3. **Cuvinte cheie secundare**: din **Also rank for** și **Questions**, extrage 5-10 termeni înrudiți pe care să-i integrezi natural în articol.
-4. **Structura**: construiește structura articolului ca să să acopere toate subtopicurile identificate în pasul anterior.
+4. **Structura**: construiește structura articolului ca să acopere toate subtopicurile identificate în pasul anterior.
 5. **Publicare și monitorizare**: după publicare, adaugă cuvintele cheie țintă în Rank Tracker și urmărește evoluția poziției în următoarele 4-8 săptămâni.
 6. **Optimizare**: dacă după 2-3 luni articolul se poziționează pe pozițiile 5-15, optimizează-l: adaugă secțiuni noi, actualizează informațiile, îmbunătățește titlul și meta description-ul.
 

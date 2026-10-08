@@ -199,7 +199,7 @@
 <p>Mecanisme concrete:</p>
 <ul>
 <li><strong>Control al accesului bazat pe rol (RBAC)</strong>: definești roluri (avocat coordonator, avocat colaborator, paralegal, secretariat, contabilitate externă) și atașezi fiecărui rol un set de permisiuni. Secretariatul poate vedea calendarul și facturile, dar nu și strategia de litigiu dintr-un dosar sensibil.</li>
-<li><strong>Acces pe dosar, nu pe tot arhivajul</strong>: structurează folderele cloud ca să accesul să se acorde per dosar sau per client. Vezi modul de organizare a permisiunilor descris în ghidul <a href="../cum-sa-folosesti-google-drive-ca-avocat/">Cum să folosești Google Drive ca avocat</a>.</li>
+<li><strong>Acces pe dosar, nu pe tot arhivajul</strong>: structurează folderele cloud astfel încât accesul să se acorde per dosar sau per client. Vezi modul de organizare a permisiunilor descris în ghidul <a href="../cum-sa-folosesti-google-drive-ca-avocat/">Cum să folosești Google Drive ca avocat</a>.</li>
 <li><strong>Acces just-in-time (JIT) și revizuiri periodice</strong>: acordă drepturi temporare pentru o sarcină punctuală și retrage-le după. Fă trimestrial o revizuire a accesului - cine mai are nevoie de ce? Revocă imediat accesul colaboratorilor care pleacă.</li>
 <li><strong>Separarea conturilor administrative</strong>: contul cu care administrezi platformele nu este același cu cel de zi cu zi. Conturile de admin sunt cele mai râvnite de atacatori.</li>
 </ul>
@@ -207,7 +207,7 @@
 <p>Multe cabinete încă folosesc un <strong>VPN</strong> pentru accesul la distanță. Problema cu VPN-ul tradițional este că, odată conectat, utilizatorul capătă acces la întreaga rețea internă - exact perimetrul de încredere pe care zero-trust îl elimină.</p>
 <p>Soluția modernă este <strong>ZTNA (Zero Trust Network Access)</strong>: în loc să te conectezi la rețea, te conectezi direct la aplicația de care ai nevoie, după ce identitatea și dispozitivul au fost verificate. Aplicațiile rămân „invizibile” pentru oricine nu este autorizat explicit.</p>
 <ul>
-<li><strong>Micro-segmentarea</strong> împarte rețeaua în zone mici și izolate, ca să o breșă într-o zonă (de exemplu, calculatorul de la recepție) să nu se propage la serverul cu dosare.</li>
+<li><strong>Micro-segmentarea</strong> împarte rețeaua în zone mici și izolate, astfel încât o breșă într-o zonă (de exemplu, calculatorul de la recepție) să nu se propage la serverul cu dosare.</li>
 <li><strong>SASE (Secure Access Service Edge)</strong> combină ZTNA cu filtrarea traficului web și protecția DNS într-un singur serviciu cloud - util pentru cabinetele complet remote.</li>
 <li>Pentru un cabinet mic, ZTNA poate fi implementat rapid cu servicii precum <strong>Cloudflare Zero Trust</strong> sau <strong>Twingate</strong>, fără infrastructură proprie complexă.</li>
 </ul>

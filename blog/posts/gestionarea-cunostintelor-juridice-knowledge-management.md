@@ -26,7 +26,7 @@ Acest ghid practic îți arată cum să proiectezi, să configurezi și să men�
 
 ## 1. Ce înseamnă Knowledge Management în practica unui cabinet de avocatură
 
-În esență, Knowledge Management reprezintă disciplina de a captura, structura, actualiza și partaja cunoștințele acumulate în activitatea juridică, ca să valoarea creată într-un dosar să rămână în patrimoniul cabinetului, nu doar în memoria avocatului care a redactat documentul.
+În esență, Knowledge Management reprezintă disciplina de a captura, structura, actualiza și partaja cunoștințele acumulate în activitatea juridică, astfel încât valoarea creată într-un dosar să rămână în patrimoniul cabinetului, nu doar în memoria avocatului care a redactat documentul.
 
 Există două tipuri de cunoștințe într-o casă de avocatură:
 - **Cunoștințe explicite**: documente redactate, modele de acțiuni, contracte semnate, memorii de sinteză, tabele de jurisprudență și opinii legale. Acestea pot fi salvate, indexate și arhivate direct.

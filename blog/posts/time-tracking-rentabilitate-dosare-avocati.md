@@ -158,7 +158,7 @@ Secretul profesional este o obligație fundamentală a profesiei de avocat confo
 Pentru a asigura conformitatea deplină, aplică aceste trei reguli operaționale:
 
 - **Anonimizarea descrierilor de pontaj**: Nu scrie niciodată detalii sensibile în câmpul descrierii publice. În loc de `Discuție privind infracțiunea de evaziune fiscală comisă de Popescu Ion`, notează `Ședință analiză documente contabile - Dosar 3421/P/2026`. Dacă un colaborator extern sau un auditor are acces la rapoarte, datele cu caracter sensibil rămân protejate.
-- **Autentificare strictă și control al accesului**: Activează obligatoriu autentificarea cu doi factori (`2FA`) prin aplicație dedicată pe dispozitivele tuturor membrilor cabinetului. Restricționează drepturile de vizualizare ca să avocații stagiari sau colaboratorii să aibă acces doar la dosarele la care sunt repartizați direct.
+- **Autentificare strictă și control al accesului**: Activează obligatoriu autentificarea cu doi factori (`2FA`) prin aplicație dedicată pe dispozitivele tuturor membrilor cabinetului. Restricționează drepturile de vizualizare astfel încât avocații stagiari sau colaboratorii să aibă acces doar la dosarele la care sunt repartizați direct.
 - **Criptare și furnizori europeni**: Alege platforme conforme cu normele GDPR care oferă criptare în tranzit (`TLS 1.3`) și stocare securizată (`AES-256`).
 
 Pentru o arhitectură avansată de protecție a informațiilor din cabinet, consultă ghidul nostru tehnic despre [Zero Trust Security explicat pentru avocați](../zero-trust-security-explicat-pentru-avocati/).
