@@ -5,7 +5,7 @@ slug: "cat-costa-un-site-de-avocat-in-2026"
 description: "Cât costă un site de avocat în 2026? Intervale de preț publicate în România și factorii care influențează costul: pagini, conținut, SEO, mentenanță."
 read_time: 8
 categories: ["prezenta online", "marketing juridic", "website avocat"]
-tags: ["site de prezentare pret", "website de prezentare", "creare site avocat", "avocat", "costuri website"]
+tags: ["site de prezentare preț", "website de prezentare", "creare site avocat", "avocați", "costuri website"]
 ---
 
 # Cât costă un site de avocat în 2026: intervale de preț și ce influențează costul
@@ -27,6 +27,10 @@ tags: ["site de prezentare pret", "website de prezentare", "creare site avocat",
  "datePublished": "2026-10-09",
  "dateModified": "2026-10-09",
  "inLanguage": "ro-RO",
+ "image": {
+ "@type": "ImageObject",
+ "url": "https://solon.agency/assets/img/undraw_personal-website_kz7a.png"
+ },
  "author": {"@id": "https://solon.agency/#organization"},
  "publisher": {"@id": "https://solon.agency/#organization"}
  },
@@ -39,7 +43,7 @@ tags: ["site de prezentare pret", "website de prezentare", "creare site avocat",
  "name": "Cât costă un site pentru un cabinet de avocatură?",
  "acceptedAnswer": {
  "@type": "Answer",
- "text": "Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pornesc, pentru un site simplu de avocat, de la câteva sute de euro și cresc pentru societățile cu mai mulți avocați, mai multe specializări sau conținut în mai multe limbi. Intervalele concrete și sursele lor sunt prezentate în articol."
+ "text": "Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pentru un site de prezentare pornesc de la câteva sute de euro la un freelancer și de la 900 € la o agenție mică. Site-urile cu design personalizat, potrivite unui birou de avocatură, se plasează de regulă în intervalul 1.500-3.500 €. Intervalele concrete și sursele lor sunt prezentate în articol."
  }
  },
  {
@@ -80,29 +84,21 @@ tags: ["site de prezentare pret", "website de prezentare", "creare site avocat",
 }
 </script>
 
-Un site de prezentare pentru un avocat sau un cabinet de avocatură din România pornește, conform prețurilor publicate în 2026, de la circa 500 € (<a href="https://tgadesign.ro/servicii/creare-site-avocat" target="_blank" rel="nofollow noopener">TGA Design</a>, <a href="https://webbase.ro/creare-site-avocat" target="_blank" rel="nofollow noopener">WebBase</a>) și poate ajunge la 1.500 - 2.500 € pentru societăți cu mai mulți avocați (<a href="https://tgadesign.ro/servicii/creare-site-avocat" target="_blank" rel="nofollow noopener">TGA Design</a>). Costul depinde în principal de numărul de pagini, conținut, SEO și mentenanță.
+Un site de prezentare în România costă, conform prețurilor publicate în 2026, între 300 și 1.000 € la un freelancer și între 900 și 2.500 € la o agenție mică (<a href="https://nordweb.ro/ghiduri/cat-costa-un-site/" target="_blank" rel="noopener">Nordweb</a>). Site-urile cu design personalizat, conținut și SEO de bază se plasează între 800 și 7.000 € (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>). Costul depinde în principal de numărul de pagini, conținut, SEO și mentenanță.
 
 *Actualizat: octombrie 2026*
 
-Acest ghid este realizat de SOLON, agenția digitală pentru avocați din România. Scopul lui este să vă ajute să citiți și să comparați ofertele pe care le primiți, nu să recomande un anumit preț. Nu publicăm aici tarifele SOLON. prezentăm doar intervale publice de pe piață, cu sursa fiecăreia, și factorii care explică diferențele.
+Acest ghid este realizat de SOLON, agenția digitală pentru avocați din România. Scopul lui este să te ajute să citești și să compari ofertele pe care le primești, nu să recomande un anumit preț. Nu publicăm aici tarifele SOLON. Prezentăm doar intervale publice de pe piață, cu sursa fiecăreia, și factorii care explică diferențele.
 
 ## Intervale de preț publicate pe piața din România
 
 Prețurile de mai jos sunt cele afișate public de furnizori din România în momentul redactării. Sunt orientative, unele sunt fără TVA, iar ce include fiecare pachet diferă de la un furnizor la altul.
 
-**Site-uri dedicate avocaților:**
+- Un ghid de prețuri pentru 2026 estimează 300-1.000 € la un freelancer, 900-2.500 € la o agenție mică și de la 2.500 € în sus la agențiile mari (<a href="https://nordweb.ro/ghiduri/cat-costa-un-site/" target="_blank" rel="noopener">Nordweb</a>).
+- Alt ghid plasează un site de prezentare profesional între 800 € și 7.000 €, în funcție de complexitate și personalizare. Aceeași sursă menționează că birouri de avocatură se înscriu de regulă în categoria mid-range, adică 1.500-3.500 € (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
+- În lei, un ghid publicat estimează 500-1.500 lei pentru un site simplu pe șablon și 1.500-4.000 lei pentru un site personalizat pe WordPress, prețuri fără TVA (<a href="https://webhat.ro/creare-site-web-pret/" target="_blank" rel="noopener">Web Hat Solutions</a>).
 
-- Un furnizor indică o investiție între 500 € și 1.200 € în funcție de complexitate și, pentru societăți civile mari cu echipe și specializări multiple, 1.500 - 2.500 € (<a href="https://tgadesign.ro/servicii/creare-site-avocat" target="_blank" rel="nofollow noopener">TGA Design</a>).
-- Un alt furnizor publică pachete pentru avocați „de la 500 €” pentru un site simplu și „de la 1.200 €” pentru varianta cu blog juridic, pagini în mai multe limbi și mentenanță inclusă pe o perioadă limitată (<a href="https://webbase.ro/creare-site-avocat" target="_blank" rel="nofollow noopener">WebBase</a>).
-- Un al treilea afișează un preț de pornire de 590 € fără TVA pentru un site standard de până la 8 pagini, cu preț care crește pentru cabinete cu mai mulți avocați sau blog extins (<a href="https://www.dianysmedia.info/realizare-site-avocat/" target="_blank" rel="nofollow noopener">Dianys</a>).
-
-**Site-uri de prezentare în general (orice domeniu):**
-
-- Un ghid de prețuri pentru 2026 estimează 300 - 1.000 € la un freelancer, 900 - 2.500 € la o agenție mică și de la 2.500 € în sus la agențiile mari (<a href="https://nordweb.ro/ghiduri/cat-costa-un-site/" target="_blank" rel="noopener">Nordweb</a>).
-- Alt ghid plasează un site de prezentare profesional între 800 € și 7.000 €, în funcție de complexitate și personalizare (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
-- În lei, un ghid publicat estimează 500 - 1.500 lei pentru un site simplu pe șablon și 1.500 - 4.000 lei pentru un site personalizat pe WordPress (<a href="https://webhat.ro/creare-site-web-pret/" target="_blank" rel="noopener">Web Hat Solutions</a>).
-
-**Costuri recurente, după lansare:** același tip de ghid enumeră găzduirea (200 - 2.000 lei/an), domeniul (60 - 150 lei/an) și mentenanța (200 - 800 lei/lună) (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
+**Costuri recurente, după lansare:** același tip de ghid enumeră găzduirea (200-2.000 lei/an), domeniul (60-150 lei/an) și mentenanța (200-800 lei/lună) (<a href="https://mmcreative.ro/cat-costa-un-site-web-in-romania-2026/" target="_blank" rel="noopener">MM Creative</a>).
 
 Diferențele mari dintre surse arată un lucru simplu: „un site de prezentare” nu este un produs standard. Tabelul de mai jos explică de unde vin diferențele.
 
@@ -169,9 +165,9 @@ Diferențele mari dintre surse arată un lucru simplu: „un site de prezentare�
 
 > **Pe scurt:** prețul unui site de avocat în România este determinat în principal de patru elemente: numărul de pagini, conținutul (cine îl scrie și în câte limbi), nivelul de SEO și mentenanța de după lansare. Două oferte cu același „preț de pornire” pot include lucruri foarte diferite, așa că se compară ce conține fiecare, nu doar suma finală. - SOLON, octombrie 2026
 
-## Cum citiți o ofertă pentru site-ul cabinetului
+## Cum citești o ofertă pentru site-ul cabinetului
 
-Înainte să comparați sume, verificați dacă oferta răspunde clar la aceste întrebări:
+Înainte să compari sume, verifică dacă oferta răspunde clar la aceste întrebări:
 
 - Câte pagini sunt incluse și care sunt acestea?
 - Cine scrie textele și cine le verifică din perspectiva regulilor profesiei?
@@ -182,17 +178,17 @@ Diferențele mari dintre surse arată un lucru simplu: „un site de prezentare�
 - Ce mentenanță urmează după lansare și cine o face?
 - Prețul include sau nu TVA?
 
-Un site de avocat are rolul unei prezențe informative: le arată celor interesați cine sunteți, în ce arii activați și cum vă pot contacta. Pentru exemple concrete de structură și conținut, puteți consulta studiile de caz [Avocat Dumitrescu Alexandru](https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/) și [Mărinău și Asociații](https://solon.agency/studii-de-caz/marinau-si-asociatii/). Dacă vă interesează și costul de a nu avea o prezență digitală, citiți [Cât te costă de fapt un cabinet de avocatură nedigitalizat](https://solon.agency/blog/cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/).
+Un site de avocat are rolul unei prezențe informative: le arată celor interesați cine ești, în ce arii activezi și cum te pot contacta. Pentru exemple concrete de structură și conținut, poți consulta studiile de caz [Avocat Dumitrescu Alexandru](https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/) și [Mărinău și Asociații](https://solon.agency/studii-de-caz/marinau-si-asociatii/). Dacă te interesează și costul de a nu avea o prezență digitală, citește [Cât te costă de fapt un cabinet de avocatură nedigitalizat](https://solon.agency/blog/cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/).
 
-<!-- TODO Dev Bot: adăugați aici linkul către Glosarul de marketing digital pentru avocați (Oct 10) și către ghidul „Creare site pentru avocați: ghid pas cu pas" (Oct 14), după ce sunt live. -->
-
-Regulile de publicitate ale profesiei influențează ce conținut poate apărea pe site. le tratăm separat, într-un material dedicat.
+Regulile de publicitate ale profesiei influențează ce conținut poate apărea pe site. Le tratăm separat, într-un material dedicat.
 
 ## Întrebări frecvente
 
 ### Cât costă un site pentru un cabinet de avocatură?
 
-Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pornesc, pentru un site simplu de avocat, de la câteva sute de euro și cresc pentru societățile cu mai mulți avocați, mai multe specializări sau conținut în mai multe limbi. Intervalele concrete și sursele lor sunt prezentate în articol.
+Depinde de numărul de pagini, de conținut, de SEO și de mentenanță. Prețurile publicate în 2026 de furnizori din România pentru un site de prezentare pornesc de la câteva sute de euro la un freelancer și de la 900 € la o agenție mică.
+
+Site-urile cu design personalizat, potrivite unui birou de avocatură, se plasează de regulă în intervalul 1.500-3.500 €. Intervalele concrete și sursele lor sunt prezentate în articol.
 
 ### De ce diferă atât de mult prețurile la site-urile pentru avocați?
 
@@ -212,12 +208,12 @@ Alegerea depinde de buget și de cât de distinctă trebuie să fie prezența on
 
 O ofertă clară specifică numărul de pagini, cine furnizează textele, ce include SEO-ul, cum sunt tratate GDPR și cookie-urile, dacă domeniul și hosting-ul sunt incluse, ce mentenanță urmează după lansare și dacă prețul include sau nu TVA.
 
-## Vreți să discutăm despre site-ul cabinetului?
+## Vrei să discutăm despre site-ul cabinetului?
 
-Dacă doriți să clarificați ce ar trebui să includă site-ul cabinetului dumneavoastră, puteți [programa o consultanță gratuită](https://solon.agency/programare-consultanta-gratuita/) sau puteți afla mai multe pe [solon.agency](https://solon.agency/).
+Dacă vrei să clarifici ce ar trebui să includă site-ul cabinetului tău, poți [programa o consultanță gratuită](https://solon.agency/programare-consultanta-gratuita/) sau poți afla mai multe pe [solon.agency](https://solon.agency/).
 
 ---
 
 **Despre autor**
 
-Articol realizat de echipa SOLON, agenția digitală pentru avocați din România. SOLON (SOLON SRL) construiește site-uri, conținut și prezență digitală informativă pentru avocați și cabinete de avocatură. Materialul are caracter informativ. prețurile citate aparțin surselor indicate și pot fi modificate de acestea.
+Articol realizat de echipa SOLON, agenția digitală pentru avocați din România. SOLON (SOLON SRL) construiește site-uri, conținut și prezență digitală informativă pentru avocați și cabinete de avocatură. Materialul are caracter informativ. Prețurile citate aparțin surselor indicate și pot fi modificate de acestea.
