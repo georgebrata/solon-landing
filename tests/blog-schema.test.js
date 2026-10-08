@@ -16,14 +16,16 @@ const test = require("node:test");
 
 const BLOG_DIR = path.join(__dirname, "../blog");
 
-/**
- * Strip all HTML tags and normalise internal whitespace.
- * @param {string} html
- * @returns {string}
- */
-function stripTags(html) {
-  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-}
+const stripTags = (html) =>
+  html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+const tryParseJson = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
 
 /**
  * Find the FAQPage node in any JSON-LD script block and return its Q&A pairs.
@@ -31,16 +33,11 @@ function stripTags(html) {
  * @param {string} html
  * @returns {Array<{name: string, text: string}>|null}
  */
-function extractJsonLdFaqPairs(html) {
+const extractJsonLdFaqPairs = (html) => {
   const scriptRe = /<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g;
-  let m;
-  while ((m = scriptRe.exec(html)) !== null) {
-    let schema;
-    try {
-      schema = JSON.parse(m[1]);
-    } catch {
-      continue;
-    }
+  for (const scriptMatch of html.matchAll(scriptRe)) {
+    const schema = tryParseJson(scriptMatch[1]);
+    if (!schema) continue;
     const nodes = Array.isArray(schema["@graph"])
       ? schema["@graph"]
       : schema["@type"] === "FAQPage"
@@ -56,7 +53,7 @@ function extractJsonLdFaqPairs(html) {
     }
   }
   return null;
-}
+};
 
 /**
  * Extract visible FAQ Q&A pairs from the rendered HTML.
@@ -65,30 +62,27 @@ function extractJsonLdFaqPairs(html) {
  * @param {string} html
  * @returns {Array<{name: string, text: string}>|null}
  */
-function extractVisibleFaqPairs(html) {
+const extractVisibleFaqPairs = (html) => {
   const sectionMatch = html.match(
     /<h2[^>]*>[^<]*Întrebări frecvente[^<]*<\/h2>([\s\S]*?)(?=<h2[^>]*>|<\/article>)/i
   );
   if (!sectionMatch) return null;
 
   const section = sectionMatch[1];
-  const h3Re = /<h3[^>]*>([\s\S]*?)<\/h3>([\s\S]*?)(?=<h3[^>]*>|$)/g;
   const pairs = [];
-  let qm;
-  while ((qm = h3Re.exec(section)) !== null) {
-    const question = stripTags(qm[1]);
-    const answerBlock = qm[2];
+  const h3Re = /<h3[^>]*>([\s\S]*?)<\/h3>([\s\S]*?)(?=<h3[^>]*>|$)/g;
+  for (const questionMatch of section.matchAll(h3Re)) {
+    const question = stripTags(questionMatch[1]);
+    const answerBlock = questionMatch[2];
     const pTexts = [];
-    const pRe = /<p>([\s\S]*?)<\/p>/g;
-    let pm;
-    while ((pm = pRe.exec(answerBlock)) !== null) {
-      const txt = stripTags(pm[1]);
+    for (const paragraphMatch of answerBlock.matchAll(/<p>([\s\S]*?)<\/p>/g)) {
+      const txt = stripTags(paragraphMatch[1]);
       if (txt) pTexts.push(txt);
     }
     if (question) pairs.push({ name: question, text: pTexts.join(" ") });
   }
   return pairs.length > 0 ? pairs : null;
-}
+};
 
 test("FAQPage JSON-LD matches visible FAQ section for all blog posts", () => {
   const entries = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
