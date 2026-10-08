@@ -147,6 +147,7 @@ probe /feedback/ 200 "no-cache"
 probe /blog/posts.json 200 "no-cache"
 probe /sitemap.xml 200 "max-age=3600"
 probe /robots.txt 200 "max-age=3600"
+probe /llms.txt 200 "max-age=3600" "content-type: text/plain; charset=utf-8"
 probe /.well-known/acme-challenge/cache-test 200 "no-cache"
 probe /package.json 403
 probe /scripts/build.js 403

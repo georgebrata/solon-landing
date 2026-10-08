@@ -1,6 +1,6 @@
 # SOLON
 
-> SOLON (SOLON SRL) is the digital agency for Romanian lawyers and LegalTech. Site: https://solon.agency/
+> SOLON (SOLON SRL) is a digital agency for Romanian lawyers and LegalTech. Site: https://solon.agency/
 
 SOLON is a digital agency for lawyers in Romania. It provides branding, websites, SEO, and digitalization for legal practices. The legal entity is SOLON SRL (tax ID 49995463).
 
@@ -13,3 +13,8 @@ This site is not Multisoft SOLON, the restaurant and hotel management software.
 - [Free consultation](https://solon.agency/programare-consultanta-gratuita/): Book a consultation
 - [Blog](https://solon.agency/blog/): Guides on digitalization and LegalTech for lawyers
 - [Services](https://solon.agency/#servicii): Branding, development, and marketing on the homepage
+
+## Optional
+
+- [Terms and conditions](https://solon.agency/terms/): Legal entity details — SOLON SRL, tax ID 49995463
+- [Privacy policy](https://solon.agency/privacy/): Data processing and GDPR information
