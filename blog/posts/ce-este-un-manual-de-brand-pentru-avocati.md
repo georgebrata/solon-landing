@@ -86,7 +86,7 @@ Un manual de brand definește fiecare culoare cu **coduri exacte**, ca să fie r
 | **CMYK** | tipar (cărți de vizită, broșuri) |
 | **Pantone (PMS)** | tipar de precizie, culori speciale |
 
-Manualul precizează și **proporțiile de utilizare** (care culoare este dominantă, care este accent) și combinațiile permise, ca să identitatea să rămână echilibrată pe orice material.
+Manualul precizează și **proporțiile de utilizare** (care culoare este dominantă, care este accent) și combinațiile permise, astfel încât identitatea să rămână echilibrată pe orice material.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-8">

@@ -66,7 +66,7 @@ Dacă ești partener într-o societate de avocatură, asociază profilul persona
 - Link către pagina de servicii de pe site.
 - Document PDF (de exemplu un ghid despre drepturile angajaților) - util ca lead magnet discret.
 
-Adaugă elemente din **Add profile section → Recommended → Add featured link / media**. Reordonează-le cu drag & drop ca să primul element să fie cel mai actual și relevant. Dacă ai un blog juridic indexat în Google, un articol bine scris din secțiunea Featured poate completa strategia SEO descrisă în ghidul despre [Google Search Console](../cum-sa-folosesti-google-search-console-ca-avocat/).
+Adaugă elemente din **Add profile section → Recommended → Add featured link / media**. Reordonează-le cu drag & drop astfel încât primul element să fie cel mai actual și relevant. Dacă ai un blog juridic indexat în Google, un articol bine scris din secțiunea Featured poate completa strategia SEO descrisă în ghidul despre [Google Search Console](../cum-sa-folosesti-google-search-console-ca-avocat/).
 
 ## 5. Strategia de conținut - ce, când și cât
 

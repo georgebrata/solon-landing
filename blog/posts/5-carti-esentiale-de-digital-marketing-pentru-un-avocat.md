@@ -26,7 +26,7 @@ Cele cinci cărți de mai jos acoperă exact golurile pe care le întâlnim la c
   </div>
 </div>
 
-Donald Miller argumentează că majoritatea brandurilor - inclusiv cabinetele de avocatură - comunică prea mult despre ei înșiși și prea puțin despre client. *Building a StoryBrand* învață cititorii cum să simplifice mesajul de marcă ca să oamenii să-l înțeleagă imediat și cum să creeze cele mai eficiente mesaje pentru site-uri web, broșuri și social media.
+Donald Miller argumentează că majoritatea brandurilor - inclusiv cabinetele de avocatură - comunică prea mult despre ei înșiși și prea puțin despre client. *Building a StoryBrand* învață cititorii cum să simplifice mesajul de marcă astfel încât oamenii să-l înțeleagă imediat și cum să creeze cele mai eficiente mesaje pentru site-uri web, broșuri și social media.
 
 **De ce contează pentru un avocat:**
 

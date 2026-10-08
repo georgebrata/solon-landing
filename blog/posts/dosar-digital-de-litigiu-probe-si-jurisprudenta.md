@@ -213,7 +213,7 @@ Măsuri de securitate tehnice obligatorii pentru dosarul digital:
 
 - **Criptarea completă a dispozitivelor**: Activează criptarea hard disk-ului pe toate laptopurile și calculatoarele cabinetului (BitLocker pentru Windows, FileVault pentru macOS). În cazul pierderii sau furtului unui dispozitiv fizic, datele din dosarele clienților nu pot fi citite de persoane neautorizate.
 - **Regula de backup 3-2-1**: Păstrează **3 copii** ale tuturor dosarelor digitale, pe **2 medii de stocare diferite** (ex: stocare locală rapidă pe SSD și un server de fișiere dedicat), cu **1 copie stocată offsite** într-un cloud securizat localizat în Uniunea Europeană.
-- **Arhitectura Zero Trust**: Implementează autentificarea cu doi factori (2FA / MFA) pentru toți colaboratorii și configurează permisiuni de acces restrictive, ca să fiecare avocat să aibă acces doar la dosarele în care este desemnat titular sau colaborator direct. Pentru a înțelege cadrul tehnic de securizare a infrastructurii cabinetului, consultă [Zero Trust Security explicat pentru avocați](../zero-trust-security-explicat-pentru-avocati/).
+- **Arhitectura Zero Trust**: Implementează autentificarea cu doi factori (2FA / MFA) pentru toți colaboratorii și configurează permisiuni de acces restrictive, astfel încât fiecare avocat să aibă acces doar la dosarele în care este desemnat titular sau colaborator direct. Pentru a înțelege cadrul tehnic de securizare a infrastructurii cabinetului, consultă [Zero Trust Security explicat pentru avocați](../zero-trust-security-explicat-pentru-avocati/).
 
 ---
 

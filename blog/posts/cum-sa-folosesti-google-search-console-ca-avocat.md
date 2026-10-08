@@ -129,7 +129,7 @@ Un **sitemap XML** este lista structurată a paginilor pe care vrei să le index
 - Trimite URL-ul sitemap-ului (de obicei `https://cabinet.ro/sitemap.xml`).
 - Include toate paginile importante: pagina principală, paginile de practică, pagina „Despre”, „Contact”, articolele de blog și eventualele studii de caz.
 - Verifică în raport numărul de pagini **descoperite** față de cele **trimise** - discrepanțele indică probleme.
-- Actualizează sitemap-ul automat la fiecare pagină nouă publicată, ca să Google să fie informat rapid.
+- Actualizează sitemap-ul automat la fiecare pagină nouă publicată, astfel încât Google să fie informat rapid.
 
 **De știut:** trimiterea sitemap-ului nu garantează indexarea, dar este modul oficial prin care îi semnalezi lui Google ce conținut consideri prioritar.
 

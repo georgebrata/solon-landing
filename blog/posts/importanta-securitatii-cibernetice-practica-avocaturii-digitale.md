@@ -34,7 +34,7 @@ Prin utilizarea unor algoritmi puternici de criptare, documentele și comunicăr
 
 ![Ilustrație: securitate activă și acces controlat la sisteme digitale](../../assets/img/undraw_security-on_btwg.png)
 
-Apoi, orice cabinet de avocatură ar trebui să aibă o strategie solidă de backup, prin care datele esențiale să fie salvate periodic pe medii securizate, ca să să poată fi recuperate rapid în cazul unui atac ransomware sau al unei defecțiuni tehnice. Aceste măsuri, aplicate corespunzător, nu doar că reduc riscurile asociate securității cibernetice, dar asigură și conformitatea cu cerințele legale privind protecția datelor juridice.
+Apoi, orice cabinet de avocatură ar trebui să aibă o strategie solidă de backup, prin care datele esențiale să fie salvate periodic pe medii securizate, ca să poată fi recuperate rapid în cazul unui atac ransomware sau al unei defecțiuni tehnice. Aceste măsuri, aplicate corespunzător, nu doar că reduc riscurile asociate securității cibernetice, dar asigură și conformitatea cu cerințele legale privind protecția datelor juridice.
 
 ## Training, inginerie socială și securitate endpoint
 

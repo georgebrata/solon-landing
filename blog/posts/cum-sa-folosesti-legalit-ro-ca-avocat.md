@@ -75,7 +75,7 @@ Dacă trimiți clientului un rezultat, explică ce dovedește verificarea și ce
 
 **Calendarul fiscal** centralizează termenele de declarare și plată și te ajută să urmărești ce declarații trebuie depuse. Pentru un avocat care oferă consultanță antreprenorilor sau lucrează împreună cu un contabil, calendarul poate deveni un punct de control înaintea fiecărei discuții cu clientul.
 
-Configurează profilul ca să reminder-ele să reflecte tipul de contribuabil urmărit. Folosește reminder-e pe mai multe niveluri: unul cu suficient timp pentru colectarea documentelor, unul înainte de redactare și unul în apropierea termenului de depunere. Activează notificările pe email pentru termenele pe care nu vrei să le ratezi.
+Configurează profilul astfel încât reminder-ele să reflecte tipul de contribuabil urmărit. Folosește reminder-e pe mai multe niveluri: unul cu suficient timp pentru colectarea documentelor, unul înainte de redactare și unul în apropierea termenului de depunere. Activează notificările pe email pentru termenele pe care nu vrei să le ratezi.
 
 Nu trata calendarul ca pe o dovadă că o obligație a fost îndeplinită. El îți arată termenul și te ajută să organizezi munca.
 
