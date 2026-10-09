@@ -1,12 +1,183 @@
 (function () {
   "use strict";
 
-  const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent";
+  /*
+   * Backend. Production is the Vercel sync bridge (repo georgebrata/solon-support-api).
+   * Rollback path: set CHAT_BACKEND_DEFAULT to "n8n" (and restore the n8n host in the
+   * .htaccess CSP connect-src), or test a single browser with ?chatBackend=n8n.
+   * Both backends share the same request/response contract.
+   */
+  const API_BACKENDS = {
+    vercel: "https://solon-support-api.vercel.app/api/chat",
+    n8n: "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent",
+  };
+  const CHAT_BACKEND_DEFAULT = "vercel";
+
+  /*
+   * AI-disclosure caption under the header. OFF by George's decision (2026-10-09).
+   * Keep this code path so it can be switched on (set to true) without other changes.
+   */
+  const SHOW_AI_DISCLOSURE = false;
+  const AI_DISCLOSURE_TEXT = "Răspunsuri generate cu ajutorul AI";
+
+  const AGENT_NAME = "Maria";
+  const AGENT_ROLE = "Suport clienți";
+  const AVATAR_URL = "/assets/img/maria-avatar.webp";
+
   const SESSION_KEY = "chat_session_id";
   const HISTORY_KEY = "chat_history";
-  const GREETING = "Bună! Sunt asistentul SOLON. Spune-mi cu ce te pot ajuta.";
-  const ERROR_MSG = "A apărut o eroare. Te rugăm să încerci din nou.";
-  const NEEDS_HUMAN_MSG = "Un coleg din echipă te va contacta.";
+  const HISTORY_AT_KEY = "chat_history_at";
+  const STARTED_KEY = "chat_started_session";
+  const RESOLVED_KEY = "chat_resolved_session";
+  const HISTORY_TTL_MS = 24 * 60 * 60 * 1000;
+  const CLIENT_TIMEOUT_MS = 65000;
+  const GREETING = "Bună! Sunt Maria, de la suportul SOLON. Cu ce te pot ajuta azi?";
+  const TYPING_MSG = "Maria scrie…";
+  const ERROR_MSG_RATE_LIMIT =
+    "Ai trimis multe mesaje într-un timp scurt. Așteaptă un minut și încearcă din nou.";
+  const ERROR_MSG_UNAVAILABLE =
+    "Chatul nu e disponibil acum. Încearcă din nou mai târziu.";
+  const NEEDS_HUMAN_MSG = "Te pun în legătură cu un coleg din echipă, care te va contacta în curând.";
+
+  /** Resolves the chat API URL, including a ?chatBackend= override.
+   * @returns {string}
+   */
+  function resolveApi() {
+    let backend = CHAT_BACKEND_DEFAULT;
+    try {
+      const override = new URLSearchParams(window.location.search).get("chatBackend");
+      if (override && Object.prototype.hasOwnProperty.call(API_BACKENDS, override)) {
+        backend = override;
+      }
+    } catch {
+      /* keep default */
+    }
+    return API_BACKENDS[backend];
+  }
+
+  /**
+   * GA4 (property 420688868). Privacy: only event names, a short session hash,
+   * counters, booleans and latency. Never message text, email, name or the full
+   * session UUID.
+   * consent.js installs a gtag stub that pushes into dataLayer before a choice.
+   * Drop the event until analytics consent. Do not call gtag and do not push
+   * dataLayer, or a later grant on the same page can replay the queue.
+   * @param {string} eventName
+   * @param {object} [params]
+   * @returns {void}
+   */
+  function trackSupport(eventName, params) {
+    try {
+      if (typeof window === "undefined") return;
+      if (!window.SolonConsent?.hasConsent("analytics")) return;
+      if (typeof window.gtag === "function") {
+        window.gtag("event", eventName, params || {});
+        return;
+      }
+      if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push(Object.assign({ event: eventName }, params || {}));
+      }
+    } catch {
+      /* no-op */
+    }
+  }
+
+  /** Last 8 hex characters of a chat UUID, never the full id.
+   * @param {string} id
+   * @returns {string}
+   */
+  function shortSessionHash(id) {
+    const hex = String(id || "").replace(/[^0-9a-f]/gi, "");
+    return hex.slice(-8) || "unknown";
+  }
+
+  /** Short session id for analytics, or "unknown".
+   * @returns {string}
+   */
+  function analyticsSessionId() {
+    try {
+      return shortSessionHash(localStorage.getItem(SESSION_KEY));
+    } catch {
+      return "unknown";
+    }
+  }
+
+  /** Reads a storage key, or null when storage is blocked.
+   * @param {Storage} storage
+   * @param {string} key
+   * @returns {string|null}
+   */
+  function readFlag(storage, key) {
+    try {
+      return storage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Writes a storage key, ignoring quota and privacy errors.
+   * @param {Storage} storage
+   * @param {string} key
+   * @param {string} value
+   * @returns {void}
+   */
+  function writeFlag(storage, key, value) {
+    try {
+      storage.setItem(key, value);
+    } catch {
+      /* no-op */
+    }
+  }
+
+  /** Counts visitor messages in a transcript.
+   * @param {Array<object>} history
+   * @returns {number}
+   */
+  function countUserMessages(history) {
+    return history.filter((entry) => entry?.role === "user").length;
+  }
+
+  /** True when any bubble asked for a human colleague.
+   * @param {Array<object>} history
+   * @returns {boolean}
+   */
+  function sessionEscalated(history) {
+    return history.some((entry) => entry?.needsHuman);
+  }
+
+  /** True when Maria has rendered at least one answer.
+   * @param {Array<object>} history
+   * @returns {boolean}
+   */
+  function sessionHasAnswer(history) {
+    return history.some((entry) => entry?.role === "bot" && entry?.answered);
+  }
+
+  /** Fires support_chat_resolved once per chat session.
+   * @param {Array<object>} history
+   * @returns {void}
+   */
+  function markResolved(history) {
+    const sid = analyticsSessionId();
+    // localStorage, keyed by the chat session, same as STARTED_KEY. A
+    // sessionStorage flag resets when the tab closes while the transcript
+    // remains, so the next visit would count resolved again.
+    if (readFlag(localStorage, RESOLVED_KEY) === sid) return;
+    writeFlag(localStorage, RESOLVED_KEY, sid);
+    trackSupport("support_chat_resolved", {
+      session_id: sid,
+      message_count: countUserMessages(history),
+    });
+  }
+
+  /** Romanian error copy for HTTP 429 versus every other failure.
+   * @param {number} [status]
+   * @returns {string}
+   */
+  function chatErrorMessage(status) {
+    if (status === 429) return ERROR_MSG_RATE_LIMIT;
+    return ERROR_MSG_UNAVAILABLE;
+  }
 
   let pending = false;
   let isOpen = false;
@@ -20,17 +191,70 @@
   let sendBtn;
   let closeBtn;
 
-  function getSessionId() {
-    let id = localStorage.getItem(SESSION_KEY);
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem(SESSION_KEY, id);
+  let memorySessionId = "";
+
+  /** Removes one localStorage key, ignoring storage errors.
+   * @param {string} key
+   * @returns {void}
+   */
+  function storageRemove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* no-op */
     }
-    return id;
+  }
+
+  /** Drops the transcript, session id, and chat analytics flags.
+   * @returns {void}
+   */
+  function clearChatStorage() {
+    storageRemove(HISTORY_KEY);
+    storageRemove(HISTORY_AT_KEY);
+    storageRemove(SESSION_KEY);
+    storageRemove(STARTED_KEY);
+    storageRemove(RESOLVED_KEY);
+  }
+
+  /** True when the transcript timestamp is within 24 hours.
+   * @returns {boolean}
+   */
+  function chatStorageFresh() {
+    const savedAt = Number(readFlag(localStorage, HISTORY_AT_KEY));
+    return savedAt > 0 && Date.now() - savedAt <= HISTORY_TTL_MS;
+  }
+
+  /** Clears chat storage when the transcript is missing a fresh timestamp.
+   * @returns {void}
+   */
+  function expireChatIfNeeded() {
+    const hasHistory = readFlag(localStorage, HISTORY_KEY);
+    const hasSession = readFlag(localStorage, SESSION_KEY);
+    if (!hasHistory && !hasSession) return;
+    if (!chatStorageFresh()) clearChatStorage();
+  }
+
+  function getSessionId() {
+    expireChatIfNeeded();
+    try {
+      let id = localStorage.getItem(SESSION_KEY);
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem(SESSION_KEY, id);
+        if (!localStorage.getItem(HISTORY_AT_KEY)) {
+          localStorage.setItem(HISTORY_AT_KEY, String(Date.now()));
+        }
+      }
+      return id;
+    } catch {
+      if (!memorySessionId) memorySessionId = crypto.randomUUID();
+      return memorySessionId;
+    }
   }
 
   function loadHistory() {
     try {
+      expireChatIfNeeded();
       const raw = localStorage.getItem(HISTORY_KEY);
       if (!raw) return [];
       const parsed = JSON.parse(raw);
@@ -41,7 +265,8 @@
   }
 
   function saveHistory(items) {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+    writeFlag(localStorage, HISTORY_KEY, JSON.stringify(items));
+    writeFlag(localStorage, HISTORY_AT_KEY, String(Date.now()));
   }
 
   function isAllowedUrl(url) {
@@ -65,11 +290,33 @@
     quickRepliesEl.hidden = true;
   }
 
+  /** Decorative Maria avatar.
+   * @param {string} className
+   * @param {number} size
+   * @returns {HTMLImageElement}
+   */
+  function avatarImg(className, size) {
+    const img = document.createElement("img");
+    img.className = className;
+    img.src = AVATAR_URL;
+    img.alt = "";
+    img.width = size;
+    img.height = size;
+    img.decoding = "async";
+    img.setAttribute("aria-hidden", "true");
+    return img;
+  }
+
   function appendBubbleToDom(entry) {
     const wrap = document.createElement("div");
     wrap.className =
       "solon-chat-msg solon-chat-msg--" +
       (entry.role === "user" ? "user" : "bot");
+
+    if (entry.role !== "user") {
+      wrap.classList.add("solon-chat-msg--maria");
+      wrap.appendChild(avatarImg("solon-chat-msg__avatar", 28));
+    }
 
     if (entry.text) {
       const text = document.createElement("div");
@@ -113,7 +360,18 @@
     scrollMessagesToBottom();
   }
 
+  const LEGACY_GREETING_PREFIX = "Bună! Sunt asistentul SOLON";
+
   function ensureGreeting(history) {
+    if (
+      history.length > 0 &&
+      history[0]?.role === "bot" &&
+      typeof history[0]?.text === "string" &&
+      history[0].text.indexOf(LEGACY_GREETING_PREFIX) === 0
+    ) {
+      history[0] = { role: "bot", text: GREETING };
+      saveHistory(history);
+    }
     if (history.length > 0) return history;
     const next = [
       {
@@ -221,23 +479,27 @@
     }
 
     const needsHuman = actions.some(
-      (a) => a && a.tag_name === "needs_human"
+      (a) => a?.tag_name === "needs_human"
     );
+    const resolved =
+      !needsHuman && actions.some((a) => a?.tag_name === "resolved");
 
-    return {
+    const result = {
       messages,
       quickReplies,
       needsHuman,
     };
+    if (resolved) result.resolved = true;
+    return result;
   }
 
   async function fetchReply(text) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => {
       ctrl.abort();
-    }, 60000);
+    }, CLIENT_TIMEOUT_MS);
     try {
-      const res = await fetch(API, {
+      const res = await fetch(resolveApi(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -247,7 +509,11 @@
         }),
         signal: ctrl.signal,
       });
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      if (!res.ok) {
+        const error = new Error(`HTTP ${res.status}`);
+        error.status = res.status;
+        throw error;
+      }
       const data = await res.json();
       return parseApiResponse(data);
     } finally {
@@ -273,6 +539,7 @@
         text: typeof m.text === "string" ? m.text : "",
         buttons: buttons,
         needsHuman: idx === msgs.length - 1 && result.needsHuman,
+        answered: true,
       });
     });
     return entries;
@@ -293,6 +560,18 @@
     setInputEnabled(false);
     showTyping(true);
 
+    const sid = analyticsSessionId();
+    const messageIndex = countUserMessages(history);
+    if (readFlag(localStorage, STARTED_KEY) !== sid) {
+      writeFlag(localStorage, STARTED_KEY, sid);
+      trackSupport("support_chat_started", { session_id: sid });
+    }
+    trackSupport("support_chat_message_sent", {
+      session_id: sid,
+      message_index: messageIndex,
+    });
+    const sentAt = Date.now();
+
     try {
       const result = await fetchReply(trimmed);
       showTyping(false);
@@ -303,6 +582,21 @@
       });
       saveHistory(history);
       renderQuickReplies(result.quickReplies);
+      if (botEntries.length) {
+        trackSupport("support_chat_answer_received", {
+          session_id: sid,
+          latency_ms: Date.now() - sentAt,
+          has_quick_replies: Array.isArray(result.quickReplies) && result.quickReplies.length > 0,
+        });
+      }
+      if (result.needsHuman) {
+        trackSupport("support_chat_escalated", {
+          session_id: sid,
+          message_index: messageIndex,
+        });
+      } else if (result.resolved && !sessionEscalated(history)) {
+        markResolved(history);
+      }
     } catch (error) {
       showTyping(false);
       const logger = globalThis?.SolonLog;
@@ -313,7 +607,7 @@
           name: error?.name,
         });
       }
-      const errEntry = { role: "bot", text: ERROR_MSG };
+      const errEntry = { role: "bot", text: chatErrorMessage(error?.status) };
       history.push(errEntry);
       saveHistory(history);
       appendBubbleToDom(errEntry);
@@ -326,20 +620,25 @@
 
   function openPanel() {
     isOpen = true;
+    getSessionId();
+    trackSupport("support_chat_opened", { session_id: analyticsSessionId() });
     panel.hidden = false;
     launcher.setAttribute("aria-expanded", "true");
     document.body.classList.add("solon-chat-panel-open");
 
-    let history = loadHistory();
-    if (history.length === 0) {
-      history = ensureGreeting(history);
-    }
+    const history = ensureGreeting(loadHistory());
     renderHistory(history);
 
     if (inputEl) inputEl.focus();
   }
 
   function closePanel() {
+    // Fallback resolve heuristic (PLAN.md): closed after >=1 answer, no escalation.
+    // markResolved() de-duplicates once per chat session in localStorage.
+    const closingHistory = loadHistory();
+    if (sessionHasAnswer(closingHistory) && !sessionEscalated(closingHistory)) {
+      markResolved(closingHistory);
+    }
     isOpen = false;
     panel.hidden = true;
     launcher.setAttribute("aria-expanded", "false");
@@ -357,7 +656,33 @@
     sendUserMessage(inputEl.value);
   }
 
+  const MARIA_CSS = [
+    ".solon-chat-launcher--maria{position:relative;padding:0;overflow:visible;background:var(--white,#fff);border:2px solid var(--primary,#03170c)}",
+    ".solon-chat-launcher__avatar{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}",
+    ".solon-chat-launcher__badge{position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:var(--primary,#03170c);color:var(--white,#fff);display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,.25)}",
+    ".solon-chat-launcher--maria .solon-chat-launcher__badge i{font-size:12px}",
+    ".solon-chat-panel__identity{display:flex;align-items:center;gap:10px;min-width:0}",
+    ".solon-chat-panel__avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.85);flex:0 0 auto}",
+    ".solon-chat-panel__identity-text{min-width:0}",
+    ".solon-chat-panel__role{margin:0;font-size:12px;opacity:.85;line-height:1.3}",
+    ".solon-chat-panel__disclosure{margin:2px 0 0;font-size:11px;opacity:.75;line-height:1.3}",
+    ".solon-chat-msg--maria{position:relative;margin-left:36px}",
+    ".solon-chat-msg__avatar{position:absolute;left:-36px;bottom:0;width:28px;height:28px;border-radius:50%;object-fit:cover}",
+  ].join("");
+
+  /** Injects the Maria layout rules once.
+   * @returns {void}
+   */
+  function injectStyles() {
+    if (document.getElementById("solon-support-chat-maria-css")) return;
+    const style = document.createElement("style");
+    style.id = "solon-support-chat-maria-css";
+    style.textContent = MARIA_CSS;
+    document.head.appendChild(style);
+  }
+
   function buildUi() {
+    injectStyles();
     root = document.createElement("div");
     root.id = "solon-support-chat";
     root.className = "solon-support-chat";
@@ -367,8 +692,14 @@
     launcher.className = "solon-chat-launcher";
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-controls", "solon-chat-panel");
-    launcher.setAttribute("aria-label", "Deschide chat-ul de suport SOLON");
-    launcher.innerHTML = '<i class="bi bi-chat-dots" aria-hidden="true"></i>';
+    launcher.setAttribute("aria-label", "Vorbește cu Maria de la suportul SOLON");
+    launcher.classList.add("solon-chat-launcher--maria");
+    launcher.appendChild(avatarImg("solon-chat-launcher__avatar", 56));
+    const launcherBadge = document.createElement("span");
+    launcherBadge.className = "solon-chat-launcher__badge";
+    launcherBadge.setAttribute("aria-hidden", "true");
+    launcherBadge.innerHTML = '<i class="bi bi-chat-dots-fill"></i>';
+    launcher.appendChild(launcherBadge);
 
     panel = document.createElement("div");
     panel.id = "solon-chat-panel";
@@ -381,10 +712,31 @@
     const header = document.createElement("div");
     header.className = "solon-chat-panel__header";
 
+    const identity = document.createElement("div");
+    identity.className = "solon-chat-panel__identity";
+    identity.appendChild(avatarImg("solon-chat-panel__avatar", 40));
+
+    const identityText = document.createElement("div");
+    identityText.className = "solon-chat-panel__identity-text";
+
     const title = document.createElement("h2");
     title.id = "solon-chat-panel-title";
     title.className = "solon-chat-panel__title";
-    title.textContent = "SOLON";
+    title.textContent = AGENT_NAME;
+
+    const role = document.createElement("p");
+    role.className = "solon-chat-panel__role";
+    role.textContent = AGENT_ROLE;
+
+    identityText.appendChild(title);
+    identityText.appendChild(role);
+    if (SHOW_AI_DISCLOSURE) {
+      const disclosure = document.createElement("p");
+      disclosure.className = "solon-chat-panel__disclosure";
+      disclosure.textContent = AI_DISCLOSURE_TEXT;
+      identityText.appendChild(disclosure);
+    }
+    identity.appendChild(identityText);
 
     closeBtn = document.createElement("button");
     closeBtn.type = "button";
@@ -392,7 +744,7 @@
     closeBtn.setAttribute("aria-label", "Închide chat-ul");
     closeBtn.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
 
-    header.appendChild(title);
+    header.appendChild(identity);
     header.appendChild(closeBtn);
 
     messagesEl = document.createElement("div");
@@ -402,7 +754,7 @@
     typingEl.className = "solon-chat-panel__typing";
     typingEl.hidden = true;
     typingEl.setAttribute("aria-live", "polite");
-    typingEl.textContent = "…";
+    typingEl.textContent = TYPING_MSG;
 
     quickRepliesEl = document.createElement("div");
     quickRepliesEl.className = "solon-chat-panel__quick-replies";
@@ -453,11 +805,24 @@
   function init() {
     if (document.getElementById("solon-support-chat")) return;
     buildUi();
-    getSessionId();
   }
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { parseApiResponse };
+    module.exports = {
+      parseApiResponse,
+      trackSupport,
+      shortSessionHash,
+      chatErrorMessage,
+      getSessionId,
+      loadHistory,
+      saveHistory,
+      markResolved,
+      API_BACKENDS,
+      CHAT_BACKEND_DEFAULT,
+      SHOW_AI_DISCLOSURE,
+      CLIENT_TIMEOUT_MS,
+      HISTORY_TTL_MS,
+    };
   }
 
   if (typeof document !== "undefined") {

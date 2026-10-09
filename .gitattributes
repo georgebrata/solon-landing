@@ -1,0 +1,2 @@
+# main.js is stored with CRLF, matching its history. -text stops a checkout from rewriting every line to LF.
+assets/js/main.js -text
