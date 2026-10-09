@@ -18,7 +18,8 @@ const {
   HISTORY_TTL_MS,
 } = require("../assets/js/support-chat.js");
 
-function grantAnalytics(extra) {
+/** @param {object} [extra] */
+const grantAnalytics = (extra) => {
   global.window = Object.assign(
     {
       SolonConsent: {
@@ -29,9 +30,10 @@ function grantAnalytics(extra) {
     },
     extra || {}
   );
-}
+};
 
-function memoryStorage(mem) {
+/** @param {Map<string, string>} mem */
+const memoryStorage = (mem) => {
   return {
     getItem(key) {
       return mem.has(key) ? mem.get(key) : null;
@@ -43,7 +45,7 @@ function memoryStorage(mem) {
       mem.delete(key);
     },
   };
-}
+};
 
 test("parses n8n webhook output with JSON string in data.reply", () => {
   const rawResponse = {
@@ -127,7 +129,7 @@ test("parses explicit resolved action; needs_human wins over resolved", () => {
     actions: [{ tag_name: "resolved" }, { tag_name: "needs_human" }],
   });
   assert.strictEqual(both.needsHuman, true);
-  assert.strictEqual(both.resolved, undefined);
+  assert.ok(!Object.prototype.hasOwnProperty.call(both, "resolved"));
 });
 
 test("short session hash is 8 hex chars and not the full UUID", () => {
@@ -192,7 +194,7 @@ test("429 and 503 use distinct Romanian tu error copy", () => {
     "Chatul nu e disponibil acum. Încearcă din nou mai târziu."
   );
   assert.strictEqual(chatErrorMessage(500), chatErrorMessage(503));
-  assert.strictEqual(chatErrorMessage(undefined), chatErrorMessage(503));
+  assert.strictEqual(chatErrorMessage(), chatErrorMessage(503));
   assert.notStrictEqual(chatErrorMessage(429), chatErrorMessage(503));
   assert.match(chatErrorMessage(429), /încearcă/i);
   assert.doesNotMatch(chatErrorMessage(429), /încercați/i);
