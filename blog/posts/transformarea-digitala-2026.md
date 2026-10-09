@@ -1,5 +1,5 @@
 ---
-title: "Transformarea Digitală a Birourilor de Avocatură în 2026"
+title: "Transformare digitală birouri avocatură 2026"
 date: "2026-01-18"
 slug: "transformarea-digitala-2026"
 description: "Tehnologia și inteligența artificială redefinesc practica juridică modernă în toată România. Află cum rămâi la curent cu tehnologia."

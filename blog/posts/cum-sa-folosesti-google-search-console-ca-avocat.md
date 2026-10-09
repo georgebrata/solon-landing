@@ -2,7 +2,7 @@
 title: "Cum să folosești Google Search Console ca avocat"
 date: "2026-06-07"
 slug: "cum-sa-folosesti-google-search-console-ca-avocat"
-description: "Ghid Google Search Console pentru avocați: verificarea proprietății, raportul Performanță, inspecția URL, indexare, sitemap, Core Web Vitals, link-uri, filtre regex și configurații avansate."
+description: "Învață să folosești Google Search Console ca avocat: indexare, căutări, erori tehnice și Core Web Vitals. Ghid pas cu pas pentru mai multe contacte."
 read_time: 12
 categories: ["digitalizare", "SEO", "marketing"]
 tags: ["google search console", "avocați", "SEO", "marketing juridic", "vizibilitate online", "indexare"]

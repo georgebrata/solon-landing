@@ -1,8 +1,8 @@
 ---
-title: "Cât te costă, de fapt, un cabinet de avocatură nedigitalizat?"
+title: "Cabinet avocatură nedigitalizat: cât te costă?"
 date: "2026-08-10"
 slug: "cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat"
-description: "Analiză despre costul oportunității în avocatură: calculează câți bani și câte ore pierzi lunar din cauza lipsei digitalizării (ore pierdute × valoarea orei de avocat)."
+description: "Calculează cât pierzi lunar fără digitalizare: ore pierdute, clienți ratate și costuri ascunse. Ghid practic cu pași clari pentru cabinetul tău."
 read_time: 8
 categories: ["digitalizare", "management", "legaltech"]
 tags: ["cost oportunitate", "digitalizare avocați", "productivitate", "management cabinet", "legaltech", "calcul costuri"]

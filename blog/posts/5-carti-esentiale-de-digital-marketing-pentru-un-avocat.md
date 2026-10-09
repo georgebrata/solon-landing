@@ -1,8 +1,8 @@
 ---
-title: "5 cărți esențiale de digital marketing pentru un avocat"
+title: "5 cărți esențiale de marketing pentru avocați"
 date: "2026-06-07"
 slug: "5-carti-esentiale-de-digital-marketing-pentru-un-avocat"
-description: "Cinci cărți de marketing digital recomandate avocaților: StoryBrand, Lemon, The Catalyst, Influence Is Your Superpower și Create Togetherness – cu lecții practice pentru cabinet."
+description: "Cinci cărți de marketing digital pentru avocați, cu lecții aplicabile în cabinet. Alege lectura potrivită și pune ideile în practică de azi."
 read_time: 9
 categories: ["marketing", "digitalizare", "branding"]
 tags: ["marketing digital", "avocați", "cărți", "branding", "comunicare", "strategie"]
