@@ -116,3 +116,21 @@ test("does not stamp images, HTML, or third-party URLs", () => {
   const stamped = stampHtml(original, htmlPath);
   assert.equal(stamped, original);
 });
+
+test("stamps self-hosted partner logos under assets/img/partners/", () => {
+  const logoPath = write(
+    "assets/img/partners/lexeto-wordmark.svg",
+    "<svg></svg>"
+  );
+  const htmlPath = write(
+    "index.html",
+    '<img src="assets/img/partners/lexeto-wordmark.svg" alt="">'
+  );
+
+  const stamped = stampHtml(fs.readFileSync(htmlPath, "utf8"), htmlPath);
+  const hash = hashFile(logoPath);
+  assert.match(
+    stamped,
+    new RegExp(`assets/img/partners/lexeto-wordmark\\.svg\\?v=${hash}`)
+  );
+});
