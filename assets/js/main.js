@@ -288,7 +288,7 @@
       .replace(/main\.js(\?.*)?$/i, 'support-chat.js$1')
     // Bump SUPPORT_CHAT_REV whenever support-chat.js changes: the chat file is
     // cached for 1 year under main's ?v= token, so this forces a fresh fetch.
-    const SUPPORT_CHAT_REV = '2026-10-09-maria'
+    const SUPPORT_CHAT_REV = '2026-10-09-maria2'
     const script = document.createElement('script')
     script.src = chatSrc + (chatSrc.indexOf('?') >= 0 ? '&' : '?') + 'rev=' + SUPPORT_CHAT_REV
     script.defer = true

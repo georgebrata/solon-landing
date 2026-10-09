@@ -26,11 +26,17 @@
 
   const SESSION_KEY = "chat_session_id";
   const HISTORY_KEY = "chat_history";
+  const HISTORY_AT_KEY = "chat_history_at";
   const STARTED_KEY = "chat_started_session";
   const RESOLVED_KEY = "chat_resolved_session";
+  const HISTORY_TTL_MS = 24 * 60 * 60 * 1000;
+  const CLIENT_TIMEOUT_MS = 65000;
   const GREETING = "Bună! Sunt Maria, de la suportul SOLON. Cu ce te pot ajuta azi?";
   const TYPING_MSG = "Maria scrie…";
-  const ERROR_MSG = "Îmi pare rău, mesajul tău nu a ajuns la mine. Mai încearcă o dată, te rog.";
+  const ERROR_MSG_RATE_LIMIT =
+    "Ai trimis multe mesaje într-un timp scurt. Așteaptă un minut și încearcă din nou.";
+  const ERROR_MSG_UNAVAILABLE =
+    "Chatul nu e disponibil acum. Încearcă din nou mai târziu.";
   const NEEDS_HUMAN_MSG = "Te pun în legătură cu un coleg din echipă, care te va contacta în curând.";
 
   function resolveApi() {
@@ -49,11 +55,15 @@
   /*
    * GA4 (property 420688868). Privacy: only event names, a short session hash,
    * counters, booleans and latency. Never message text, email, name or the full
-   * session UUID. No-op when neither gtag nor dataLayer is usable.
+   * session UUID.
+   * consent.js installs a gtag stub that pushes into dataLayer before a choice.
+   * Drop the event until analytics consent. Do not call gtag and do not push
+   * dataLayer, or a later grant on the same page can replay the queue.
    */
   function trackSupport(eventName, params) {
     try {
       if (typeof window === "undefined") return;
+      if (!window.SolonConsent?.hasConsent("analytics")) return;
       if (typeof window.gtag === "function") {
         window.gtag("event", eventName, params || {});
         return;
@@ -109,12 +119,20 @@
 
   function markResolved(history) {
     const sid = analyticsSessionId();
-    if (readFlag(sessionStorage, RESOLVED_KEY) === sid) return;
-    writeFlag(sessionStorage, RESOLVED_KEY, sid);
+    // localStorage, keyed by the chat session, same as STARTED_KEY. A
+    // sessionStorage flag resets when the tab closes while the transcript
+    // remains, so the next visit would count resolved again.
+    if (readFlag(localStorage, RESOLVED_KEY) === sid) return;
+    writeFlag(localStorage, RESOLVED_KEY, sid);
     trackSupport("support_chat_resolved", {
       session_id: sid,
-      message_count: history.length,
+      message_count: countUserMessages(history),
     });
+  }
+
+  function chatErrorMessage(status) {
+    if (status === 429) return ERROR_MSG_RATE_LIMIT;
+    return ERROR_MSG_UNAVAILABLE;
   }
 
   let pending = false;
@@ -129,17 +147,57 @@
   let sendBtn;
   let closeBtn;
 
-  function getSessionId() {
-    let id = localStorage.getItem(SESSION_KEY);
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem(SESSION_KEY, id);
+  let memorySessionId = "";
+
+  function storageRemove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* no-op */
     }
-    return id;
+  }
+
+  function clearChatStorage() {
+    storageRemove(HISTORY_KEY);
+    storageRemove(HISTORY_AT_KEY);
+    storageRemove(SESSION_KEY);
+    storageRemove(STARTED_KEY);
+    storageRemove(RESOLVED_KEY);
+  }
+
+  function chatStorageFresh() {
+    const savedAt = Number(readFlag(localStorage, HISTORY_AT_KEY));
+    return savedAt > 0 && Date.now() - savedAt <= HISTORY_TTL_MS;
+  }
+
+  function expireChatIfNeeded() {
+    const hasHistory = readFlag(localStorage, HISTORY_KEY);
+    const hasSession = readFlag(localStorage, SESSION_KEY);
+    if (!hasHistory && !hasSession) return;
+    if (!chatStorageFresh()) clearChatStorage();
+  }
+
+  function getSessionId() {
+    expireChatIfNeeded();
+    try {
+      let id = localStorage.getItem(SESSION_KEY);
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem(SESSION_KEY, id);
+        if (!localStorage.getItem(HISTORY_AT_KEY)) {
+          localStorage.setItem(HISTORY_AT_KEY, String(Date.now()));
+        }
+      }
+      return id;
+    } catch {
+      if (!memorySessionId) memorySessionId = crypto.randomUUID();
+      return memorySessionId;
+    }
   }
 
   function loadHistory() {
     try {
+      expireChatIfNeeded();
       const raw = localStorage.getItem(HISTORY_KEY);
       if (!raw) return [];
       const parsed = JSON.parse(raw);
@@ -150,7 +208,8 @@
   }
 
   function saveHistory(items) {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+    writeFlag(localStorage, HISTORY_KEY, JSON.stringify(items));
+    writeFlag(localStorage, HISTORY_AT_KEY, String(Date.now()));
   }
 
   function isAllowedUrl(url) {
@@ -377,7 +436,7 @@
     const ctrl = new AbortController();
     const timer = setTimeout(() => {
       ctrl.abort();
-    }, 60000);
+    }, CLIENT_TIMEOUT_MS);
     try {
       const res = await fetch(resolveApi(), {
         method: "POST",
@@ -389,7 +448,11 @@
         }),
         signal: ctrl.signal,
       });
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      if (!res.ok) {
+        const error = new Error("HTTP " + res.status);
+        error.status = res.status;
+        throw error;
+      }
       const data = await res.json();
       return parseApiResponse(data);
     } finally {
@@ -483,7 +546,7 @@
           name: error?.name,
         });
       }
-      const errEntry = { role: "bot", text: ERROR_MSG };
+      const errEntry = { role: "bot", text: chatErrorMessage(error?.status) };
       history.push(errEntry);
       saveHistory(history);
       appendBubbleToDom(errEntry);
@@ -496,6 +559,7 @@
 
   function openPanel() {
     isOpen = true;
+    getSessionId();
     trackSupport("support_chat_opened", { session_id: analyticsSessionId() });
     panel.hidden = false;
     launcher.setAttribute("aria-expanded", "true");
@@ -509,7 +573,7 @@
 
   function closePanel() {
     // Fallback resolve heuristic (PLAN.md): closed after >=1 answer, no escalation.
-    // markResolved() de-duplicates per session via sessionStorage.
+    // markResolved() de-duplicates once per chat session in localStorage.
     const closingHistory = loadHistory();
     if (sessionHasAnswer(closingHistory) && !sessionEscalated(closingHistory)) {
       markResolved(closingHistory);
@@ -677,7 +741,6 @@
   function init() {
     if (document.getElementById("solon-support-chat")) return;
     buildUi();
-    getSessionId();
   }
 
   if (typeof module !== "undefined" && module.exports) {
@@ -685,9 +748,16 @@
       parseApiResponse,
       trackSupport,
       shortSessionHash,
+      chatErrorMessage,
+      getSessionId,
+      loadHistory,
+      saveHistory,
+      markResolved,
       API_BACKENDS,
       CHAT_BACKEND_DEFAULT,
       SHOW_AI_DISCLOSURE,
+      CLIENT_TIMEOUT_MS,
+      HISTORY_TTL_MS,
     };
   }
 

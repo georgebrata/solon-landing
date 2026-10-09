@@ -78,7 +78,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | Google Fonts | `fonts.googleapis.com`, `fonts.gstatic.com` | style, font |
 | Forms / FAQ Sheets | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action |
 | IP lookup | `api64.ipify.org` | connect |
-| Support chat | `solon-agency.app.n8n.cloud` | connect |
+| Support chat | `solon-support-api.vercel.app` | connect |
 | Stripe Payment Links | `buy.stripe.com` is a **top-level navigation** (not CSP). `js.stripe.com` / `hooks.stripe.com` reserved if Checkout is ever embedded | frame, script |
 | Cloudflare Turnstile (#31) | `challenges.cloudflare.com` | script, style, img, connect, frame, worker |
 | NETOPIA / ANPC widget | Script `mny.ro/npId.js` injects an SVG from `mny.ro`. `anpc.ro` is a text link; logos are first-party under `/assets/img/` | script, img, connect |
