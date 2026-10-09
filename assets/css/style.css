@@ -3109,6 +3109,9 @@ a.details-link:focus-visible,
 
 .partners__item {
   flex: 0 1 auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .partners__card {
@@ -3167,7 +3170,7 @@ a.details-link:focus-visible,
   background-color: var(--primary);
 }
 
-.partners__logo {
+.partners .partners__logo[width][height] {
   display: block;
   width: auto;
   max-width: 100%;
@@ -3175,9 +3178,8 @@ a.details-link:focus-visible,
   object-fit: contain;
 }
 
-.partners__logo--juridis {
+.partners .partners__logo--juridis[width][height] {
   height: 2rem;
-  object-fit: contain;
 }
 
 .partners__name {
@@ -3197,11 +3199,11 @@ a.details-link:focus-visible,
     width: min(13.75rem, 100%);
   }
 
-  .partners__logo {
+  .partners .partners__logo[width][height] {
     height: 2rem;
   }
 
-  .partners__logo--juridis {
+  .partners .partners__logo--juridis[width][height] {
     height: 1.75rem;
   }
 }

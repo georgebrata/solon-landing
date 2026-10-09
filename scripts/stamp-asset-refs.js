@@ -13,9 +13,10 @@
  * You do not need to edit this script when adding those files; add the
  * <link>/<script> tag and run `npm run minify` (or `npm run stamp-assets`).
  *
- * Images, fonts, and PDFs under assets/ are long-cached without query
- * tokens: rename the file when the bytes change. HTML, /blog/posts.json,
- * and sitemap.xml are not long-cached; see .htaccess.
+ * Images under assets/img/partners/ are stamped (long-cache + in-place updates).
+ * Other images, fonts, and PDFs under assets/ stay without query tokens: rename
+ * the file when the bytes change. HTML, /blog/posts.json, and sitemap.xml are
+ * not long-cached; see .htaccess.
  */
 
 const nodeCrypto = require("crypto");
@@ -36,7 +37,7 @@ const SKIP_DIR_NAMES = new Set([
  * Does not match absolute http(s) URLs or assets/img/.
  */
 const ASSET_REF_RE =
-  /(\b(?:href|src)\s*=\s*)(["'])((?:\.\.?\/|\/)?(?:(?:\.\.\/)+)?assets\/(?:css|js|vendor)\/[^"'?#]+(?:\?[^"'#]*)?)\2/gi;
+  /(\b(?:href|src)\s*=\s*)(["'])((?:\.\.?\/|\/)?(?:(?:\.\.\/)+)?assets\/(?:css|js|vendor|img\/partners)\/[^"'?#]+(?:\?[^"'#]*)?)\2/gi;
 
 const hashCache = new Map();
 
