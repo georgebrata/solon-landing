@@ -65,6 +65,10 @@ See [docs/forms.md](docs/forms.md) for form-specific error states.
 - FAQ section with dinamic content from Google Sheets
 - **Lightweight Static Blog System**: Write in Markdown, build to static HTML.
 
+## Support chat
+
+The site-wide chat (`assets/js/support-chat.js`) presents **Maria** from SOLON support and calls `https://solon-support-api.vercel.app/api/chat` (backend repo: georgebrata/solon-support-api). It fires GA4 `support_chat_*` events with privacy-safe params only. Rollback to n8n, cache-busting (`SUPPORT_CHAT_REV`), events and the resolved rule: [docs/support-chat.md](docs/support-chat.md).
+
 ## Blog System
 
 The project includes a minimal, performant static blog architecture.
