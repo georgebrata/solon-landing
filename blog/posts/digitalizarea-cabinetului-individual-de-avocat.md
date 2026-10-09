@@ -1,5 +1,5 @@
 ---
-title: "Digitalizare cabinet individual de avocat: ghid integral"
+title: "Digitalizare cabinet individual de avocat"
 date: "2026-04-03"
 slug: "digitalizarea-cabinetului-individual-de-avocat"
 description: "Digitalizare pentru avocați: branding, NAP, website, optimizare SEO, instrumente de productivitate și măsurarea rezultatelor online."

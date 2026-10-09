@@ -1,5 +1,5 @@
 ---
-title: "Prevenirea atacurilor Ransomware în cabinete de avocat"
+title: "Prevenire ransomware în cabinete de avocat"
 date: "2026-09-14"
 slug: "prevenirea-ransomware-in-cabinete-de-avocatura"
 description: "Ghid de securitate defensivă: protecția fișierelor confidențiale, strategii de backup imuabil, igiena parolelor și prevenirea extorcării digitale."

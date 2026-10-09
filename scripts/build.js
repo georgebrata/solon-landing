@@ -231,8 +231,9 @@ ${tagsBlock}
   const listBody = indexRedirectScript
     + replaceToken(replaceToken(listTemplate, 'filters_html', filtersHtml), 'posts_html', postsHtml);
 
-  let page = layoutTemplate;
-  page = replaceToken(page, 'title', 'Blog');
+  const blogIndexTitle = 'Blog marketing și digitalizare pentru avocați | SOLON';
+  let page = layoutTemplate.replaceAll('{{title}} | SOLON Blog', blogIndexTitle);
+  page = replaceToken(page, 'title', '');
   page = replaceToken(page, 'description', 'SOLON Blog LegalTech - digitalizare juridică, unelte digitale și productivitate pentru practica avocaturii moderne');
   page = replaceToken(page, 'slug', '');
   page = replaceToken(page, 'slugWithTrailingSlash', '');
