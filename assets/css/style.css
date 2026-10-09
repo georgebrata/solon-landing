@@ -3111,7 +3111,6 @@ a.details-link:focus-visible,
   flex: 0 1 auto;
   display: flex;
   justify-content: center;
-  width: 100%;
 }
 
 .partners__card {
@@ -3193,6 +3192,10 @@ a.details-link:focus-visible,
 @media (max-width: 767px) {
   .partners__list {
     gap: 1.25rem;
+  }
+
+  .partners__item {
+    width: 100%;
   }
 
   .partners__card {
