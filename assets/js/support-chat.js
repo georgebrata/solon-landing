@@ -39,6 +39,9 @@
     "Chatul nu e disponibil acum. Încearcă din nou mai târziu.";
   const NEEDS_HUMAN_MSG = "Te pun în legătură cu un coleg din echipă, care te va contacta în curând.";
 
+  /** Resolves the chat API URL, including a ?chatBackend= override.
+   * @returns {string}
+   */
   function resolveApi() {
     let backend = CHAT_BACKEND_DEFAULT;
     try {
@@ -52,13 +55,16 @@
     return API_BACKENDS[backend];
   }
 
-  /*
+  /**
    * GA4 (property 420688868). Privacy: only event names, a short session hash,
    * counters, booleans and latency. Never message text, email, name or the full
    * session UUID.
    * consent.js installs a gtag stub that pushes into dataLayer before a choice.
    * Drop the event until analytics consent. Do not call gtag and do not push
    * dataLayer, or a later grant on the same page can replay the queue.
+   * @param {string} eventName
+   * @param {object} [params]
+   * @returns {void}
    */
   function trackSupport(eventName, params) {
     try {
@@ -76,11 +82,18 @@
     }
   }
 
+  /** Last 8 hex characters of a chat UUID, never the full id.
+   * @param {string} id
+   * @returns {string}
+   */
   function shortSessionHash(id) {
     const hex = String(id || "").replace(/[^0-9a-f]/gi, "");
     return hex.slice(-8) || "unknown";
   }
 
+  /** Short session id for analytics, or "unknown".
+   * @returns {string}
+   */
   function analyticsSessionId() {
     try {
       return shortSessionHash(localStorage.getItem(SESSION_KEY));
@@ -89,6 +102,11 @@
     }
   }
 
+  /** Reads a storage key, or null when storage is blocked.
+   * @param {Storage} storage
+   * @param {string} key
+   * @returns {string|null}
+   */
   function readFlag(storage, key) {
     try {
       return storage.getItem(key);
@@ -97,6 +115,12 @@
     }
   }
 
+  /** Writes a storage key, ignoring quota and privacy errors.
+   * @param {Storage} storage
+   * @param {string} key
+   * @param {string} value
+   * @returns {void}
+   */
   function writeFlag(storage, key, value) {
     try {
       storage.setItem(key, value);
@@ -105,18 +129,34 @@
     }
   }
 
+  /** Counts visitor messages in a transcript.
+   * @param {Array<object>} history
+   * @returns {number}
+   */
   function countUserMessages(history) {
-    return history.filter((entry) => entry && entry.role === "user").length;
+    return history.filter((entry) => entry?.role === "user").length;
   }
 
+  /** True when any bubble asked for a human colleague.
+   * @param {Array<object>} history
+   * @returns {boolean}
+   */
   function sessionEscalated(history) {
-    return history.some((entry) => entry && entry.needsHuman);
+    return history.some((entry) => entry?.needsHuman);
   }
 
+  /** True when Maria has rendered at least one answer.
+   * @param {Array<object>} history
+   * @returns {boolean}
+   */
   function sessionHasAnswer(history) {
-    return history.some((entry) => entry && entry.role === "bot" && entry.answered);
+    return history.some((entry) => entry?.role === "bot" && entry?.answered);
   }
 
+  /** Fires support_chat_resolved once per chat session.
+   * @param {Array<object>} history
+   * @returns {void}
+   */
   function markResolved(history) {
     const sid = analyticsSessionId();
     // localStorage, keyed by the chat session, same as STARTED_KEY. A
@@ -130,6 +170,10 @@
     });
   }
 
+  /** Romanian error copy for HTTP 429 versus every other failure.
+   * @param {number} [status]
+   * @returns {string}
+   */
   function chatErrorMessage(status) {
     if (status === 429) return ERROR_MSG_RATE_LIMIT;
     return ERROR_MSG_UNAVAILABLE;
@@ -149,6 +193,10 @@
 
   let memorySessionId = "";
 
+  /** Removes one localStorage key, ignoring storage errors.
+   * @param {string} key
+   * @returns {void}
+   */
   function storageRemove(key) {
     try {
       localStorage.removeItem(key);
@@ -157,6 +205,9 @@
     }
   }
 
+  /** Drops the transcript, session id, and chat analytics flags.
+   * @returns {void}
+   */
   function clearChatStorage() {
     storageRemove(HISTORY_KEY);
     storageRemove(HISTORY_AT_KEY);
@@ -165,11 +216,17 @@
     storageRemove(RESOLVED_KEY);
   }
 
+  /** True when the transcript timestamp is within 24 hours.
+   * @returns {boolean}
+   */
   function chatStorageFresh() {
     const savedAt = Number(readFlag(localStorage, HISTORY_AT_KEY));
     return savedAt > 0 && Date.now() - savedAt <= HISTORY_TTL_MS;
   }
 
+  /** Clears chat storage when the transcript is missing a fresh timestamp.
+   * @returns {void}
+   */
   function expireChatIfNeeded() {
     const hasHistory = readFlag(localStorage, HISTORY_KEY);
     const hasSession = readFlag(localStorage, SESSION_KEY);
@@ -233,6 +290,11 @@
     quickRepliesEl.hidden = true;
   }
 
+  /** Decorative Maria avatar.
+   * @param {string} className
+   * @param {number} size
+   * @returns {HTMLImageElement}
+   */
   function avatarImg(className, size) {
     const img = document.createElement("img");
     img.className = className;
@@ -303,9 +365,8 @@
   function ensureGreeting(history) {
     if (
       history.length > 0 &&
-      history[0] &&
-      history[0].role === "bot" &&
-      typeof history[0].text === "string" &&
+      history[0]?.role === "bot" &&
+      typeof history[0]?.text === "string" &&
       history[0].text.indexOf(LEGACY_GREETING_PREFIX) === 0
     ) {
       history[0] = { role: "bot", text: GREETING };
@@ -418,10 +479,10 @@
     }
 
     const needsHuman = actions.some(
-      (a) => a && a.tag_name === "needs_human"
+      (a) => a?.tag_name === "needs_human"
     );
     const resolved =
-      !needsHuman && actions.some((a) => a && a.tag_name === "resolved");
+      !needsHuman && actions.some((a) => a?.tag_name === "resolved");
 
     const result = {
       messages,
@@ -449,7 +510,7 @@
         signal: ctrl.signal,
       });
       if (!res.ok) {
-        const error = new Error("HTTP " + res.status);
+        const error = new Error(`HTTP ${res.status}`);
         error.status = res.status;
         throw error;
       }
@@ -609,6 +670,9 @@
     ".solon-chat-msg__avatar{position:absolute;left:-36px;bottom:0;width:28px;height:28px;border-radius:50%;object-fit:cover}",
   ].join("");
 
+  /** Injects the Maria layout rules once.
+   * @returns {void}
+   */
   function injectStyles() {
     if (document.getElementById("solon-support-chat-maria-css")) return;
     const style = document.createElement("style");
