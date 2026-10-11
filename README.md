@@ -49,7 +49,7 @@ The public key is [`23897578dc538f267009bf3fbf12e684.txt`](23897578dc538f267009b
 | Default | Post-deploy on push to `main` (`INDEXNOW_BEFORE`..`INDEXNOW_SHA`) | Changed `.html` files mapped to canonical URLs (`index.html` becomes the directory URL with a trailing slash), plus `<loc>` values added or given a new `<lastmod>` in `sitemap.xml`. Only URLs still present in `sitemap.xml` are sent. |
 | `--all` | Actions workflow **IndexNow** (`workflow_dispatch`) | Every `<loc>` in `sitemap.xml`. |
 
-If `github.event.before` is missing, all zeros (first push), or not in the clone (force-push), the script uses sitemap lastmod changes when the previous `sitemap.xml` can be read, and otherwise skips. An empty list does not POST. Each request contains at most 10,000 URLs. The script logs the HTTP status and response body and always exits 0.
+A zero or missing `before` SHA (`github.event.before` unset, or the all-zero first-push value) skips submission. When that SHA is present but `git diff` cannot read it (force-push), the script falls back to sitemap lastmod changes if the previous `sitemap.xml` is readable, and otherwise skips. An empty list does not POST. Each request contains at most 10,000 URLs and aborts after 15 seconds. The script logs the HTTP status and response body, warns on 4xx responses, and always exits 0.
 
 ```bash
 npm run test:indexnow

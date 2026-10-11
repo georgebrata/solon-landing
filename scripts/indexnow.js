@@ -8,8 +8,10 @@
  * lastmod. Only URLs still listed in sitemap.xml are sent.
  * Mode B (--all): every sitemap <loc>.
  *
- * The public key is /<32 lowercase hex>.txt at the site root. The script
- * logs the HTTP status and body and always exits 0.
+ * The public key is /<32 lowercase hex>.txt at the site root. A zero or
+ * missing before SHA skips submission. The script logs the HTTP status and
+ * body, warns on 4xx responses, aborts the request after 15 seconds, and
+ * always exits 0.
  */
 
 const { execFileSync } = require("child_process");
@@ -20,6 +22,7 @@ const HOST = "solon.agency";
 const ORIGIN = `https://${HOST}`;
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 const BATCH_SIZE = 10000;
+const REQUEST_TIMEOUT_MS = 15000;
 const ROOT = path.join(__dirname, "..");
 const KEY_FILE_NAME = /^[0-9a-f]{32}\.txt$/;
 const SHA40 = /^[0-9a-f]{40}$/;
@@ -143,16 +146,30 @@ const selectChangedUrls = ({ changedFiles, sitemapChanged, previousSitemap, curr
 };
 
 /**
+ * Keep a log call when the caller did not pass one.
+ * @param {string} message
+ * @returns {string}
+ */
+const fallbackLog = (message) => {
+  return message;
+};
+
+/**
  * Mode A URL list. A null git result means the command failed.
- * Missing, zero, or unreachable before SHAs fall back to sitemap lastmod
- * changes when the previous sitemap can be read, and otherwise skip.
+ * A zero or missing before SHA skips submission. An unreachable before SHA
+ * (force-push) falls back to sitemap lastmod changes when the previous
+ * sitemap can be read, and otherwise skips.
  * @param {{ before: string, sha: string, currentSitemap: string, gitRunner: function, log: function }} input
  * @returns {string[]}
  */
 const collectChangedUrls = ({ before, sha, currentSitemap, gitRunner, log }) => {
-  const write = typeof log === "function" ? log : () => {};
-  if (!isUsableSha(before) || !isUsableSha(sha)) {
+  const write = typeof log === "function" ? log : fallbackLog;
+  if (!isUsableSha(before)) {
     write("IndexNow: before SHA is missing or zero; skipping");
+    return [];
+  }
+  if (!isUsableSha(sha)) {
+    write("IndexNow: head SHA is missing; skipping");
     return [];
   }
   const nameStatus = gitRunner(["diff", "--name-status", "--find-renames", `${before}..${sha}`]);
@@ -254,11 +271,19 @@ const defaultGit = (args, cwd, log) => {
 };
 
 /**
+ * @param {number} status
+ * @returns {boolean}
+ */
+const isClientError = (status) => status >= 400 && status < 500;
+
+/**
  * POST urlList in batches of at most 10,000. Logs each status and body.
- * @param {{ urls: string[], key: string, fetchImpl: function, log: function, batchSize?: number }} input
+ * 4xx responses are also written as warnings. The request aborts after 15s.
+ * @param {{ urls: string[], key: string, fetchImpl: function, log: function, warn?: function, batchSize?: number }} input
  * @returns {Promise<number[]>}
  */
-const submitUrlList = async ({ urls, key, fetchImpl, log, batchSize = BATCH_SIZE }) => {
+const submitUrlList = async ({ urls, key, fetchImpl, log, warn, batchSize = BATCH_SIZE }) => {
+  const warnOut = typeof warn === "function" ? warn : console.warn;
   const statusCodes = [];
   const batches = chunk(urls, batchSize);
   for (const urlList of batches) {
@@ -267,10 +292,14 @@ const submitUrlList = async ({ urls, key, fetchImpl, log, batchSize = BATCH_SIZE
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(15000),
     });
     let body = "";
     if (response && typeof response.text === "function") {
       body = await response.text();
+    }
+    if (isClientError(response.status)) {
+      warnOut(`IndexNow warning: HTTP ${response.status}`);
     }
     log(`IndexNow status ${response.status}`);
     log(body);
@@ -280,11 +309,21 @@ const submitUrlList = async ({ urls, key, fetchImpl, log, batchSize = BATCH_SIZE
 };
 
 /**
- * @param {{ all?: boolean, before?: string, sha?: string, root?: string, dryRun?: boolean, fetchImpl?: function, log?: function, gitRunner?: function }} [options]
+ * @param {unknown} error
+ * @returns {boolean}
+ */
+const isTimeoutError = (error) => {
+  if (!error || typeof error !== "object" || !("name" in error)) return false;
+  return error.name === "TimeoutError" || error.name === "AbortError";
+};
+
+/**
+ * @param {{ all?: boolean, before?: string, sha?: string, root?: string, dryRun?: boolean, fetchImpl?: function, log?: function, warn?: function, gitRunner?: function }} [options]
  * @returns {Promise<{ urls: string[], submitted: number, statusCodes: number[], error?: string }>}
  */
 const runIndexNow = async (options = {}) => {
   const log = typeof options.log === "function" ? options.log : console.log;
+  const warn = typeof options.warn === "function" ? options.warn : console.warn;
   const root = options.root || ROOT;
   const fetchImpl = options.fetchImpl || globalThis.fetch;
   try {
@@ -317,10 +356,15 @@ const runIndexNow = async (options = {}) => {
       key: keyInfo.key,
       fetchImpl,
       log,
+      warn,
     });
     return { urls, submitted: urls.length, statusCodes };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    if (isTimeoutError(error)) {
+      log(`IndexNow: request timed out after ${REQUEST_TIMEOUT_MS}ms (${message})`);
+      return { urls: [], submitted: 0, statusCodes: [], error: message };
+    }
     log(`IndexNow error: ${message}`);
     return { urls: [], submitted: 0, statusCodes: [], error: message };
   }
@@ -376,6 +420,7 @@ if (require.main === module) {
 
 module.exports = {
   BATCH_SIZE,
+  REQUEST_TIMEOUT_MS,
   INDEXNOW_ENDPOINT,
   ORIGIN,
   isUsableSha,

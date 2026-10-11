@@ -31,15 +31,38 @@ const CURRENT = [
   "",
 ].join("\n");
 
-const PREVIOUS = CURRENT.replace(
-  "<lastmod>2026-10-08</lastmod>",
-  "<lastmod>2026-10-01</lastmod>"
-).replace(
-  `    <url>\n        <loc>https://solon.agency/terms/</loc>\n        <lastmod>2026-10-02</lastmod>\n        <priority>0.20</priority>\n    </url>\n`,
-  ""
-);
+const TERMS_BLOCK = [
+  "    <url>",
+  "        <loc>https://solon.agency/terms/</loc>",
+  "        <lastmod>2026-10-02</lastmod>",
+  "        <priority>0.20</priority>",
+  "    </url>",
+  "",
+].join("\n");
+
+const PREVIOUS = CURRENT
+  .replace("<lastmod>2026-10-08</lastmod>", "<lastmod>2026-10-01</lastmod>")
+  .replace(TERMS_BLOCK, "");
 
 const sha = (digit) => digit.repeat(40);
+
+/**
+ * @param {string} line
+ * @returns {string}
+ */
+const quietLog = (line) => {
+  return line;
+};
+
+/**
+ * @param {number} status
+ * @param {string} body
+ * @returns {{ status: number, text: function }}
+ */
+const httpResponse = (status, body) => ({
+  status,
+  text: () => Promise.resolve(body),
+});
 
 test("html paths map to canonical sitemap URLs", () => {
   assert.equal(indexnow.htmlFileToUrl("index.html"), "https://solon.agency/");
@@ -131,7 +154,7 @@ test("zero or missing before SHA skips without calling git", () => {
       calls += 1;
       return null;
     },
-    log: () => {},
+    log: quietLog,
   });
   assert.equal(calls, 0);
   assert.deepEqual(urls, []);
@@ -166,7 +189,7 @@ test("force-push with no previous sitemap skips", () => {
     sha: sha("b"),
     currentSitemap: CURRENT,
     gitRunner: () => null,
-    log: () => {},
+    log: quietLog,
   });
   assert.deepEqual(urls, []);
 });
@@ -182,7 +205,7 @@ test("a readable diff unions HTML urls and sitemap edits", () => {
       if (args[0] === "show") return PREVIOUS;
       return null;
     },
-    log: () => {},
+    log: quietLog,
   });
   assert.deepEqual(urls, [
     "https://solon.agency/",
@@ -201,10 +224,11 @@ test("payload batches stay at or under 10000 URLs", async () => {
     urls,
     key,
     batchSize: indexnow.BATCH_SIZE,
-    log: () => {},
-    fetchImpl: async (endpoint, request) => {
+    log: quietLog,
+    fetchImpl: (endpoint, request) => {
+      assert.ok(request.signal instanceof AbortSignal);
       calls.push({ endpoint, body: JSON.parse(request.body), method: request.method });
-      return { status: 200, text: async () => "{\"ok\":true}" };
+      return Promise.resolve(httpResponse(200, "{\"ok\":true}"));
     },
   });
   assert.deepEqual(statusCodes, [200, 200]);
@@ -219,17 +243,26 @@ test("payload batches stay at or under 10000 URLs", async () => {
   assert.ok(calls[0].body.urlList.length <= 10000);
 });
 
-test("HTTP failures are logged and do not throw", async () => {
+test("HTTP 4xx responses are warnings and do not throw", async () => {
   const logs = [];
+  const warnings = [];
   const statusCodes = await indexnow.submitUrlList({
     urls: ["https://solon.agency/"],
     key: "b".repeat(32),
-    log: (line) => logs.push(String(line)),
-    fetchImpl: async () => ({ status: 422, text: async () => "invalid" }),
+    log: (line) => {
+      logs.push(String(line));
+      return line;
+    },
+    warn: (line) => {
+      warnings.push(String(line));
+      return line;
+    },
+    fetchImpl: () => Promise.resolve(httpResponse(422, "invalid")),
   });
   assert.deepEqual(statusCodes, [422]);
   assert.ok(logs.includes("IndexNow status 422"));
   assert.ok(logs.includes("invalid"));
+  assert.deepEqual(warnings, ["IndexNow warning: HTTP 422"]);
 });
 
 test("a thrown fetch is reported and resolved", async () => {
@@ -242,7 +275,7 @@ test("a thrown fetch is reported and resolved", async () => {
     all: true,
     root: dir,
     log: (line) => logs.push(String(line)),
-    fetchImpl: async () => {
+    fetchImpl: () => {
       throw new Error("network down");
     },
   });
@@ -252,16 +285,44 @@ test("a thrown fetch is reported and resolved", async () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
+test("a timed-out IndexNow request is logged and resolves", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-indexnow-timeout-"));
+  const key = "e".repeat(32);
+  fs.writeFileSync(path.join(dir, `${key}.txt`), key);
+  fs.writeFileSync(path.join(dir, "sitemap.xml"), CURRENT);
+  const logs = [];
+  const result = await indexnow.runIndexNow({
+    all: true,
+    root: dir,
+    log: (line) => {
+      logs.push(String(line));
+      return line;
+    },
+    fetchImpl: (endpoint, request) => {
+      assert.equal(endpoint, indexnow.INDEXNOW_ENDPOINT);
+      assert.equal(indexnow.REQUEST_TIMEOUT_MS, 15000);
+      assert.ok(request.signal instanceof AbortSignal);
+      const timeout = new Error("The operation was aborted due to timeout");
+      timeout.name = "TimeoutError";
+      return Promise.reject(timeout);
+    },
+  });
+  assert.equal(result.submitted, 0);
+  assert.equal(result.error, "The operation was aborted due to timeout");
+  assert.ok(logs.some((line) => line.includes("timed out after 15000ms")));
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
 test("mode all dry-run lists every sitemap loc and does not POST", async () => {
   let fetched = false;
   const result = await indexnow.runIndexNow({
     all: true,
     dryRun: true,
     root: ROOT,
-    log: () => {},
-    fetchImpl: async () => {
+    log: quietLog,
+    fetchImpl: () => {
       fetched = true;
-      return { status: 200, text: async () => "" };
+      return Promise.resolve(httpResponse(200, ""));
     },
   });
   const xml = fs.readFileSync(path.join(ROOT, "sitemap.xml"), "utf8");
@@ -279,11 +340,11 @@ test("an empty diff skips the POST", async () => {
     before: sha("a"),
     sha: sha("b"),
     root: ROOT,
-    log: () => {},
+    log: quietLog,
     gitRunner: () => "",
-    fetchImpl: async () => {
+    fetchImpl: () => {
       fetched = true;
-      return { status: 200, text: async () => "" };
+      return Promise.resolve(httpResponse(200, ""));
     },
   });
   assert.equal(fetched, false);
