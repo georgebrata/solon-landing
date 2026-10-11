@@ -16,22 +16,53 @@ const SITEMAP_EXCLUDED_PATHS = new Set([
   "/403/",
 ]);
 
+const INDEXNOW_KEY_PATH = /^\/[0-9a-f]{32}\.txt$/;
+
 /**
- * True when a sitemap loc is an error document that must not be listed.
+ * Pathname of an absolute sitemap loc, without a query string.
+ * @param {string} loc Absolute sitemap URL.
+ * @returns {string} Path such as `/blog/`, or "" when loc is not on this host.
+ */
+const pathnameOfLoc = (loc) => {
+  if (typeof loc !== "string" || !loc.startsWith(`${BASE_URL}/`)) return "";
+  let pathname = loc.slice(BASE_URL.length);
+  const queryIndex = pathname.indexOf("?");
+  if (queryIndex !== -1) pathname = pathname.slice(0, queryIndex);
+  return pathname;
+};
+
+/**
+ * True for the public IndexNow key file (`/<32 lowercase hex>.txt`).
+ * That file must stay reachable and must not be listed in the sitemap.
+ * @param {string} loc Absolute sitemap URL.
+ * @returns {boolean}
+ */
+const isIndexNowKeyLoc = (loc) => INDEXNOW_KEY_PATH.test(pathnameOfLoc(loc));
+
+/**
+ * True when a sitemap loc is an error document or the IndexNow key file.
  * @param {string} loc Absolute sitemap URL.
  * @returns {boolean}
  */
 const isExcludedFromSitemap = (loc) => {
-  if (typeof loc !== "string" || !loc.startsWith(`${BASE_URL}/`)) {
-    return false;
-  }
-  let pathname = loc.slice(BASE_URL.length);
-  const queryIndex = pathname.indexOf("?");
-  if (queryIndex !== -1) {
-    pathname = pathname.slice(0, queryIndex);
-  }
-  return SITEMAP_EXCLUDED_PATHS.has(pathname);
+  const pathname = pathnameOfLoc(loc);
+  if (!pathname) return false;
+  return SITEMAP_EXCLUDED_PATHS.has(pathname) || INDEXNOW_KEY_PATH.test(pathname);
 };
+
+/**
+ * Drop IndexNow key-file URLs. Other url nodes are copied unchanged.
+ * @param {string} xml Sitemap document.
+ * @returns {string}
+ */
+const stripIndexNowKeyUrls = (xml) => String(xml).replace(
+  /[ \t]*<url>[\s\S]*?<\/url>\r?\n?/g,
+  (block) => {
+    const locMatch = /<loc>([\s\S]*?)<\/loc>/.exec(block);
+    if (!locMatch) return block;
+    return isIndexNowKeyLoc(locMatch[1].trim()) ? "" : block;
+  }
+);
 
 /**
  * Today as YYYY-MM-DD in Europe/Bucharest.
@@ -176,7 +207,8 @@ const updateSitemap = (options = {}) => {
     throw new Error(`Invalid sitemap clock ${today}; expected YYYY-MM-DD`);
   }
 
-  const sitemapContent = fs.readFileSync(sitemapFile, "utf8");
+  const original = fs.readFileSync(sitemapFile, "utf8");
+  const sitemapContent = stripIndexNowKeyUrls(original);
   const urlNodeRegex = /<url>\s*<loc>([\s\S]*?)<\/loc>\s*<lastmod>([\s\S]*?)<\/lastmod>\s*<priority>([\s\S]*?)<\/priority>\s*<\/url>/g;
 
   const existingEntries = [];
@@ -244,7 +276,7 @@ const updateSitemap = (options = {}) => {
     if (lastmod !== entry.lastmod) xml = replaceLastmod(xml, entry.loc, lastmod);
   }
 
-  if (xml !== sitemapContent) {
+  if (xml !== original) {
     fs.writeFileSync(sitemapFile, xml, "utf8");
   }
   return xml;
@@ -260,4 +292,7 @@ module.exports = {
   resolveLastmod,
   todayBucharest,
   updateSitemap,
+  isIndexNowKeyLoc,
+  isExcludedFromSitemap,
+  stripIndexNowKeyUrls,
 };

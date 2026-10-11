@@ -13,6 +13,7 @@ const path = require("node:path");
 const test = require("node:test");
 
 const ROOT = path.join(__dirname, "..");
+const { stripIndexNowKeyUrls, isIndexNowKeyLoc } = require(path.join(ROOT, "scripts/update-sitemap.js"));
 const BASE_URL = "https://solon.agency";
 const SITEMAP = path.join(ROOT, "sitemap.xml");
 const POSTS = path.join(ROOT, "blog/posts.json");
@@ -250,5 +251,43 @@ test("date_modified moves an updated post lastmod forward, clamped to the fake c
     fs.rmSync(dir, { recursive: true, force: true });
   }
 
+  assert.equal(fs.readFileSync(SITEMAP, "utf8"), realBefore);
+});
+
+test("update-sitemap strips an IndexNow key URL and does not rewrite the real sitemap", () => {
+  const realBefore = fs.readFileSync(SITEMAP, "utf8");
+  const key = "0123456789abcdef0123456789abcdef";
+  const keyLoc = `${BASE_URL}/${key}.txt`;
+  assert.equal(stripIndexNowKeyUrls(realBefore), realBefore);
+  assert.equal(isIndexNowKeyLoc(keyLoc), true);
+  assert.equal(isIndexNowKeyLoc(`${BASE_URL}/`), false);
+  assert.equal(realBefore.includes(keyLoc), false);
+
+  const pageLoc = `${BASE_URL}/blog/example/`;
+  const indexLoc = `${BASE_URL}/blog/`;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-sitemap-key-"));
+  const sitemapCopy = path.join(dir, "sitemap.xml");
+  const postsCopy = path.join(dir, "posts.json");
+  fs.writeFileSync(sitemapCopy, wrapSitemap([
+    `    <url>\n        <loc>${keyLoc}</loc>\n        <lastmod>2026-10-09</lastmod>\n        <priority>0.10</priority>\n    </url>`,
+    `    <url>\n        <loc>${indexLoc}</loc>\n        <lastmod>2026-10-09</lastmod>\n        <priority>0.80</priority>\n    </url>`,
+    `    <url>\n        <loc>${pageLoc}</loc>\n        <lastmod>2026-10-09</lastmod>\n        <priority>0.50</priority>\n    </url>`,
+  ].join("\n")));
+  fs.writeFileSync(postsCopy, JSON.stringify([{
+    title: "Example",
+    date: "2026-01-01",
+    date_modified: "2026-06-15",
+    slug: "example",
+    url: "example/",
+  }], null, 2));
+
+  const once = runScript(sitemapCopy, postsCopy, "2026-10-09");
+  const twice = runScript(sitemapCopy, postsCopy, "2026-10-09");
+  assert.equal(twice, once);
+  assert.equal(once.includes(keyLoc), false);
+  assert.equal(once.includes(`${key}.txt`), false);
+  assert.equal(parseEntries(once).get(pageLoc), "2026-10-09");
+  assert.equal(parseEntries(once).get(indexLoc), "2026-10-09");
+  fs.rmSync(dir, { recursive: true, force: true });
   assert.equal(fs.readFileSync(SITEMAP, "utf8"), realBefore);
 });
