@@ -38,3 +38,6 @@ jobs:
 
       - name: Run error page tests
         run: npm run test:error-pages
+
+      - name: Run IndexNow tests
+        run: npm run test:indexnow

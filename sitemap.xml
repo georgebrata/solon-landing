@@ -57,7 +57,7 @@
     </url>
     <url>
         <loc>https://solon.agency/blog/</loc>
-        <lastmod>2026-10-10</lastmod>
+        <lastmod>2026-10-11</lastmod>
         <priority>0.90</priority>
     </url>
     <url>
@@ -333,6 +333,20 @@
     <url>
         <loc>https://solon.agency/blog/glosar-marketing-digital-avocati/</loc>
         <lastmod>2026-10-10</lastmod>
+        <priority>0.50</priority>
+    </url>
+    <url>
+<<<<<<< Updated upstream
+        <loc>https://solon.agency/blog/google-business-profile-avocati/</loc>
+=======
+        <loc>https://solon.agency/blog/eu-ai-act-pentru-cabinete-de-avocati/</loc>
+>>>>>>> Stashed changes
+        <lastmod>2026-10-10</lastmod>
+        <priority>0.50</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/google-business-profile-avocati/</loc>
+        <lastmod>2026-10-11</lastmod>
         <priority>0.50</priority>
     </url>
     <url>

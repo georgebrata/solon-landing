@@ -14,6 +14,7 @@ npm ci
 npm run test:forms
 npm run test:flags
 npm run test:assets
+npm run test:indexnow
 npm audit --audit-level=high
 ```
 
@@ -27,13 +28,33 @@ GitHub Actions (`.github/workflows/main.yml`) is the production pipeline. Issue 
 | Push to `main` | Yes, then deploy | Yes, after `ci` |
 | Manual **Run workflow** | Yes, then deploy | Yes, after `ci` |
 
-Deploy uses `SamKirkland/FTP-Deploy-Action` with an exclude list so VCS, `node_modules`, tests, docs, tooling, markdown sources, `feature-flags.json`, and `.DS_Store` are not uploaded. Runtime files stay in the publish set: HTML pages, `assets/`, `robots.txt`, `sitemap.xml`, `blog/posts.json`, and `.htaccess`. Remote deletion (`dangerous-clean-slate`) is not enabled; leftover internal files already on the server must be removed in cPanel, not by CI.
+Pushes to `main` also run IndexNow after a successful FTP deploy. See [IndexNow](#indexnow).
+
+Deploy uses `SamKirkland/FTP-Deploy-Action` with an exclude list so VCS, `node_modules`, tests, docs, tooling, markdown sources, `feature-flags.json`, and `.DS_Store` are not uploaded. Runtime files stay in the publish set: HTML pages, `assets/`, `robots.txt`, `llms.txt`, `sitemap.xml`, `blog/posts.json`, `.htaccess`, and the IndexNow key file. Remote deletion (`dangerous-clean-slate`) is not enabled; leftover internal files already on the server must be removed in cPanel, not by CI.
 
 `feature-flags.json` is build-time only (`scripts/apply-feature-flags.js`); the browser never fetches it. Blog sidebar JS fetches `/blog/posts.json`, which is not excluded.
 
 `.htaccess` denies HTTP access to dotfiles (except `.well-known`), `*.md`, package/lock JSON, `feature-flags.json`, and tooling directories as defence in depth. It also 301-redirects `http://` and `www.solon.agency` to the canonical host `https://solon.agency` (path and query string preserved). `/.well-known/acme-challenge/` is not redirected so cPanel AutoSSL can renew. The same file sets HSTS, CSP Report-Only, nosniff, Referrer-Policy, Permissions-Policy, and clickjacking headers. See [docs/security-headers.md](docs/security-headers.md) to maintain the third-party allowlist or switch CSP from Report-Only to enforcing.
 
 Repo admins should make the **ci** check required on `main`: **Settings → Branches → Add/Edit branch protection rule for `main` → Require status checks to pass before merging → search for `ci`**. Agents cannot always change that setting.
+
+### IndexNow
+
+After the FTP deploy succeeds on a push to `main`, job `indexnow` in `.github/workflows/main.yml` runs `node scripts/indexnow.js`. It POSTs JSON (`host`, `key`, `keyLocation`, `urlList`) to `https://api.indexnow.org/indexnow`. The job has `needs: deploy`, `if: success()`, and `continue-on-error: true`, so a failed ping cannot fail the workflow or block the deploy. Checkout uses `fetch-depth: 0` so the push diff is available.
+
+The public key is [`23897578dc538f267009bf3fbf12e684.txt`](23897578dc538f267009bf3fbf12e684.txt) at the site root (32 lowercase hex characters; the file body is exactly that key, with no trailing newline). IndexNow fetches it at `https://solon.agency/23897578dc538f267009bf3fbf12e684.txt`. It is not a secret. FTP deploy uploads it because `*.txt` is not excluded. `scripts/update-sitemap.js` removes any `https://solon.agency/<32-hex>.txt` loc, so the key file is never listed in `sitemap.xml`.
+
+| Mode | When | URLs |
+| --- | --- | --- |
+| Default | Post-deploy on push to `main` (`INDEXNOW_BEFORE`..`INDEXNOW_SHA`) | Changed `.html` files mapped to canonical URLs (`index.html` becomes the directory URL with a trailing slash), plus `<loc>` values added or given a new `<lastmod>` in `sitemap.xml`. Only URLs still present in `sitemap.xml` are sent. |
+| `--all` | Actions workflow **IndexNow** (`workflow_dispatch`) | Every `<loc>` in `sitemap.xml`. |
+
+A zero or missing `before` SHA (`github.event.before` unset, or the all-zero first-push value) skips submission. When that SHA is present but `git diff` cannot read it (force-push), the script falls back to sitemap lastmod changes if the previous `sitemap.xml` is readable, and otherwise skips. An empty list does not POST. Each request contains at most 10,000 URLs and aborts after 15 seconds. The script logs the HTTP status and response body, warns on 4xx responses, and always exits 0.
+
+```bash
+npm run test:indexnow
+node scripts/indexnow.js --dry-run --all
+```
 
 ## Error reporting
 

@@ -52,6 +52,9 @@ jobs:
       - name: Test error pages
         run: npm run test:error-pages
 
+      - name: Test IndexNow URL selection
+        run: npm run test:indexnow
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
@@ -82,6 +85,8 @@ jobs:
           username: deploy@solon.agency
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
+          # Root *.txt is part of the publish set: robots.txt, llms.txt, and the
+          # IndexNow key file /<32 lowercase hex>.txt. Do not exclude *.txt.
           exclude: |
             **/.git*
             **/.git*/**
@@ -110,3 +115,30 @@ jobs:
             **/assets/scss/**
             **/.ftp-deploy-sync-state.json
             !**/.htaccess
+
+  # Pings IndexNow only after a successful FTP deploy on push to main.
+  # continue-on-error plus the script's exit 0 keep a failed ping from
+  # failing the workflow or blocking deploy (this job does not gate deploy).
+  indexnow:
+    name: indexnow
+    needs: deploy
+    if: success() && needs.deploy.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - name: Submit changed URLs to IndexNow
+        env:
+          INDEXNOW_BEFORE: ${{ github.event.before }}
+          INDEXNOW_SHA: ${{ github.sha }}
+        run: node scripts/indexnow.js
