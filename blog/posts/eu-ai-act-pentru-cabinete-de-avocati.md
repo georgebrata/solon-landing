@@ -31,7 +31,9 @@ EU AI Act folosește o abordare bazată pe risc: practici interzise (art. 5), si
 
 51–55). Sistemele care nu intră în aceste categorii nu au obligații noi specifice, în afară de alfabetizarea în domeniul AI (art. 4).
 
-Calendarul, după modificarea prin Omnibusul digital (Regulamentul (UE) 2026/1744): interdicțiile și obligația de alfabetizare în domeniul AI se aplică din 2 februarie 2025; regulile pentru modelele de uz general, din 2 august 2025; majoritatea celorlalte reguli, inclusiv obligațiile de transparență din art. 50, din 2 august 2026. De la 2 decembrie 2026 se aplică noile interdicții adăugate prin Omnibus și expiră perioada de tranziție pentru marcarea conținutului generat de sistemele introduse pe piață înainte de 2 august 2026.
+Calendarul, după modificarea prin Omnibusul digital (Regulamentul (UE) 2026/1744): interdicțiile și obligația de alfabetizare în domeniul AI se aplică din 2 februarie 2025; regulile pentru modelele de uz general, din 2 august 2025; majoritatea celorlalte reguli, inclusiv obligațiile de transparență din art.
+
+50, din 2 august 2026. De la 2 decembrie 2026 se aplică noile interdicții adăugate prin Omnibus și expiră perioada de tranziție pentru marcarea conținutului generat de sistemele introduse pe piață înainte de 2 august 2026.
 
 Obligațiile pentru sistemele cu risc ridicat din anexa III se aplică din 2 decembrie 2027, iar pentru cele din anexa I, din 2 august 2028. Pentru practica avocațială, diferențierea corectă a instrumentelor pe care le folosești în fiecare zi determină volumul de conformare necesar.
 
@@ -53,7 +55,9 @@ Dacă achiziționezi o licență SaaS de la un furnizor legaltech și o foloseș
 
 4) și, după caz, de transparență (art. 50). Abia pentru sistemele cu risc ridicat, art. 26 îți cere să le folosești conform instrucțiunilor furnizorului, să încredințezi supravegherea umană unor persoane competente, să te asiguri că datele de intrare pe care le controlezi sunt relevante și să păstrezi jurnalele generate automat.
 
-Devii **provider** (furnizor) dacă dezvolți un sistem AI, sau ți-l dezvolți la comandă, și îl pui în funcțiune ori pe piață sub numele tău (art. 3 pct. 3), de exemplu un chatbot propriu pe site, construit peste modelul altei companii. Pentru sistemele cu risc ridicat, art. 25 adaugă situațiile în care pui numele tău pe sistemul altcuiva, îl modifici serios sau îi schimbi scopul astfel încât devine cu risc ridicat.
+Devii **provider** (furnizor) dacă dezvolți un sistem AI, sau ți-l dezvolți la comandă, și îl pui în funcțiune ori pe piață sub numele tău (art. 3 pct. 3), de exemplu un chatbot propriu pe site, construit peste modelul altei companii.
+
+Pentru sistemele cu risc ridicat, art. 25 adaugă situațiile în care pui numele tău pe sistemul altcuiva, îl modifici serios sau îi schimbi scopul astfel încât devine cu risc ridicat.
 
 Abia atunci preiei obligațiile furnizorului de sistem cu risc ridicat (evaluarea conformității, marcajul CE, gestionarea riscurilor, înregistrarea în baza de date a UE). Pentru un chatbot care nu e cu risc ridicat, principala obligație de furnizor e cea de transparență din art. 50.
 
