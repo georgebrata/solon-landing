@@ -35,6 +35,12 @@
  */
 const fs = require("fs");
 const path = require("path");
+const {
+  LEGAL_PROTECTED_TOKEN,
+  containsLegalCitations,
+  mergeLegalSentenceFragments,
+  protectLegalContent,
+} = require("./lib/legal-content-guard");
 
 const DEFAULT_POSTS_DIR = path.join(__dirname, "../blog/posts");
 const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
@@ -569,12 +575,6 @@ const rules = [
     preserveCase: true,
   },
   {
-    name: "Tempereaza «substantial»",
-    pattern: boundedPhrase("substanțial"),
-    replacement: "serios",
-    preserveCase: true,
-  },
-  {
     name: "Tempereaza «considerabil»",
     pattern: boundedPhrase("considerabil"),
     replacement: "vizibil",
@@ -708,9 +708,11 @@ function humanizeFiles(filesToProcess) {
   printRuleSummary(totalsByRule);
 }
 
+// skipcq: JS-0067
 function humanizeMarkdown(markdown) {
   const { frontmatter, body } = splitFrontmatter(markdown);
   const protectedBody = protectMarkdown(body);
+  const legalProtected = protectLegalContent(protectedBody.text);
   const counts = new Map();
 
   let updatedBody = rules.reduce((text, rule) => {
@@ -719,7 +721,7 @@ function humanizeMarkdown(markdown) {
       counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
     }
     return result.text;
-  }, protectedBody.text);
+  }, legalProtected.text);
 
   const colonResult = normalizeMidClauseColons(updatedBody);
   updatedBody = colonResult.text;
@@ -732,6 +734,8 @@ function humanizeMarkdown(markdown) {
   burstinessResult.counts.forEach((count, name) => {
     if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
   });
+
+  updatedBody = legalProtected.restore(updatedBody);
 
   return {
     updated: frontmatter + protectedBody.restore(updatedBody),
@@ -749,24 +753,6 @@ function splitFrontmatter(markdown) {
   return { frontmatter: match[1], body: match[2] };
 }
 
-function applyRule(text, rule) {
-  let count = 0;
-  const updated = text.replace(rule.pattern, (...args) => {
-    const match = args[0];
-    const replacement =
-      typeof rule.replacement === "function" ? rule.replacement(...args) : expandReplacement(rule.replacement, args);
-    const updatedMatch = rule.preserveCase ? preserveFirstLetterCase(match, replacement) : replacement;
-
-    if (updatedMatch !== match) {
-      count += 1;
-    }
-
-    return updatedMatch;
-  });
-
-  return { text: updated, count };
-}
-
 /**
  * Lever 8: mid-clause colons after short AI-style labels (Problema:, Soluția:).
  * Colons remain when preceded by a complete sentence ending in punctuation logic.
@@ -774,7 +760,7 @@ function applyRule(text, rule) {
 function normalizeMidClauseColons(text) {
   let count = 0;
   const labelPattern =
-    /\b(Problema|Soluția|Răspunsul|Concluzia|Ideea|Rezultatul|Exemplu|Atenție|Important|Notă)\s*:\s+/gu;
+    /\b(Problema|Soluția|Răspunsul|Concluzia|Ideea|Rezultatul|Exemplu|Important|Notă)\s*:\s+/gu;
 
   const updated = text.replace(labelPattern, (match, label) => {
     count += 1;
@@ -873,8 +859,11 @@ function splitMetronomicParagraphs(text) {
   return { text: updatedBlocks.join(""), count };
 }
 
+// skipcq: JS-0067 -- CLI entry script; hoisted helpers match upstream humanize.js layout
 function extractSentences(block) {
-  return block.match(/[^.!?]+[.!?]+(?:["”»])?|[^.!?]+$/g);
+  const raw = block.match(/[^.!?]+[.!?]+(?:["”»])?|[^.!?]+$/gu);
+  if (!raw) return raw;
+  return mergeLegalSentenceFragments(raw);
 }
 
 function findBalancedSplitIndex(sentences, totalWords) {
@@ -890,11 +879,14 @@ function findBalancedSplitIndex(sentences, totalWords) {
   return -1;
 }
 
+// skipcq: JS-0067
 function shouldSplitParagraph(block) {
   const trimmed = block.trim();
   if (!trimmed) return false;
   if (/^(#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\|)/.test(trimmed)) return false;
   if (trimmed.includes(PROTECTED_TOKEN)) return false;
+  if (trimmed.includes(LEGAL_PROTECTED_TOKEN)) return false;
+  if (containsLegalCitations(trimmed)) return false;
   return !/^\s{4,}/.test(block);
 }
 
@@ -919,8 +911,29 @@ function preserveFirstLetterCase(source, replacement) {
   return replacement;
 }
 
-function expandReplacement(replacement, args) {
-  return replacement.replace(/\$(\d+)/g, (_, index) => args[Number(index)] || "");
+function expandReplacement(replacement, matchArgs) {
+  return replacement.replace(/\$(\d+)/g, (_, index) => matchArgs[Number(index)] || "");
+}
+
+// skipcq: JS-0067
+function applyRule(text, rule) {
+  let count = 0;
+  const updated = text.replace(rule.pattern, (...matchArgs) => {
+    const match = matchArgs[0];
+    const replacement =
+      typeof rule.replacement === "function"
+        ? rule.replacement(...matchArgs)
+        : expandReplacement(rule.replacement, matchArgs);
+    const updatedMatch = rule.preserveCase ? preserveFirstLetterCase(match, replacement) : replacement;
+
+    if (updatedMatch !== match) {
+      count += 1;
+    }
+
+    return updatedMatch;
+  });
+
+  return { text: updated, count };
 }
 
 function sumCounts(counts) {
