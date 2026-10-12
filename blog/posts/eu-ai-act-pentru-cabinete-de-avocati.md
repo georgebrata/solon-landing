@@ -1,6 +1,6 @@
 ---
 title: "EU AI Act explicat pentru cabinete de avocați"
-date: "2026-10-10"
+date: "2026-10-12"
 slug: "eu-ai-act-pentru-cabinete-de-avocati"
 description: "Ghid practic EU AI Act pentru cabinete de avocatură: clasificarea riscurilor AI, obligații de transparență, interdicții și protecția secretului profesional."
 categories: ["legaltech", "inteligenta-artificiala", "securitate"]
