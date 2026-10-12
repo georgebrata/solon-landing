@@ -19,21 +19,15 @@ Reglementarea europeană privind inteligența artificială (EU AI Act) schimbă 
 
 ## 1. De ce EU AI Act reconfigurează practica avocațială
 
-Adoptarea Regulamentului (UE) 2024/1689 nu reprezintă doar un set abstract de norme comunitare destinate corporațiilor Big Tech, ci un filtru direct aplicabil oricărui cabinet sau societăți civile de avocați. Când integrezi modele LLM pentru sumarizarea dosarelor de instanță, pentru extragerea clauzelor contractuale sau pentru redactarea automată a întâmpinărilor, devii, de regulă, implementator (deployer) al unui sistem AI (art.
-
-3 pct. 4). Doar în anumite situații, de exemplu dacă pui un sistem în funcțiune sub numele cabinetului, poți ajunge furnizor (provider) (art. 3 pct. 3).
+Adoptarea Regulamentului (UE) 2024/1689 nu reprezintă doar un set abstract de norme comunitare destinate corporațiilor Big Tech, ci un filtru direct aplicabil oricărui cabinet sau societăți civile de avocați. Când integrezi modele LLM pentru sumarizarea dosarelor de instanță, pentru extragerea clauzelor contractuale sau pentru redactarea automată a întâmpinărilor, devii, de regulă, implementator (deployer) al unui sistem AI (art. 3 pct. 4). Doar în anumite situații, de exemplu dacă pui un sistem în funcțiune sub numele cabinetului, poți ajunge furnizor (provider) (art. 3 pct. 3).
 
 Impactul se resimte direct în zona de risc operațional și reputațional. Un instrument AI folosit fără verificare poate produce trimiteri greșite la lege sau la jurisprudență, iar răspunderea față de client și față de barou rămâne a ta. Așa că, înțelegerea arhitecturii legislative a EU AI Act devine un pilon central de conformitate și supraviețuire pe o piață legaltech foarte competitivă.
 
 ## 2. Clasificarea sistemelor AI după nivelul de risc în drept
 
-EU AI Act folosește o abordare bazată pe risc: practici interzise (art. 5), sisteme cu risc ridicat (art. 6 și anexele I și III) și obligații de transparență pentru anumite sisteme (art. 50). Separat, furnizorii de modele AI de uz general, cum sunt modelele din spatele marilor asistenți generativi, au obligații proprii (art.
+EU AI Act folosește o abordare bazată pe risc: practici interzise (art. 5), sisteme cu risc ridicat (art. 6 și anexele I și III) și obligații de transparență pentru anumite sisteme (art. 50). Separat, furnizorii de modele AI de uz general, cum sunt modelele din spatele marilor asistenți generativi, au obligații proprii (art. 51–55). Sistemele care nu intră în aceste categorii nu au obligații noi specifice, în afară de alfabetizarea în domeniul AI (art. 4).
 
-51–55). Sistemele care nu intră în aceste categorii nu au obligații noi specifice, în afară de alfabetizarea în domeniul AI (art. 4).
-
-Calendarul, după modificarea prin Omnibusul digital (Regulamentul (UE) 2026/1744): interdicțiile și obligația de alfabetizare în domeniul AI se aplică din 2 februarie 2025; regulile pentru modelele de uz general, din 2 august 2025; majoritatea celorlalte reguli, inclusiv obligațiile de transparență din art.
-
-50, din 2 august 2026. De la 2 decembrie 2026 se aplică noile interdicții adăugate prin Omnibus și expiră perioada de tranziție pentru marcarea conținutului generat de sistemele introduse pe piață înainte de 2 august 2026.
+Calendarul, după modificarea prin Omnibusul digital (Regulamentul (UE) 2026/1744): interdicțiile și obligația de alfabetizare în domeniul AI se aplică din 2 februarie 2025; regulile pentru modelele de uz general, din 2 august 2025; majoritatea celorlalte reguli, inclusiv obligațiile de transparență din art. 50, din 2 august 2026. De la 2 decembrie 2026 se aplică noile interdicții adăugate prin Omnibus și expiră perioada de tranziție pentru marcarea conținutului generat de sistemele introduse pe piață înainte de 2 august 2026.
 
 Obligațiile pentru sistemele cu risc ridicat din anexa III se aplică din 2 decembrie 2027, iar pentru cele din anexa I, din 2 august 2028. Pentru practica avocațială, diferențierea corectă a instrumentelor pe care le folosești în fiecare zi determină volumul de conformare necesar.
 
@@ -51,23 +45,19 @@ Sistemele cu risc minim sau nul (de exemplu, filtrele antispam din clientul de m
 
 Pentru a aplica corect regulamentul, trebuie să identifici poziția ta juridică în lanțul valoric al sistemului AI. În cele mai multe cazuri, un cabinet individual sau o societate de avocați acționează în calitate de **deployer** (implementator: persoana care folosește un sistem AI sub propria autoritate, art. 3 pct. 4).
 
-Dacă achiziționezi o licență SaaS de la un furnizor legaltech și o folosești pentru analiza contractelor din cabinet, ești deployer. Dacă instrumentul nu e un sistem cu risc ridicat (cazul celor mai multe instrumente de redactare și analiză), regulamentul nu îți impune obligații speciale de implementator, în afară de alfabetizarea în domeniul AI (art.
-
-4) și, după caz, de transparență (art. 50). Abia pentru sistemele cu risc ridicat, art. 26 îți cere să le folosești conform instrucțiunilor furnizorului, să încredințezi supravegherea umană unor persoane competente, să te asiguri că datele de intrare pe care le controlezi sunt relevante și să păstrezi jurnalele generate automat.
+Dacă achiziționezi o licență SaaS de la un furnizor legaltech și o folosești pentru analiza contractelor din cabinet, ești deployer. Dacă instrumentul nu e un sistem cu risc ridicat (cazul celor mai multe instrumente de redactare și analiză), regulamentul nu îți impune obligații speciale de implementator, în afară de alfabetizarea în domeniul AI (art. 4) și, după caz, de transparență (art. 50). Abia pentru sistemele cu risc ridicat, art. 26 îți cere să le folosești conform instrucțiunilor furnizorului, să încredințezi supravegherea umană unor persoane competente, să te asiguri că datele de intrare pe care le controlezi sunt relevante și să păstrezi jurnalele generate automat.
 
 Devii **provider** (furnizor) dacă dezvolți un sistem AI, sau ți-l dezvolți la comandă, și îl pui în funcțiune ori pe piață sub numele tău (art. 3 pct. 3), de exemplu un chatbot propriu pe site, construit peste modelul altei companii.
 
-Pentru sistemele cu risc ridicat, art. 25 adaugă situațiile în care pui numele tău pe sistemul altcuiva, îl modifici serios sau îi schimbi scopul astfel încât devine cu risc ridicat.
+Pentru sistemele cu risc ridicat, art. 25 adaugă situațiile în care pui numele tău pe sistemul altcuiva, îl modifici substanțial sau îi schimbi scopul astfel încât devine cu risc ridicat.
 
 Abia atunci preiei obligațiile furnizorului de sistem cu risc ridicat (evaluarea conformității, marcajul CE, gestionarea riscurilor, înregistrarea în baza de date a UE). Pentru un chatbot care nu e cu risc ridicat, principala obligație de furnizor e cea de transparență din art. 50.
 
 ## 4. Obligații directe de transparență conform Articolului 50
 
-Articolul 50 se aplică de la 2 august 2026 și împarte obligațiile de transparență între furnizori și implementatori. Atenție. regulamentul nu îți cere să marchezi fiecare opinie sau e-mail către client redactat cu ajutorul AI. Dacă și cum îl informezi pe client ține de contract și de regulile profesiei. Pentru un cabinet contează, în practică, două situații:
+Articolul 50 se aplică de la 2 august 2026 și împarte obligațiile de transparență între furnizori și implementatori. Atenție: regulamentul nu îți cere să marchezi fiecare opinie sau e-mail către client redactat cu ajutorul AI. Dacă și cum îl informezi pe client ține de contract și de regulile profesiei. Pentru un cabinet contează, în practică, două situații:
 
-În primul rând, chatbotul de pe site. Dacă vizitatorii interacționează direct cu un sistem AI (cum ar fi un widget de calificare a cazurilor pe site-ul cabinetului), trebuie informați clar că vorbesc cu un sistem AI, cel târziu la prima interacțiune, cu excepția cazului în care e evident (art.
-
-50 alin. (1) și (5)). Obligația revine furnizorului: dacă îți construiești chatbotul și îl pui în funcțiune sub numele cabinetului, furnizorul ești tu. Dacă folosești un widget gata făcut, verifică oricum că mesajul apare.
+În primul rând, chatbotul de pe site. Dacă vizitatorii interacționează direct cu un sistem AI (cum ar fi un widget de calificare a cazurilor pe site-ul cabinetului), trebuie informați clar că vorbesc cu un sistem AI, cel târziu la prima interacțiune, cu excepția cazului în care e evident (art. 50 alin. (1) și (5)). Obligația revine furnizorului: dacă îți construiești chatbotul și îl pui în funcțiune sub numele cabinetului, furnizorul ești tu. Dacă folosești un widget gata făcut, verifică oricum că mesajul apare.
 
 În al doilea rând, conținutul generat. Obligația de a marca într-un format care poate fi detectat automat conținutul generat de AI (art. 50 alin. (2)) revine furnizorilor sistemelor generative, nu ție ca utilizator. Pentru sistemele introduse pe piață înainte de 2 august 2026, termenul e 2 decembrie 2026 (art. 111 alin. (4)). Tu, ca implementator, ai obligații proprii dacă publici deepfake-uri (imagini, audio sau video care par autentice) sau texte generate de AI pentru informarea publicului în chestiuni de interes public. Pentru texte, obligația nu se aplică dacă un om le-a revizuit și își asumă responsabilitatea editorială (art. 50 alin. (4)). Pentru a înțelege riscurile administrative ale utilizării unor sisteme neconforme sau neauditate, poți parcurge analiza noastră detaliată despre [Cât te costă, de fapt, un cabinet de avocatură nedigitalizat?](../cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/).
 
@@ -88,9 +78,7 @@ Pentru a structura o strategie tehnologică securizată la nivelul întregului c
 
 ## 6. Supravegherea umană obligatorie: Principiul Human-in-the-Loop
 
-În EU AI Act, supravegherea umană e o obligație expresă doar pentru sistemele cu risc ridicat: furnizorul trebuie să proiecteze sistemul ca să poată fi supravegheat (art. 14), iar implementatorul trebuie să încredințeze supravegherea unor persoane competente (art.
-
-26 alin. (2)). Pentru celelalte instrumente, regulamentul nu o cere, dar ți-o cer responsabilitatea profesională și bunul-simț: nicio decizie juridică, opinie sau acțiune procesuală nu poate fi lăsată pe seama unui algoritm fără validare umană calificată.
+În EU AI Act, supravegherea umană e o obligație expresă doar pentru sistemele cu risc ridicat: furnizorul trebuie să proiecteze sistemul ca să poată fi supravegheat (art. 14), iar implementatorul trebuie să încredințeze supravegherea unor persoane competente (art. 26 alin. (2)). Pentru celelalte instrumente, regulamentul nu o cere, dar ți-o cer responsabilitatea profesională și bunul-simț: nicio decizie juridică, opinie sau acțiune procesuală nu poate fi lăsată pe seama unui algoritm fără validare umană calificată.
 
 ```text
 +-----------------------------------------------------------------------+
@@ -150,9 +138,7 @@ Un contract verificat de un modul AI și aprobat de avocat trebuie transmis spre
 
 ## 11. Sancțiuni, riscuri de neconformitate și răspundere profesională
 
-Sancțiunile prevăzute de EU AI Act sunt printre cele mai drastice din legislația europeană, putând ajunge până la 35 de milioane de euro sau 7% din cifra de afaceri mondială anuală (se aplică valoarea mai mare) pentru practicile interzise, până la 15 milioane de euro sau 3% pentru încălcarea altor obligații, inclusiv a celor de transparență din art.
-
-50, și până la 7,5 milioane de euro sau 1% pentru informații incorecte furnizate autorităților (art. 99). Pentru IMM-uri se aplică valoarea mai mică dintre cele două.
+Sancțiunile prevăzute de EU AI Act sunt printre cele mai drastice din legislația europeană, putând ajunge până la 35 de milioane de euro sau 7% din cifra de afaceri mondială anuală (se aplică valoarea mai mare) pentru practicile interzise, până la 15 milioane de euro sau 3% pentru încălcarea altor obligații, inclusiv a celor de transparență din art. 50, și până la 7,5 milioane de euro sau 1% pentru informații incorecte furnizate autorităților (art. 99). Pentru IMM-uri se aplică valoarea mai mică dintre cele două.
 
 Și în România? Regulamentul se aplică direct, dar aplicarea sancțiunilor are nevoie de o lege națională. Printr-un memorandum aprobat de Guvern în martie 2026, ANCOM urmează să fie autoritatea de supraveghere a pieței și punctul unic de contact, iar Autoritatea pentru Digitalizarea României (ADR), autoritatea de notificare.
 
@@ -179,6 +165,8 @@ Tranziția către o practică juridică aliniată la EU AI Act necesită timp, i
 Dacă vrei ajutor tehnic la implementarea instrumentelor AI în cabinet (configurare, securitate, fluxuri de lucru), echipa **SOLON** oferă servicii de digitalizare pentru profesioniștii din domeniul juridic. Pentru analiza juridică a conformității, discută cu un avocat specializat.
 
 ---
+
+*Text redactat cu ajutorul AI și revizuit de echipa SOLON.*
 
 > *Acest articol are caracter informativ și nu constituie consultanță juridică. Pentru o situație concretă, consultă un avocat specializat.*
 

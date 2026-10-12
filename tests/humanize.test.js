@@ -154,6 +154,35 @@ Pregătește documentele pentru ca secretariatul să opereze fără întârzieri
   assert.doesNotMatch(text, /ca să ChatGPT/u);
 });
 
+const LEGAL_CITATION_FIXTURE = `---
+title: "Test: legal citations"
+date: "2026-01-01"
+slug: "test-legal-citations"
+description: "Fixture for legal citation burstiness protection."
+categories: ["test"]
+tags: ["test"]
+---
+
+# Test
+
+Devii implementator al unui sistem AI (art. 3 pct. 4). Separat, obligații proprii (art. 51–55). Transparență din art. 50, din 2 august 2026. Alfabetizare (art. 4) și, după caz, transparență. E evident (art. 50 alin. (1) și (5)). Supraveghere (art. 26 alin. (2)). Sancțiuni din art. 50, și până la 7,5 milioane. Regulamentul (UE) 2024/1689 se aplică direct.
+
+Atenție: regulamentul nu cere marcarea fiecărui e-mail.
+
+Îl modifici substanțial sau îl schimbi scopul pentru sistemele cu risc ridicat folosite de furnizor și implementator.
+`;
+
+test("humanize.js does not split or rewrite EU AI Act legal citations and terms", () => {
+  const { text, outputs } = humanizePost(LEGAL_CITATION_FIXTURE, 2);
+
+  assert.equal(text, LEGAL_CITATION_FIXTURE);
+  assert.match(outputs[0], /No humanizing changes found/u);
+  assert.match(outputs[1], /No humanizing changes found/u);
+  assert.doesNotMatch(text, /\(art\.\s*\n\n/iu);
+  assert.match(text, /modifici substanțial/u);
+  assert.match(text, /Atenție: regulamentul/u);
+});
+
 test("humanize.js leaves similar connectors untouched and is stable on a second run", () => {
   const source = `${ASTFEL_FRONTMATTER}Formulează clauzele în așa fel încât să rămână aplicabile.
 

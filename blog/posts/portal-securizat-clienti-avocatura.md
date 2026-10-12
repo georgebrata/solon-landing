@@ -61,7 +61,9 @@ Dacă administrezi un cabinet mic și folosești deja suita Microsoft 365 Busine
 
 ## 4. Securitate, autentificare MFA și conformitate GDPR
 
-Avocatul este depozitarul secretului profesional, conform Legii nr. 51/1995 și Statutului profesiei. Așa că, securitatea unui portal nu poate fi tratată cu superficialitate. O breșă de securitate ce expune documentele unui client aduce prejudicii ireversibile reputației cabinetului.
+Avocatul este depozitarul secretului profesional, conform Legii nr. 51/1995 și Statutului profesiei. Așa că, securitatea unui portal nu poate fi tratată cu superficialitate.
+
+O breșă de securitate ce expune documentele unui client aduce prejudicii ireversibile reputației cabinetului.
 
 Măsurile obligatorii de securitate cibernetică includ:
 - **Autentificare multifactorială obligatorie (MFA)**: la conectare, clientul introduce parola și confirmă identitatea printr-un cod primit pe o aplicație dedicată de autentificare (Microsoft Authenticator, Google Authenticator) sau prin e-mail autorizat. Nu recomanda SMS-ul pentru coduri de securitate, din cauza riscului de interceptare sau clonare a cartelei.
