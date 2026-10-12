@@ -731,40 +731,6 @@ function humanizeFiles(filesToProcess) {
   printRuleSummary(totalsByRule);
 }
 
-const humanizeMarkdown = (markdown) => {
-  const { frontmatter, body } = splitFrontmatter(markdown);
-  const protectedBody = protectMarkdown(body);
-  const legalProtected = protectLegalContent(protectedBody.text);
-  const counts = new Map();
-
-  let updatedBody = rules.reduce((text, rule) => {
-    const result = applyRule(text, rule);
-    if (result.count > 0) {
-      counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
-    }
-    return result.text;
-  }, legalProtected.text);
-
-  const colonResult = normalizeMidClauseColons(updatedBody);
-  updatedBody = colonResult.text;
-  if (colonResult.count > 0) {
-    counts.set("Transforma doua puncte mid-clauza (stil AI)", colonResult.count);
-  }
-
-  const burstinessResult = enforceBurstiness(updatedBody);
-  updatedBody = burstinessResult.text;
-  burstinessResult.counts.forEach((count, name) => {
-    if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
-  });
-
-  updatedBody = legalProtected.restore(updatedBody);
-
-  return {
-    updated: frontmatter + protectedBody.restore(updatedBody),
-    counts,
-  };
-};
-
 function splitFrontmatter(markdown) {
   const match = markdown.match(/^(---\r?\n[\s\S]*?\r?\n---\r?\n?)([\s\S]*)$/);
 
@@ -1022,6 +988,40 @@ function getArgValue(flag) {
   if (index === -1) return "";
   return args[index + 1] || "";
 }
+
+const humanizeMarkdown = (markdown) => {
+  const { frontmatter, body } = splitFrontmatter(markdown);
+  const protectedBody = protectMarkdown(body);
+  const legalProtected = protectLegalContent(protectedBody.text);
+  const counts = new Map();
+
+  let updatedBody = rules.reduce((text, rule) => {
+    const result = applyRule(text, rule);
+    if (result.count > 0) {
+      counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
+    }
+    return result.text;
+  }, legalProtected.text);
+
+  const colonResult = normalizeMidClauseColons(updatedBody);
+  updatedBody = colonResult.text;
+  if (colonResult.count > 0) {
+    counts.set("Transforma doua puncte mid-clauza (stil AI)", colonResult.count);
+  }
+
+  const burstinessResult = enforceBurstiness(updatedBody);
+  updatedBody = burstinessResult.text;
+  burstinessResult.counts.forEach((count, name) => {
+    if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
+  });
+
+  updatedBody = legalProtected.restore(updatedBody);
+
+  return {
+    updated: frontmatter + protectedBody.restore(updatedBody),
+    counts,
+  };
+};
 
 const files = fs
   .readdirSync(postsDir)
