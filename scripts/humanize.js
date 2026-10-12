@@ -680,18 +680,6 @@ const protectMarkdown = (markdown) => {
   };
 };
 
-const files = fs
-  .readdirSync(postsDir)
-  .filter((file) => file.endsWith(".md"))
-  .filter((file) => !targetFile || file === targetFile);
-
-if (targetFile && files.length === 0) {
-  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-  process.exitCode = 1;
-} else {
-  humanizeFiles(files);
-}
-
 function humanizeFiles(filesToProcess) {
   let changedFiles = 0;
   let totalChanges = 0;
@@ -938,14 +926,11 @@ function protectLegalContent(text) {
     return token;
   };
 
-  let working = text;
+  let working = text.replace(REGULAMENT_UE_CITATION_PATTERN, protect);
 
-  working = working.replace(/Regulamentul\s*\(UE\)\s*\d{4}\/\d+/giu, protect);
-
-  const termsByLength = [...PROTECTED_LEGAL_TERMS].sort((a, b) => b.length - a.length);
-  termsByLength.forEach((term) => {
-    working = working.replace(boundedPhrase(term), protect);
-  });
+  for (const pattern of PROTECTED_LEGAL_TERM_PATTERNS) {
+    working = working.replace(pattern, protect);
+  }
 
   return {
     text: working,
@@ -995,6 +980,12 @@ function boundedPhrase(phrase) {
   return new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, "giu");
 }
 
+const PROTECTED_LEGAL_TERM_PATTERNS = [...PROTECTED_LEGAL_TERMS]
+  .sort((a, b) => b.length - a.length)
+  .map((term) => boundedPhrase(term));
+
+const REGULAMENT_UE_CITATION_PATTERN = /Regulamentul\s*\(UE\)\s*\d{4}\/\d+/giu;
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -1034,10 +1025,14 @@ function getArgValue(flag) {
   return args[index + 1] || "";
 }
 
-module.exports = {
-  humanizeMarkdown,
-  extractSentences,
-  endsWithLegalCitationAbbreviation,
-  containsLegalCitations,
-  PROTECTED_LEGAL_TERMS,
-};
+const files = fs
+  .readdirSync(postsDir)
+  .filter((file) => file.endsWith(".md"))
+  .filter((file) => !targetFile || file === targetFile);
+
+if (targetFile && files.length === 0) {
+  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+  process.exitCode = 1;
+} else {
+  humanizeFiles(files);
+}
