@@ -1,45 +1,5 @@
 [
   {
-    "title": "EU AI Act explicat pentru cabinete de avocați",
-    "date": "2026-10-12",
-    "slug": "eu-ai-act-pentru-cabinete-de-avocati",
-    "description": "Ghid practic EU AI Act pentru cabinete de avocatură: clasificarea riscurilor AI, obligații de transparență, interdicții și protecția secretului profesional.",
-    "categories": [
-      "legaltech",
-      "inteligenta-artificiala",
-      "securitate"
-    ],
-    "tags": [
-      "eu ai act",
-      "avocați",
-      "conformitate",
-      "legaltech",
-      "securitate"
-    ],
-    "read_time": 15,
-    "url": "eu-ai-act-pentru-cabinete-de-avocati/"
-  },
-  {
-    "title": "Mentenanță site pentru avocați: ce include, cât de des se face și ce riscuri apar fără ea",
-    "date": "2026-10-12",
-    "date_modified": "2026-10-12",
-    "slug": "mentenanta-site-avocati",
-    "description": "Ce înseamnă mentenanța unui site de avocat: ce include, cât de des se face (tabel săptămânal, lunar, trimestrial, anual) și ce riscuri apar fără ea.",
-    "cluster": "securitate-cibernetica",
-    "categories": [
-      "securitate",
-      "digitalizare"
-    ],
-    "tags": [
-      "mentenanta site",
-      "mentenanta site avocat",
-      "intretinere site web",
-      "securitate"
-    ],
-    "read_time": 7,
-    "url": "mentenanta-site-avocati/"
-  },
-  {
     "title": "Google Business Profile pentru avocați: checklist complet în 12 pași",
     "date": "2026-10-11",
     "slug": "google-business-profile-avocati",
@@ -58,6 +18,26 @@
     ],
     "read_time": 9,
     "url": "google-business-profile-avocati/"
+  },
+  {
+    "title": "EU AI Act explicat pentru cabinete de avocați",
+    "date": "2026-10-10",
+    "slug": "eu-ai-act-pentru-cabinete-de-avocati",
+    "description": "Ghid practic EU AI Act pentru cabinete de avocatură: clasificarea riscurilor AI, obligații de transparență, interdicții și protecția secretului profesional.",
+    "categories": [
+      "legaltech",
+      "inteligenta-artificiala",
+      "securitate"
+    ],
+    "tags": [
+      "eu ai act",
+      "avocați",
+      "conformitate",
+      "legaltech",
+      "securitate"
+    ],
+    "read_time": 12,
+    "url": "eu-ai-act-pentru-cabinete-de-avocati/"
   },
   {
     "title": "Glosar de marketing digital pentru avocați: 30 de termeni explicați simplu",
