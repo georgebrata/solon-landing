@@ -25,8 +25,10 @@ const PROTECTED_LEGAL_TERMS = [
   "provider",
 ];
 
+/** @param {string} value */
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+/** @param {string} phrase */
 const boundedPhrase = (phrase) => {
   const escaped = escapeRegExp(phrase).replace(/\s+/g, "\\s+");
   return new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, "giu");
@@ -84,6 +86,7 @@ const containsLegalCitations = (text) =>
  */
 const protectLegalContent = (text) => {
   const protectedChunks = [];
+  /** @param {string} match */
   const protectChunk = (match) => {
     const token = `${LEGAL_PROTECTED_TOKEN}${protectedChunks.length}__`;
     protectedChunks.push(match);

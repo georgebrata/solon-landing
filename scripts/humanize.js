@@ -660,18 +660,6 @@ const protectMarkdown = (markdown) => {
   };
 };
 
-const files = fs
-  .readdirSync(postsDir)
-  .filter((file) => file.endsWith(".md"))
-  .filter((file) => !targetFile || file === targetFile);
-
-if (targetFile && files.length === 0) {
-  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-  process.exitCode = 1;
-} else {
-  humanizeFiles(files);
-}
-
 function humanizeFiles(filesToProcess) {
   let changedFiles = 0;
   let totalChanges = 0;
@@ -708,40 +696,6 @@ function humanizeFiles(filesToProcess) {
   printRuleSummary(totalsByRule);
 }
 
-function humanizeMarkdown(markdown) {
-  const { frontmatter, body } = splitFrontmatter(markdown);
-  const protectedBody = protectMarkdown(body);
-  const legalProtected = protectLegalContent(protectedBody.text);
-  const counts = new Map();
-
-  let updatedBody = rules.reduce((text, rule) => {
-    const result = applyRule(text, rule);
-    if (result.count > 0) {
-      counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
-    }
-    return result.text;
-  }, legalProtected.text);
-
-  const colonResult = normalizeMidClauseColons(updatedBody);
-  updatedBody = colonResult.text;
-  if (colonResult.count > 0) {
-    counts.set("Transforma doua puncte mid-clauza (stil AI)", colonResult.count);
-  }
-
-  const burstinessResult = enforceBurstiness(updatedBody);
-  updatedBody = burstinessResult.text;
-  burstinessResult.counts.forEach((count, name) => {
-    if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
-  });
-
-  updatedBody = legalProtected.restore(updatedBody);
-
-  return {
-    updated: frontmatter + protectedBody.restore(updatedBody),
-    counts,
-  };
-}
-
 function splitFrontmatter(markdown) {
   const match = markdown.match(/^(---\r?\n[\s\S]*?\r?\n---\r?\n?)([\s\S]*)$/);
 
@@ -750,26 +704,6 @@ function splitFrontmatter(markdown) {
   }
 
   return { frontmatter: match[1], body: match[2] };
-}
-
-function applyRule(text, rule) {
-  let count = 0;
-  const updated = text.replace(rule.pattern, (...replacerArgs) => {
-    const match = replacerArgs[0];
-    const replacement =
-      typeof rule.replacement === "function"
-        ? rule.replacement(...replacerArgs)
-        : expandReplacement(rule.replacement, replacerArgs);
-    const updatedMatch = rule.preserveCase ? preserveFirstLetterCase(match, replacement) : replacement;
-
-    if (updatedMatch !== match) {
-      count += 1;
-    }
-
-    return updatedMatch;
-  });
-
-  return { text: updated, count };
 }
 
 /**
@@ -878,11 +812,11 @@ function splitMetronomicParagraphs(text) {
   return { text: updatedBlocks.join(""), count };
 }
 
-function extractSentences(block) {
+const extractSentences = (block) => {
   const raw = block.match(/[^.!?]+[.!?]+(?:["”»])?|[^.!?]+$/gu);
   if (!raw) return raw;
   return mergeLegalSentenceFragments(raw);
-}
+};
 
 function findBalancedSplitIndex(sentences, totalWords) {
   let runningWords = 0;
@@ -897,7 +831,7 @@ function findBalancedSplitIndex(sentences, totalWords) {
   return -1;
 }
 
-function shouldSplitParagraph(block) {
+const shouldSplitParagraph = (block) => {
   const trimmed = block.trim();
   if (!trimmed) return false;
   if (/^(#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\|)/.test(trimmed)) return false;
@@ -905,7 +839,7 @@ function shouldSplitParagraph(block) {
   if (trimmed.includes(LEGAL_PROTECTED_TOKEN)) return false;
   if (containsLegalCitations(trimmed)) return false;
   return !/^\s{4,}/.test(block);
-}
+};
 
 function boundedPhrase(phrase) {
   const escaped = escapeRegExp(phrase).replace(/\s+/g, "\\s+");
@@ -928,9 +862,63 @@ function preserveFirstLetterCase(source, replacement) {
   return replacement;
 }
 
-function expandReplacement(replacement, captureGroups) {
-  return replacement.replace(/\$(\d+)/g, (_, index) => captureGroups[Number(index)] || "");
+function expandReplacement(replacement, matchArgs) {
+  return replacement.replace(/\$(\d+)/g, (_, index) => matchArgs[Number(index)] || "");
 }
+
+const applyRule = (text, rule) => {
+  let count = 0;
+  const updated = text.replace(rule.pattern, (...matchArgs) => {
+    const match = matchArgs[0];
+    const replacement =
+      typeof rule.replacement === "function"
+        ? rule.replacement(...matchArgs)
+        : expandReplacement(rule.replacement, matchArgs);
+    const updatedMatch = rule.preserveCase ? preserveFirstLetterCase(match, replacement) : replacement;
+
+    if (updatedMatch !== match) {
+      count += 1;
+    }
+
+    return updatedMatch;
+  });
+
+  return { text: updated, count };
+};
+
+const humanizeMarkdown = (markdown) => {
+  const { frontmatter, body } = splitFrontmatter(markdown);
+  const protectedBody = protectMarkdown(body);
+  const legalProtected = protectLegalContent(protectedBody.text);
+  const counts = new Map();
+
+  let updatedBody = rules.reduce((text, rule) => {
+    const result = applyRule(text, rule);
+    if (result.count > 0) {
+      counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
+    }
+    return result.text;
+  }, legalProtected.text);
+
+  const colonResult = normalizeMidClauseColons(updatedBody);
+  updatedBody = colonResult.text;
+  if (colonResult.count > 0) {
+    counts.set("Transforma doua puncte mid-clauza (stil AI)", colonResult.count);
+  }
+
+  const burstinessResult = enforceBurstiness(updatedBody);
+  updatedBody = burstinessResult.text;
+  burstinessResult.counts.forEach((count, name) => {
+    if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
+  });
+
+  updatedBody = legalProtected.restore(updatedBody);
+
+  return {
+    updated: frontmatter + protectedBody.restore(updatedBody),
+    counts,
+  };
+};
 
 function sumCounts(counts) {
   return Array.from(counts.values()).reduce((sum, count) => sum + count, 0);
@@ -949,4 +937,16 @@ function getArgValue(flag) {
   const index = args.indexOf(flag);
   if (index === -1) return "";
   return args[index + 1] || "";
+}
+
+const files = fs
+  .readdirSync(postsDir)
+  .filter((file) => file.endsWith(".md"))
+  .filter((file) => !targetFile || file === targetFile);
+
+if (targetFile && files.length === 0) {
+  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+  process.exitCode = 1;
+} else {
+  humanizeFiles(files);
 }
