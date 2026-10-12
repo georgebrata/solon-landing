@@ -35,50 +35,15 @@
  */
 const fs = require("fs");
 const path = require("path");
+const {
+  LEGAL_PROTECTED_TOKEN,
+  containsLegalCitations,
+  mergeLegalSentenceFragments,
+  protectLegalContent,
+} = require("./lib/legal-content-guard");
 
 const DEFAULT_POSTS_DIR = path.join(__dirname, "../blog/posts");
 const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
-const LEGAL_PROTECTED_TOKEN = "__HUMANIZE_LEGAL_";
-
-/**
- * Legal vocabulary and phrases that must never be rewritten (EU AI Act defined terms).
- * Longest phrases first when applying protection.
- */
-const PROTECTED_LEGAL_TERMS = [
-  "risc ridicat",
-  "risc inacceptabil",
-  "modificare substanțială",
-  "substanțiale",
-  "substanțială",
-  "substanțiali",
-  "substanțial",
-  "implementatorului",
-  "implementatorilor",
-  "implementatori",
-  "implementator",
-  "furnizorului",
-  "furnizorilor",
-  "furnizorul",
-  "furnizori",
-  "furnizor",
-  "deployer",
-  "provider",
-];
-
-function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function boundedPhrase(phrase) {
-  const escaped = escapeRegExp(phrase).replace(/\s+/g, "\\s+");
-  return new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, "giu");
-}
-
-const PROTECTED_LEGAL_TERM_PATTERNS = [...PROTECTED_LEGAL_TERMS]
-  .sort((a, b) => b.length - a.length)
-  .map((term) => boundedPhrase(term));
-
-const REGULAMENT_UE_CITATION_PATTERN = /Regulamentul\s*\(UE\)\s*\d{4}\/\d+/giu;
 
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
@@ -867,61 +832,11 @@ function splitMetronomicParagraphs(text) {
   return { text: updatedBlocks.join(""), count };
 }
 
-const extractSentences = (block) => {
+function extractSentences(block) {
   const raw = block.match(/[^.!?]+[.!?]+(?:["”»])?|[^.!?]+$/gu);
   if (!raw) return raw;
-
-  const merged = [];
-  for (let index = 0; index < raw.length; index += 1) {
-    let segment = raw[index];
-    while (index < raw.length - 1 && endsWithLegalCitationAbbreviation(segment)) {
-      index += 1;
-      segment += raw[index];
-    }
-    merged.push(segment);
-  }
-
-  return merged;
-};
-
-/**
- * Period after art./alin./lit./pct. etc. is not a sentence boundary (Romanian legal citations).
- */
-const endsWithLegalCitationAbbreviation = (segment) => {
-  const trimmed = segment.trimEnd();
-  return (
-    /\b(art|alin|lit|pct|cap|par|nr|Anexa)\.\s*$/iu.test(trimmed) ||
-    /\bRegulamentul\s*\(UE\)\s*\d{4}\/\d+\s*$/iu.test(trimmed)
-  );
-};
-
-/**
- * Tokenize legal citations and protected terms so rewrite rules and paragraph splitting skip them.
- */
-const protectLegalContent = (text) => {
-  const protectedChunks = [];
-  /** @param {string} match */
-  const protect = (match) => {
-    const token = `${LEGAL_PROTECTED_TOKEN}${protectedChunks.length}__`;
-    protectedChunks.push(match);
-    return token;
-  };
-
-  let working = text.replace(REGULAMENT_UE_CITATION_PATTERN, protect);
-
-  for (const pattern of PROTECTED_LEGAL_TERM_PATTERNS) {
-    working = working.replace(pattern, protect);
-  }
-
-  return {
-    text: working,
-    restore: (value) =>
-      protectedChunks.reduce(
-        (restored, chunk, index) => restored.replaceAll(`${LEGAL_PROTECTED_TOKEN}${index}__`, chunk),
-        value
-      ),
-  };
-};
+  return mergeLegalSentenceFragments(raw);
+}
 
 function findBalancedSplitIndex(sentences, totalWords) {
   let runningWords = 0;
@@ -936,7 +851,7 @@ function findBalancedSplitIndex(sentences, totalWords) {
   return -1;
 }
 
-const shouldSplitParagraph = (block) => {
+function shouldSplitParagraph(block) {
   const trimmed = block.trim();
   if (!trimmed) return false;
   if (/^(#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\|)/.test(trimmed)) return false;
@@ -944,15 +859,16 @@ const shouldSplitParagraph = (block) => {
   if (trimmed.includes(LEGAL_PROTECTED_TOKEN)) return false;
   if (containsLegalCitations(trimmed)) return false;
   return !/^\s{4,}/.test(block);
-};
+}
 
-/** True when a paragraph contains Romanian/EU legal citation markers. */
-const containsLegalCitations = (text) =>
-  /\bart\.\s*\d/u.test(text) ||
-  /\balin\.\s*\(/u.test(text) ||
-  /\blit\.\s*[a-zăîâșț]/iu.test(text) ||
-  /\bpct\.\s*\d/u.test(text) ||
-  /Regulamentul\s*\(UE\)\s*\d{4}\/\d+/iu.test(text);
+function boundedPhrase(phrase) {
+  const escaped = escapeRegExp(phrase).replace(/\s+/g, "\\s+");
+  return new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, "giu");
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 function preserveFirstLetterCase(source, replacement) {
   const firstLetter = source.match(/\p{L}/u);
@@ -989,7 +905,7 @@ function getArgValue(flag) {
   return args[index + 1] || "";
 }
 
-const humanizeMarkdown = (markdown) => {
+function humanizeMarkdown(markdown) {
   const { frontmatter, body } = splitFrontmatter(markdown);
   const protectedBody = protectMarkdown(body);
   const legalProtected = protectLegalContent(protectedBody.text);
@@ -1021,7 +937,7 @@ const humanizeMarkdown = (markdown) => {
     updated: frontmatter + protectedBody.restore(updatedBody),
     counts,
   };
-};
+}
 
 const files = fs
   .readdirSync(postsDir)
