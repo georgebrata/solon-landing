@@ -1,5 +1,7 @@
 "use strict";
 
+/** Guards blog humanize from rewriting EU/legal citations and defined terms. */
+
 const LEGAL_PROTECTED_TOKEN = "__HUMANIZE_LEGAL_";
 
 const PROTECTED_LEGAL_TERMS = [
@@ -23,14 +25,12 @@ const PROTECTED_LEGAL_TERMS = [
   "provider",
 ];
 
-function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-function boundedPhrase(phrase) {
+const boundedPhrase = (phrase) => {
   const escaped = escapeRegExp(phrase).replace(/\s+/g, "\\s+");
   return new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, "giu");
-}
+};
 
 const PROTECTED_LEGAL_TERM_PATTERNS = [...PROTECTED_LEGAL_TERMS]
   .sort((a, b) => b.length - a.length)
@@ -39,24 +39,22 @@ const PROTECTED_LEGAL_TERM_PATTERNS = [...PROTECTED_LEGAL_TERMS]
 const REGULAMENT_UE_CITATION_PATTERN = /Regulamentul\s*\(UE\)\s*\d{4}\/\d+/giu;
 
 /**
- * Period after art./alin./lit./pct. etc. is not a sentence boundary (Romanian legal citations).
  * @param {string} segment
  * @returns {boolean}
  */
-function endsWithLegalCitationAbbreviation(segment) {
+const endsWithLegalCitationAbbreviation = (segment) => {
   const trimmed = segment.trimEnd();
   return (
     /\b(art|alin|lit|pct|cap|par|nr|Anexa)\.\s*$/iu.test(trimmed) ||
     /\bRegulamentul\s*\(UE\)\s*\d{4}\/\d+\s*$/iu.test(trimmed)
   );
-}
+};
 
 /**
- * Merge sentence fragments split on legal abbreviations (e.g. art., alin., pct.).
  * @param {string[]} raw
  * @returns {string[]}
  */
-function mergeLegalSentenceFragments(raw) {
+const mergeLegalSentenceFragments = (raw) => {
   const merged = [];
   for (let index = 0; index < raw.length; index += 1) {
     let segment = raw[index];
@@ -67,42 +65,36 @@ function mergeLegalSentenceFragments(raw) {
     merged.push(segment);
   }
   return merged;
-}
+};
 
 /**
- * True when a paragraph contains Romanian/EU legal citation markers.
  * @param {string} text
  * @returns {boolean}
  */
-function containsLegalCitations(text) {
-  return (
-    /\bart\.\s*\d/u.test(text) ||
-    /\balin\.\s*\(/u.test(text) ||
-    /\blit\.\s*[a-zăîâșț]/iu.test(text) ||
-    /\bpct\.\s*\d/u.test(text) ||
-    /Regulamentul\s*\(UE\)\s*\d{4}\/\d+/iu.test(text)
-  );
-}
+const containsLegalCitations = (text) =>
+  /\bart\.\s*\d/u.test(text) ||
+  /\balin\.\s*\(/u.test(text) ||
+  /\blit\.\s*[a-zăîâșț]/iu.test(text) ||
+  /\bpct\.\s*\d/u.test(text) ||
+  /Regulamentul\s*\(UE\)\s*\d{4}\/\d+/iu.test(text);
 
 /**
- * Tokenize legal citations and protected terms so rewrite rules and paragraph splitting skip them.
  * @param {string} text
  * @returns {{ text: string, restore: (value: string) => string }}
  */
-function protectLegalContent(text) {
+const protectLegalContent = (text) => {
   const protectedChunks = [];
-  /** @param {string} match */
-  const protect = (match) => {
+  const protectChunk = (match) => {
     const token = `${LEGAL_PROTECTED_TOKEN}${protectedChunks.length}__`;
     protectedChunks.push(match);
     return token;
   };
 
-  let working = text.replace(REGULAMENT_UE_CITATION_PATTERN, protect);
-
-  for (const pattern of PROTECTED_LEGAL_TERM_PATTERNS) {
-    working = working.replace(pattern, protect);
-  }
+  const withRegulament = text.replace(REGULAMENT_UE_CITATION_PATTERN, protectChunk);
+  const working = PROTECTED_LEGAL_TERM_PATTERNS.reduce(
+    (acc, pattern) => acc.replace(pattern, protectChunk),
+    withRegulament
+  );
 
   return {
     text: working,
@@ -112,7 +104,7 @@ function protectLegalContent(text) {
         value
       ),
   };
-}
+};
 
 module.exports = {
   LEGAL_PROTECTED_TOKEN,

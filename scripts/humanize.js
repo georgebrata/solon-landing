@@ -660,6 +660,18 @@ const protectMarkdown = (markdown) => {
   };
 };
 
+const files = fs
+  .readdirSync(postsDir)
+  .filter((file) => file.endsWith(".md"))
+  .filter((file) => !targetFile || file === targetFile);
+
+if (targetFile && files.length === 0) {
+  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+  process.exitCode = 1;
+} else {
+  humanizeFiles(files);
+}
+
 function humanizeFiles(filesToProcess) {
   let changedFiles = 0;
   let totalChanges = 0;
@@ -694,6 +706,40 @@ function humanizeFiles(filesToProcess) {
 
   console.log(`\n${dryRun ? "Dry run complete" : "Done"}. ${totalChanges} change(s) across ${changedFiles}/${filesToProcess.length} file(s).`);
   printRuleSummary(totalsByRule);
+}
+
+function humanizeMarkdown(markdown) {
+  const { frontmatter, body } = splitFrontmatter(markdown);
+  const protectedBody = protectMarkdown(body);
+  const legalProtected = protectLegalContent(protectedBody.text);
+  const counts = new Map();
+
+  let updatedBody = rules.reduce((text, rule) => {
+    const result = applyRule(text, rule);
+    if (result.count > 0) {
+      counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
+    }
+    return result.text;
+  }, legalProtected.text);
+
+  const colonResult = normalizeMidClauseColons(updatedBody);
+  updatedBody = colonResult.text;
+  if (colonResult.count > 0) {
+    counts.set("Transforma doua puncte mid-clauza (stil AI)", colonResult.count);
+  }
+
+  const burstinessResult = enforceBurstiness(updatedBody);
+  updatedBody = burstinessResult.text;
+  burstinessResult.counts.forEach((count, name) => {
+    if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
+  });
+
+  updatedBody = legalProtected.restore(updatedBody);
+
+  return {
+    updated: frontmatter + protectedBody.restore(updatedBody),
+    counts,
+  };
 }
 
 function splitFrontmatter(markdown) {
@@ -903,50 +949,4 @@ function getArgValue(flag) {
   const index = args.indexOf(flag);
   if (index === -1) return "";
   return args[index + 1] || "";
-}
-
-function humanizeMarkdown(markdown) {
-  const { frontmatter, body } = splitFrontmatter(markdown);
-  const protectedBody = protectMarkdown(body);
-  const legalProtected = protectLegalContent(protectedBody.text);
-  const counts = new Map();
-
-  let updatedBody = rules.reduce((text, rule) => {
-    const result = applyRule(text, rule);
-    if (result.count > 0) {
-      counts.set(rule.name, (counts.get(rule.name) || 0) + result.count);
-    }
-    return result.text;
-  }, legalProtected.text);
-
-  const colonResult = normalizeMidClauseColons(updatedBody);
-  updatedBody = colonResult.text;
-  if (colonResult.count > 0) {
-    counts.set("Transforma doua puncte mid-clauza (stil AI)", colonResult.count);
-  }
-
-  const burstinessResult = enforceBurstiness(updatedBody);
-  updatedBody = burstinessResult.text;
-  burstinessResult.counts.forEach((count, name) => {
-    if (count > 0) counts.set(name, (counts.get(name) || 0) + count);
-  });
-
-  updatedBody = legalProtected.restore(updatedBody);
-
-  return {
-    updated: frontmatter + protectedBody.restore(updatedBody),
-    counts,
-  };
-}
-
-const files = fs
-  .readdirSync(postsDir)
-  .filter((file) => file.endsWith(".md"))
-  .filter((file) => !targetFile || file === targetFile);
-
-if (targetFile && files.length === 0) {
-  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-  process.exitCode = 1;
-} else {
-  humanizeFiles(files);
 }
