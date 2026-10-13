@@ -125,7 +125,7 @@ Această standardizare este mai importantă decât pare. Fără ea, fiecare cole
 
 <div class="row justify-content-center my-4">
   <div class="col-md-9">
-    <img src="../../assets/img/undraw_calendar.png" alt="Ilustrație: urmărirea termenelor și a ședințelor din dosare într-un flux digital pentru avocați" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+    <img src="../../assets/img/undraw-calendar.png" alt="Ilustrație: urmărirea termenelor și a ședințelor din dosare într-un flux digital pentru avocați" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
   </div>
 </div>
 
