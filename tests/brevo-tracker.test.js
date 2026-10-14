@@ -234,14 +234,16 @@ test("every content page gates the tracker and error pages omit it", () => {
   }
 });
 
-test("report-only CSP allows the Brevo iframe host", () => {
+test("report-only CSP allows the Brevo loader hosts and not an unused frame host", () => {
   const htaccess = fs.readFileSync(path.join(root, ".htaccess"), "utf8");
   const cspLine = htaccess.split("\n").find((line) => line.includes("Content-Security-Policy-Report-Only"));
   assert.ok(cspLine);
   assert.match(cspLine, /script-src[^"]*https:\/\/cdn\.brevo\.com/);
   assert.match(cspLine, /script-src[^"]*https:\/\/sibautomation\.com/);
   assert.match(cspLine, /connect-src[^"]*https:\/\/in-automate\.brevo\.com/);
-  assert.match(cspLine, /frame-src[^"]*https:\/\/sibautomation\.com/);
+  const frameSrc = cspLine.match(/frame-src[^;]*/);
+  assert.ok(frameSrc);
+  assert.equal(frameSrc[0].includes("sibautomation.com"), false);
   assert.match(cspLine, /worker-src[^"]*https:\/\/sibautomation\.com/);
   const cookies = fs.readFileSync(path.join(root, "cookies/index.html"), "utf8");
   assert.match(cookies, /sib_cuid/);

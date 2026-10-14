@@ -275,6 +275,21 @@
     status.append(" ", button);
   };
 
+  /** Trimmed value of a dedicated first-name field. A full name is not split.
+   * @param {HTMLFormElement} form
+   * @returns {string}
+   */
+  const explicitFirstName = (form) => {
+    const names = ["first-name", "name"];
+    for (const fieldName of names) {
+      const field = form?.elements?.namedItem(fieldName);
+      if (!field || typeof field.value !== "string") continue;
+      const trimmed = field.value.trim();
+      if (trimmed) return trimmed;
+    }
+    return "";
+  };
+
   /** Tell Brevo who submitted, only after a confirmed email save.
    * The tracker no-ops without marketing consent or a real client key.
    */
@@ -290,11 +305,8 @@
         SOURCE: type,
         PAGE_URL: typeof window.location?.href === "string" ? window.location.href : "",
       };
-      const name = String(values?.Nume || "").trim();
-      if (name) {
-        const firstName = name.split(/\s+/)[0];
-        if (firstName) attributes.FIRSTNAME = firstName;
-      }
+      const firstName = explicitFirstName(form);
+      if (firstName) attributes.FIRSTNAME = firstName;
       tracker.identify(email, attributes);
     } catch {
       // Identification must not change the form result.

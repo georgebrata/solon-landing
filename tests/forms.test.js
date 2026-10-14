@@ -596,10 +596,10 @@ test("identifies Brevo for newsletter, and for contact only when the newsletter 
       attributes: {
         SOURCE: "Contact",
         PAGE_URL: "https://solon.agency/contact/#formular",
-        FIRSTNAME: "Ada",
       },
     })
   );
+  assert.equal(opted.identifies[0].attributes.FIRSTNAME, undefined);
   assert.equal(
     JSON.stringify(opted.identifies[1]),
     JSON.stringify({
@@ -610,6 +610,25 @@ test("identifies Brevo for newsletter, and for contact only when the newsletter 
       },
     })
   );
+});
+
+test("sends FIRSTNAME only from an explicit first-name or name field", async () => {
+  const fromFirstName = harness(["Contact"], { optIn: true });
+  fromFirstName.forms[0].values["first-name"] = "  Ada  ";
+  await fromFirstName.forms[0].dispatch();
+  assert.equal(fromFirstName.identifies[0].attributes.FIRSTNAME, "Ada");
+
+  const fromName = harness(["Newsletter"]);
+  fromName.forms[0].values.name = "  Grace  ";
+  await fromName.forms[0].dispatch();
+  assert.equal(fromName.identifies[0].attributes.FIRSTNAME, "Grace");
+
+  const blank = harness(["Contact"], { optIn: true });
+  blank.forms[0].values["first-name"] = "   ";
+  blank.forms[0].values.name = "   ";
+  await blank.forms[0].dispatch();
+  assert.equal(blank.identifies[0].attributes.FIRSTNAME, undefined);
+  assert.equal(blank.identifies[0].attributes.SOURCE, "Contact");
 });
 
 test("does not identify Brevo when the save fails, the honeypot trips, or the tracker is absent", async () => {
