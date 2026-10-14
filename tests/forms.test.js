@@ -599,7 +599,6 @@ test("identifies Brevo for newsletter, and for contact only when the newsletter 
       },
     })
   );
-  assert.equal(opted.identifies[0].attributes.FIRSTNAME, undefined);
   assert.equal(
     JSON.stringify(opted.identifies[1]),
     JSON.stringify({
@@ -627,7 +626,7 @@ test("sends FIRSTNAME only from an explicit first-name or name field", async () 
   blank.forms[0].values["first-name"] = "   ";
   blank.forms[0].values.name = "   ";
   await blank.forms[0].dispatch();
-  assert.equal(blank.identifies[0].attributes.FIRSTNAME, undefined);
+  assert.equal(Object.hasOwn(blank.identifies[0].attributes, "FIRSTNAME"), false);
   assert.equal(blank.identifies[0].attributes.SOURCE, "Contact");
 });
 
