@@ -275,6 +275,44 @@
     status.append(" ", button);
   };
 
+  /** Trimmed value of a dedicated first-name field. A full name is not split.
+   * @param {HTMLFormElement} form
+   * @returns {string}
+   */
+  const explicitFirstName = (form) => {
+    const names = ["first-name", "name"];
+    for (const fieldName of names) {
+      const field = form?.elements?.namedItem(fieldName);
+      if (!field || typeof field.value !== "string") continue;
+      const trimmed = field.value.trim();
+      if (trimmed) return trimmed;
+    }
+    return "";
+  };
+
+  /** Tell Brevo who submitted, only after a confirmed email save.
+   * The tracker no-ops without marketing consent or a real client key.
+   */
+  const notifyBrevo = (type, values, form) => {
+    try {
+      const optedIn = form?.elements?.namedItem("NewsletterOptIn")?.checked === true;
+      if (type !== "Newsletter" && !(type === "Contact" && optedIn)) return;
+      const email = String(values?.Email || "").trim();
+      if (!email) return;
+      const tracker = window.SolonBrevo;
+      if (!tracker || typeof tracker.identify !== "function") return;
+      const attributes = {
+        SOURCE: type,
+        PAGE_URL: typeof window.location?.href === "string" ? window.location.href : "",
+      };
+      const firstName = explicitFirstName(form);
+      if (firstName) attributes.FIRSTNAME = firstName;
+      tracker.identify(email, attributes);
+    } catch {
+      // Identification must not change the form result.
+    }
+  };
+
   /** POST one form payload to Apps Script and require `{ ok: true }`. */
   const postForm = async (type, values, form) => {
     const data = {
@@ -307,6 +345,7 @@
         if (SPAM_CODES[code]) throw taggedError(code, new Error(code));
         throw taggedError("unconfirmed", new Error("The API did not confirm the save"));
       }
+      notifyBrevo(type, values, form);
     } catch (error) {
       if (error?.solonCode) throw error;
       throw taggedError(classifySubmitError(error), error);

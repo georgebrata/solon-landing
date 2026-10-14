@@ -71,7 +71,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | GA4 / gtag | `www.googletagmanager.com`, `www.google-analytics.com`, `*.google-analytics.com`, `region1.google-analytics.com`, `analytics.google.com`, `*.analytics.google.com`, `*.googletagmanager.com`, `stats.g.doubleclick.net`, `www.google.com`, `www.google.ro` | script, img, connect |
 | Meta Pixel | `connect.facebook.net`, `www.facebook.com`, `*.facebook.com` | script, img, connect |
 | Microsoft Clarity | `www.clarity.ms`, `scripts.clarity.ms`, `*.clarity.ms` | script, img, connect, worker |
-| Brevo | `cdn.brevo.com`, `sibautomation.com` (SDK `sa.js`), `in-automate.brevo.com`, `*.brevo.com` | script, connect, worker |
+| Brevo tracker | Headless Chrome with the public client key, after marketing consent, requested `https://cdn.brevo.com/js/sdk-loader.js` (script), `https://sibautomation.com/sa.js` (script), and `https://in-automate.brevo.com/p` (connect, page view). No Brevo image, frame, or worker request was made, and no `cm_iframe` was created, so `frame-src` does not allow `sibautomation.com`. `worker-src` still allows `sibautomation.com` for `sw.js`. `*.brevo.com` covers the Brevo subdomains. Identify uses the same `in-automate.brevo.com` connect host. | script, connect, worker |
 | Metricool | `tracker.metricool.com` (script + `c3po.jpg` beacon) | script, img, connect |
 | Ahrefs | `analytics.ahrefs.com` | script, connect |
 | counter.dev | `cdn.counter.dev`, `t.counter.dev` | script, connect |

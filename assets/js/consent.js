@@ -10,7 +10,7 @@
  *     timestamp: string,        // ISO-8601
  *     necessary: true,          // always on
  *     analytics: boolean,       // GA4, Clarity, Ahrefs, Metricool, counter.dev
- *     marketing: boolean        // Meta Pixel, Brevo, mny.ro ANPC widget
+ *     marketing: boolean        // Meta Pixel, Brevo tracker, mny.ro ANPC widget
  *   }
  *   Retention: 12 months from timestamp. Version mismatch or expiry → re-prompt.
  *
@@ -38,6 +38,7 @@
     "ANONCHK",
     "SM",
     "MUID",
+    "sib_",
   ];
   const SKIP_SCRIPT_ATTRS = {
     type: true,
@@ -469,6 +470,32 @@
     expireTrackerCookies();
   }
 
+  /** Starts or stops Brevo when marketing consent changes.
+   * The tracker tag stays inert until marketing is granted. This also covers
+   * withdrawal, and a later grant on the same page after the tag already ran.
+   * @param {object} consent
+   * @returns {void}
+   */
+  function syncBrevo(consent) {
+    const brevo = win.SolonBrevo;
+    if (!brevo) {
+      return;
+    }
+    if (isGrantedFlag(consent?.marketing)) {
+      if (typeof brevo.start === "function") {
+        tryCall(() => {
+          brevo.start();
+        });
+      }
+      return;
+    }
+    if (typeof brevo.stop === "function") {
+      tryCall(() => {
+        brevo.stop();
+      });
+    }
+  }
+
   /**
    * @param {object} consent
    * @param {{persist?: boolean}} [options]
@@ -486,6 +513,7 @@
     if (next.analytics || next.marketing) {
       activateInertScripts(next);
     }
+    syncBrevo(next);
     if (!next.analytics || !next.marketing) {
       disableLoadedTags();
     }
@@ -752,7 +780,7 @@
           createCategory({
             id: "solon-consent-marketing",
             label: "Marketing",
-            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Pot implica publicitate măsurată.",
+            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă trimiți un formular cu emailul tău, Brevo poate lega vizitele tale de pe site de adresa ta. Pot implica publicitate măsurată.",
             input: marketingInput,
           }),
         ]),

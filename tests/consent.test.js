@@ -190,6 +190,15 @@ test("accept all persists version, timestamp, and both categories", () => {
   assert.equal(parsed.marketing, true);
 });
 
+test("rejection expires sib_ cookies even when the tracker never started", () => {
+  const { api, context } = loadConsent({ cookie: "sib_cuid=abc-123; visitor=keep; _ga=GA1.1" });
+  api.rejectAll();
+  const jar = context.document.cookie;
+  assert.match(jar, /sib_cuid=; Path=\/; Max-Age=0/);
+  assert.match(jar, /_ga=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
+});
+
 test("reject all persists denied optional categories", () => {
   const { api, store } = loadConsent();
   api.acceptAll();
@@ -198,6 +207,30 @@ test("reject all persists denied optional categories", () => {
   assert.equal(saved.marketing, false);
   const parsed = JSON.parse(store[api.STORAGE_KEY]);
   assert.equal(parsed.analytics, false);
+});
+
+test("marketing withdrawal stops Brevo and an analytics-only change does not", () => {
+  const { api, context } = loadConsent();
+  const calls = [];
+  context.SolonBrevo = {
+    start() {
+      calls.push("start");
+    },
+    stop() {
+      calls.push("stop");
+    },
+  };
+  api.acceptAll();
+  assert.deepEqual(calls, ["start"]);
+  calls.length = 0;
+  api.saveCustom({ analytics: false, marketing: true });
+  assert.deepEqual(calls, ["start"]);
+  calls.length = 0;
+  api.saveCustom({ analytics: true, marketing: false });
+  assert.deepEqual(calls, ["stop"]);
+  calls.length = 0;
+  api.rejectAll();
+  assert.deepEqual(calls, ["stop"]);
 });
 
 test("custom mix persists and rehydrates", () => {
@@ -324,7 +357,7 @@ const hasLiveTracker = function hasLiveTracker(html) {
     if (!isInert && !isConsent) {
       const haystack = `${attrs}\n${body}`;
       if (
-        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker|mny\.ro/.test(
+        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|brevo-tracker|sibautomation\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker|mny\.ro/.test(
           haystack
         )
       ) {

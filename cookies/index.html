@@ -54,10 +54,10 @@
     <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="../assets/css/style.min.css?v=d4e7ea71a2" rel="stylesheet">
+    <link href="../assets/css/style.min.css?v=5fb355f556" rel="stylesheet">
 
       <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
-  <script src="/assets/js/consent.min.js?v=44ff212a7f"></script>
+  <script src="/assets/js/consent.min.js?v=eb5f8b6494"></script>
 
 <!-- counter.dev -->
     <script type="text/plain" data-consent-category="analytics" src="https://cdn.counter.dev/script.js" data-id="03bd5925-48e2-4d33-ae59-d66aaf6acba0" data-utcoffset="2"></script>
@@ -78,6 +78,7 @@
 
   <!-- clarity -->
     <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
+    <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
 </head>
 
 <body>
@@ -137,7 +138,7 @@
                     <ul>
                         <li><strong>Necesare</strong> — mereu active. Stochează alegerea ta de consimțământ (versiune și dată) și țin site-ul funcțional.</li>
                         <li><strong>Analiză</strong> — Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev.</li>
-                        <li><strong>Marketing</strong> — Meta Pixel (Facebook) și Brevo (email / urmărire campanii), doar pe paginile unde sunt instalate.</li>
+                        <li><strong>Marketing</strong> — Meta Pixel (Facebook) și widget-ul ANPC, acolo unde sunt instalate, și trackerul Brevo (vizitele tale și identificarea când trimiți un formular cu email), pe paginile site-ului.</li>
                     </ul>
                     <p class="px-lg-5">Alegerea este salvată 12 luni, cu un număr de versiune. Dacă schimbăm politica de consimțământ, bannerul reapare. Îți poți retrage sau modifica acordul oricând din subsol, linkul <strong>Setări cookie</strong> (lângă Politica cookie), sau din această pagină. „Refuz” (Respinge toate) oprește încărcarea ulterioară a tag-urilor non-esențiale și actualizează Google Consent Mode v2 la stare refuzată.</p>
                     <p class="px-lg-5">Poți deschide din nou setările: <a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a>.</p>
@@ -154,7 +155,7 @@
                         <li>Browserul utilizat și, după caz, sistemul de operare al calculatorului dvs. ca și numele furnizorului dvs. de acces</li>
                     </ul>
                     <p class="px-lg-5">Datele indicate sunt prelucrate de noi în următoarele scopuri: garantarea unei legături fără probleme a website-ului, garantarea unei folosiri confortabile a website-ului nostru, evaluarea siguranței și stabilității de sistem și în alte scopuri administrative.</p>
-                    <p class="px-lg-5">Baza legală pentru prelucrarea datelor este art. 6 alin (1) lit. f din REGULAMENTUL nr. 679 din 27 aprilie 2016 privind protecţia persoanelor fizice în ceea ce priveşte prelucrarea datelor cu caracter personal şi privind libera circulaţie a acestor date (denumit în continuare GDPR). Interesul nostru legitim decurge din scopurile enumerate mai sus pentru colectarea datelor. În nici un caz nu folosim datele colectate în scopul de a crea profiluri în privința persoanei dvs. În plus, atunci când vizitați website-ul nostru, folosim cookies și alte servicii de analiză.</p>
+                    <p class="px-lg-5">Baza legală pentru prelucrarea datelor este art. 6 alin (1) lit. f din REGULAMENTUL nr. 679 din 27 aprilie 2016 privind protecţia persoanelor fizice în ceea ce priveşte prelucrarea datelor cu caracter personal şi privind libera circulaţie a acestor date (denumit în continuare GDPR). Interesul nostru legitim decurge din scopurile enumerate mai sus pentru colectarea datelor. Aceste date de server nu le folosim ca să creăm profiluri despre tine. Cookie-urile și serviciile de analiză și de marketing descrise mai jos le folosim doar dacă îți dai acordul în bannerul de cookie-uri (art. 6 alin. (1) lit. a) RGPD și art. 4 alin. (5) din Legea nr. 506/2004).</p>
 
 
                     <br><br>
@@ -180,7 +181,7 @@
                     
                     <br>
                     <h4>Google Analytics </h4>
-                    <p class="px-lg-5">În scopul configurării corespunzătoare și a optimizării continue a website-urilor noastre folosim Google Analytics, un serviciu de analiză web al Google Inc. (https://www.google.de/intl/de/about/) (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA; în continuare „Google“). În acest context se întocmesc profile de utilizare pseudonimizate și se folosesc fișiere cookie (vezi la punctul 4). Informațiile produse de cookie privitoare la utilizarea acestui website precum:</p>
+                    <p class="px-lg-5">În scopul configurării corespunzătoare și a optimizării continue a website-urilor noastre folosim Google Analytics, un serviciu de analiză web al Google Ireland Ltd (https://www.google.de/intl/de/about/) (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA; în continuare „Google“). În acest context se întocmesc profile de utilizare pseudonimizate și se folosesc fișiere cookie (vezi la punctul 4). Informațiile produse de cookie privitoare la utilizarea acestui website precum:</p>
                     <ul>
                         <li>tip versiune de browser</li>
                         <li>sistemul de operare utilizat</li>
@@ -224,7 +225,9 @@
 
                     <br>
                     <h4>Brevo</h4>
-                    <p class="px-lg-5">SDK-ul Brevo (client_key mwgotrl8mb9d4jf2rit2omjt) este instalat pe pagina principală și se încarcă doar cu acordul pentru Marketing. Este folosit pentru automatizări și măsurarea interacțiunilor legate de email și campanii.</p>
+                    <p class="px-lg-5">Trackerul Brevo este furnizat de Sendinblue SAS (marca Brevo), Paris, Franța. Este un cookie de marketing și analiză al unui terț: îl scrie scriptul Brevo pe domeniul solon.agency, ca să măsurăm cum folosești site-ul și cum interacționezi cu emailurile și campaniile noastre. Se încarcă pe paginile site-ului doar după ce accepți categoria <strong>Marketing</strong>. Până atunci nu pleacă nicio cerere către Brevo. Dacă îți retragi acordul din <a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a>, trackerul se oprește, nu mai trimite evenimente și cookie-ul de mai jos este șters. Paginile de eroare nu încarcă trackerul.</p>
+                    <p class="px-lg-5">Cookie-ul pe care îl scrie scriptul Brevo (<code>sa.js</code>, încărcat din sdk-loader) este <strong>sib_cuid</strong>. Îl folosește ca să recunoască aceeași vizită a ta de la o pagină la alta și, după ce te identifici, să lege activitatea de contactul tău. În centrul de ajutor Brevo, identificatorul acesta este numit <strong>visitor_id</strong> (numele din cererea către Brevo); în browser cookie-ul se numește <code>sib_cuid</code>. Nu este un al doilea cookie. Potrivit Brevo, cookie-ul conține doar un identificator, nu adresa ta de email. Tip: cookie de marketing/analiză al unui terț (Brevo). Durată: aproximativ 182 de zile. Îți poți retrage oricând acordul din <a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a>; după retragere, cookie-ul este șters.</p>
+                    <p class="px-lg-5">O vizită fără formular rămâne anonimă: nu ești identificat doar pentru că ai deschis o pagină. Dacă ai acceptat Marketing și te abonezi la newsletter, din formularul de newsletter sau bifând abonarea în formularul de contact, Brevo poate asocia vizita cu emailul tău. Nu trimitem un prenume ghicit din numele complet. Prenumele pleacă doar dacă formularul are un câmp separat de prenume și l-ai completat. Se mai trimit numele formularului (SOURCE) și adresa paginii pe care te afli.</p>
 
                     <br>
                     <h4>Widget ANPC (mny.ro)</h4>
@@ -461,7 +464,7 @@
             position: absolute !important;
         }
     </style>
-  <script src="../assets/js/forms.min.js?v=a0919cc947"></script>
+  <script src="../assets/js/forms.min.js?v=838999170b"></script>
 </body>
 
 </html>

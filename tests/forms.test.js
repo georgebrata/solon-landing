@@ -103,6 +103,7 @@ const harness = (types, options = {}) => {
     );
   }
 
+  const identifies = [];
   const context = {
     window: undefined,
     document: {
@@ -165,11 +166,21 @@ const harness = (types, options = {}) => {
     encodeURIComponent,
     Error,
     turnstile: options.turnstile,
+    location: options.location || { href: "https://solon.agency/contact/#formular" },
+    SolonBrevo:
+      options.SolonBrevo === null
+        ? undefined
+        : options.SolonBrevo || {
+            identify(email, attributes) {
+              identifies.push({ email, attributes });
+              return true;
+            },
+          },
   };
   context.window = context;
   context.globalThis = context;
   vm.runInNewContext(code, context, { filename: "forms.js" });
-  return { forms, requests, logs, clock };
+  return { forms, requests, logs, clock, identifies };
 };
 
 const dataRequests = (requests) => requests.filter(({ url }) => !url.includes("ipify"));
@@ -525,6 +536,26 @@ test("maps rate_limited from the API without an immediate retry control", async 
   assert.equal(dataRequests(requests).length, 1);
 });
 
+test("contact and newsletter forms carry the Brevo notice above submit", () => {
+  const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj. Dacă bifezi abonarea la newsletter și ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta de email.";
+  const newsletterNote = "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
+  const contactPages = ["index.html", "studii-de-caz/index.html"];
+  const newsletterPages = ["templates/layout.html", "newsletter.html", "index.html"];
+  for (const rel of contactPages) {
+    const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
+    const form = html.slice(html.indexOf('data-solon-form="Contact"'), html.indexOf("</form>", html.indexOf('data-solon-form="Contact"')));
+    assert.ok(form.includes(contactNote), rel);
+    assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
+  }
+  for (const rel of newsletterPages) {
+    const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
+    const start = html.indexOf('data-solon-form="Newsletter"');
+    const form = html.slice(start, html.indexOf("</form>", start));
+    assert.ok(form.includes(newsletterNote), rel);
+    assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
+  }
+});
+
 test("honeypot markup is hidden from assistive tech and the keyboard", () => {
   const pages = [
     fs.readFileSync(path.join(__dirname, "../index.html"), "utf8"),
@@ -538,4 +569,82 @@ test("honeypot markup is hidden from assistive tech and the keyboard", () => {
     assert.match(html, /tabindex="-1"/);
     assert.match(html, /\binert\b/);
   }
+});
+
+test("identifies Brevo for newsletter, and for contact only when the newsletter opt-in is checked", async () => {
+  const plain = harness(["Contact", "Telefon", "Newsletter"]);
+  for (const form of plain.forms) await form.dispatch();
+  assert.equal(plain.identifies.length, 1);
+  assert.equal(
+    JSON.stringify(plain.identifies[0]),
+    JSON.stringify({
+      email: "ada@example.com",
+      attributes: {
+        SOURCE: "Newsletter",
+        PAGE_URL: "https://solon.agency/contact/#formular",
+      },
+    })
+  );
+
+  const opted = harness(["Contact"], { optIn: true });
+  await opted.forms[0].dispatch();
+  assert.equal(opted.identifies.length, 2);
+  assert.equal(
+    JSON.stringify(opted.identifies[0]),
+    JSON.stringify({
+      email: "ada@example.com",
+      attributes: {
+        SOURCE: "Contact",
+        PAGE_URL: "https://solon.agency/contact/#formular",
+      },
+    })
+  );
+  assert.equal(
+    JSON.stringify(opted.identifies[1]),
+    JSON.stringify({
+      email: "ada@example.com",
+      attributes: {
+        SOURCE: "Newsletter",
+        PAGE_URL: "https://solon.agency/contact/#formular",
+      },
+    })
+  );
+});
+
+test("sends FIRSTNAME only from an explicit first-name or name field", async () => {
+  const fromFirstName = harness(["Contact"], { optIn: true });
+  fromFirstName.forms[0].values["first-name"] = "  Ada  ";
+  await fromFirstName.forms[0].dispatch();
+  assert.equal(fromFirstName.identifies[0].attributes.FIRSTNAME, "Ada");
+
+  const fromName = harness(["Newsletter"]);
+  fromName.forms[0].values.name = "  Grace  ";
+  await fromName.forms[0].dispatch();
+  assert.equal(fromName.identifies[0].attributes.FIRSTNAME, "Grace");
+
+  const blank = harness(["Contact"], { optIn: true });
+  blank.forms[0].values["first-name"] = "   ";
+  blank.forms[0].values.name = "   ";
+  await blank.forms[0].dispatch();
+  assert.equal(Object.hasOwn(blank.identifies[0].attributes, "FIRSTNAME"), false);
+  assert.equal(blank.identifies[0].attributes.SOURCE, "Contact");
+});
+
+test("does not identify Brevo when the save fails, the honeypot trips, or the tracker is absent", async () => {
+  const failed = harness(["Contact"], {
+    fetch: (url) => {
+      if (url.includes("ipify")) return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      return Promise.resolve({ ok: true, json: () => ({ ok: false, error: "Failed" }) });
+    },
+  });
+  await failed.forms[0].dispatch();
+  assert.equal(failed.identifies.length, 0);
+
+  const honeypot = harness(["Newsletter"], { honeypot: "https://spam.example" });
+  await honeypot.forms[0].dispatch();
+  assert.equal(honeypot.identifies.length, 0);
+
+  const absent = harness(["Contact"], { SolonBrevo: null });
+  await absent.forms[0].dispatch();
+  assert.equal(absent.identifies.length, 0);
 });
