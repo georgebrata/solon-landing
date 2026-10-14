@@ -55,7 +55,7 @@
    * @returns {{name: string, properties: {ma_title: string, ma_url: string, ma_path: string, ma_referrer: string}}}
    */
   function pagePayload() {
-    const title = String((doc && doc.title) || "page").trim() || "page";
+    const title = String(doc?.title || "page").trim() || "page";
     const loc = win.location || {};
     return {
       name: title,
@@ -97,16 +97,23 @@
       return;
     }
     const node = doc.getElementById(id);
-    if (node && node.parentNode) {
+    if (node?.parentNode) {
       node.parentNode.removeChild(node);
     }
+  }
+
+  /** Replaces a Brevo method so withdrawal does not send anything further.
+   * @returns {boolean}
+   */
+  function ignoreBrevoCommand() {
+    return false;
   }
 
   /** Drops queued and live Brevo commands so withdrawal stops further sends.
    * @returns {void}
    */
   function silenceBrevo() {
-    const noop = function noop() {};
+    const noop = ignoreBrevoCommand;
     const api = win.Brevo;
     win.Brevo = [];
     win.Brevo.push = noop;

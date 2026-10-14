@@ -97,7 +97,7 @@ test("placeholder key does not load the SDK even after marketing consent", () =>
   assert.equal(context.SolonBrevo.isConfigured(), false);
   assert.equal(context.SolonBrevo.start(), false);
   assert.equal(scripts.length, 0);
-  assert.equal(context.Brevo, undefined);
+  assert.equal(typeof context.Brevo, "undefined");
   assert.equal(context.SolonBrevo.identify("ada@example.com", { SOURCE: "Contact" }), false);
 });
 
