@@ -536,6 +536,26 @@ test("maps rate_limited from the API without an immediate retry control", async 
   assert.equal(dataRequests(requests).length, 1);
 });
 
+test("contact and newsletter forms carry the Brevo notice above submit", () => {
+  const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj. Dacă bifezi abonarea la newsletter și ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta de email.";
+  const newsletterNote = "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
+  const contactPages = ["index.html", "studii-de-caz/index.html"];
+  const newsletterPages = ["templates/layout.html", "newsletter.html", "index.html"];
+  for (const rel of contactPages) {
+    const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
+    const form = html.slice(html.indexOf('data-solon-form="Contact"'), html.indexOf("</form>", html.indexOf('data-solon-form="Contact"')));
+    assert.ok(form.includes(contactNote), rel);
+    assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
+  }
+  for (const rel of newsletterPages) {
+    const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
+    const start = html.indexOf('data-solon-form="Newsletter"');
+    const form = html.slice(start, html.indexOf("</form>", start));
+    assert.ok(form.includes(newsletterNote), rel);
+    assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
+  }
+});
+
 test("honeypot markup is hidden from assistive tech and the keyboard", () => {
   const pages = [
     fs.readFileSync(path.join(__dirname, "../index.html"), "utf8"),
@@ -551,12 +571,26 @@ test("honeypot markup is hidden from assistive tech and the keyboard", () => {
   }
 });
 
-test("identifies Brevo only after a confirmed contact or newsletter email", async () => {
-  const { forms, identifies } = harness(["Contact", "Telefon", "Newsletter"]);
-  for (const form of forms) await form.dispatch();
-  assert.equal(identifies.length, 2);
+test("identifies Brevo for newsletter, and for contact only when the newsletter opt-in is checked", async () => {
+  const plain = harness(["Contact", "Telefon", "Newsletter"]);
+  for (const form of plain.forms) await form.dispatch();
+  assert.equal(plain.identifies.length, 1);
   assert.equal(
-    JSON.stringify(identifies[0]),
+    JSON.stringify(plain.identifies[0]),
+    JSON.stringify({
+      email: "ada@example.com",
+      attributes: {
+        SOURCE: "Newsletter",
+        PAGE_URL: "https://solon.agency/contact/#formular",
+      },
+    })
+  );
+
+  const opted = harness(["Contact"], { optIn: true });
+  await opted.forms[0].dispatch();
+  assert.equal(opted.identifies.length, 2);
+  assert.equal(
+    JSON.stringify(opted.identifies[0]),
     JSON.stringify({
       email: "ada@example.com",
       attributes: {
@@ -567,7 +601,7 @@ test("identifies Brevo only after a confirmed contact or newsletter email", asyn
     })
   );
   assert.equal(
-    JSON.stringify(identifies[1]),
+    JSON.stringify(opted.identifies[1]),
     JSON.stringify({
       email: "ada@example.com",
       attributes: {

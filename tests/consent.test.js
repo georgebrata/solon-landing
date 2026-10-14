@@ -190,6 +190,15 @@ test("accept all persists version, timestamp, and both categories", () => {
   assert.equal(parsed.marketing, true);
 });
 
+test("rejection expires sib_ cookies even when the tracker never started", () => {
+  const { api, context } = loadConsent({ cookie: "sib_cuid=abc-123; visitor=keep; _ga=GA1.1" });
+  api.rejectAll();
+  const jar = context.document.cookie;
+  assert.match(jar, /sib_cuid=; Path=\/; Max-Age=0/);
+  assert.match(jar, /_ga=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
+});
+
 test("reject all persists denied optional categories", () => {
   const { api, store } = loadConsent();
   api.acceptAll();

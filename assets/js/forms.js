@@ -278,9 +278,10 @@
   /** Tell Brevo who submitted, only after a confirmed email save.
    * The tracker no-ops without marketing consent or a real client key.
    */
-  const notifyBrevo = (type, values) => {
+  const notifyBrevo = (type, values, form) => {
     try {
-      if (type !== "Contact" && type !== "Newsletter") return;
+      const optedIn = form?.elements?.namedItem("NewsletterOptIn")?.checked === true;
+      if (type !== "Newsletter" && !(type === "Contact" && optedIn)) return;
       const email = String(values?.Email || "").trim();
       if (!email) return;
       const tracker = window.SolonBrevo;
@@ -332,7 +333,7 @@
         if (SPAM_CODES[code]) throw taggedError(code, new Error(code));
         throw taggedError("unconfirmed", new Error("The API did not confirm the save"));
       }
-      notifyBrevo(type, values);
+      notifyBrevo(type, values, form);
     } catch (error) {
       if (error?.solonCode) throw error;
       throw taggedError(classifySubmitError(error), error);

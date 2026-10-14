@@ -2006,6 +2006,32 @@ img[width][height] {
   accent-color: var(--primary);
 }
 
+.solon-form-note {
+  margin: 0 0 16px;
+  color: #4c555b;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.solon-form-note a {
+  color: var(--secondary);
+}
+
+.solon-newsletter-form {
+  position: relative;
+  margin-bottom: 6.5rem;
+}
+
+.solon-newsletter-form .solon-form-note {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  left: 0;
+  margin: 0;
+}
+
 .contact .solon-contact-card button[type="submit"] {
   display: block;
   margin: 0 auto;

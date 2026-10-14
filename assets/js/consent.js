@@ -38,6 +38,7 @@
     "ANONCHK",
     "SM",
     "MUID",
+    "sib_",
   ];
   const SKIP_SCRIPT_ATTRS = {
     type: true,
@@ -779,7 +780,7 @@
           createCategory({
             id: "solon-consent-marketing",
             label: "Marketing",
-            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Pot implica publicitate măsurată.",
+            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă trimiți un formular cu emailul tău, Brevo poate lega vizitele tale de pe site de adresa ta. Pot implica publicitate măsurată.",
             input: marketingInput,
           }),
         ]),
