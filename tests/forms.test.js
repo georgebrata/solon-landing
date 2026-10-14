@@ -103,6 +103,7 @@ const harness = (types, options = {}) => {
     );
   }
 
+  const identifies = [];
   const context = {
     window: undefined,
     document: {
@@ -165,11 +166,21 @@ const harness = (types, options = {}) => {
     encodeURIComponent,
     Error,
     turnstile: options.turnstile,
+    location: options.location || { href: "https://solon.agency/contact/#formular" },
+    SolonBrevo:
+      options.SolonBrevo === null
+        ? undefined
+        : options.SolonBrevo || {
+            identify(email, attributes) {
+              identifies.push({ email, attributes });
+              return true;
+            },
+          },
   };
   context.window = context;
   context.globalThis = context;
   vm.runInNewContext(code, context, { filename: "forms.js" });
-  return { forms, requests, logs, clock };
+  return { forms, requests, logs, clock, identifies };
 };
 
 const dataRequests = (requests) => requests.filter(({ url }) => !url.includes("ipify"));
@@ -538,4 +549,50 @@ test("honeypot markup is hidden from assistive tech and the keyboard", () => {
     assert.match(html, /tabindex="-1"/);
     assert.match(html, /\binert\b/);
   }
+});
+
+test("identifies Brevo only after a confirmed contact or newsletter email", async () => {
+  const { forms, identifies } = harness(["Contact", "Telefon", "Newsletter"]);
+  for (const form of forms) await form.dispatch();
+  assert.equal(identifies.length, 2);
+  assert.equal(
+    JSON.stringify(identifies[0]),
+    JSON.stringify({
+      email: "ada@example.com",
+      attributes: {
+        SOURCE: "Contact",
+        PAGE_URL: "https://solon.agency/contact/#formular",
+        FIRSTNAME: "Ada",
+      },
+    })
+  );
+  assert.equal(
+    JSON.stringify(identifies[1]),
+    JSON.stringify({
+      email: "ada@example.com",
+      attributes: {
+        SOURCE: "Newsletter",
+        PAGE_URL: "https://solon.agency/contact/#formular",
+      },
+    })
+  );
+});
+
+test("does not identify Brevo when the save fails, the honeypot trips, or the tracker is absent", async () => {
+  const failed = harness(["Contact"], {
+    fetch: (url) => {
+      if (url.includes("ipify")) return Promise.resolve({ ok: true, json: () => ({ ip: "203.0.113.7" }) });
+      return Promise.resolve({ ok: true, json: () => ({ ok: false, error: "Failed" }) });
+    },
+  });
+  await failed.forms[0].dispatch();
+  assert.equal(failed.identifies.length, 0);
+
+  const honeypot = harness(["Newsletter"], { honeypot: "https://spam.example" });
+  await honeypot.forms[0].dispatch();
+  assert.equal(honeypot.identifies.length, 0);
+
+  const absent = harness(["Contact"], { SolonBrevo: null });
+  await absent.forms[0].dispatch();
+  assert.equal(absent.identifies.length, 0);
 });

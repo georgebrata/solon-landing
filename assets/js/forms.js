@@ -275,6 +275,31 @@
     status.append(" ", button);
   };
 
+  /** Tell Brevo who submitted, only after a confirmed email save.
+   * The tracker no-ops without marketing consent or a real client key.
+   */
+  const notifyBrevo = (type, values) => {
+    try {
+      if (type !== "Contact" && type !== "Newsletter") return;
+      const email = String(values?.Email || "").trim();
+      if (!email) return;
+      const tracker = window.SolonBrevo;
+      if (!tracker || typeof tracker.identify !== "function") return;
+      const attributes = {
+        SOURCE: type,
+        PAGE_URL: typeof window.location?.href === "string" ? window.location.href : "",
+      };
+      const name = String(values?.Nume || "").trim();
+      if (name) {
+        const firstName = name.split(/\s+/)[0];
+        if (firstName) attributes.FIRSTNAME = firstName;
+      }
+      tracker.identify(email, attributes);
+    } catch {
+      // Identification must not change the form result.
+    }
+  };
+
   /** POST one form payload to Apps Script and require `{ ok: true }`. */
   const postForm = async (type, values, form) => {
     const data = {
@@ -307,6 +332,7 @@
         if (SPAM_CODES[code]) throw taggedError(code, new Error(code));
         throw taggedError("unconfirmed", new Error("The API did not confirm the save"));
       }
+      notifyBrevo(type, values);
     } catch (error) {
       if (error?.solonCode) throw error;
       throw taggedError(classifySubmitError(error), error);

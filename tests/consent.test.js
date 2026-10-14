@@ -200,6 +200,30 @@ test("reject all persists denied optional categories", () => {
   assert.equal(parsed.analytics, false);
 });
 
+test("marketing withdrawal stops Brevo and an analytics-only change does not", () => {
+  const { api, context } = loadConsent();
+  const calls = [];
+  context.SolonBrevo = {
+    start() {
+      calls.push("start");
+    },
+    stop() {
+      calls.push("stop");
+    },
+  };
+  api.acceptAll();
+  assert.deepEqual(calls, ["start"]);
+  calls.length = 0;
+  api.saveCustom({ analytics: false, marketing: true });
+  assert.deepEqual(calls, ["start"]);
+  calls.length = 0;
+  api.saveCustom({ analytics: true, marketing: false });
+  assert.deepEqual(calls, ["stop"]);
+  calls.length = 0;
+  api.rejectAll();
+  assert.deepEqual(calls, ["stop"]);
+});
+
 test("custom mix persists and rehydrates", () => {
   const first = loadConsent();
   first.api.saveCustom({ analytics: true, marketing: false });
@@ -324,7 +348,7 @@ const hasLiveTracker = function hasLiveTracker(html) {
     if (!isInert && !isConsent) {
       const haystack = `${attrs}\n${body}`;
       if (
-        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker|mny\.ro/.test(
+        /googletagmanager\.com\/gtag|cdn\.counter\.dev|analytics\.ahrefs\.com|cdn\.brevo\.com|brevo-tracker|sibautomation\.com|tracker\.metricool\.com|clarity\.ms\/tag|connect\.facebook\.net|meta-pixel|G-H41D7KCWHX|client_key:\s*"mwgotrl8|beTracker|mny\.ro/.test(
           haystack
         )
       ) {

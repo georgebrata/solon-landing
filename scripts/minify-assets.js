@@ -21,7 +21,7 @@ const jsFiles = [
   "gtag-config.js",
   "clarity-init.js",
   "metricool-init.js",
-  "brevo-init.js",
+  "brevo-tracker.js",
   "main.js",
   "price-toggle.js",
   "typeahead.js",
