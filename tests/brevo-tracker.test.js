@@ -75,25 +75,26 @@ const loadTracker = function loadTracker(code, options = {}) {
   return { context, scripts, cookie: () => cookieStr };
 };
 
-const withFakeKey = source.replace(
-  'const BREVO_TRACKER_CLIENT_KEY = "REPLACE_WITH_BREVO_CLIENT_KEY";',
-  'const BREVO_TRACKER_CLIENT_KEY = "test-client-key";'
+const CLIENT_KEY = "mwgotrl8mb9d4jf2rit2omjt";
+const withBlankKey = source.replace(
+  `const BREVO_TRACKER_CLIENT_KEY = "${CLIENT_KEY}";`,
+  'const BREVO_TRACKER_CLIENT_KEY = "";'
 );
 
-test("client key lives in one placeholder and the old init file is gone", () => {
-  const matches = source.match(/const BREVO_TRACKER_CLIENT_KEY = "REPLACE_WITH_BREVO_CLIENT_KEY";/g);
-  assert.deepEqual(matches, ['const BREVO_TRACKER_CLIENT_KEY = "REPLACE_WITH_BREVO_CLIENT_KEY";']);
+test("client key lives in one config spot and the old init file is gone", () => {
+  const matches = source.match(/const BREVO_TRACKER_CLIENT_KEY = "[^"]+";/g);
+  assert.deepEqual(matches, [`const BREVO_TRACKER_CLIENT_KEY = "${CLIENT_KEY}";`]);
   assert.equal(fs.existsSync(path.join(root, "assets/js/brevo-init.js")), false);
-  assert.equal(source.includes("mwgotrl8"), false);
+  assert.equal(source.includes("REPLACE_WITH_BREVO_CLIENT_KEY"), false);
   const jsDir = path.join(root, "assets/js");
   const keyFiles = fs
     .readdirSync(jsDir)
-    .filter((name) => name.endsWith(".js") && fs.readFileSync(path.join(jsDir, name), "utf8").includes("BREVO_TRACKER_CLIENT_KEY"));
+    .filter((name) => name.endsWith(".js") && !name.endsWith(".min.js") && fs.readFileSync(path.join(jsDir, name), "utf8").includes("BREVO_TRACKER_CLIENT_KEY"));
   assert.deepEqual(keyFiles, ["brevo-tracker.js"]);
 });
 
-test("placeholder key does not load the SDK even after marketing consent", () => {
-  const { context, scripts } = loadTracker(source, { marketing: true });
+test("a blank key still does not load the SDK", () => {
+  const { context, scripts } = loadTracker(withBlankKey, { marketing: true });
   assert.equal(context.SolonBrevo.isConfigured(), false);
   assert.equal(context.SolonBrevo.start(), false);
   assert.equal(scripts.length, 0);
@@ -101,22 +102,23 @@ test("placeholder key does not load the SDK even after marketing consent", () =>
   assert.equal(context.SolonBrevo.identify("ada@example.com", { SOURCE: "Contact" }), false);
 });
 
-test("without marketing consent a real key still does not load or identify", () => {
-  const { context, scripts } = loadTracker(withFakeKey, { marketing: false });
+test("without marketing consent the tracker does not load or identify", () => {
+  const { context, scripts } = loadTracker(source, { marketing: false });
   assert.equal(context.SolonBrevo.isConfigured(), true);
   assert.equal(context.SolonBrevo.start(), false);
   assert.equal(scripts.length, 0);
+  assert.equal(typeof context.Brevo, "undefined");
   assert.equal(context.SolonBrevo.identify("ada@example.com", { SOURCE: "Newsletter" }), false);
 });
 
-test("marketing consent and a real key queue one page view and load the SDK", () => {
-  const { context, scripts } = loadTracker(withFakeKey, { marketing: true, title: "Articol de test" });
+test("marketing consent queues the v2 init, one page view, and loads the SDK", () => {
+  const { context, scripts } = loadTracker(source, { marketing: true, title: "Articol de test" });
   assert.equal(scripts.length, 1);
   assert.equal(scripts[0].async, true);
   assert.equal(scripts[0].src, SDK_SRC);
   assert.equal(
     JSON.stringify(context.Brevo[0]),
-    JSON.stringify(["init", { client_key: "test-client-key", do_not_track_page: true }])
+    JSON.stringify(["init", { client_key: CLIENT_KEY, do_not_track_page: true }])
   );
   assert.equal(
     JSON.stringify(context.Brevo[1]),
@@ -159,7 +161,7 @@ test("marketing consent and a real key queue one page view and load the SDK", ()
 });
 
 test("withdrawal stops later page and identify calls and can start again", () => {
-  const { context, scripts } = loadTracker(withFakeKey, { marketing: true });
+  const { context, scripts } = loadTracker(source, { marketing: true });
   context.SolonBrevo.stop();
   assert.equal(scripts[0].removed, true);
   assert.equal(context.SolonBrevo.identify("ada@example.com", { SOURCE: "Newsletter" }), false);

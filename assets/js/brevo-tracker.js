@@ -1,19 +1,22 @@
 "use strict";
 
 /**
- * Brevo page-view tracker and form identify.
+ * Brevo tracker, snippet v2.0.
  *
- * Client key: paste the value from Brevo > Automation > Settings > Tracking code.
- * Leave the placeholder and this file does not load the SDK or send events.
- * Never put a private Brevo API key here — the tracker uses the public client key only.
+ * The public client key is the only config spot in this file. It is the value
+ * from Brevo > Automation > Settings > Tracking code, not a private API key.
+ * An empty key, or one that still starts with REPLACE_WITH_, does not load the SDK.
  *
  * The script tag is type="text/plain" data-consent-category="marketing", so the
  * browser does not fetch it until SolonConsent grants marketing. start() also
  * refuses to run without that grant. stop() runs when marketing is withdrawn.
+ *
+ * After consent, start() loads https://cdn.brevo.com/js/sdk-loader.js and queues
+ * window.Brevo = window.Brevo || []; Brevo.push(["init", { client_key }]).
+ * Page views and identify use the same Brevo.push API.
  */
 (function () {
-  const BREVO_TRACKER_CLIENT_KEY = "REPLACE_WITH_BREVO_CLIENT_KEY";
-  const BREVO_TRACKER_PLACEHOLDER = "REPLACE_WITH_BREVO_CLIENT_KEY";
+  const BREVO_TRACKER_CLIENT_KEY = "mwgotrl8mb9d4jf2rit2omjt";
   const SDK_SRC = "https://cdn.brevo.com/js/sdk-loader.js";
   const LOADER_ID = "solon-brevo-sdk-loader";
   const SDK_ID = "sendinblue-js";
@@ -34,7 +37,7 @@
    */
   function isPlaceholderKey(key) {
     const value = String(key || "").trim();
-    if (!value || value === BREVO_TRACKER_PLACEHOLDER) {
+    if (!value) {
       return true;
     }
     return value.indexOf("REPLACE_WITH_") === 0;
@@ -144,20 +147,6 @@
     if (!doc || typeof doc.createElement !== "function") {
       return false;
     }
-    stopped = false;
-    const page = pagePayload();
-    win.Brevo = [];
-    win.sib = undefined;
-    win.Brevo.push([
-      "init",
-      {
-        client_key: BREVO_TRACKER_CLIENT_KEY,
-        // sa.js also enqueues a page view on init. Skip it so the explicit
-        // page() call is the only page view for this load.
-        do_not_track_page: true,
-      },
-    ]);
-    win.Brevo.push(["page", page.name, page.properties]);
     if (!doc.getElementById(LOADER_ID)) {
       const script = doc.createElement("script");
       script.id = LOADER_ID;
@@ -169,6 +158,24 @@
       }
       parent.appendChild(script);
     }
+    stopped = false;
+    const page = pagePayload();
+    if (Array.isArray(win.Brevo) && win.Brevo.push === ignoreBrevoCommand) {
+      delete win.Brevo;
+    }
+    win.sib = undefined;
+    // Snippet v2.0: sdk-loader.js, then window.Brevo = window.Brevo || [].
+    // sa.js also unshifts a page view on init. do_not_track_page keeps that
+    // from firing so the Brevo.push(["page", ...]) call below is the only one.
+    win.Brevo = win.Brevo || [];
+    win.Brevo.push([
+      "init",
+      {
+        client_key: BREVO_TRACKER_CLIENT_KEY,
+        do_not_track_page: true,
+      },
+    ]);
+    win.Brevo.push(["page", page.name, page.properties]);
     started = true;
     return true;
   }
