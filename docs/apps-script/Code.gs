@@ -297,9 +297,10 @@ function fetchBrevoListContacts_(apiKey, listId, offset, limit) {
   return JSON.parse(res.getContentText() || '{}');
 }
 
-function deleteBrevoContact_(apiKey, identifier) {
-  var encoded = encodeURIComponent(identifier);
-  var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL + '/' + encoded, {
+function deleteBrevoContact_(apiKey, contactId) {
+  var id = Number(contactId);
+  if (!id) return false;
+  var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL + '/' + id + '?identifierType=contact_id', {
     method: 'delete',
     headers: {
       'api-key': apiKey,
@@ -342,13 +343,9 @@ function contactHasNonLeadList_(listIds) {
 }
 
 function removeBrevoContactFromList_(apiKey, listId, contact) {
-  var body = {};
-  if (contact && contact.email) body.emails = [String(contact.email)];
-  else if (contact && contact.attributes && contact.attributes.SMS) {
-    body.sms = [String(contact.attributes.SMS)];
-  } else {
-    return false;
-  }
+  var id = contact && contact.id != null ? Number(contact.id) : NaN;
+  if (!id) return false;
+  var body = { ids: [id] };
   var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL + '/lists/' + listId + '/contacts/remove', {
     method: 'post',
     headers: {
@@ -411,12 +408,10 @@ function purgeStaleBrevoLeads() {
       skippedNewsletter += 1;
       continue;
     }
-    var identifier = contact.email || (contact.attributes && contact.attributes.SMS
-      ? String(contact.attributes.SMS)
-      : '');
-    if (!identifier) continue;
+    var contactId = contact && contact.id != null ? Number(contact.id) : NaN;
+    if (!contactId) continue;
     if (contactIsOnlyOnLeadList_(listIds)) {
-      if (deleteBrevoContact_(apiKey, identifier)) deleted += 1;
+      if (deleteBrevoContact_(apiKey, contactId)) deleted += 1;
       continue;
     }
     if (contactHasNonLeadList_(listIds)) {

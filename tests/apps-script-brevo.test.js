@@ -488,16 +488,19 @@ test("purgeStaleBrevoLeads deletes, unlinks, and skips newsletter subscribers", 
             JSON.stringify({
               contacts: [
                 {
+                  id: 101,
                   email: "solo@example.com",
                   listIds: [11],
                   attributes: { LAST_INQUIRY: "2020-01-01" },
                 },
                 {
+                  id: 102,
                   email: "sub@example.com",
                   listIds: [11, 99],
                   attributes: { LAST_INQUIRY: "2020-01-01" },
                 },
                 {
+                  id: 103,
                   email: "also@example.com",
                   listIds: [11, 5],
                   attributes: { LAST_INQUIRY: "2020-01-01" },
@@ -524,8 +527,85 @@ test("purgeStaleBrevoLeads deletes, unlinks, and skips newsletter subscribers", 
     (c) => c.opts.method === "post" && c.url.includes("/contacts/remove")
   );
   assert.equal(removeCalls.length, 1);
-  assert.deepEqual(JSON.parse(removeCalls[0].opts.payload).emails, ["also@example.com"]);
+  assert.deepEqual(JSON.parse(removeCalls[0].opts.payload), { ids: [103] });
+  assert.equal(
+    removeCalls[0].url,
+    "https://api.brevo.com/v3/contacts/lists/11/contacts/remove"
+  );
+  const deleteCall = ctx.fetchCalls.find((c) => c.opts.method === "delete");
+  assert.equal(
+    deleteCall.url,
+    "https://api.brevo.com/v3/contacts/101?identifierType=contact_id"
+  );
   assert.equal(contactRows.length, 2);
+});
+
+test("purgeStaleBrevoLeads uses contact id for SMS-only delete and list removal", () => {
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key", BREVO_NEWSLETTER_LIST_ID: "99" },
+    contactSheet: {
+      getLastColumn: () => 4,
+      getLastRow: () => 1,
+      getRange: createSheetGetRange([["Data", "Email", "Nume", "Mesaj"]]),
+      deleteRow: () => undefined,
+    },
+    telefonSheet: {
+      getLastColumn: () => 3,
+      getLastRow: () => 1,
+      getRange: createSheetGetRange([["Data", "Telefon", "IP"]]),
+      deleteRow: () => undefined,
+    },
+    fetchImpl: (url, opts) => {
+      if (opts.method === "get" && url.includes("/lists/11/contacts")) {
+        return {
+          getResponseCode: () => 200,
+          getContentText: () =>
+            JSON.stringify({
+              contacts: [
+                {
+                  id: 501,
+                  listIds: [11],
+                  attributes: {
+                    SMS: "+40711111111",
+                    LAST_INQUIRY: "2020-01-01",
+                  },
+                },
+                {
+                  id: 502,
+                  listIds: [11, 5],
+                  attributes: {
+                    SMS: "+40722222222",
+                    LAST_INQUIRY: "2020-01-01",
+                  },
+                },
+              ],
+            }),
+        };
+      }
+      if (opts.method === "delete") {
+        return { getResponseCode: () => 204, getContentText: () => "" };
+      }
+      if (opts.method === "post" && url.includes("/contacts/remove")) {
+        return { getResponseCode: () => 201, getContentText: () => "{}" };
+      }
+      return { getResponseCode: () => 200, getContentText: () => "{}" };
+    },
+  });
+  ctx.purgeStaleBrevoLeads();
+  const deleteCall = ctx.fetchCalls.find((c) => c.opts.method === "delete");
+  assert.equal(
+    deleteCall.url,
+    "https://api.brevo.com/v3/contacts/501?identifierType=contact_id"
+  );
+  const removeCalls = ctx.fetchCalls.filter(
+    (c) => c.opts.method === "post" && c.url.includes("/contacts/remove")
+  );
+  assert.equal(removeCalls.length, 1);
+  assert.equal(
+    removeCalls[0].url,
+    "https://api.brevo.com/v3/contacts/lists/11/contacts/remove"
+  );
+  assert.deepEqual(JSON.parse(removeCalls[0].opts.payload), { ids: [502] });
 });
 
 test("parseSheetDateIso_ accepts Date objects for sheet pruning", () => {

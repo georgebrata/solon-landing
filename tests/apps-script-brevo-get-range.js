@@ -21,7 +21,17 @@ const createSheetGetRange = (rows) => (row, col, numRows, numCols) => {
       rows[row - 1][col - 1] = value;
     },
     setValues(values) {
+      if (!Array.isArray(values) || values.length !== numRows) {
+        throw new Error(
+          `setValues: expected ${numRows} row(s), got ${values?.length ?? "non-array"}`
+        );
+      }
       for (let r = 0; r < values.length; r++) {
+        if (!Array.isArray(values[r]) || values[r].length !== numCols) {
+          throw new Error(
+            `setValues: expected ${numCols} column(s) in row ${r}, got ${values[r]?.length ?? "non-array"}`
+          );
+        }
         for (let c = 0; c < values[r].length; c++) {
           rows[row - 1 + r][col - 1 + c] = values[r][c];
         }
