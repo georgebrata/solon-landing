@@ -26,6 +26,17 @@
 
   /** Public packages on solon.agency/#pricing (Bronze, Silver, Gold, Platinum). */
   const REQUIRED_ACTIVE_PACKAGES = 4;
+  const ALLOWED_ACTIVE_PACKAGE_NAMES = Object.freeze(["Bronze", "Silver", "Gold", "Platinum"]);
+
+  /** @param {Record<string, unknown>} row */
+  function packageDisplayName(row) {
+    return String(row["Nume abonament"] || "").trim();
+  }
+
+  /** @param {string} name */
+  function canonicalPackageName(name) {
+    return ALLOWED_ACTIVE_PACKAGE_NAMES.find((allowed) => allowed.toLowerCase() === name.toLowerCase()) ?? null;
+  }
 
   /** Only NETOPIA checkout hosts are accepted. Anything else (Stripe, placeholders) hides the button. */
   const NETOPIA_HOSTS = [/^mpy\.ro$/u, /(^|\.)mobilpay\.ro$/u, /(^|\.)netopia-payments\.com$/u];
@@ -106,13 +117,25 @@
     if (!data || !Array.isArray(data.Abonamente) || !Array.isArray(data.Servicii)) {
       throw new Error("payload has no Abonamente/Servicii arrays");
     }
-    const active = data.Abonamente.filter((row) => row && row.Activ === true && String(row["Nume abonament"] || "").trim());
-    if (active.length < REQUIRED_ACTIVE_PACKAGES) {
-      throw new Error(`expected ${REQUIRED_ACTIVE_PACKAGES} active packages, got ${active.length}`);
+    const active = data.Abonamente.filter((row) => row && row.Activ === true && packageDisplayName(row));
+    if (active.length !== REQUIRED_ACTIVE_PACKAGES) {
+      throw new Error(
+        `expected exactly ${REQUIRED_ACTIVE_PACKAGES} active packages (${ALLOWED_ACTIVE_PACKAGE_NAMES.join(", ")}), got ${active.length}`,
+      );
     }
+    const seen = new Set();
     for (const row of active) {
+      const displayName = packageDisplayName(row);
+      const canonical = canonicalPackageName(displayName);
+      if (!canonical) {
+        throw new Error(`unknown active package name: ${displayName}`);
+      }
+      if (seen.has(canonical)) {
+        throw new Error(`duplicate active package: ${canonical}`);
+      }
+      seen.add(canonical);
       if (!toNumber(row["Pret lunar (RON)"]) && !toNumber(row["Pret anual (RON)"])) {
-        throw new Error(`active package "${row["Nume abonament"]}" has no price`);
+        throw new Error(`active package "${displayName}" has no price`);
       }
     }
     return data;
@@ -341,5 +364,6 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     render,
     validate,
     REQUIRED_ACTIVE_PACKAGES,
+    ALLOWED_ACTIVE_PACKAGE_NAMES,
   };
 })();

@@ -56,7 +56,25 @@ test("validate rejects fewer than four active packages (partial sheet)", () => {
   const data = JSON.parse(JSON.stringify(snapshot));
   const active = data.Abonamente.filter((row) => row.Activ === true);
   data.Abonamente = active.slice(0, 3);
-  assert.throws(() => validate(data), /expected 4 active packages, got 3/);
+  assert.throws(() => validate(data), /got 3/);
+});
+
+test("validate rejects five active packages", () => {
+  const data = JSON.parse(JSON.stringify(snapshot));
+  data.Abonamente.push({
+    "Nume abonament": "Extra",
+    Activ: true,
+    "Pret lunar (RON)": 1,
+    "Pret anual (RON)": 2,
+  });
+  assert.throws(() => validate(data), /got 5/);
+});
+
+test("validate rejects unknown active package name", () => {
+  const data = JSON.parse(JSON.stringify(snapshot));
+  const bronze = data.Abonamente.find((row) => row.Activ === true && row["Nume abonament"] === "Bronze");
+  bronze["Nume abonament"] = "Mystery";
+  assert.throws(() => validate(data), /unknown active package name: Mystery/);
 });
 
 test("known English sheet phrases become Romanian", () => {
