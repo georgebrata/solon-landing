@@ -50,6 +50,7 @@
     section.dataset.billing = billing;
   }
 
+  /** Wire billing toggle, plan clicks, and one-time pricing_view when #pricing is visible. */
   function initPricingToggle() {
     const section = document.querySelector("#pricing");
     if (!section) return;

@@ -31,11 +31,11 @@ test("committed index.html matches the snapshot render", () => {
 });
 
 test("pricing HTML has no Stripe links and prices are in RON", () => {
-  const block = html.match(/<!-- PRICING:START[\s\S]*?<!-- PRICING:END -->/)[0];
+  const block = html.match(/<!-- PRICING:START[\s\S]*?<!-- PRICING:END -->/u)[0];
   assert.ok(!/stripe/i.test(block));
-  assert.ok(!/€/.test(block));
+  assert.ok(!/€/u.test(block));
   for (const p of model(snapshot).plans) {
-    if (p.monthly) assert.ok(block.includes(`lei/lună`));
+    if (p.monthly) assert.ok(block.includes("lei/lună"));
     assert.ok(block.includes(p.name.toUpperCase()));
   }
 });

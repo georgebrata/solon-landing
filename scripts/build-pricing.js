@@ -172,7 +172,7 @@
    * @param {string} unit
    */
   function priceHtml(amount, unit) {
-    return amount ? `${fmt(amount)} <small>lei/${unit}</small>` : `<small>preț la cerere</small>`;
+    return amount ? `${fmt(amount)} <small>lei/${unit}</small>` : "<small>preț la cerere</small>";
   }
 
   /** @param {{ plans: ReturnType<typeof model>["plans"], addons: ReturnType<typeof model>["addons"] }} view */
@@ -180,7 +180,8 @@
     const cols = plans.length >= 4 ? "col-lg-3 col-md-6" : "col-lg-4";
     const cards = plans
       .map((plan, index) => {
-        const btn = (period) => {
+        /** @param {"monthly" | "annual"} period */
+        const renderBuyButton = (period) => {
           const label = `Alege ${plan.name} ${period === "monthly" ? "lunar" : "anual"}`;
           if (!plan.links[period]) return `<!-- PAYMENT-LINK ${plan.slug}/${period}: no NETOPIA link in sheet yet -->`;
           return `<a href="${esc(plan.links[period])}" target="_blank" rel="noopener" class="buy-btn" data-plan="${esc(plan.slug)}" data-billing="${period}">${esc(label)}</a>`;
@@ -196,8 +197,8 @@
               <ul>
 ${plan.inclusions.map((line) => `                <li><i class="bi bi-check"></i> ${esc(line)}</li>`).join("\n")}
               </ul>
-              <div class="price-monthly">${btn("monthly")}</div>
-              <div class="price-annual" hidden>${btn("annual")}</div>
+              <div class="price-monthly">${renderBuyButton("monthly")}</div>
+              <div class="price-annual" hidden>${renderBuyButton("annual")}</div>
             </div>
           </div>`;
       })
@@ -296,14 +297,16 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     return out;
   }
 
+  /** CLI entry: fetch sheet (optional), render pricing blocks into index.html. */
   async function main() {
     const offline = process.argv.includes("--offline");
     const check = process.argv.includes("--check");
-    let data;
+    let data = null;
     if (!offline) {
       try {
         data = await fetchData();
-        fs.writeFileSync(SNAPSHOT, JSON.stringify({ Abonamente: data.Abonamente, Servicii: data.Servicii }, null, 2) + "\n");
+        const snapshotBody = `${JSON.stringify({ Abonamente: data.Abonamente, Servicii: data.Servicii }, null, 2)}\n`;
+        fs.writeFileSync(SNAPSHOT, snapshotBody);
         console.log(`build-pricing: fetched ${data.Abonamente.length} Abonamente rows from endpoint`);
       } catch (err) {
         console.error(`::error::build-pricing: endpoint failed (${err.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`);
@@ -316,7 +319,7 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     if (check) {
       if (before !== after) {
         console.error("::error::build-pricing: index.html is out of date; run node scripts/build-pricing.js --offline");
-        process.exit(1);
+        throw new Error("index.html is out of date");
       }
       return;
     }
@@ -327,7 +330,7 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
   if (require.main === module) {
     main().catch((err) => {
       console.error(`::error::build-pricing: ${err.message}`);
-      process.exit(1);
+      process.exitCode = 1;
     });
   }
 
