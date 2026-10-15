@@ -108,6 +108,11 @@ const minifyVendorCss = function minifyVendorCss(relPath) {
   return true;
 };
 
+/**
+ * Minifies one CSS file under assets/css/.
+ * @param {string} relPath File name relative to assets/css (e.g. consent.css).
+ * @returns {boolean} False when minification fails.
+ */
 const minifyCss = function minifyCss(relPath) {
   const full = path.join(root, "assets/css", relPath);
   if (!fs.existsSync(full)) {
@@ -166,6 +171,11 @@ const minifyVendorJs = async function minifyVendorJs(relPath) {
   return true;
 };
 
+/**
+ * Minifies one JS file under assets/js/.
+ * @param {string} relPath File name relative to assets/js (e.g. faq.js).
+ * @returns {Promise<boolean>} False when minification fails.
+ */
 const minifyJs = async function minifyJs(relPath) {
   const full = path.join(root, "assets/js", relPath);
   if (!fs.existsSync(full)) {

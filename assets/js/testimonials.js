@@ -16,10 +16,10 @@
         let { intrebare, raspuns } = faqObject;
 
         return `<li data-aos="fade-in" data-aos-delay="${index*100}">
-            <i class="bx bx-help-circle icon-help"></i>
+            <i class="bi bi-question-circle icon-help"></i>
             <button type="button" data-bs-toggle="collapse" class="collapse collapsed" data-bs-target="#faq-list-${index}" aria-expanded="false" aria-controls="faq-list-${index}">
                 ${intrebare}
-            <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i>
+            <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i>
             </button>
             <div id="faq-list-${index}" class="collapse" data-bs-parent=".faq-list">
             <p>
