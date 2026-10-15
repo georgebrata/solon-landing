@@ -12,8 +12,23 @@ The browser posts to a **Google Apps Script** web app (`/exec`). That project li
 4. **Turnstile:** `siteverify` runs **only when `TURNSTILE_SECRET` and `data.turnstileToken` are both non-empty**. Then `success: true` is required (fail closed, including fetch errors). If **either** is missing, CAPTCHA is skipped so cutover cannot block leads. The client sends a token only after `TURNSTILE_SITE_KEY` in `forms.js` is a real key. Error code on failed verify: `captcha` (stable; PR #40 maps it).
 5. **Rate limit:** max 5 posts / 10 minutes / sheet, keyed by `data.IP` **and** email/phone when present. Over limit: `{ ok: false, error: "rate_limited" }`.
 6. Appends only the sheet columns `Data`, `Email`, `Nume`, `Mesaj`, `Telefon`, `IP` — never the token, timestamp, or honeypot.
+7. **Brevo (list “Contact”, id 11):** after a successful row append for **Contact** or **Telefon**, the handler **enqueues** a Brevo `POST /v3/contacts` payload on a hidden **`BrevoQueue`** sheet (under a `LockService` lock). The web app response does **not** call Brevo. A time-driven trigger runs **`processBrevoQueue`** every 5 minutes, sends queued items, deletes successes, and retries failures up to 3 times before marking **`failed`**.
 
 Success and failure use `{ ok: true }` / `{ ok: false, error: "..." }` to match `assets/js/forms.js`.
+
+### Brevo setup (leads list 11 only — no marketing)
+
+List **Contact** (id **11**) is **leads-only**: pre-contract inquiries (art. 6(1)(b)/(f) RGPD). It must **not** receive newsletter signups or campaigns.
+
+1. In Brevo, confirm list **Contact** exists (id **11**). In the list description, note “leads only — exclude from campaigns”.
+2. In **every** Brevo campaign, add list **11** as an **exclude** list. Do not run automations on “added to list 11” except internal SOLON notifications.
+3. Create contact attributes **`NUME`** (text), **`LAST_INQUIRY`** (date), **`CHANNEL`** (text).
+4. **Project Settings → Script properties** (required): `BREVO_API_KEY` = v3 API key (**SMTP & API → API keys**); **`BREVO_NEWSLETTER_LIST_ID`** = your newsletter list id (purge refuses to call Brevo without it). Never commit these values.
+5. Run **`installBrevoTrigger()`** once (5-minute queue drain). It is idempotent.
+6. Run **`installBrevoRetentionTrigger()`** once (monthly 24-month purge via **`purgeStaleBrevoLeads`**). It is idempotent. Purge uses each contact’s Brevo **`id`** (`DELETE /v3/contacts/{id}?identifierType=contact_id`, or `POST .../lists/11/contacts/remove` with `{ ids: [id] }`), never email or SMS. Stale contacts on **only** list 11 are deleted; contacts also on other lists are **removed from list 11** only; newsletter subscribers are never deleted.
+7. Paste/deploy `Code.gs` as below; queue rows drain on the trigger (or run **`processBrevoQueue`** manually to test).
+
+Newsletter signups stay on the **Newsletter** sheet (and newsletter list / tracker identify when the user opts in). They must **never** be routed to list **11** by this script.
 
 ## Cutover (safe in either order)
 
@@ -35,9 +50,11 @@ Full step-by-step “what happens to live leads” is in `docs/forms.md` (Turnst
 
 1. Open the existing Apps Script project attached to the leads spreadsheet (or create one bound to that sheet).
 2. Replace `Code.gs` with the contents of `Code.gs` in this folder. If you already have custom append logic, keep `appendLead_()` in sync with your column headers and still call the honeypot / timing / Turnstile / rate-limit checks **before** `appendRow`.
-3. **Project Settings → Script properties** → add `TURNSTILE_SECRET` = the Turnstile **secret** key (not the site key). Never commit that value.
-4. Deploy → **Manage deployments** → pencil → **New version** → Deploy. Use a test deployment / test sheet first.
-5. Confirm the `/exec` URL still matches `API_URL` in `assets/js/forms.js` (rotating the URL is optional; if you rotate, update the client constant and redeploy the site).
+3. **Project Settings → Script properties** → add `TURNSTILE_SECRET` = the Turnstile **secret** key (not the site key) and `BREVO_API_KEY` if Brevo sync is enabled. Never commit those values.
+4. Run **`installBrevoTrigger()`** once after the first Brevo-enabled deploy.
+5. Set **`BREVO_NEWSLETTER_LIST_ID`** and run **`installBrevoRetentionTrigger()`** once (mandatory 24-month retention).
+6. Deploy → **Manage deployments** → pencil → **New version** → Deploy. Use a test deployment / test sheet first.
+7. Confirm the `/exec` URL still matches `API_URL` in `assets/js/forms.js` (rotating the URL is optional; if you rotate, update the client constant and redeploy the site).
 
 ## Test sheet checklist
 
