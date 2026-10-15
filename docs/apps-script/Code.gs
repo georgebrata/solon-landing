@@ -7,6 +7,7 @@
  *
  * Script Properties (Project Settings → Script properties):
  *   TURNSTILE_SECRET = <Cloudflare Turnstile secret key>
+ *   BREVO_API_KEY = <Brevo v3 API key> (SMTP & API → API keys)
  *
  * Enforce Turnstile only when BOTH this secret and a client token are present.
  * The live forms.js sends a token only after TURNSTILE_SITE_KEY is replaced.
@@ -35,6 +36,8 @@ var ALLOWED_SHEETS = {
   Telefon: ['Data', 'Telefon', 'IP'],
   Newsletter: ['Data', 'Email', 'IP']
 };
+var BREVO_CONTACT_LIST_ID = 11;
+var BREVO_CONTACTS_URL = 'https://api.brevo.com/v3/contacts';
 
 // Optional: leave empty when the script is bound to the spreadsheet.
 var SPREADSHEET_ID = '';
@@ -143,6 +146,108 @@ function appendLead_(sheetName, data) {
   sheet.appendRow(row);
 }
 
+function normalizeRomanianPhoneE164_(raw) {
+  if (raw == null) return null;
+  var compact = String(raw).replace(/[\s.\-]/g, '');
+  if (!compact) return null;
+  var digits = compact;
+  if (digits.charAt(0) === '+') {
+    digits = digits.slice(1);
+  } else if (digits.indexOf('0040') === 0) {
+    digits = digits.slice(2);
+  }
+  if (digits.charAt(0) === '0' && digits.length === 10 && digits.charAt(1) === '7') {
+    digits = '40' + digits.slice(1);
+  }
+  if (digits.length !== 11 || digits.indexOf('40') !== 0 || digits.charAt(2) !== '7') {
+    return null;
+  }
+  var i;
+  for (i = 0; i < digits.length; i++) {
+    var ch = digits.charAt(i);
+    if (ch < '0' || ch > '9') return null;
+  }
+  return '+' + digits;
+}
+
+function buildBrevoContactPayload_(data) {
+  var email = data && data.Email != null ? String(data.Email).trim() : '';
+  if (!email) return null;
+  var payload = {
+    email: email,
+    attributes: {},
+    listIds: [BREVO_CONTACT_LIST_ID],
+    updateEnabled: true
+  };
+  var name = data.Nume != null ? String(data.Nume).trim() : '';
+  if (name) payload.attributes.FIRSTNAME = name;
+  return payload;
+}
+
+function buildBrevoPhonePayload_(data) {
+  var phone = normalizeRomanianPhoneE164_(data && data.Telefon);
+  if (!phone) return null;
+  var payload = {
+    attributes: { SMS: phone },
+    listIds: [BREVO_CONTACT_LIST_ID],
+    updateEnabled: true
+  };
+  var name = data.Nume != null ? String(data.Nume).trim() : '';
+  if (name) payload.attributes.FIRSTNAME = name;
+  return payload;
+}
+
+function syncToBrevoContactList_(sheetName, data) {
+  try {
+    var apiKey = PropertiesService.getScriptProperties().getProperty('BREVO_API_KEY');
+    if (!apiKey) {
+      Logger.log('Brevo: skipped (BREVO_API_KEY missing)');
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('Brevo: skipped (BREVO_API_KEY missing)');
+      }
+      return;
+    }
+    var payload = null;
+    if (sheetName === 'Contact') {
+      payload = buildBrevoContactPayload_(data);
+    } else if (sheetName === 'Telefon') {
+      payload = buildBrevoPhonePayload_(data);
+    } else {
+      return;
+    }
+    if (!payload) {
+      Logger.log('Brevo: skipped (no payload for ' + sheetName + ')');
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('Brevo: skipped (no payload for ' + sheetName + ')');
+      }
+      return;
+    }
+    var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL, {
+      method: 'post',
+      headers: {
+        'api-key': apiKey,
+        accept: 'application/json',
+        'content-type': 'application/json'
+      },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+    var code = res.getResponseCode();
+    if (code < 200 || code >= 300) {
+      var detail = res.getContentText();
+      Logger.log('Brevo: HTTP ' + code + ' ' + detail);
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('Brevo: HTTP ' + code + ' ' + detail);
+      }
+    }
+  } catch (err) {
+    Logger.log('Brevo: ' + err);
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn('Brevo: ' + err);
+    }
+  }
+}
+
 function doPost(e) {
   try {
     var parsed = parseBody_(e);
@@ -175,6 +280,7 @@ function doPost(e) {
     }
 
     appendLead_(sheet, data);
+    syncToBrevoContactList_(sheet, data);
     return jsonOutput_({ ok: true });
   } catch (err) {
     return jsonOutput_({ ok: false, error: 'server' });
