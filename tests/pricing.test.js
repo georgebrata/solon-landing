@@ -77,6 +77,22 @@ test("validate rejects unknown active package name", () => {
   assert.throws(() => validate(data), /unknown active package name: Mystery/);
 });
 
+test("validate rejects duplicate active package names", () => {
+  const data = JSON.parse(JSON.stringify(snapshot));
+  const silver = data.Abonamente.find((row) => row.Activ === true && row["Nume abonament"] === "Silver");
+  silver["Nume abonament"] = "Bronze";
+  assert.throws(() => validate(data), /duplicate active package: Bronze/);
+});
+
+test("model renders canonical package names regardless of sheet casing", () => {
+  const data = JSON.parse(JSON.stringify(snapshot));
+  const bronze = data.Abonamente.find((row) => row.Activ === true && row["Nume abonament"] === "Bronze");
+  bronze["Nume abonament"] = "bRoNzE";
+  const names = model(data).plans.map((plan) => plan.name);
+  assert.ok(names.includes("Bronze"));
+  assert.ok(!names.includes("bRoNzE"));
+});
+
 test("known English sheet phrases become Romanian", () => {
   assert.strictEqual(roInclusion("- 2 website updates / month;"), "2 modificări pe website / lună");
   assert.strictEqual(roInclusion("- GoogleMyBusines maintenance, "), "Mentenanță Google My Business");

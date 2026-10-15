@@ -158,8 +158,9 @@
    * @param {ReturnType<typeof validate>} data
    */
   function model(data) {
-    const plans = data.Abonamente.filter((row) => row.Activ === true && String(row["Nume abonament"] || "").trim()).map((row) => {
-      const name = String(row["Nume abonament"]).trim();
+    const plans = data.Abonamente.filter((row) => row.Activ === true && packageDisplayName(row)).map((row) => {
+      const displayName = packageDisplayName(row);
+      const name = canonicalPackageName(displayName) ?? displayName;
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const links = {};
       for (const [periodKey, column] of [["monthly", "Netopia Payment Link Month"], ["annual", "Netopia Payment Link Year"]]) {

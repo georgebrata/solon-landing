@@ -153,7 +153,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/abonamente.snapshot.json
           git commit -m "chore(pricing): refresh abonamente snapshot [skip ci]"
-          git pull --rebase origin main || { echo "::warning::snapshot push: git pull --rebase failed"; exit 0; }
+          git pull --rebase --autostash origin main || { echo "::warning::snapshot push: git pull --rebase failed"; exit 0; }
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main \
             || echo "::warning::snapshot push failed (FTP deploy already succeeded)"
 
