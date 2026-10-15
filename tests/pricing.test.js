@@ -30,6 +30,13 @@ test("committed index.html matches the snapshot render", () => {
   assert.strictEqual(render(html, model(validate(snapshot))), html);
 });
 
+test("pricing marker references SOLON API sheet (not legacy spreadsheet title)", () => {
+  const start = html.match(/<!-- PRICING:START[^>]*>/u);
+  assert.ok(start);
+  assert.match(start[0], /sheet "SOLON API"/u);
+  assert.ok(!/SOLON Data\s*\|\s*Machine-readable/iu.test(html));
+});
+
 test("pricing HTML has no Stripe links and prices are in RON", () => {
   const block = html.match(/<!-- PRICING:START[\s\S]*?<!-- PRICING:END -->/u)[0];
   assert.ok(!/stripe/i.test(block));
