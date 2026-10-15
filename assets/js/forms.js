@@ -295,6 +295,8 @@
    */
   const notifyBrevo = (type, values, form) => {
     try {
+      // Leads list (Brevo id 11) is synced server-side only; never identify from Telefon or bare Contact.
+      if (type === "Telefon") return;
       const optedIn = form?.elements?.namedItem("NewsletterOptIn")?.checked === true;
       if (type !== "Newsletter" && !(type === "Contact" && optedIn)) return;
       const email = String(values?.Email || "").trim();

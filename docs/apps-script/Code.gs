@@ -43,6 +43,11 @@ var BREVO_QUEUE_MAX_ATTEMPTS = 3;
 var BREVO_QUEUE_HEADERS = ['QueuedAt', 'Payload', 'Attempts', 'Status', 'LastError'];
 var BREVO_EMAIL_RE = /^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$/i;
 var BREVO_LOG_DETAIL_MAX = 80;
+var BREVO_RETENTION_MONTHS = 24;
+var BREVO_LEAD_NAME_ATTR = 'NUME';
+var BREVO_INQUIRY_DATE_ATTR = 'LAST_INQUIRY';
+var BREVO_CHANNEL_ATTR = 'CHANNEL';
+var BREVO_SMS_ONLY_SKIP_CODE = 'sms_only_skipped';
 
 // Optional: leave empty when the script is bound to the spreadsheet.
 var SPREADSHEET_ID = '';
@@ -187,20 +192,166 @@ function normalizeRomanianPhoneE164_(raw) {
 }
 
 function truncateBrevoErrorDetail_(responseCode, responseText) {
-  var detail = '';
+  var code = 'http_error';
   try {
     var parsed = JSON.parse(responseText || '{}');
-    if (parsed && parsed.code) detail = String(parsed.code);
-    else if (parsed && parsed.message) detail = String(parsed.message);
+    if (parsed && parsed.code) code = String(parsed.code);
   } catch (ignore) {
-    detail = '';
+    code = 'http_error';
   }
-  if (!detail) detail = 'http_error';
-  detail = detail.replace(/\s+/g, ' ').trim();
-  if (detail.length > BREVO_LOG_DETAIL_MAX) {
-    detail = detail.slice(0, BREVO_LOG_DETAIL_MAX);
+  code = code.replace(/\s+/g, ' ').trim();
+  if (code.length > BREVO_LOG_DETAIL_MAX) {
+    code = code.slice(0, BREVO_LOG_DETAIL_MAX);
   }
-  return 'HTTP ' + responseCode + ' ' + detail;
+  return 'HTTP ' + responseCode + ' ' + code;
+}
+
+function inquiryDateIso_(data) {
+  var raw = data && data.Data != null ? String(data.Data).trim() : '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  return Utilities.formatDate(new Date(), 'Europe/Bucharest', 'yyyy-MM-dd');
+}
+
+function buildLeadBrevoAttributes_(data, channel) {
+  var attrs = {};
+  attrs[BREVO_INQUIRY_DATE_ATTR] = inquiryDateIso_(data);
+  attrs[BREVO_CHANNEL_ATTR] = channel;
+  var name = data && data.Nume != null ? String(data.Nume).trim() : '';
+  if (name) attrs[BREVO_LEAD_NAME_ATTR] = name;
+  return attrs;
+}
+
+function serializeBrevoApiPayload_(payload) {
+  var clone = JSON.parse(JSON.stringify(payload));
+  delete clone._smsOnly;
+  return clone;
+}
+
+function isBrevoEmailRequiredError_(responseCode, responseText) {
+  if (responseCode === 400 || responseCode === 422) {
+    try {
+      var parsed = JSON.parse(responseText || '{}');
+      var code = parsed && parsed.code ? String(parsed.code) : '';
+      if (code === 'missing_parameter' || code === 'invalid_parameter') return true;
+    } catch (ignore) {
+      return false;
+    }
+  }
+  return false;
+}
+
+function cutoffInquiryDateIso_() {
+  var cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - BREVO_RETENTION_MONTHS);
+  return Utilities.formatDate(cutoff, 'Europe/Bucharest', 'yyyy-MM-dd');
+}
+
+function parseSheetDateIso_(value) {
+  var raw = value != null ? String(value).trim() : '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  return '';
+}
+
+function pruneLeadSheetRows_(sheetName, cutoffIso) {
+  var sheet = getSheet_(sheetName);
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var removed = 0;
+  var rowIndex;
+  for (rowIndex = lastRow; rowIndex >= 2; rowIndex--) {
+    var dateCell = sheet.getRange(rowIndex, 1).getValue();
+    var rowDate = parseSheetDateIso_(dateCell);
+    if (rowDate && rowDate < cutoffIso) {
+      sheet.deleteRow(rowIndex);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
+function getBrevoNewsletterListId_() {
+  var raw = PropertiesService.getScriptProperties().getProperty('BREVO_NEWSLETTER_LIST_ID');
+  if (!raw) return null;
+  var id = Number(raw);
+  return isFinite(id) && id > 0 ? id : null;
+}
+
+function fetchBrevoListContacts_(apiKey, listId, offset, limit) {
+  var url = BREVO_CONTACTS_URL + '/lists/' + listId + '/contacts?limit=' + limit + '&offset=' + offset;
+  var res = UrlFetchApp.fetch(url, {
+    method: 'get',
+    headers: {
+      'api-key': apiKey,
+      accept: 'application/json'
+    },
+    muteHttpExceptions: true
+  });
+  var code = res.getResponseCode();
+  if (code < 200 || code >= 300) {
+    brevoWarn_(truncateBrevoErrorDetail_(code, res.getContentText()));
+    return null;
+  }
+  return JSON.parse(res.getContentText() || '{}');
+}
+
+function deleteBrevoContact_(apiKey, identifier) {
+  var encoded = encodeURIComponent(identifier);
+  var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL + '/' + encoded, {
+    method: 'delete',
+    headers: {
+      'api-key': apiKey,
+      accept: 'application/json'
+    },
+    muteHttpExceptions: true
+  });
+  var code = res.getResponseCode();
+  if (code >= 200 && code < 300) return true;
+  brevoWarn_(truncateBrevoErrorDetail_(code, res.getContentText()));
+  return false;
+}
+
+function contactHasNewsletterList_(contact, newsletterListId) {
+  if (!newsletterListId || !contact) return false;
+  var lists = contact.listIds || contact.listUnsubscribed || [];
+  var i;
+  for (i = 0; i < lists.length; i++) {
+    if (Number(lists[i]) === newsletterListId) return true;
+  }
+  return false;
+}
+
+function purgeStaleBrevoLeads() {
+  var apiKey = PropertiesService.getScriptProperties().getProperty('BREVO_API_KEY');
+  if (!apiKey) {
+    brevoWarn_('Brevo retention: skipped (BREVO_API_KEY missing)');
+    return;
+  }
+  var cutoff = cutoffInquiryDateIso_();
+  var newsletterListId = getBrevoNewsletterListId_();
+  var offset = 0;
+  var limit = 50;
+  var deleted = 0;
+  while (true) {
+    var page = fetchBrevoListContacts_(apiKey, BREVO_CONTACT_LIST_ID, offset, limit);
+    if (!page || !page.contacts || !page.contacts.length) break;
+    var i;
+    for (i = 0; i < page.contacts.length; i++) {
+      var contact = page.contacts[i];
+      if (contactHasNewsletterList_(contact, newsletterListId)) continue;
+      var attrs = contact.attributes || {};
+      var lastInquiry = attrs[BREVO_INQUIRY_DATE_ATTR] || attrs.last_inquiry || '';
+      var lastIso = parseSheetDateIso_(lastInquiry);
+      if (!lastIso || lastIso >= cutoff) continue;
+      var identifier = contact.email || (attrs.SMS ? String(attrs.SMS) : '');
+      if (!identifier) continue;
+      if (deleteBrevoContact_(apiKey, identifier)) deleted += 1;
+    }
+    if (!page.contacts || page.contacts.length < limit) break;
+    offset += limit;
+  }
+  var prunedContact = pruneLeadSheetRows_('Contact', cutoff);
+  var prunedTelefon = pruneLeadSheetRows_('Telefon', cutoff);
+  Logger.log('Brevo retention: deleted=' + deleted + ' sheets Contact=' + prunedContact + ' Telefon=' + prunedTelefon);
 }
 
 function brevoWarn_(message) {
@@ -239,6 +390,8 @@ function enqueueBrevoPayload_(payload) {
 }
 
 function postBrevoContactPayload_(apiKey, payload) {
+  var smsOnly = payload && payload._smsOnly === true;
+  var body = serializeBrevoApiPayload_(payload);
   var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL, {
     method: 'post',
     headers: {
@@ -246,17 +399,22 @@ function postBrevoContactPayload_(apiKey, payload) {
       accept: 'application/json',
       'content-type': 'application/json'
     },
-    payload: JSON.stringify(payload),
+    payload: JSON.stringify(body),
     muteHttpExceptions: true
   });
   var code = res.getResponseCode();
+  var responseText = res.getContentText();
   if (code >= 200 && code < 300) {
     return { ok: true, code: code, errorDetail: '' };
+  }
+  if (smsOnly && isBrevoEmailRequiredError_(code, responseText)) {
+    brevoWarn_('Brevo: phone sync skipped (SMS-only not accepted)');
+    return { ok: true, code: code, errorDetail: BREVO_SMS_ONLY_SKIP_CODE, skipped: true };
   }
   return {
     ok: false,
     code: code,
-    errorDetail: truncateBrevoErrorDetail_(code, res.getContentText())
+    errorDetail: truncateBrevoErrorDetail_(code, responseText)
   };
 }
 
@@ -330,17 +488,27 @@ function installBrevoTrigger() {
   ScriptApp.newTrigger(handler).timeBased().everyMinutes(5).create();
 }
 
+function installBrevoRetentionTrigger() {
+  var handler = 'purgeStaleBrevoLeads';
+  var triggers = ScriptApp.getProjectTriggers();
+  var i;
+  for (i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === handler) {
+      return;
+    }
+  }
+  ScriptApp.newTrigger(handler).timeBased().onMonthDay(1).atHour(3).create();
+}
+
 function buildBrevoContactPayload_(data) {
   var email = data && data.Email != null ? String(data.Email).trim() : '';
   if (!email || !isValidEmailForBrevo_(email)) return null;
   var payload = {
     email: email,
-    attributes: {},
+    attributes: buildLeadBrevoAttributes_(data, 'contact'),
     listIds: [BREVO_CONTACT_LIST_ID],
     updateEnabled: true
   };
-  var name = data.Nume != null ? String(data.Nume).trim() : '';
-  if (name) payload.attributes.FIRSTNAME = name;
   return payload;
 }
 
@@ -348,12 +516,12 @@ function buildBrevoPhonePayload_(data) {
   var phone = normalizeRomanianPhoneE164_(data && data.Telefon);
   if (!phone) return null;
   var payload = {
-    attributes: { SMS: phone },
+    attributes: buildLeadBrevoAttributes_(data, 'telefon'),
     listIds: [BREVO_CONTACT_LIST_ID],
-    updateEnabled: true
+    updateEnabled: true,
+    _smsOnly: true
   };
-  var name = data.Nume != null ? String(data.Nume).trim() : '';
-  if (name) payload.attributes.FIRSTNAME = name;
+  payload.attributes.SMS = phone;
   return payload;
 }
 

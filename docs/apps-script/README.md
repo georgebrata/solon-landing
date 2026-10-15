@@ -16,12 +16,19 @@ The browser posts to a **Google Apps Script** web app (`/exec`). That project li
 
 Success and failure use `{ ok: true }` / `{ ok: false, error: "..." }` to match `assets/js/forms.js`.
 
-### Brevo setup
+### Brevo setup (leads list 11 only — no marketing)
 
-1. In Brevo, confirm list **Contact** exists (id **11**).
-2. **Project Settings → Script properties** → `BREVO_API_KEY` = v3 API key (**SMTP & API → API keys**). Never commit it.
-3. In the Apps Script editor, run **`installBrevoTrigger()`** once (authorize if prompted). It is idempotent and does not create duplicate 5-minute triggers.
-4. Paste/deploy `Code.gs` as below; queue rows drain on the trigger (or run **`processBrevoQueue`** manually to test).
+List **Contact** (id **11**) is **leads-only**: pre-contract inquiries (art. 6(1)(b)/(f) RGPD). It must **not** receive newsletter signups or campaigns.
+
+1. In Brevo, confirm list **Contact** exists (id **11**). In the list description, note “leads only — exclude from campaigns”.
+2. In **every** Brevo campaign, add list **11** as an **exclude** list. Do not run automations on “added to list 11” except internal SOLON notifications.
+3. Create contact attributes **`NUME`** (text), **`LAST_INQUIRY`** (date), **`CHANNEL`** (text). Optional: **`BREVO_NEWSLETTER_LIST_ID`** script property (newsletter list id) so retention skips newsletter subscribers.
+4. **Project Settings → Script properties** → `BREVO_API_KEY` = v3 API key (**SMTP & API → API keys**). Never commit it.
+5. Run **`installBrevoTrigger()`** once (5-minute queue drain). It is idempotent.
+6. **Retention (opt-in):** after George approves deleting stale leads in production, run **`installBrevoRetentionTrigger()`** once for a monthly purge (`purgeStaleBrevoLeads`). It is **not** installed by default.
+7. Paste/deploy `Code.gs` as below; queue rows drain on the trigger (or run **`processBrevoQueue`** manually to test).
+
+Newsletter signups stay on the **Newsletter** sheet (and newsletter list / tracker identify when the user opts in). They must **never** be routed to list **11** by this script.
 
 ## Cutover (safe in either order)
 

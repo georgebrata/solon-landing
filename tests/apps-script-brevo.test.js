@@ -9,6 +9,11 @@ const test = require("node:test");
 const CODE_PATH = path.join(__dirname, "../docs/apps-script/Code.gs");
 const SOURCE = fs.readFileSync(CODE_PATH, "utf8");
 
+const wrapFetch = (fetchCalls, impl) => (url, opts) => {
+  fetchCalls.push({ url, opts });
+  return impl(url, opts);
+};
+
 const makeQueueSheet = () => {
   const rows = [
     ["QueuedAt", "Payload", "Attempts", "Status", "LastError"],
@@ -59,19 +64,50 @@ const loadAppsScript = (options = {}) => {
   const triggers = options.triggers || [];
   const createdTriggers = [];
 
-  const makeSheet = (headers) => ({
-    getLastColumn: () => headers.length,
-    getRange: () => ({
-      getValues: () => [headers],
-    }),
-    appendRow(row) {
-      appendedRows.push(row);
-    },
-  });
+  const makeDataSheet = (headers) => {
+    const rows = [headers.slice()];
+    return {
+      getLastColumn: () => headers.length,
+      getLastRow: () => rows.length,
+      getRange(rowStart, colStart, rowEnd, colEnd) {
+        if (arguments.length === 2) {
+          rowEnd = rowStart;
+          colEnd = colStart;
+        }
+        if (rowStart === rowEnd && colStart === colEnd) {
+          return { getValue: () => rows[rowStart - 1][colStart - 1] };
+        }
+        const slice = rows.slice(rowStart - 1, rowEnd).map((row) =>
+          row.slice(colStart - 1, colEnd)
+        );
+        return {
+          getValues: () => slice,
+          setValue(value) {
+            rows[rowStart - 1][colStart - 1] = value;
+          },
+          setValues(values) {
+            for (let r = 0; r < values.length; r++) {
+              for (let c = 0; c < values[r].length; c++) {
+                rows[rowStart - 1 + r][colStart - 1 + c] = values[r][c];
+              }
+            }
+          },
+        };
+      },
+      appendRow(row) {
+        rows.push(row);
+        appendedRows.push(row);
+      },
+      deleteRow(rowIndex) {
+        rows.splice(rowIndex - 1, 1);
+      },
+      _rows: rows,
+    };
+  };
   const sheetsByName = {
-    Contact: makeSheet(["Data", "Email", "Nume", "Mesaj"]),
-    Telefon: makeSheet(["Data", "Telefon", "IP"]),
-    Newsletter: makeSheet(["Data", "Email", "IP"]),
+    Contact: options.contactSheet || makeDataSheet(["Data", "Email", "Nume", "Mesaj"]),
+    Telefon: options.telefonSheet || makeDataSheet(["Data", "Telefon", "IP"]),
+    Newsletter: makeDataSheet(["Data", "Email", "IP"]),
     BrevoQueue: brevoQueue,
   };
 
@@ -94,6 +130,17 @@ const loadAppsScript = (options = {}) => {
     Error,
     Array,
     Object,
+    encodeURIComponent,
+    Utilities: {
+      formatDate: (date, _tz, fmt) => {
+        const d = date instanceof Date ? date : new Date(date);
+        const y = d.getUTCFullYear();
+        const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+        const day = String(d.getUTCDate()).padStart(2, "0");
+        if (fmt === "yyyy-MM-dd") return `${y}-${m}-${day}`;
+        return d.toISOString();
+      },
+    },
     console: {
       warn: (msg) => {
         warnings.push(String(msg));
@@ -113,13 +160,14 @@ const loadAppsScript = (options = {}) => {
       }),
     },
     UrlFetchApp: {
-      fetch: options.fetchImpl || ((url, opts) => {
-        fetchCalls.push({ url, opts });
-        return {
-          getResponseCode: () => 201,
-          getContentText: () => "{}",
-        };
-      }),
+      fetch: wrapFetch(
+        fetchCalls,
+        options.fetchImpl ||
+          (() => ({
+            getResponseCode: () => 201,
+            getContentText: () => "{}",
+          }))
+      ),
     },
     CacheService: {
       getScriptCache: () => ({
@@ -140,9 +188,17 @@ const loadAppsScript = (options = {}) => {
         timeBased: () => ({
           everyMinutes: () => ({
             create: () => {
-              createdTriggers.push(handler);
+              createdTriggers.push({ handler, kind: "queue" });
               triggers.push({ getHandlerFunction: () => handler });
             },
+          }),
+          onMonthDay: (day) => ({
+            atHour: (hour) => ({
+              create: () => {
+                createdTriggers.push({ handler, kind: "retention", day, hour });
+                triggers.push({ getHandlerFunction: () => handler });
+              },
+            }),
           }),
         }),
       }),
@@ -226,18 +282,17 @@ test("buildBrevoContactPayload_ validates email before building", () => {
   const { buildBrevoContactPayload_, isValidEmailForBrevo_ } = loadAppsScript();
   assert.equal(isValidEmailForBrevo_("not-an-email"), false);
   assert.equal(isValidEmailForBrevo_("ada@example.com"), true);
-  sameJson(
-    buildBrevoContactPayload_({
-      Email: "  ada@example.com ",
-      Nume: " Ada Lovelace ",
-    }),
-    {
-      email: "ada@example.com",
-      attributes: { FIRSTNAME: "Ada Lovelace" },
-      listIds: [11],
-      updateEnabled: true,
-    }
-  );
+  const payload = buildBrevoContactPayload_({
+    Data: "2026-10-15",
+    Email: "  ada@example.com ",
+    Nume: " Ada Lovelace ",
+  });
+  assert.equal(payload.email, "ada@example.com");
+  assert.equal(payload.attributes.NUME, "Ada Lovelace");
+  assert.equal(payload.attributes.LAST_INQUIRY, "2026-10-15");
+  assert.equal(payload.attributes.CHANNEL, "contact");
+  assert.equal(Object.hasOwn(payload.attributes, "FIRSTNAME"), false);
+  assert.equal(payload.listIds[0], 11);
   assert.equal(buildBrevoContactPayload_({ Email: "bad@", Nume: "Ada" }), null);
   assert.equal(buildBrevoContactPayload_({ Nume: "Ada" }), null);
 });
@@ -251,12 +306,10 @@ test("truncateBrevoErrorDetail_ logs code only and truncates long messages", () 
   assert.equal(short, "HTTP 400 duplicate_parameter");
   assert.ok(!short.includes("ignored"));
   assert.ok(!short.includes("ada@"));
-  const long = truncateBrevoErrorDetail_(
-    500,
-    JSON.stringify({ message: "x".repeat(200) })
+  assert.equal(
+    truncateBrevoErrorDetail_(500, JSON.stringify({ message: "x".repeat(200) })),
+    "HTTP 500 http_error"
   );
-  assert.match(long, /^HTTP 500 /);
-  assert.ok(long.length <= 90);
 });
 
 test("enqueueBrevoContactList_ appends to BrevoQueue without UrlFetchApp", () => {
@@ -264,17 +317,16 @@ test("enqueueBrevoContactList_ appends to BrevoQueue without UrlFetchApp", () =>
     scriptProps: { BREVO_API_KEY: "test-key" },
   });
   ctx.enqueueBrevoContactList_("Contact", {
+    Data: "2026-10-15",
     Email: "ada@example.com",
     Nume: "Ada",
   });
   assert.equal(ctx.fetchCalls.length, 0);
   assert.equal(ctx.brevoQueue.rows.length, 2);
-  sameJson(queuePayloads(ctx.brevoQueue)[0], {
-    email: "ada@example.com",
-    attributes: { FIRSTNAME: "Ada" },
-    listIds: [11],
-    updateEnabled: true,
-  });
+  const queued = queuePayloads(ctx.brevoQueue)[0];
+  assert.equal(queued.email, "ada@example.com");
+  assert.equal(queued.attributes.NUME, "Ada");
+  assert.equal(queued.attributes.CHANNEL, "contact");
 });
 
 test("enqueueBrevoContactList_ skips bad email and bad phone", () => {
@@ -352,9 +404,139 @@ test("installBrevoTrigger is idempotent", () => {
 
   const fresh = loadAppsScript({ triggers: [] });
   fresh.installBrevoTrigger();
-  assert.deepEqual(fresh.createdTriggers, ["processBrevoQueue"]);
+  assert.equal(fresh.createdTriggers.length, 1);
+  assert.equal(fresh.createdTriggers[0].handler, "processBrevoQueue");
   fresh.installBrevoTrigger();
   assert.equal(fresh.createdTriggers.length, 1);
+});
+
+test("installBrevoRetentionTrigger is idempotent and not run by installBrevoTrigger", () => {
+  const fresh = loadAppsScript({ triggers: [] });
+  fresh.installBrevoRetentionTrigger();
+  assert.equal(fresh.createdTriggers.length, 1);
+  assert.equal(fresh.createdTriggers[0].handler, "purgeStaleBrevoLeads");
+  fresh.installBrevoRetentionTrigger();
+  assert.equal(fresh.createdTriggers.length, 1);
+  const queueOnly = loadAppsScript({ triggers: [] });
+  queueOnly.installBrevoTrigger();
+  assert.equal(queueOnly.createdTriggers[0].handler, "processBrevoQueue");
+});
+
+test("SMS-only phone payloads are dropped when Brevo requires email", () => {
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key" },
+    fetchImpl: () => ({
+      getResponseCode: () => 400,
+      getContentText: () => JSON.stringify({ code: "missing_parameter" }),
+    }),
+  });
+  const result = ctx.postBrevoContactPayload_("test-key", {
+    attributes: { SMS: "+40712345678", CHANNEL: "telefon", LAST_INQUIRY: "2026-10-15" },
+    listIds: [11],
+    updateEnabled: true,
+    _smsOnly: true,
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.errorDetail, "sms_only_skipped");
+  assert.ok(ctx.warnings.some((line) => line.includes("SMS-only not accepted")));
+  const body = JSON.parse(ctx.fetchCalls[0].opts.payload);
+  assert.equal(Object.hasOwn(body, "_smsOnly"), false);
+});
+
+test("postBrevoContactPayload_ never sends _smsOnly to the API", () => {
+  const ctx = loadAppsScript({ scriptProps: { BREVO_API_KEY: "test-key" } });
+  ctx.postBrevoContactPayload_("key", {
+    attributes: { SMS: "+40712345678" },
+    listIds: [11],
+    updateEnabled: true,
+    _smsOnly: true,
+  });
+  const body = JSON.parse(ctx.fetchCalls[0].opts.payload);
+  assert.equal(body._smsOnly, undefined);
+});
+
+test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (mocked)", () => {
+  const contactRows = [
+    ["Data", "Email", "Nume", "Mesaj"],
+    ["2020-01-01", "old@example.com", "Old", "Hi"],
+    ["2026-10-15", "new@example.com", "New", "Hi"],
+  ];
+  const contactSheet = {
+    getLastColumn: () => 4,
+    getLastRow: () => contactRows.length,
+    getRange(rowStart, colStart, rowEnd, colEnd) {
+      if (arguments.length === 2) {
+        rowEnd = rowStart;
+        colEnd = colStart;
+      }
+      if (rowStart === rowEnd && colStart === colEnd) {
+        return { getValue: () => contactRows[rowStart - 1][colStart - 1] };
+      }
+      return {
+        getValues: () =>
+          contactRows.slice(rowStart - 1, rowEnd).map((row) =>
+            row.slice(colStart - 1, colEnd)
+          ),
+      };
+    },
+    deleteRow(rowIndex) {
+      contactRows.splice(rowIndex - 1, 1);
+      this.deleted = rowIndex;
+    },
+    deleted: null,
+  };
+  const telefonSheet = {
+    getLastColumn: () => 3,
+    getLastRow: () => 1,
+    getRange(rowStart, colStart, rowEnd, colEnd) {
+      if (arguments.length === 2) {
+        rowEnd = rowStart;
+        colEnd = colStart;
+      }
+      if (rowStart === rowEnd && colStart === colEnd) {
+        return { getValue: () => "" };
+      }
+      return { getValues: () => [] };
+    },
+    deleteRow: () => undefined,
+  };
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key", BREVO_NEWSLETTER_LIST_ID: "99" },
+    contactSheet,
+    telefonSheet,
+    fetchImpl: (url, opts) => {
+      if (opts.method === "get" && url.includes("/lists/11/contacts")) {
+        return {
+          getResponseCode: () => 200,
+          getContentText: () =>
+            JSON.stringify({
+              contacts: [
+                {
+                  email: "old@example.com",
+                  listIds: [11],
+                  attributes: { LAST_INQUIRY: "2020-01-01" },
+                },
+                {
+                  email: "sub@example.com",
+                  listIds: [11, 99],
+                  attributes: { LAST_INQUIRY: "2020-01-01" },
+                },
+              ],
+            }),
+        };
+      }
+      if (opts.method === "delete") {
+        return { getResponseCode: () => 204, getContentText: () => "" };
+      }
+      return { getResponseCode: () => 201, getContentText: () => "{}" };
+    },
+  });
+  ctx.purgeStaleBrevoLeads();
+  assert.equal(
+    ctx.fetchCalls.filter((c) => c.opts.method === "delete").length,
+    1
+  );
+  assert.equal(contactSheet.deleted, 2);
 });
 
 test("doPost enqueues Brevo work and never blocks on fetch", () => {
@@ -392,11 +574,10 @@ test("doPost enqueues Brevo work and never blocks on fetch", () => {
   const outPhone = phoneCtx.doPost(validPost("Telefon", telefonData));
   assert.deepEqual(phoneCtx.responseJson(outPhone), { ok: true });
   assert.equal(phoneCtx.fetchCalls.length, 0);
-  sameJson(queuePayloads(phoneCtx.brevoQueue)[0], {
-    attributes: { SMS: "+40712345678" },
-    listIds: [11],
-    updateEnabled: true,
-  });
+  const phonePayload = queuePayloads(phoneCtx.brevoQueue)[0];
+  assert.equal(phonePayload.attributes.SMS, "+40712345678");
+  assert.equal(phonePayload.attributes.CHANNEL, "telefon");
+  assert.equal(phonePayload._smsOnly, true);
 });
 
 test("doPost does not enqueue Brevo for Newsletter", () => {

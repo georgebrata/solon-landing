@@ -536,6 +536,14 @@ test("maps rate_limited from the API without an immediate retry control", async 
   assert.equal(dataRequests(requests).length, 1);
 });
 
+test("homepage phone form carries the art. 13 notice after the form", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+  const start = html.indexOf('data-solon-form="Telefon"');
+  const block = html.slice(start, html.indexOf("data-form-status", start));
+  assert.ok(block.includes("Folosim numărul tău doar ca să te sunăm"));
+  assert.ok(block.includes("Nu îți trimitem mesaje de marketing"));
+});
+
 test("contact and newsletter forms carry the Brevo notice above submit", () => {
   const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj. Dacă bifezi abonarea la newsletter și ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta de email.";
   const newsletterNote = "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
@@ -569,6 +577,12 @@ test("honeypot markup is hidden from assistive tech and the keyboard", () => {
     assert.match(html, /tabindex="-1"/);
     assert.match(html, /\binert\b/);
   }
+});
+
+test("never identifies Brevo from the Telefon form", async () => {
+  const { forms, identifies } = harness(["Telefon"]);
+  await forms[0].dispatch();
+  assert.equal(identifies.length, 0);
 });
 
 test("identifies Brevo for newsletter, and for contact only when the newsletter opt-in is checked", async () => {
