@@ -536,12 +536,37 @@ test("maps rate_limited from the API without an immediate retry control", async 
   assert.equal(dataRequests(requests).length, 1);
 });
 
-test("homepage phone form carries the art. 13 notice after the form", () => {
-  const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-  const start = html.indexOf('data-solon-form="Telefon"');
-  const block = html.slice(start, html.indexOf("data-form-status", start));
-  assert.ok(block.includes("Folosim numărul tău doar ca să te sunăm"));
-  assert.ok(block.includes("Nu îți trimitem mesaje de marketing"));
+const TELEFON_FORM_NOTICE =
+  'Folosim numărul tău doar ca să te sunăm în legătură cu solicitarea ta și îl păstrăm (în Google Sheets și Brevo) cel mult 24 de luni de la ultima interacțiune. Nu îți trimitem mesaje de marketing. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.';
+
+const walkHtmlFiles = (dir, acc = []) => {
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (ent.name === "node_modules" || ent.name === ".git") continue;
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) walkHtmlFiles(full, acc);
+    else if (ent.name.endsWith(".html")) acc.push(full);
+  }
+  return acc;
+};
+
+test("every HTML page with a Telefon form includes the legal phone notice after the form", () => {
+  const root = path.join(__dirname, "..");
+  const telefonPages = walkHtmlFiles(root).filter((file) =>
+    fs.readFileSync(file, "utf8").includes('data-solon-form="Telefon"')
+  );
+  assert.equal(telefonPages.length, 10);
+  for (const file of telefonPages) {
+    const html = fs.readFileSync(file, "utf8");
+    const start = html.indexOf('data-solon-form="Telefon"');
+    const formEnd = html.indexOf("</form>", start);
+    assert.ok(formEnd > start, path.relative(root, file));
+    const afterForm = html.slice(formEnd, formEnd + 700);
+    assert.ok(afterForm.includes(TELEFON_FORM_NOTICE), path.relative(root, file));
+    const noticeAt = afterForm.indexOf("Folosim numărul");
+    const statusAt = afterForm.indexOf("data-form-status");
+    assert.ok(noticeAt >= 0 && statusAt > noticeAt, path.relative(root, file));
+    assert.ok(afterForm.includes('<p class="solon-form-note">'), path.relative(root, file));
+  }
 });
 
 test("contact and newsletter forms carry the Brevo notice above submit", () => {

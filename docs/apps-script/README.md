@@ -22,10 +22,10 @@ List **Contact** (id **11**) is **leads-only**: pre-contract inquiries (art. 6(1
 
 1. In Brevo, confirm list **Contact** exists (id **11**). In the list description, note “leads only — exclude from campaigns”.
 2. In **every** Brevo campaign, add list **11** as an **exclude** list. Do not run automations on “added to list 11” except internal SOLON notifications.
-3. Create contact attributes **`NUME`** (text), **`LAST_INQUIRY`** (date), **`CHANNEL`** (text). Set script property **`BREVO_NEWSLETTER_LIST_ID`** to your newsletter list id (required before running retention — purge aborts without it).
-4. **Project Settings → Script properties** → `BREVO_API_KEY` = v3 API key (**SMTP & API → API keys**). Never commit it.
+3. Create contact attributes **`NUME`** (text), **`LAST_INQUIRY`** (date), **`CHANNEL`** (text).
+4. **Project Settings → Script properties** (required): `BREVO_API_KEY` = v3 API key (**SMTP & API → API keys**); **`BREVO_NEWSLETTER_LIST_ID`** = your newsletter list id (purge refuses to call Brevo without it). Never commit these values.
 5. Run **`installBrevoTrigger()`** once (5-minute queue drain). It is idempotent.
-6. **Retention (opt-in):** after George approves deleting stale leads in production, set **`BREVO_NEWSLETTER_LIST_ID`**, then run **`installBrevoRetentionTrigger()`** once for a monthly purge (`purgeStaleBrevoLeads`). Purge actions use each contact’s Brevo **`id`** (`DELETE /v3/contacts/{id}?identifierType=contact_id`, or `POST .../lists/11/contacts/remove` with `{ ids: [id] }`), never email or SMS. Stale contacts on **only** list 11 are deleted; contacts also on other lists are **removed from list 11** only; newsletter subscribers are never deleted. It is **not** installed by default.
+6. Run **`installBrevoRetentionTrigger()`** once (monthly 24-month purge via **`purgeStaleBrevoLeads`**). It is idempotent. Purge uses each contact’s Brevo **`id`** (`DELETE /v3/contacts/{id}?identifierType=contact_id`, or `POST .../lists/11/contacts/remove` with `{ ids: [id] }`), never email or SMS. Stale contacts on **only** list 11 are deleted; contacts also on other lists are **removed from list 11** only; newsletter subscribers are never deleted.
 7. Paste/deploy `Code.gs` as below; queue rows drain on the trigger (or run **`processBrevoQueue`** manually to test).
 
 Newsletter signups stay on the **Newsletter** sheet (and newsletter list / tracker identify when the user opts in). They must **never** be routed to list **11** by this script.
@@ -52,8 +52,9 @@ Full step-by-step “what happens to live leads” is in `docs/forms.md` (Turnst
 2. Replace `Code.gs` with the contents of `Code.gs` in this folder. If you already have custom append logic, keep `appendLead_()` in sync with your column headers and still call the honeypot / timing / Turnstile / rate-limit checks **before** `appendRow`.
 3. **Project Settings → Script properties** → add `TURNSTILE_SECRET` = the Turnstile **secret** key (not the site key) and `BREVO_API_KEY` if Brevo sync is enabled. Never commit those values.
 4. Run **`installBrevoTrigger()`** once after the first Brevo-enabled deploy.
-5. Deploy → **Manage deployments** → pencil → **New version** → Deploy. Use a test deployment / test sheet first.
-6. Confirm the `/exec` URL still matches `API_URL` in `assets/js/forms.js` (rotating the URL is optional; if you rotate, update the client constant and redeploy the site).
+5. Set **`BREVO_NEWSLETTER_LIST_ID`** and run **`installBrevoRetentionTrigger()`** once (mandatory 24-month retention).
+6. Deploy → **Manage deployments** → pencil → **New version** → Deploy. Use a test deployment / test sheet first.
+7. Confirm the `/exec` URL still matches `API_URL` in `assets/js/forms.js` (rotating the URL is optional; if you rotate, update the client constant and redeploy the site).
 
 ## Test sheet checklist
 

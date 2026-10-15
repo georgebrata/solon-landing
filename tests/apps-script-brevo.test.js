@@ -453,7 +453,10 @@ test("purgeStaleBrevoLeads aborts when BREVO_NEWSLETTER_LIST_ID is missing", () 
   });
   ctx.purgeStaleBrevoLeads();
   assert.equal(ctx.fetchCalls.length, 0);
-  assert.ok(ctx.warnings.some((line) => line.includes("BREVO_NEWSLETTER_LIST_ID missing")));
+  assert.ok(
+    ctx.warnings.some((line) => line.includes("BREVO_NEWSLETTER_LIST_ID missing"))
+  );
+  assert.equal(ctx.fetchCalls.length, 0);
 });
 
 test("purgeStaleBrevoLeads deletes, unlinks, and skips newsletter subscribers", () => {

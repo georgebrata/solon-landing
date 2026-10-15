@@ -8,6 +8,7 @@
  * Script Properties (Project Settings → Script properties):
  *   TURNSTILE_SECRET = <Cloudflare Turnstile secret key>
  *   BREVO_API_KEY = <Brevo v3 API key> (SMTP & API → API keys)
+ *   BREVO_NEWSLETTER_LIST_ID = <newsletter list id> (required for retention purge)
  *
  * Enforce Turnstile only when BOTH this secret and a client token are present.
  * The live forms.js sends a token only after TURNSTILE_SITE_KEY is replaced.
@@ -392,7 +393,7 @@ function purgeStaleBrevoLeads() {
   }
   var newsletterListId = getBrevoNewsletterListId_();
   if (!newsletterListId) {
-    brevoWarn_('Brevo retention: aborted (BREVO_NEWSLETTER_LIST_ID missing)');
+    brevoWarn_('Brevo retention: error — BREVO_NEWSLETTER_LIST_ID missing; aborting without Brevo API calls');
     return;
   }
   var cutoff = cutoffInquiryDateIso_();
