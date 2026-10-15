@@ -131,12 +131,12 @@ const loadAppsScript = (options = {}) => {
     encodeURIComponent,
     Utilities: {
       formatDate: (date, _tz, fmt) => {
-        const d = date instanceof Date ? date : new Date(date);
-        const y = d.getUTCFullYear();
-        const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-        const day = String(d.getUTCDate()).padStart(2, "0");
-        if (fmt === "yyyy-MM-dd") return `${y}-${m}-${day}`;
-        return d.toISOString();
+        const parsedDate = date instanceof Date ? date : new Date(date);
+        const year = parsedDate.getUTCFullYear();
+        const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
+        const day = String(parsedDate.getUTCDate()).padStart(2, "0");
+        if (fmt === "yyyy-MM-dd") return `${year}-${month}-${day}`;
+        return parsedDate.toISOString();
       },
     },
     console: {
@@ -228,10 +228,6 @@ const loadAppsScript = (options = {}) => {
       return JSON.parse(output._text);
     },
   };
-};
-
-const sameJson = (actual, expected) => {
-  assert.equal(JSON.stringify(actual), JSON.stringify(expected));
 };
 
 const validPost = (sheet, data) => ({
