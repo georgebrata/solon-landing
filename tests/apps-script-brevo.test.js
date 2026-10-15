@@ -70,15 +70,13 @@ const loadAppsScript = (options = {}) => {
       getLastColumn: () => headers.length,
       getLastRow: () => rows.length,
       getRange(rowStart, colStart, rowEnd, colEnd) {
-        if (arguments.length === 2) {
-          rowEnd = rowStart;
-          colEnd = colStart;
-        }
-        if (rowStart === rowEnd && colStart === colEnd) {
+        const endRow = rowEnd === undefined ? rowStart : rowEnd;
+        const endCol = colEnd === undefined ? colStart : colEnd;
+        if (rowStart === endRow && colStart === endCol) {
           return { getValue: () => rows[rowStart - 1][colStart - 1] };
         }
-        const slice = rows.slice(rowStart - 1, rowEnd).map((row) =>
-          row.slice(colStart - 1, colEnd)
+        const slice = rows.slice(rowStart - 1, endRow).map((row) =>
+          row.slice(colStart - 1, endCol)
         );
         return {
           getValues: () => slice,
@@ -465,17 +463,15 @@ test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (moc
     getLastColumn: () => 4,
     getLastRow: () => contactRows.length,
     getRange(rowStart, colStart, rowEnd, colEnd) {
-      if (arguments.length === 2) {
-        rowEnd = rowStart;
-        colEnd = colStart;
-      }
-      if (rowStart === rowEnd && colStart === colEnd) {
+      const endRow = rowEnd === undefined ? rowStart : rowEnd;
+      const endCol = colEnd === undefined ? colStart : colEnd;
+      if (rowStart === endRow && colStart === endCol) {
         return { getValue: () => contactRows[rowStart - 1][colStart - 1] };
       }
       return {
         getValues: () =>
-          contactRows.slice(rowStart - 1, rowEnd).map((row) =>
-            row.slice(colStart - 1, colEnd)
+          contactRows.slice(rowStart - 1, endRow).map((row) =>
+            row.slice(colStart - 1, endCol)
           ),
       };
     },
@@ -489,11 +485,9 @@ test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (moc
     getLastColumn: () => 3,
     getLastRow: () => 1,
     getRange(rowStart, colStart, rowEnd, colEnd) {
-      if (arguments.length === 2) {
-        rowEnd = rowStart;
-        colEnd = colStart;
-      }
-      if (rowStart === rowEnd && colStart === colEnd) {
+      const endRow = rowEnd === undefined ? rowStart : rowEnd;
+      const endCol = colEnd === undefined ? colStart : colEnd;
+      if (rowStart === endRow && colStart === endCol) {
         return { getValue: () => "" };
       }
       return { getValues: () => [] };

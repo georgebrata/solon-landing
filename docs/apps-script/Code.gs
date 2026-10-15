@@ -331,7 +331,8 @@ function purgeStaleBrevoLeads() {
   var offset = 0;
   var limit = 50;
   var deleted = 0;
-  while (true) {
+  var hasMore = true;
+  while (hasMore) {
     var page = fetchBrevoListContacts_(apiKey, BREVO_CONTACT_LIST_ID, offset, limit);
     if (!page || !page.contacts || !page.contacts.length) break;
     var i;
