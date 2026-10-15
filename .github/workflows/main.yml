@@ -94,7 +94,7 @@ jobs:
         with:
           node-version: 22
 
-      # Build-time pricing from sheet "SOLON Data | Machine-readable" / Abonamente.
+      # Build-time pricing from sheet "SOLON API" / Abonamente.
       # On endpoint failure it logs ::error:: and keeps the committed snapshot.
       - name: Build pricing from sheet
         run: node scripts/build-pricing.js
