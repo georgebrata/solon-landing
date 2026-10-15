@@ -22,10 +22,10 @@ List **Contact** (id **11**) is **leads-only**: pre-contract inquiries (art. 6(1
 
 1. In Brevo, confirm list **Contact** exists (id **11**). In the list description, note “leads only — exclude from campaigns”.
 2. In **every** Brevo campaign, add list **11** as an **exclude** list. Do not run automations on “added to list 11” except internal SOLON notifications.
-3. Create contact attributes **`NUME`** (text), **`LAST_INQUIRY`** (date), **`CHANNEL`** (text). Optional: **`BREVO_NEWSLETTER_LIST_ID`** script property (newsletter list id) so retention skips newsletter subscribers.
+3. Create contact attributes **`NUME`** (text), **`LAST_INQUIRY`** (date), **`CHANNEL`** (text). Set script property **`BREVO_NEWSLETTER_LIST_ID`** to your newsletter list id (required before running retention — purge aborts without it).
 4. **Project Settings → Script properties** → `BREVO_API_KEY` = v3 API key (**SMTP & API → API keys**). Never commit it.
 5. Run **`installBrevoTrigger()`** once (5-minute queue drain). It is idempotent.
-6. **Retention (opt-in):** after George approves deleting stale leads in production, run **`installBrevoRetentionTrigger()`** once for a monthly purge (`purgeStaleBrevoLeads`). It is **not** installed by default.
+6. **Retention (opt-in):** after George approves deleting stale leads in production, set **`BREVO_NEWSLETTER_LIST_ID`**, then run **`installBrevoRetentionTrigger()`** once for a monthly purge (`purgeStaleBrevoLeads`). Stale contacts on **only** list 11 are deleted; contacts also on other lists are **removed from list 11** only; newsletter subscribers are never deleted. It is **not** installed by default.
 7. Paste/deploy `Code.gs` as below; queue rows drain on the trigger (or run **`processBrevoQueue`** manually to test).
 
 Newsletter signups stay on the **Newsletter** sheet (and newsletter list / tracker identify when the user opts in). They must **never** be routed to list **11** by this script.

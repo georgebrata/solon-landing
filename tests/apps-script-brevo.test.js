@@ -8,6 +8,7 @@ const test = require("node:test");
 
 const CODE_PATH = path.join(__dirname, "../docs/apps-script/Code.gs");
 const SOURCE = fs.readFileSync(CODE_PATH, "utf8");
+const { createSheetGetRange } = require("./apps-script-brevo-get-range");
 
 const wrapFetch = (fetchCalls, impl) => (url, opts) => {
   fetchCalls.push({ url, opts });
@@ -27,24 +28,7 @@ const makeQueueSheet = () => {
     getLastRow() {
       return rows.length;
     },
-    getRange(rowStart, colStart, rowEnd, colEnd) {
-      const slice = rows.slice(rowStart - 1, rowEnd).map((row) =>
-        row.slice(colStart - 1, colEnd)
-      );
-      return {
-        getValues: () => slice,
-        setValue(value) {
-          rows[rowStart - 1][colStart - 1] = value;
-        },
-        setValues(values) {
-          for (let r = 0; r < values.length; r++) {
-            for (let c = 0; c < values[r].length; c++) {
-              rows[rowStart - 1 + r][colStart - 1 + c] = values[r][c];
-            }
-          }
-        },
-      };
-    },
+    getRange: createSheetGetRange(rows),
     deleteRow(rowIndex) {
       rows.splice(rowIndex - 1, 1);
     },
@@ -69,29 +53,7 @@ const loadAppsScript = (options = {}) => {
     return {
       getLastColumn: () => headers.length,
       getLastRow: () => rows.length,
-      getRange(rowStart, colStart, rowEnd, colEnd) {
-        const endRow = rowEnd === undefined ? rowStart : rowEnd;
-        const endCol = colEnd === undefined ? colStart : colEnd;
-        if (rowStart === endRow && colStart === endCol) {
-          return { getValue: () => rows[rowStart - 1][colStart - 1] };
-        }
-        const slice = rows.slice(rowStart - 1, endRow).map((row) =>
-          row.slice(colStart - 1, endCol)
-        );
-        return {
-          getValues: () => slice,
-          setValue(value) {
-            rows[rowStart - 1][colStart - 1] = value;
-          },
-          setValues(values) {
-            for (let r = 0; r < values.length; r++) {
-              for (let c = 0; c < values[r].length; c++) {
-                rows[rowStart - 1 + r][colStart - 1 + c] = values[r][c];
-              }
-            }
-          },
-        };
-      },
+      getRange: createSheetGetRange(rows),
       appendRow(row) {
         rows.push(row);
         appendedRows.push(row);
@@ -134,8 +96,8 @@ const loadAppsScript = (options = {}) => {
         const parsedDate = date instanceof Date ? date : new Date(date);
         const year = parsedDate.getUTCFullYear();
         const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
-        const day = String(parsedDate.getUTCDate()).padStart(2, "0");
-        if (fmt === "yyyy-MM-dd") return `${year}-${month}-${day}`;
+        const dayOfMonth = String(parsedDate.getUTCDate()).padStart(2, "0");
+        if (fmt === "yyyy-MM-dd") return `${year}-${month}-${dayOfMonth}`;
         return parsedDate.toISOString();
       },
     },
@@ -175,7 +137,9 @@ const loadAppsScript = (options = {}) => {
     },
     LockService: {
       getScriptLock: () => ({
-        waitLock: () => undefined,
+        waitLock: () => {
+          if (options.lockWaitThrows) throw new Error("Lock timeout");
+        },
         tryLock: () => true,
         releaseLock: () => undefined,
       }),
@@ -347,6 +311,40 @@ test("processBrevoQueue sends queued items and removes successes", () => {
   assert.equal(ctx.brevoQueue.rows.length, 1);
 });
 
+test("processBrevoQueue updates retry columns on failure and still processes other rows", () => {
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key" },
+    fetchImpl: (_url, opts) => {
+      const body = JSON.parse(opts.payload || "{}");
+      if (body.email === "first@example.com") {
+        return {
+          getResponseCode: () => 500,
+          getContentText: () => JSON.stringify({ code: "internal_error" }),
+        };
+      }
+      return { getResponseCode: () => 201, getContentText: () => "{}" };
+    },
+  });
+  ctx.enqueueBrevoPayload_({
+    email: "first@example.com",
+    listIds: [11],
+    updateEnabled: true,
+  });
+  ctx.enqueueBrevoPayload_({
+    email: "second@example.com",
+    listIds: [11],
+    updateEnabled: true,
+  });
+  ctx.processBrevoQueue();
+  assert.equal(ctx.fetchCalls.length, 2);
+  assert.equal(ctx.brevoQueue.rows.length, 2);
+  const failedRow = ctx.brevoQueue.rows[1];
+  assert.equal(failedRow[2], 1);
+  assert.equal(failedRow[3], "pending");
+  assert.equal(failedRow[4], "HTTP 500 internal_error");
+  assert.equal(JSON.parse(failedRow[1]).email, "first@example.com");
+});
+
 test("processBrevoQueue retries then marks failed after three attempts", () => {
   const ctx = loadAppsScript({
     scriptProps: { BREVO_API_KEY: "test-key" },
@@ -449,7 +447,16 @@ test("postBrevoContactPayload_ never sends _smsOnly to the API", () => {
   assert.equal(Object.hasOwn(body, "_smsOnly"), false);
 });
 
-test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (mocked)", () => {
+test("purgeStaleBrevoLeads aborts when BREVO_NEWSLETTER_LIST_ID is missing", () => {
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key" },
+  });
+  ctx.purgeStaleBrevoLeads();
+  assert.equal(ctx.fetchCalls.length, 0);
+  assert.ok(ctx.warnings.some((line) => line.includes("BREVO_NEWSLETTER_LIST_ID missing")));
+});
+
+test("purgeStaleBrevoLeads deletes, unlinks, and skips newsletter subscribers", () => {
   const contactRows = [
     ["Data", "Email", "Nume", "Mesaj"],
     ["2020-01-01", "old@example.com", "Old", "Hi"],
@@ -458,36 +465,15 @@ test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (moc
   const contactSheet = {
     getLastColumn: () => 4,
     getLastRow: () => contactRows.length,
-    getRange(rowStart, colStart, rowEnd, colEnd) {
-      const endRow = rowEnd === undefined ? rowStart : rowEnd;
-      const endCol = colEnd === undefined ? colStart : colEnd;
-      if (rowStart === endRow && colStart === endCol) {
-        return { getValue: () => contactRows[rowStart - 1][colStart - 1] };
-      }
-      return {
-        getValues: () =>
-          contactRows.slice(rowStart - 1, endRow).map((row) =>
-            row.slice(colStart - 1, endCol)
-          ),
-      };
-    },
+    getRange: createSheetGetRange(contactRows),
     deleteRow(rowIndex) {
       contactRows.splice(rowIndex - 1, 1);
-      this.deleted = rowIndex;
     },
-    deleted: null,
   };
   const telefonSheet = {
     getLastColumn: () => 3,
     getLastRow: () => 1,
-    getRange(rowStart, colStart, rowEnd, colEnd) {
-      const endRow = rowEnd === undefined ? rowStart : rowEnd;
-      const endCol = colEnd === undefined ? colStart : colEnd;
-      if (rowStart === endRow && colStart === endCol) {
-        return { getValue: () => "" };
-      }
-      return { getValues: () => [] };
-    },
+    getRange: createSheetGetRange([["Data", "Telefon", "IP"]]),
     deleteRow: () => undefined,
   };
   const ctx = loadAppsScript({
@@ -502,13 +488,18 @@ test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (moc
             JSON.stringify({
               contacts: [
                 {
-                  email: "old@example.com",
+                  email: "solo@example.com",
                   listIds: [11],
                   attributes: { LAST_INQUIRY: "2020-01-01" },
                 },
                 {
                   email: "sub@example.com",
                   listIds: [11, 99],
+                  attributes: { LAST_INQUIRY: "2020-01-01" },
+                },
+                {
+                  email: "also@example.com",
+                  listIds: [11, 5],
                   attributes: { LAST_INQUIRY: "2020-01-01" },
                 },
               ],
@@ -518,6 +509,9 @@ test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (moc
       if (opts.method === "delete") {
         return { getResponseCode: () => 204, getContentText: () => "" };
       }
+      if (opts.method === "post" && url.includes("/contacts/remove")) {
+        return { getResponseCode: () => 201, getContentText: () => "{}" };
+      }
       return { getResponseCode: () => 201, getContentText: () => "{}" };
     },
   });
@@ -526,7 +520,60 @@ test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (moc
     ctx.fetchCalls.filter((c) => c.opts.method === "delete").length,
     1
   );
-  assert.equal(contactSheet.deleted, 2);
+  const removeCalls = ctx.fetchCalls.filter(
+    (c) => c.opts.method === "post" && c.url.includes("/contacts/remove")
+  );
+  assert.equal(removeCalls.length, 1);
+  assert.deepEqual(JSON.parse(removeCalls[0].opts.payload).emails, ["also@example.com"]);
+  assert.equal(contactRows.length, 2);
+});
+
+test("parseSheetDateIso_ accepts Date objects for sheet pruning", () => {
+  const contactRows = [
+    ["Data", "Email", "Nume", "Mesaj"],
+    [new Date("2020-01-01T12:00:00.000Z"), "old@example.com", "Old", "Hi"],
+    [new Date("2026-10-15T12:00:00.000Z"), "new@example.com", "New", "Hi"],
+  ];
+  const contactSheet = {
+    getLastColumn: () => 4,
+    getLastRow: () => contactRows.length,
+    getRange: createSheetGetRange(contactRows),
+    deleteRow(rowIndex) {
+      contactRows.splice(rowIndex - 1, 1);
+    },
+  };
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key", BREVO_NEWSLETTER_LIST_ID: "99" },
+    contactSheet,
+    telefonSheet: {
+      getLastColumn: () => 3,
+      getLastRow: () => 1,
+      getRange: createSheetGetRange([["Data", "Telefon", "IP"]]),
+      deleteRow: () => undefined,
+    },
+    fetchImpl: (url, opts) => {
+      if (opts.method === "get" && url.includes("/lists/11/contacts")) {
+        return {
+          getResponseCode: () => 200,
+          getContentText: () => JSON.stringify({ contacts: [] }),
+        };
+      }
+      return { getResponseCode: () => 200, getContentText: () => "{}" };
+    },
+  });
+  ctx.purgeStaleBrevoLeads();
+  assert.equal(contactRows.length, 2);
+  assert.equal(contactRows[1][1], "new@example.com");
+});
+
+test("enqueueBrevoPayload_ appends without lock after waitLock times out", () => {
+  const ctx = loadAppsScript({
+    scriptProps: { BREVO_API_KEY: "test-key" },
+    lockWaitThrows: true,
+  });
+  ctx.enqueueBrevoPayload_({ email: "ada@example.com", listIds: [11] });
+  assert.equal(ctx.brevoQueue.rows.length, 2);
+  assert.ok(ctx.warnings.some((line) => line.includes("without lock")));
 });
 
 test("doPost enqueues Brevo work and never blocks on fetch", () => {
