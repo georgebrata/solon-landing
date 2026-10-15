@@ -15,7 +15,9 @@
     "test:indexnow": "node --test tests/indexnow.test.js tests/sitemap.test.js",
     "test": "node --test tests/*.test.js && node scripts/test-feature-flags.js",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
-    "test:chat": "node --test tests/support-chat.test.js"
+    "test:chat": "node --test tests/support-chat.test.js",
+    "build:pricing": "node scripts/build-pricing.js",
+    "test:pricing": "node --test tests/pricing.test.js"
   },
   "devDependencies": {
     "clean-css": "^5.3.3",

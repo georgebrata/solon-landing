@@ -18,6 +18,10 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  # Rebuild when the "Abonamente" sheet changes: POST /repos/georgebrata/solon-landing/dispatches
+  # with {"event_type":"abonamente-updated"} (token needs to be set up by George; see PR).
+  repository_dispatch:
+    types: [abonamente-updated]
 
 permissions:
   contents: read
@@ -55,14 +59,19 @@ jobs:
       - name: Test IndexNow URL selection
         run: npm run test:indexnow
 
+      - name: Test pricing build (snapshot)
+        run: npm run test:pricing
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
   deploy:
     name: deploy
     needs: [ci]
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     environment: production
     concurrency:
       group: production-deploy
@@ -70,6 +79,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # dangerous-clean-slate is intentionally omitted (defaults to false).
       # Do not enable it: that flag wipes server-dir including excluded paths.
@@ -78,6 +89,16 @@ jobs:
       # omitted from both upload and delete (applyExcludeFilter on local and
       # server lists), so previously leaked tooling files will not be removed
       # by CI — clean those up in cPanel. .htaccess is uploaded (not excluded).
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      # Build-time pricing from sheet "SOLON Data | Machine-readable" / Abonamente.
+      # On endpoint failure it logs ::error:: and keeps the committed snapshot.
+      - name: Build pricing from sheet
+        run: node scripts/build-pricing.js
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
         with:
@@ -108,6 +129,7 @@ jobs:
             **/scripts/**
             **/templates/**
             **/blog/posts/**
+            **/data/**
             **/*.md
             !**/assets/**/*.md
             **/LICENSE
@@ -115,6 +137,25 @@ jobs:
             **/assets/scss/**
             **/.ftp-deploy-sync-state.json
             !**/.htaccess
+
+      # After FTP: optional snapshot commit on main ([skip ci] avoids dispatch/CI loops). Never blocks deploy.
+      - name: Commit refreshed abonamente snapshot
+        if: github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- data/abonamente.snapshot.json; then
+            echo "Snapshot unchanged; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/abonamente.snapshot.json
+          git commit -m "chore(pricing): refresh abonamente snapshot [skip ci]"
+          git pull --rebase --autostash origin main || { echo "::warning::snapshot push: git pull --rebase failed"; exit 0; }
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main \
+            || echo "::warning::snapshot push failed (FTP deploy already succeeded)"
 
   # Pings IndexNow only after a successful FTP deploy on push to main.
   # continue-on-error plus the script's exit 0 keep a failed ping from

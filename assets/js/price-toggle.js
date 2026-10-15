@@ -1,63 +1,102 @@
-(function() {
+(function () {
   "use strict";
 
+  // Pricing markup is generated at build time by scripts/build-pricing.js.
+  // This only switches monthly/annual and sends GA4 events (no PII).
+
   /**
-   * Easy selector helper function
+   * @param {string} name
+   * @param {Record<string, string>} params
+   * @param {{ solonConsent?: { hasConsent?: (category: string) => boolean } | null, gtag?: ((...args: unknown[]) => void) | null }} [deps]
    */
-  const select = (el, all = false) => {
-    el = el.trim();
-    if (all) {
-      return [...document.querySelectorAll(el)];
-    }
-    return document.querySelector(el);
-  };
+  function trackPricingEvent(name, params, deps) {
+    const env = deps ?? {};
+    let consentApi = env.solonConsent;
+    let gtagFn = env.gtag;
 
-  function clickMonthly() {
-    const priceBronze = select("#price-bronze");
-    const priceSilver = select("#price-silver");
-    const priceGold = select("#price-gold");
-    if (!priceBronze || !priceSilver || !priceGold) {
+    if (consentApi === undefined && typeof window !== "undefined") {
+      consentApi = window.SolonConsent;
+    }
+    if (gtagFn === undefined && typeof window !== "undefined") {
+      gtagFn = window.gtag;
+    }
+
+    if (
+      consentApi === null ||
+      consentApi === undefined ||
+      typeof consentApi.hasConsent !== "function" ||
+      !consentApi.hasConsent("analytics")
+    ) {
       return;
     }
-    priceBronze.textContent = "99/lună";
-    priceSilver.textContent = "199/lună";
-    priceGold.textContent = "349/lună";
-    // PAYMENT-LINK disabled pending NETOPIA:
-    // const linkBronze = select("#link-bronze");
-    // const linkSilver = select("#link-silver");
-    // const linkGold = select("#link-gold");
-    // if (linkBronze) linkBronze.href = "https://buy.stripe.com/14kbJ767n5X58xOeUU";
-    // if (linkSilver) linkSilver.href = "https://buy.stripe.com/14k6oNfHX5X5dS89AB";
-    // if (linkGold) linkGold.href = "https://buy.stripe.com/7sI6oN0N3gBJ5lCcMO";
+
+    if (typeof gtagFn !== "function") {
+      return;
+    }
+
+    gtagFn("event", name, params);
   }
 
-  function clickAnnual() {
-    const priceBronze = select("#price-bronze");
-    const priceSilver = select("#price-silver");
-    const priceGold = select("#price-gold");
-    if (!priceBronze || !priceSilver || !priceGold) {
-      return;
-    }
-    priceBronze.textContent = "999/an";
-    priceSilver.textContent = "1,999/an";
-    priceGold.textContent = "2,999/an";
-    // PAYMENT-LINK disabled pending NETOPIA:
-    // const linkBronze = select("#link-bronze");
-    // const linkSilver = select("#link-silver");
-    // const linkGold = select("#link-gold");
-    // if (linkBronze) linkBronze.href = "https://buy.stripe.com/7sI00sfLC88qb1614c";
-    // if (linkSilver) linkSilver.href = "https://buy.stripe.com/dR6aF60QI60iedi5kr";
-    // if (linkGold) linkGold.href = "https://buy.stripe.com/cN214wbvm4We3yEbIO";
+  /** @param {"monthly" | "annual"} billing */
+  function setBilling(billing) {
+    const section = document.querySelector("#pricing");
+    if (!section) return;
+    section.querySelectorAll(".price-monthly").forEach((el) => {
+      el.hidden = billing !== "monthly";
+    });
+    section.querySelectorAll(".price-annual").forEach((el) => {
+      el.hidden = billing !== "annual";
+    });
+    section.dataset.billing = billing;
   }
 
-  window.addEventListener("load", () => {
-    const anualPricing = select("#anual-btn");
-    const monthlyPricing = select("#montly-btn");
-    if (!anualPricing || !monthlyPricing) {
-      return;
+  /** Wire billing toggle, plan clicks, and one-time pricing_view when #pricing is visible. */
+  function initPricingToggle() {
+    const section = document.querySelector("#pricing");
+    if (!section) return;
+    const monthly = section.querySelector("#monthly");
+    const yearly = section.querySelector("#yearly");
+    if (monthly && yearly) {
+      monthly.addEventListener("change", () => {
+        setBilling("monthly");
+        trackPricingEvent("pricing_toggle_billing", { billing: "monthly" });
+      });
+      yearly.addEventListener("change", () => {
+        setBilling("annual");
+        trackPricingEvent("pricing_toggle_billing", { billing: "annual" });
+      });
     }
-    anualPricing.addEventListener("click", clickAnnual);
-    monthlyPricing.addEventListener("click", clickMonthly);
-    clickMonthly();
-  });
+    setBilling(yearly?.checked ? "annual" : "monthly");
+
+    section.addEventListener("click", (e) => {
+      const btn = e.target.closest("a.buy-btn[data-plan]");
+      if (!btn) return;
+      const params = { plan: btn.dataset.plan, billing: btn.dataset.billing };
+      trackPricingEvent("pricing_plan_click", params);
+      trackPricingEvent("checkout_start", params);
+    });
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((en) => en.isIntersecting)) {
+            trackPricingEvent("pricing_view", {});
+            io.disconnect();
+          }
+        },
+        { threshold: 0.3 },
+      );
+      io.observe(section);
+    }
+  }
+
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = { trackPricingEvent, setBilling, initPricingToggle };
+  }
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("load", () => {
+      initPricingToggle();
+    });
+  }
 })();
