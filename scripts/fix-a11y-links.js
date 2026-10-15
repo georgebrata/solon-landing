@@ -39,16 +39,16 @@ function fix(html) {
   );
 
   h = h.replace(
-    /<a href="#" class="facebook"><i class="bx bxl-facebook"><\/i><\/a>/g,
-    '<a href="#" class="facebook" aria-label="Facebook SOLON (în curând)"><i class="bx bxl-facebook" aria-hidden="true"></i></a>',
+    /<a href="#" class="facebook"><i class="bi bi-facebook"><\/i><\/a>/g,
+    '<a href="#" class="facebook" aria-label="Facebook SOLON (în curând)"><i class="bi bi-facebook" aria-hidden="true"></i></a>',
   );
   h = h.replace(
-    /<a href="#" class="instagram"><i class="bx bxl-instagram"><\/i><\/a>/g,
-    '<a href="#" class="instagram" aria-label="Instagram SOLON (în curând)"><i class="bx bxl-instagram" aria-hidden="true"></i></a>',
+    /<a href="#" class="instagram"><i class="bi bi-instagram"><\/i><\/a>/g,
+    '<a href="#" class="instagram" aria-label="Instagram SOLON (în curând)"><i class="bi bi-instagram" aria-hidden="true"></i></a>',
   );
   h = h.replace(
-    /<a href="#" class="linkedin"><i class="bx bxl-linkedin"><\/i><\/a>/g,
-    '<a href="#" class="linkedin" aria-label="LinkedIn SOLON (în curând)"><i class="bx bxl-linkedin" aria-hidden="true"></i></a>',
+    /<a href="#" class="linkedin"><i class="bi bi-linkedin"><\/i><\/a>/g,
+    '<a href="#" class="linkedin" aria-label="LinkedIn SOLON (în curând)"><i class="bi bi-linkedin" aria-hidden="true"></i></a>',
   );
 
   return h;

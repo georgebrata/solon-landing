@@ -168,6 +168,15 @@ AddDefaultCharset utf-8
 </If>
 # END issue #30: caching
 
+# BEGIN gzip fallback (mod_deflate)
+# Hostico serves Brotli for many clients; gzip-only crawlers and Accept-Encoding:
+# gzip must still get compressed CSS/JS/HTML/SVG. Does not disable server Brotli.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+  SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|avif|ico|woff2?|ttf|eot|otf|pdf|zip|gz|br)$ no-gzip dont-vary
+</IfModule>
+# END gzip fallback
+
 # BEGIN issue #32: error documents
 # Keep this block last: redirects (#33), deny (#35), headers (#29),
 # caching (#30), then ErrorDocument (#32).

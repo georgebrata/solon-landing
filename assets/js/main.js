@@ -147,11 +147,13 @@
   }
 
   /**
-   * Initiate  glightbox 
+   * Initiate glightbox (only when the vendor script is loaded on the page)
    */
-  GLightbox({
-    selector: '.glightbox'
-  });
+  if (typeof GLightbox !== 'undefined') {
+    GLightbox({
+      selector: '.glightbox'
+    });
+  }
 
   /**
    * Skills animation
@@ -201,15 +203,18 @@
   });
 
   /**
-   * Initiate portfolio lightbox 
+   * Initiate portfolio lightbox
    */
-  GLightbox({
-    selector: '.portfolio-lightbox'
-  });
+  if (typeof GLightbox !== 'undefined') {
+    GLightbox({
+      selector: '.portfolio-lightbox'
+    });
+  }
 
   /**
    * Portfolio details slider
    */
+  if (typeof Swiper !== 'undefined' && select('.portfolio-details-slider')) {
   new Swiper('.portfolio-details-slider', {
     speed: 400,
     loop: true,
@@ -233,10 +238,12 @@
     },
 
   });
+  }
 
   /**
    * Clients Slider
    */
+  if (typeof Swiper !== 'undefined' && select('.clients-slider')) {
   new Swiper('.clients-slider', {
     speed: 4000,
     loop: true,
@@ -264,6 +271,7 @@
       }
     }
   });
+  }
 
   /**
    * Animation on scroll
