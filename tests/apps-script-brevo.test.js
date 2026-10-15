@@ -446,7 +446,7 @@ test("postBrevoContactPayload_ never sends _smsOnly to the API", () => {
     _smsOnly: true,
   });
   const body = JSON.parse(ctx.fetchCalls[0].opts.payload);
-  assert.equal(body._smsOnly, undefined);
+  assert.equal(Object.hasOwn(body, "_smsOnly"), false);
 });
 
 test("purgeStaleBrevoLeads deletes stale list-11 contacts and prunes sheets (mocked)", () => {
