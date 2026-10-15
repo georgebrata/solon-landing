@@ -70,6 +70,8 @@ jobs:
     needs: [ci]
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     environment: production
     concurrency:
       group: production-deploy
@@ -94,6 +96,20 @@ jobs:
       # On endpoint failure it logs ::error:: and keeps the committed snapshot.
       - name: Build pricing from sheet
         run: node scripts/build-pricing.js
+
+      # Persist a successful sheet fetch on main without re-running CI (repository_dispatch would loop otherwise).
+      - name: Commit refreshed abonamente snapshot
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if git diff --quiet -- data/abonamente.snapshot.json; then
+            echo "Snapshot unchanged; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/abonamente.snapshot.json
+          git commit -m "chore(pricing): refresh abonamente snapshot [skip ci]"
+          git push
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0

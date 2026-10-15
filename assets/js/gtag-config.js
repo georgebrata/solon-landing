@@ -19,5 +19,5 @@
     window.gtag = gtag;
   }
   window.gtag("js", new Date());
-  window.gtag("config", "G-H41D7KCWHX", { currency: "EURO" });
+  window.gtag("config", "G-H41D7KCWHX", { currency: "RON" });
 })();

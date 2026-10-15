@@ -52,6 +52,13 @@ test("validate rejects payloads without active priced packages", () => {
   assert.throws(() => validate({ Abonamente: [{ "Nume abonament": "X", Activ: true }], Servicii: [] }));
 });
 
+test("validate rejects fewer than four active packages (partial sheet)", () => {
+  const data = JSON.parse(JSON.stringify(snapshot));
+  const active = data.Abonamente.filter((row) => row.Activ === true);
+  data.Abonamente = active.slice(0, 3);
+  assert.throws(() => validate(data), /expected 4 active packages, got 3/);
+});
+
 test("known English sheet phrases become Romanian", () => {
   assert.strictEqual(roInclusion("- 2 website updates / month;"), "2 modificări pe website / lună");
   assert.strictEqual(roInclusion("- GoogleMyBusines maintenance, "), "Mentenanță Google My Business");
