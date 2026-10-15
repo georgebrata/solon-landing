@@ -38,6 +38,11 @@ var ALLOWED_SHEETS = {
 };
 var BREVO_CONTACT_LIST_ID = 11;
 var BREVO_CONTACTS_URL = 'https://api.brevo.com/v3/contacts';
+var BREVO_QUEUE_SHEET = 'BrevoQueue';
+var BREVO_QUEUE_MAX_ATTEMPTS = 3;
+var BREVO_QUEUE_HEADERS = ['QueuedAt', 'Payload', 'Attempts', 'Status', 'LastError'];
+var BREVO_EMAIL_RE = /^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$/i;
+var BREVO_LOG_DETAIL_MAX = 80;
 
 // Optional: leave empty when the script is bound to the spreadsheet.
 var SPREADSHEET_ID = '';
@@ -119,12 +124,16 @@ function enforceRateLimit_(ip, sheet, data) {
   return true;
 }
 
-function getSheet_(sheetName) {
+function getSpreadsheet_() {
   var ss = SPREADSHEET_ID
     ? SpreadsheetApp.openById(SPREADSHEET_ID)
     : SpreadsheetApp.getActiveSpreadsheet();
   if (!ss) throw new Error('spreadsheet');
-  var sheet = ss.getSheetByName(sheetName);
+  return ss;
+}
+
+function getSheet_(sheetName) {
+  var sheet = getSpreadsheet_().getSheetByName(sheetName);
   if (!sheet) throw new Error('unknown_sheet');
   return sheet;
 }
@@ -146,6 +155,13 @@ function appendLead_(sheetName, data) {
   sheet.appendRow(row);
 }
 
+function isValidEmailForBrevo_(email) {
+  if (!email) return false;
+  var trimmed = String(email).trim();
+  if (!trimmed || trimmed.length > 254) return false;
+  return BREVO_EMAIL_RE.test(trimmed);
+}
+
 function normalizeRomanianPhoneE164_(raw) {
   if (raw == null) return null;
   var compact = String(raw).replace(/[\s.\-]/g, '');
@@ -156,10 +172,10 @@ function normalizeRomanianPhoneE164_(raw) {
   } else if (digits.indexOf('0040') === 0) {
     digits = digits.slice(2);
   }
-  if (digits.charAt(0) === '0' && digits.length === 10 && digits.charAt(1) === '7') {
+  if (digits.charAt(0) === '0' && digits.length === 10) {
     digits = '40' + digits.slice(1);
   }
-  if (digits.length !== 11 || digits.indexOf('40') !== 0 || digits.charAt(2) !== '7') {
+  if (digits.length !== 11 || digits.indexOf('40') !== 0 || digits.charAt(2) === '0') {
     return null;
   }
   var i;
@@ -170,9 +186,153 @@ function normalizeRomanianPhoneE164_(raw) {
   return '+' + digits;
 }
 
+function truncateBrevoErrorDetail_(responseCode, responseText) {
+  var detail = '';
+  try {
+    var parsed = JSON.parse(responseText || '{}');
+    if (parsed && parsed.code) detail = String(parsed.code);
+    else if (parsed && parsed.message) detail = String(parsed.message);
+  } catch (ignore) {
+    detail = '';
+  }
+  if (!detail) detail = 'http_error';
+  detail = detail.replace(/\s+/g, ' ').trim();
+  if (detail.length > BREVO_LOG_DETAIL_MAX) {
+    detail = detail.slice(0, BREVO_LOG_DETAIL_MAX);
+  }
+  return 'HTTP ' + responseCode + ' ' + detail;
+}
+
+function brevoWarn_(message) {
+  Logger.log(message);
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn(message);
+  }
+}
+
+function getOrCreateBrevoQueueSheet_() {
+  var ss = getSpreadsheet_();
+  var sheet = ss.getSheetByName(BREVO_QUEUE_SHEET);
+  if (!sheet) {
+    sheet = ss.insertSheet(BREVO_QUEUE_SHEET);
+    sheet.appendRow(BREVO_QUEUE_HEADERS);
+    sheet.hideSheet();
+  }
+  return sheet;
+}
+
+function enqueueBrevoPayload_(payload) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var sheet = getOrCreateBrevoQueueSheet_();
+    sheet.appendRow([
+      new Date().toISOString(),
+      JSON.stringify(payload),
+      0,
+      'pending',
+      ''
+    ]);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function postBrevoContactPayload_(apiKey, payload) {
+  var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL, {
+    method: 'post',
+    headers: {
+      'api-key': apiKey,
+      accept: 'application/json',
+      'content-type': 'application/json'
+    },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+  var code = res.getResponseCode();
+  if (code >= 200 && code < 300) {
+    return { ok: true, code: code, errorDetail: '' };
+  }
+  return {
+    ok: false,
+    code: code,
+    errorDetail: truncateBrevoErrorDetail_(code, res.getContentText())
+  };
+}
+
+function processBrevoQueue() {
+  var apiKey = PropertiesService.getScriptProperties().getProperty('BREVO_API_KEY');
+  if (!apiKey) {
+    brevoWarn_('Brevo queue: skipped (BREVO_API_KEY missing)');
+    return;
+  }
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    brevoWarn_('Brevo queue: lock busy');
+    return;
+  }
+  try {
+    var sheet = getOrCreateBrevoQueueSheet_();
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return;
+    var rowIndex;
+    for (rowIndex = lastRow; rowIndex >= 2; rowIndex--) {
+      var row = sheet.getRange(rowIndex, 1, rowIndex, 5).getValues()[0];
+      var status = String(row[3] || '');
+      var attempts = Number(row[2]) || 0;
+      if (status === 'failed') continue;
+      if (attempts >= BREVO_QUEUE_MAX_ATTEMPTS) {
+        sheet.getRange(rowIndex, 4).setValue('failed');
+        continue;
+      }
+      var payload;
+      try {
+        payload = JSON.parse(row[1]);
+      } catch (parseErr) {
+        sheet.getRange(rowIndex, 3, rowIndex, 5).setValues([
+          [BREVO_QUEUE_MAX_ATTEMPTS, 'failed', 'invalid_payload']
+        ]);
+        continue;
+      }
+      var result;
+      try {
+        result = postBrevoContactPayload_(apiKey, payload);
+      } catch (fetchErr) {
+        result = {
+          ok: false,
+          code: 0,
+          errorDetail: 'exception'
+        };
+      }
+      if (result.ok) {
+        sheet.deleteRow(rowIndex);
+        continue;
+      }
+      attempts += 1;
+      var nextStatus = attempts >= BREVO_QUEUE_MAX_ATTEMPTS ? 'failed' : 'pending';
+      brevoWarn_(result.errorDetail);
+      sheet.getRange(rowIndex, 3, rowIndex, 5).setValues([[attempts, nextStatus, result.errorDetail]]);
+    }
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function installBrevoTrigger() {
+  var handler = 'processBrevoQueue';
+  var triggers = ScriptApp.getProjectTriggers();
+  var i;
+  for (i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === handler) {
+      return;
+    }
+  }
+  ScriptApp.newTrigger(handler).timeBased().everyMinutes(5).create();
+}
+
 function buildBrevoContactPayload_(data) {
   var email = data && data.Email != null ? String(data.Email).trim() : '';
-  if (!email) return null;
+  if (!email || !isValidEmailForBrevo_(email)) return null;
   var payload = {
     email: email,
     attributes: {},
@@ -197,14 +357,11 @@ function buildBrevoPhonePayload_(data) {
   return payload;
 }
 
-function syncToBrevoContactList_(sheetName, data) {
+function enqueueBrevoContactList_(sheetName, data) {
   try {
     var apiKey = PropertiesService.getScriptProperties().getProperty('BREVO_API_KEY');
     if (!apiKey) {
-      Logger.log('Brevo: skipped (BREVO_API_KEY missing)');
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn('Brevo: skipped (BREVO_API_KEY missing)');
-      }
+      brevoWarn_('Brevo: skipped enqueue (BREVO_API_KEY missing)');
       return;
     }
     var payload = null;
@@ -216,35 +373,12 @@ function syncToBrevoContactList_(sheetName, data) {
       return;
     }
     if (!payload) {
-      Logger.log('Brevo: skipped (no payload for ' + sheetName + ')');
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn('Brevo: skipped (no payload for ' + sheetName + ')');
-      }
+      brevoWarn_('Brevo: skipped enqueue (no payload for ' + sheetName + ')');
       return;
     }
-    var res = UrlFetchApp.fetch(BREVO_CONTACTS_URL, {
-      method: 'post',
-      headers: {
-        'api-key': apiKey,
-        accept: 'application/json',
-        'content-type': 'application/json'
-      },
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
-    });
-    var code = res.getResponseCode();
-    if (code < 200 || code >= 300) {
-      var detail = res.getContentText();
-      Logger.log('Brevo: HTTP ' + code + ' ' + detail);
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn('Brevo: HTTP ' + code + ' ' + detail);
-      }
-    }
+    enqueueBrevoPayload_(payload);
   } catch (err) {
-    Logger.log('Brevo: ' + err);
-    if (typeof console !== 'undefined' && console.warn) {
-      console.warn('Brevo: ' + err);
-    }
+    brevoWarn_('Brevo enqueue: exception');
   }
 }
 
@@ -280,7 +414,7 @@ function doPost(e) {
     }
 
     appendLead_(sheet, data);
-    syncToBrevoContactList_(sheet, data);
+    enqueueBrevoContactList_(sheet, data);
     return jsonOutput_({ ok: true });
   } catch (err) {
     return jsonOutput_({ ok: false, error: 'server' });
