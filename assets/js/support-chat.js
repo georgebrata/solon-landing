@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  /* global solonIsSupportChatEnabled */
+  /* global SOLON_SUPPORT_CHAT_RUNTIME */
 
   const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent"; // re-enable per Trello jIwDAiCn
   const SESSION_KEY = "chat_session_id";
@@ -451,8 +451,17 @@
     });
   }
 
+  function isChatEnabled() {
+    return (
+      typeof SOLON_SUPPORT_CHAT_RUNTIME !== "undefined" &&
+      SOLON_SUPPORT_CHAT_RUNTIME &&
+      typeof SOLON_SUPPORT_CHAT_RUNTIME.isSupportChatEnabled === "function" &&
+      SOLON_SUPPORT_CHAT_RUNTIME.isSupportChatEnabled()
+    );
+  }
+
   function init() {
-    if (!solonIsSupportChatEnabled()) return;
+    if (!isChatEnabled()) return;
     if (document.getElementById("solon-support-chat")) return;
     buildUi();
     getSessionId();
