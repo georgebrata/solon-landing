@@ -286,22 +286,23 @@
   });
 
   /**
-   * Support chat widget (loaded from same directory as main.js / main.min.js)
+   * Support chat widget (loaded from same directory as main.js / main.min.js).
+   * Disabled: set SUPPORT_CHAT_ENABLED in assets/js/support-chat-config.js and uncomment below.
    */
+  /* re-enable per Trello jIwDAiCn
   (function loadSupportChat() {
-    const SUPPORT_CHAT_ENABLED = false; // re-enable per Trello jIwDAiCn — sync with assets/js/support-chat-config.js
-    if (SUPPORT_CHAT_ENABLED) {
-      const current = document.currentScript;
-      if (current && current.src) {
-        const chatSrc = current.src
-          .replace(/main\.min\.js(\?.*)?$/i, "support-chat.min.js$1")
-          .replace(/main\.js(\?.*)?$/i, "support-chat.js$1");
-        const script = document.createElement("script");
-        script.src = chatSrc;
-        script.defer = true;
-        document.body.appendChild(script);
-      }
-    }
-  })();
+    const SUPPORT_CHAT_ENABLED = false;
+    if (!SUPPORT_CHAT_ENABLED) return;
+    const current = document.currentScript
+    if (!current || !current.src) return
+    const chatSrc = current.src
+      .replace(/main\.min\.js(\?.*)?$/i, 'support-chat.min.js$1')
+      .replace(/main\.js(\?.*)?$/i, 'support-chat.js$1')
+    const script = document.createElement('script')
+    script.src = chatSrc
+    script.defer = true
+    document.body.appendChild(script)
+  })()
+  */
 
 })()

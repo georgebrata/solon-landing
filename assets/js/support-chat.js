@@ -1,10 +1,7 @@
 (function () {
   "use strict";
 
-  const SUPPORT_CHAT_ENABLED =
-    typeof require === "function"
-      ? require("./support-chat-config.js").SUPPORT_CHAT_ENABLED
-      : false; // re-enable per Trello jIwDAiCn — browser loads only when enabled from main.js
+  const SUPPORT_CHAT_ENABLED = false; // re-enable per Trello jIwDAiCn — sync with assets/js/support-chat-config.js
 
   const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent"; // re-enable per Trello jIwDAiCn
   const SESSION_KEY = "chat_session_id";
@@ -466,6 +463,7 @@
     module.exports = { parseApiResponse };
   }
 
+  /* re-enable per Trello jIwDAiCn — set SUPPORT_CHAT_ENABLED true in support-chat-config.js and uncomment
   if (typeof document !== "undefined") {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
@@ -473,4 +471,5 @@
       init();
     }
   }
+  */
 })();
