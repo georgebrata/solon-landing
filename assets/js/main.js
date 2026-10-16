@@ -289,6 +289,8 @@
    * Support chat widget (loaded from same directory as main.js / main.min.js)
    */
   (function loadSupportChat() {
+    const SUPPORT_CHAT_ENABLED = false; // re-enable per Trello jIwDAiCn — sync with assets/js/support-chat-config.js
+    if (!SUPPORT_CHAT_ENABLED) return;
     const current = document.currentScript
     if (!current || !current.src) return
     const chatSrc = current.src

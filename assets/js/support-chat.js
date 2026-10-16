@@ -1,7 +1,9 @@
 (function () {
   "use strict";
 
-  const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent";
+  const SUPPORT_CHAT_ENABLED = false; // re-enable per Trello jIwDAiCn — sync with assets/js/support-chat-config.js
+
+  const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent"; // re-enable per Trello jIwDAiCn
   const SESSION_KEY = "chat_session_id";
   const HISTORY_KEY = "chat_history";
   const GREETING = "Bună! Sunt asistentul SOLON. Spune-mi cu ce te pot ajuta.";
@@ -451,6 +453,7 @@
   }
 
   function init() {
+    if (!SUPPORT_CHAT_ENABLED) return; // re-enable per Trello jIwDAiCn
     if (document.getElementById("solon-support-chat")) return;
     buildUi();
     getSessionId();

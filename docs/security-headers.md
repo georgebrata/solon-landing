@@ -45,7 +45,7 @@ Until that URL is replaced, QA is still the DevTools console.
 
 ## Switch CSP from Report-Only to enforcing
 
-After homepage, a blog post, contact/callback/newsletter, support chat, Stripe plan click, Google Calendar embed, `/feedback/`, and `/unsubscribe/` show **no unexpected** Report-Only violations in DevTools:
+After homepage, a blog post, contact/callback/newsletter, Stripe plan click, Google Calendar embed, `/feedback/`, and `/unsubscribe/` show **no unexpected** Report-Only violations in DevTools (support chat is disabled; re-enable per Trello jIwDAiCn before re-testing that flow):
 
 1. Copy the `Content-Security-Policy-Report-Only` value onto `Content-Security-Policy` (keep `frame-ancestors 'self'` in that policy).
 2. Delete the `Content-Security-Policy-Report-Only` line.
@@ -67,7 +67,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 
 | Purpose | Hosts | CSP directives |
 | --- | --- | --- |
-| First-party | `'self'` (`/assets/`, `/blog/posts.json`, support-chat, forms, consent.js when #26 lands) | default / script / style / img / font / connect / frame / form-action / worker |
+| First-party | `'self'` (`/assets/`, `/blog/posts.json`, forms, consent.js when #26 lands) | default / script / style / img / font / connect / frame / form-action / worker |
 | GA4 / gtag | `www.googletagmanager.com`, `www.google-analytics.com`, `*.google-analytics.com`, `region1.google-analytics.com`, `analytics.google.com`, `*.analytics.google.com`, `*.googletagmanager.com`, `stats.g.doubleclick.net`, `www.google.com`, `www.google.ro` | script, img, connect |
 | Meta Pixel | `connect.facebook.net`, `www.facebook.com`, `*.facebook.com` | script, img, connect |
 | Microsoft Clarity | `www.clarity.ms`, `scripts.clarity.ms`, `*.clarity.ms` | script, img, connect, worker |
@@ -78,7 +78,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | Google Fonts | `fonts.googleapis.com`, `fonts.gstatic.com` | style, font |
 | Forms / FAQ Sheets | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action |
 | IP lookup | `api64.ipify.org` | connect |
-| Support chat | `solon-agency.app.n8n.cloud` | connect |
+| Support chat (disabled; re-enable per Trello jIwDAiCn) | `solon-agency.app.n8n.cloud` — omit from CSP while off | connect |
 | Stripe Payment Links | `buy.stripe.com` is a **top-level navigation** (not CSP). `js.stripe.com` / `hooks.stripe.com` reserved if Checkout is ever embedded | frame, script |
 | Cloudflare Turnstile (#31) | `challenges.cloudflare.com` | script, style, img, connect, frame, worker |
 | NETOPIA / ANPC widget | Script `mny.ro/npId.js` injects an SVG from `mny.ro`. `anpc.ro` is a text link; logos are first-party under `/assets/img/` | script, img, connect |
