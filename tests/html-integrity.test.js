@@ -179,3 +179,23 @@ test(".htaccess CSP allows Turnstile and consent-gated tracker hosts", () => {
   assert.match(cspLine, /frame-src[^"]*challenges\.cloudflare\.com/);
   assert.match(cspLine, /connect-src[^"]*challenges\.cloudflare\.com/);
 });
+
+test("support chat is disabled: flag off, no support-chat.js in HTML, no n8n in CSP", () => {
+  const { SUPPORT_CHAT_ENABLED } = require("../assets/js/support-chat-config.js");
+  assert.equal(SUPPORT_CHAT_ENABLED, false);
+
+  const offenders = [];
+  for (const file of htmlFiles()) {
+    if (SKIP_PAGES.has(file)) continue;
+    const html = fs.readFileSync(file, "utf8");
+    if (/support-chat(?:\.min)?\.js/i.test(html)) {
+      offenders.push(path.relative(root, file));
+    }
+  }
+  assert.deepEqual(offenders, []);
+
+  const htaccess = fs.readFileSync(path.join(root, ".htaccess"), "utf8");
+  const cspLine = htaccess.split("\n").find((line) => line.includes("Content-Security-Policy-Report-Only"));
+  assert.ok(cspLine, "missing CSP Report-Only header");
+  assert.ok(!/n8n\.cloud/i.test(cspLine), "connect-src must not allow n8n while chat is off");
+});

@@ -463,7 +463,6 @@
     module.exports = { parseApiResponse };
   }
 
-  /* re-enable per Trello jIwDAiCn — set SUPPORT_CHAT_ENABLED true in support-chat-config.js and uncomment
   if (typeof document !== "undefined") {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
@@ -471,5 +470,4 @@
       init();
     }
   }
-  */
 })();
