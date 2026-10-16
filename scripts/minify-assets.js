@@ -19,14 +19,16 @@ const loadSupportChatConfig = function loadSupportChatConfig() {
 };
 
 /**
- * Inlines support-chat-config for browser bundles (main.min.js / support-chat.min.js).
+ * Prepends SOLON_SUPPORT_CHAT_RUNTIME + browser helpers for main/support-chat minify.
  * @param {string} source
  * @returns {string}
  */
-const inlineSupportChatConfig = function inlineSupportChatConfig(source) {
+const prependSupportChatRuntime = function prependSupportChatRuntime(source) {
   const enabled = loadSupportChatConfig().SUPPORT_CHAT_ENABLED;
-  const inlineConfig = `{SUPPORT_CHAT_ENABLED:${enabled},isSupportChatEnabled:function(){return ${enabled};},resolveSupportChatScriptSrc:function(currentScript){if(!${enabled})return null;if(!currentScript||!currentScript.src)return null;return currentScript.src.replace(/main\\.min\\.js(\\?.*)?$/i,"support-chat.min.js$1").replace(/main\\.js(\\?.*)?$/i,"support-chat.js$1");}}`;
-  return source.replace(/require\(["']\.\/support-chat-config\.js["']\)/g, inlineConfig);
+  const runtimeVar = `var SOLON_SUPPORT_CHAT_RUNTIME={SUPPORT_CHAT_ENABLED:${enabled},isSupportChatEnabled:function(){return ${enabled};},resolveSupportChatScriptSrc:function(currentScript){if(!${enabled})return null;if(!currentScript||!currentScript.src)return null;return currentScript.src.replace(/main\\.min\\.js(\\?.*)?$/i,"support-chat.min.js$1").replace(/main\\.js(\\?.*)?$/i,"support-chat.js$1");}};\n`;
+  const helpersPath = path.join(root, "assets/js/support-chat-runtime.js");
+  const helpers = fs.readFileSync(helpersPath, "utf8");
+  return `${runtimeVar}${helpers}\n${source}`;
 };
 
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
@@ -205,7 +207,7 @@ const minifyJs = async function minifyJs(relPath) {
   }
   let input = fs.readFileSync(full, "utf8");
   if (relPath === "main.js" || relPath === "support-chat.js") {
-    input = inlineSupportChatConfig(input);
+    input = prependSupportChatRuntime(input);
   }
   const result = await terserMinify(input, {
     compress: true,

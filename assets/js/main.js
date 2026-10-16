@@ -8,6 +8,7 @@
 /* global Swiper, AOS, GLightbox, Isotope, Waypoint */
 (function() {
   "use strict";
+  /* global solonResolveSupportChatScriptSrc */
 
   /**
    * Easy selector helper function
@@ -290,8 +291,7 @@
    * Flag: assets/js/support-chat-config.js (inlined into *.min.js at npm run minify).
    */
   (function loadSupportChat() {
-    const { resolveSupportChatScriptSrc } = require("./support-chat-config.js");
-    const chatSrc = resolveSupportChatScriptSrc(document.currentScript);
+    const chatSrc = solonResolveSupportChatScriptSrc(document.currentScript);
     if (!chatSrc) return;
     const script = document.createElement("script");
     script.src = chatSrc;

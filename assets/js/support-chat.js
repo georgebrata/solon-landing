@@ -1,7 +1,6 @@
 (function () {
   "use strict";
-
-  const { isSupportChatEnabled } = require("./support-chat-config.js");
+  /* global solonIsSupportChatEnabled */
 
   const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent"; // re-enable per Trello jIwDAiCn
   const SESSION_KEY = "chat_session_id";
@@ -453,7 +452,7 @@
   }
 
   function init() {
-    if (!isSupportChatEnabled()) return;
+    if (!solonIsSupportChatEnabled()) return;
     if (document.getElementById("solon-support-chat")) return;
     buildUi();
     getSessionId();
