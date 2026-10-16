@@ -287,22 +287,16 @@
 
   /**
    * Support chat widget (loaded from same directory as main.js / main.min.js).
-   * Disabled: set SUPPORT_CHAT_ENABLED in assets/js/support-chat-config.js and uncomment below.
+   * Flag: assets/js/support-chat-config.js (inlined into *.min.js at npm run minify).
    */
-  /* re-enable per Trello jIwDAiCn
   (function loadSupportChat() {
-    const SUPPORT_CHAT_ENABLED = false;
-    if (!SUPPORT_CHAT_ENABLED) return;
-    const current = document.currentScript
-    if (!current || !current.src) return
-    const chatSrc = current.src
-      .replace(/main\.min\.js(\?.*)?$/i, 'support-chat.min.js$1')
-      .replace(/main\.js(\?.*)?$/i, 'support-chat.js$1')
-    const script = document.createElement('script')
-    script.src = chatSrc
-    script.defer = true
-    document.body.appendChild(script)
-  })()
-  */
+    const { resolveSupportChatScriptSrc } = require("./support-chat-config.js");
+    const chatSrc = resolveSupportChatScriptSrc(document.currentScript);
+    if (!chatSrc) return;
+    const script = document.createElement("script");
+    script.src = chatSrc;
+    script.defer = true;
+    document.body.appendChild(script);
+  })();
 
 })()

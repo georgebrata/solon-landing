@@ -180,9 +180,21 @@ test(".htaccess CSP allows Turnstile and consent-gated tracker hosts", () => {
   assert.match(cspLine, /connect-src[^"]*challenges\.cloudflare\.com/);
 });
 
-test("support chat is disabled: flag off, no support-chat.js in HTML, no n8n in CSP", () => {
-  const { SUPPORT_CHAT_ENABLED } = require("../assets/js/support-chat-config.js");
+test("support chat is disabled: loader returns no script URL and minified main does not embed chat", () => {
+  const {
+    SUPPORT_CHAT_ENABLED,
+    isSupportChatEnabled,
+    resolveSupportChatScriptSrc,
+  } = require("../assets/js/support-chat-config.js");
   assert.equal(SUPPORT_CHAT_ENABLED, false);
+  assert.equal(isSupportChatEnabled(), false);
+  assert.equal(
+    resolveSupportChatScriptSrc({ src: "https://solon.agency/assets/js/main.min.js?v=abc" }),
+    null
+  );
+
+  const mainMin = fs.readFileSync(path.join(root, "assets/js/main.min.js"), "utf8");
+  assert.ok(!/support-chat(?:\.min)?\.js/i.test(mainMin), "main.min.js must not reference support-chat");
 
   const offenders = [];
   for (const file of htmlFiles()) {

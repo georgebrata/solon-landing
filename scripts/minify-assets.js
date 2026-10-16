@@ -8,6 +8,27 @@ const { stampAllHtmlFiles } = require("./stamp-asset-refs");
 
 const root = path.join(__dirname, "..");
 
+const supportChatConfigPath = path.join(root, "assets/js/support-chat-config.js");
+
+/**
+ * @returns {import("../assets/js/support-chat-config.js")}
+ */
+const loadSupportChatConfig = function loadSupportChatConfig() {
+  delete require.cache[supportChatConfigPath];
+  return require(supportChatConfigPath);
+};
+
+/**
+ * Inlines support-chat-config for browser bundles (main.min.js / support-chat.min.js).
+ * @param {string} source
+ * @returns {string}
+ */
+const inlineSupportChatConfig = function inlineSupportChatConfig(source) {
+  const enabled = loadSupportChatConfig().SUPPORT_CHAT_ENABLED;
+  const inlineConfig = `{SUPPORT_CHAT_ENABLED:${enabled},isSupportChatEnabled:function(){return ${enabled};},resolveSupportChatScriptSrc:function(currentScript){if(!${enabled})return null;if(!currentScript||!currentScript.src)return null;return currentScript.src.replace(/main\\.min\\.js(\\?.*)?$/i,"support-chat.min.js$1").replace(/main\\.js(\\?.*)?$/i,"support-chat.js$1");}}`;
+  return source.replace(/require\(["']\.\/support-chat-config\.js["']\)/g, inlineConfig);
+};
+
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
 const cssFiles = ["toggle.css", "two-up.css", "consent.css", "error-pages.css"];
 /** Sources to minify. Cache-busting is NOT this list: stamp-asset-refs.js
@@ -182,7 +203,10 @@ const minifyJs = async function minifyJs(relPath) {
     console.warn(`Skip missing JS: ${relPath}`);
     return true;
   }
-  const input = fs.readFileSync(full, "utf8");
+  let input = fs.readFileSync(full, "utf8");
+  if (relPath === "main.js" || relPath === "support-chat.js") {
+    input = inlineSupportChatConfig(input);
+  }
   const result = await terserMinify(input, {
     compress: true,
     mangle: true,
