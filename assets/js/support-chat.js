@@ -451,6 +451,9 @@
     });
   }
 
+  /**
+   * @returns {boolean}
+   */
   function isChatEnabled() {
     return (
       typeof SOLON_SUPPORT_CHAT_RUNTIME !== "undefined" &&

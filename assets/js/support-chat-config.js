@@ -3,6 +3,9 @@
 /** re-enable per Trello jIwDAiCn */
 const SUPPORT_CHAT_ENABLED = false;
 
+/**
+ * @returns {boolean}
+ */
 const isSupportChatEnabled = () => SUPPORT_CHAT_ENABLED;
 
 /**
