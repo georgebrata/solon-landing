@@ -1,7 +1,8 @@
 (function () {
   "use strict";
+  /* global SOLON_SUPPORT_CHAT_RUNTIME */
 
-  const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent";
+  const API = "https://solon-agency.app.n8n.cloud/webhook/customer-support-agent"; // re-enable per Trello jIwDAiCn
   const SESSION_KEY = "chat_session_id";
   const HISTORY_KEY = "chat_history";
   const GREETING = "Bună! Sunt asistentul SOLON. Spune-mi cu ce te pot ajuta.";
@@ -450,7 +451,20 @@
     });
   }
 
+  /**
+   * @returns {boolean}
+   */
+  function isChatEnabled() {
+    return (
+      typeof SOLON_SUPPORT_CHAT_RUNTIME !== "undefined" &&
+      SOLON_SUPPORT_CHAT_RUNTIME &&
+      typeof SOLON_SUPPORT_CHAT_RUNTIME.isSupportChatEnabled === "function" &&
+      SOLON_SUPPORT_CHAT_RUNTIME.isSupportChatEnabled()
+    );
+  }
+
   function init() {
+    if (!isChatEnabled()) return;
     if (document.getElementById("solon-support-chat")) return;
     buildUi();
     getSessionId();

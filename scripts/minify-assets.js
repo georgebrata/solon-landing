@@ -8,6 +8,26 @@ const { stampAllHtmlFiles } = require("./stamp-asset-refs");
 
 const root = path.join(__dirname, "..");
 
+const supportChatConfigPath = path.join(root, "assets/js/support-chat-config.js");
+
+/**
+ * @returns {import("../assets/js/support-chat-config.js")}
+ */
+const loadSupportChatConfig = function loadSupportChatConfig() {
+  delete require.cache[supportChatConfigPath];
+  return require(supportChatConfigPath);
+};
+
+/**
+ * Prepends SOLON_SUPPORT_CHAT_RUNTIME + browser helpers for main/support-chat minify.
+ * @param {string} source
+ * @returns {string}
+ */
+const prependSupportChatRuntime = function prependSupportChatRuntime(source) {
+  const prefix = loadSupportChatConfig().buildBrowserRuntimePrefix();
+  return `${prefix}${source}`;
+};
+
 /** style.css imports toggle.css in source; we merge before minify so one request carries both. */
 const cssFiles = ["toggle.css", "two-up.css", "consent.css", "error-pages.css"];
 /** Sources to minify. Cache-busting is NOT this list: stamp-asset-refs.js
@@ -182,7 +202,10 @@ const minifyJs = async function minifyJs(relPath) {
     console.warn(`Skip missing JS: ${relPath}`);
     return true;
   }
-  const input = fs.readFileSync(full, "utf8");
+  let input = fs.readFileSync(full, "utf8");
+  if (relPath === "main.js" || relPath === "support-chat.js") {
+    input = prependSupportChatRuntime(input);
+  }
   const result = await terserMinify(input, {
     compress: true,
     mangle: true,

@@ -5,7 +5,7 @@
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
-/* global Swiper, AOS, GLightbox, Isotope, Waypoint */
+/* global Swiper, AOS, GLightbox, Isotope, Waypoint, SOLON_SUPPORT_CHAT_RUNTIME */
 (function() {
   "use strict";
 
@@ -286,18 +286,21 @@
   });
 
   /**
-   * Support chat widget (loaded from same directory as main.js / main.min.js)
+   * Support chat widget (loaded from same directory as main.js / main.min.js).
+   * Flag: assets/js/support-chat-config.js (inlined into *.min.js at npm run minify).
    */
   (function loadSupportChat() {
-    const current = document.currentScript
-    if (!current || !current.src) return
-    const chatSrc = current.src
-      .replace(/main\.min\.js(\?.*)?$/i, 'support-chat.min.js$1')
-      .replace(/main\.js(\?.*)?$/i, 'support-chat.js$1')
-    const script = document.createElement('script')
-    script.src = chatSrc
-    script.defer = true
-    document.body.appendChild(script)
-  })()
+    const runtime =
+      typeof SOLON_SUPPORT_CHAT_RUNTIME !== "undefined" ? SOLON_SUPPORT_CHAT_RUNTIME : null;
+    const chatSrc =
+      runtime && typeof runtime.resolveSupportChatScriptSrc === "function"
+        ? runtime.resolveSupportChatScriptSrc(document.currentScript)
+        : null;
+    if (!chatSrc) return;
+    const script = document.createElement("script");
+    script.src = chatSrc;
+    script.defer = true;
+    document.body.appendChild(script);
+  })();
 
 })()

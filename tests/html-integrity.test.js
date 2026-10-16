@@ -179,3 +179,49 @@ test(".htaccess CSP allows Turnstile and consent-gated tracker hosts", () => {
   assert.match(cspLine, /frame-src[^"]*challenges\.cloudflare\.com/);
   assert.match(cspLine, /connect-src[^"]*challenges\.cloudflare\.com/);
 });
+
+test("support chat is disabled: loader returns no script URL and minified main does not embed chat", () => {
+  const vm = require("vm");
+  const {
+    SUPPORT_CHAT_ENABLED,
+    isSupportChatEnabled,
+    resolveSupportChatScriptSrc,
+    buildBrowserRuntimePrefix,
+  } = require("../assets/js/support-chat-config.js");
+  assert.equal(SUPPORT_CHAT_ENABLED, false);
+  assert.equal(isSupportChatEnabled(), false);
+  assert.equal(
+    resolveSupportChatScriptSrc({ src: "https://solon.agency/assets/js/main.min.js?v=abc" }),
+    null
+  );
+
+  const browserCtx = { result: null };
+  vm.createContext(browserCtx);
+  vm.runInContext(
+    `${buildBrowserRuntimePrefix()}result = SOLON_SUPPORT_CHAT_RUNTIME.resolveSupportChatScriptSrc({ src: "https://solon.agency/assets/js/main.min.js?v=abc" });`,
+    browserCtx
+  );
+  assert.equal(browserCtx.result, null, "browser runtime prefix must match config when chat is off");
+
+  const mainMin = fs.readFileSync(path.join(root, "assets/js/main.min.js"), "utf8");
+  assert.ok(
+    mainMin.startsWith("var SOLON_SUPPORT_CHAT_RUNTIME="),
+    "main.min.js must load the browser runtime prefix from minify"
+  );
+  assert.ok(!/support-chat(?:\.min)?\.js/i.test(mainMin), "main.min.js must not reference support-chat");
+
+  const offenders = [];
+  for (const file of htmlFiles()) {
+    if (SKIP_PAGES.has(file)) continue;
+    const html = fs.readFileSync(file, "utf8");
+    if (/support-chat(?:\.min)?\.js/i.test(html)) {
+      offenders.push(path.relative(root, file));
+    }
+  }
+  assert.deepEqual(offenders, []);
+
+  const htaccess = fs.readFileSync(path.join(root, ".htaccess"), "utf8");
+  const cspLine = htaccess.split("\n").find((line) => line.includes("Content-Security-Policy-Report-Only"));
+  assert.ok(cspLine, "missing CSP Report-Only header");
+  assert.ok(!/n8n\.cloud/i.test(cspLine), "connect-src must not allow n8n while chat is off");
+});
