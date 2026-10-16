@@ -65,7 +65,7 @@ json_ld: |-
             "name": "Pot încărca un dosar cu date de client?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Nu înainte să știi unde sunt procesate datele, cine are acces și ce prevede contractul de prelucrare. Anonimizezi unde poți. Microsoft descrie o limită de serviciu Microsoft 365 și spune că prompturile și documentele nu antrenează modelele de bază. Tu răspunzi pentru actul pe care îl semnezi."
+              "text": "Nu înainte să știi unde sunt procesate datele, cine are acces și ce prevede contractul de prelucrare. Anonimizezi unde poți. Microsoft descrie o limită de serviciu Microsoft 365 și spune că prompturile și documentele nu antrenează modelele de bază; asta nu îți spune, singur, în ce țară sunt procesate datele. Tu răspunzi pentru actul pe care îl semnezi."
             }
           },
           {
@@ -94,9 +94,9 @@ Pe 15 octombrie 2026, Microsoft a anunțat Copilot for legal: peste 20 de abilit
 
 ## 1. Ce s-a anunțat pe 15 octombrie 2026
 
-[Anunțul din Microsoft Tech Community](https://techcommunity.microsoft.com/blog/microsoft-copilot-blog/introducing-microsoft-copilot-for-legal/4564246) prezintă peste 20 de abilități juridice, plus pluginuri de parteneri. Nu sunt prompturi lipite peste un model general. La o modificare de clauză, Word aplică editarea ca modificare urmărită și păstrează formatarea.
+[Anunțul din Microsoft Tech Community](https://techcommunity.microsoft.com/blog/microsoft-copilot-blog/introducing-microsoft-copilot-for-legal/4564246) prezintă peste 20 de abilități juridice, plus pluginuri de parteneri. Microsoft spune că abilitățile merg dincolo de simple prompturi. La o modificare de clauză, Word aplică editarea ca modificare urmărită și păstrează formatarea.
 
-Este evoluția Legal Agent, arătat în aprilie 2026. [Law.com](https://www.law.com/legaltechnews/2026/10/15/-microsoft-launches-legal-skills-within-copilot-furthering-move-into-legal-tech/) o descrie la fel. [Mesajul MC1509799](https://mc.merill.net/message/MC1509799) adaugă că Legal Agent se retrage, iar utilizatorii existenți pierd accesul la acel produs. Dacă l-ai testat în primăvară, verifică în tenant ce a rămas.
+Este evoluția Legal Agent, arătat în aprilie 2026. [Law.com](https://www.law.com/legaltechnews/2026/10/15/-microsoft-launches-legal-skills-within-copilot-furthering-move-into-legal-tech/) o descrie la fel. [Mesajul MC1509799](https://mc.merill.net/message/MC1509799) (arhivă neoficială) adaugă că Legal Agent se retrage, iar utilizatorii existenți pierd accesul la acel produs. Dacă l-ai testat în primăvară, verifică în tenant ce a rămas.
 
 Copilot, Microsoft 365, Word și Cowork sunt mărci ale Microsoft. Claude este marcă a Anthropic. Gemini este marcă a Google. ChatGPT și Astra sunt mărci ale OpenAI. Textul nu recomandă un produs.
 
@@ -230,18 +230,20 @@ Comentariul de piață vorbește uneori despre presiunea asupra furnizorilor de 
 
 Secretul profesional, în Legea nr. 51/1995 și în Statutul profesiei de avocat, nu se suspendă pentru că unealta stă în Word. Nu încarci date de client până nu știi unde sunt procesate și cine are acces. Anonimizezi unde poți.
 
-La GDPR îți trebuie un temei, contractul de prelucrare cu furnizorul, locația datelor, retenția și informarea clienților, acolo unde situația o cere. În anunțul din 15 octombrie, Microsoft scrie că prompturile și răspunsurile stau în limita serviciului Microsoft 365, cu protecție de date enterprise, că Copilot lucrează doar cu conținutul la care ai deja acces, că respectă etichetele de sensibilitate și că nu folosește prompturile, răspunsurile sau documentele ca să antreneze modelele de bază. Este descrierea Microsoft, nu o dezlegare de la barou. O citești lângă contract și lângă setările tenantului.
+La GDPR îți trebuie un temei, contractul de prelucrare cu furnizorul, locația datelor, retenția și informarea clienților, acolo unde situația o cere. În anunțul din 15 octombrie, Microsoft scrie că prompturile și răspunsurile stau în limita serviciului Microsoft 365, cu protecție de date enterprise, că Copilot lucrează doar cu conținutul la care ai deja acces, că respectă etichetele de sensibilitate și că nu folosește prompturile, răspunsurile sau documentele ca să antreneze modelele de bază. Este descrierea Microsoft, nu o dezlegare de la barou. O citești lângă contract și lângă setările tenantului. Limita serviciului Microsoft 365 nu înseamnă, singură, că datele rămân în Uniunea Europeană: locația o verifici în documentația Microsoft despre EU Data Boundary, cu excepțiile ei, și în acordul de prelucrare a datelor. Descrierea privește Copilot în Microsoft 365. Pluginurile de parteneri și sursele juridice terțe au propriii furnizori și propriile condiții: înainte să le folosești pe un dosar, verifici separat cine primește datele și ce contract ai cu acel furnizor.
 
 Poți greși tu, poate greși și modelul. Răspunzi pentru actul semnat. Pentru încadrare, pleacă de la [EU AI Act explicat pentru cabinete de avocați](../eu-ai-act-pentru-cabinete-de-avocati/). Dacă datele nu au voie să iasă din cabinet, compară un [asistent AI local și privat](../asistent-ai-local-privat-pentru-avocati/). Corespondența rămâne un flux separat de acest plugin. Pentru ea există ghidul [Cum să folosești Outlook ca avocat](../cum-sa-folosesti-outlook-ca-avocat/).
 
 Înainte de primul dosar real, bifează:
 
+- Lucrezi din contul de serviciu al cabinetului, nu dintr-un cont personal de Copilot.
 - Licența Microsoft 365 Copilot comercială este pe contul care deschide Word.
 - Pluginul juridic se vede în Word pe desktop. În Cowork l-ai adăugat explicit, dacă acolo vrei să lucrezi.
 - Știi dacă administratorul l-a lăsat pornit.
 - Pentru revizuire ai un playbook `.docx` pe care l-ai citit, nu un fișier gol.
 - Ai scos din document datele care nu trebuie să iasă, acolo unde anonimizarea este posibilă.
 - Ai contractul de prelucrare și știi pe cine întrebi despre locație și retenție.
+- Pluginurile de parteneri sunt oprite pentru dosarele cu date de client sau le-ai verificat separat, cu contractul fiecărui furnizor.
 - Ai timp să citești citările și fiecare modificare urmărită înainte de **Accept**.
 - Nu ai promis clientului un termen mai scurt pe baza acestui anunț.
 
@@ -265,7 +267,7 @@ Nu în forma descrisă acum de Microsoft. Revizuirea pornește dintr-un playbook
 
 ### Pot încărca un dosar cu date de client?
 
-Nu înainte să știi unde sunt procesate datele, cine are acces și ce prevede contractul de prelucrare. Anonimizezi unde poți. Microsoft descrie o limită de serviciu Microsoft 365 și spune că prompturile și documentele nu antrenează modelele de bază. Tu răspunzi pentru actul pe care îl semnezi.
+Nu înainte să știi unde sunt procesate datele, cine are acces și ce prevede contractul de prelucrare. Anonimizezi unde poți. Microsoft descrie o limită de serviciu Microsoft 365 și spune că prompturile și documentele nu antrenează modelele de bază; asta nu îți spune, singur, în ce țară sunt procesate datele. Tu răspunzi pentru actul pe care îl semnezi.
 
 ### Acoperă dreptul român sau răspunde bine în română?
 
@@ -283,6 +285,6 @@ Dacă dorești să implementezi un flux de lucru cu instrumente de inteligență
 
 ---
 
-> *Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul Legii nr. 51/1995. Pentru asistență personalizată, vă recomandăm consultarea unui avocat specializat.*
-
-<!-- AI-Assisted Content | Verified by SOLON Editorial | Model: Gemini / Claude | Compliance: EU AI Act Art. 50 -->
+> *Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul Legii nr. 51/1995. Pentru o situație concretă, consultă un avocat.*
+>
+> *Articol redactat cu asistență AI, verificat și asumat editorial de echipa SOLON.*
