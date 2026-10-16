@@ -27,7 +27,7 @@ const resolveSupportChatScriptSrc = (currentScript) => {
 
 /**
  * Prepended to main.min.js and support-chat.min.js at build time (browser runtime).
- * @returns {string}
+ * @returns {string} JavaScript source prefix defining `SOLON_SUPPORT_CHAT_RUNTIME`
  */
 const buildBrowserRuntimePrefix = () => {
   const enabled = SUPPORT_CHAT_ENABLED;
