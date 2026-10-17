@@ -47,6 +47,39 @@ test("pricing HTML has no Stripe links and prices are in RON", () => {
   }
 });
 
+test("pricing block omits notes and add-ons", () => {
+  const rendered = render(html, model(validate(snapshot)));
+  const block = rendered.match(/<!-- PRICING:START[\s\S]*?<!-- PRICING:END -->/u)[0];
+  const absent = [
+    "pricing-notes",
+    "pricing-addons",
+    "addon-list",
+    "addon-name",
+    "addon-price",
+    "Servicii suplimentare",
+    "Prețurile sunt în lei",
+    "plătitoare de TVA",
+    "Sincronizarea social media",
+    "abonament mai vechi",
+    "Reducere la juridis.ro",
+  ];
+  for (const phrase of absent) {
+    assert.ok(!block.includes(phrase), phrase);
+  }
+  assert.match(block, /pricing-billing-toggle/);
+  assert.match(block, /PAYMENT-LINK bronze\/monthly/);
+  for (const name of ["BRONZE", "SILVER", "GOLD", "PLATINUM"]) {
+    assert.ok(block.includes(name), name);
+  }
+  const after = rendered.split("<!-- PRICING:END -->")[1];
+  assert.match(after, /Pentru o <b>ofertă personalizată<\/b>/);
+  const css = fs.readFileSync(path.join(root, "assets/css/style.css"), "utf8");
+  assert.ok(!css.includes(".pricing-notes"));
+  assert.ok(!css.includes(".pricing-addons"));
+  assert.ok(!css.includes(".addon-list"));
+  assert.ok(!css.includes(".addon-price"));
+});
+
 test("sheet text is HTML-escaped", () => {
   const data = JSON.parse(JSON.stringify(snapshot));
   data.Abonamente[1].Servicii = "<script>x</script>";
