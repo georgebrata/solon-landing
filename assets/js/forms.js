@@ -290,15 +290,14 @@
     return "";
   };
 
-  /** Tell Brevo who submitted, only after a confirmed email save.
+  /** Tell Brevo who subscribed, only after a confirmed standalone newsletter save.
+   * Contact never identifies, including the follow-up Newsletter save sent when
+   * NewsletterOptIn is checked. Telefon never identifies.
    * The tracker no-ops without marketing consent or a real client key.
    */
   const notifyBrevo = (type, values, form) => {
     try {
-      // Leads list (Brevo id 11) is synced server-side only; never identify from Telefon or bare Contact.
-      if (type === "Telefon") return;
-      const optedIn = form?.elements?.namedItem("NewsletterOptIn")?.checked === true;
-      if (type !== "Newsletter" && !(type === "Contact" && optedIn)) return;
+      if (type !== "Newsletter" || form?.dataset?.solonForm !== "Newsletter") return;
       const email = String(values?.Email || "").trim();
       if (!email) return;
       const tracker = window.SolonBrevo;
