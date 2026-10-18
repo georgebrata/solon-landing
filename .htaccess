@@ -315,14 +315,18 @@ AddDefaultCharset utf-8
 
   # SHORTLINKS-LATE:START
   <If "%{REQUEST_URI} =~ m#^/r/#">
-    ExpiresActive Off
+    <IfModule mod_expires.c>
+      ExpiresActive Off
+    </IfModule>
     Header unset Cache-Control
     Header always unset Cache-Control
     Header set Cache-Control "no-store"
     Header always merge Vary "Accept"
   </If>
   <If "%{REQUEST_URI} =~ m#^/(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)/?$#">
-    ExpiresActive Off
+    <IfModule mod_expires.c>
+      ExpiresActive Off
+    </IfModule>
     Header unset Cache-Control
     Header always unset Cache-Control
     Header set Cache-Control "no-store" "expr=%{REQUEST_STATUS} < 300"
