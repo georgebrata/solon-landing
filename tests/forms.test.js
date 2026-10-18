@@ -585,6 +585,7 @@ test("contact and newsletter forms carry their privacy notice above submit", () 
     const optIn = form.slice(optInStart, form.indexOf("</label>", optInStart));
     assert.ok(form.includes(contactNote), rel);
     assert.equal(note.includes(visitLink), false, rel);
+    assert.equal(optIn.includes(visitLink), false, rel);
     assert.ok(optIn.includes(contactOptIn), rel);
     assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
   }

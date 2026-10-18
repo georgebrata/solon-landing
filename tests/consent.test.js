@@ -503,4 +503,35 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
     assert.ok(html.includes(needle), `policy missing “${needle}”`);
   }
   assert.equal(html.includes("Nu desfășurăm activități de tip publicitate personalizată"), false);
+  assert.ok(
+    html.includes("identificarea când te abonezi prin formularul de newsletter"),
+    "Marketing Brevo copy must describe newsletter form only"
+  );
+  assert.equal(html.includes("trimiți un formular cu email"), false);
+});
+
+test("consent marketing category describes Brevo visit linking via newsletter only", () => {
+  assert.ok(
+    source.includes(
+      "Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale de pe site de adresa ta."
+    )
+  );
+  assert.equal(source.includes("Dacă trimiți un formular cu emailul tău, Brevo poate lega"), false);
+});
+
+test("privacy policy limits Brevo visit linking to newsletter subscription", () => {
+  const html = fs.readFileSync(path.join(root, "privacy/index.html"), "utf8");
+  assert.ok(html.includes("dacă te abonezi prin formularul de newsletter, adresa de email"));
+  assert.ok(
+    html.includes(
+      "legând vizitele tale pe site de adresa ta de email dacă te abonezi prin formularul de newsletter."
+    )
+  );
+  assert.ok(
+    html.includes(
+      "Dacă bifezi abonarea la newsletter, adresa ta de email intră și în lista de newsletter din Brevo; această bifare nu leagă vizitele tale pe website de adresa ta."
+    )
+  );
+  assert.equal(html.includes("dacă trimiți un formular, adresa de email"), false);
+  assert.equal(html.includes("după ce te identifici printr-un formular"), false);
 });
