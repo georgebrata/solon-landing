@@ -106,11 +106,11 @@ const dayOf = (value) => {
  * @returns {string}
  */
 const laterDay = (left, right) => {
-  const a = dayOf(left);
-  const b = dayOf(right);
-  if (!a) return b;
-  if (!b) return a;
-  return a > b ? a : b;
+  const leftDay = dayOf(left);
+  const rightDay = dayOf(right);
+  if (!leftDay) return rightDay;
+  if (!rightDay) return leftDay;
+  return leftDay > rightDay ? leftDay : rightDay;
 };
 
 /**
@@ -241,7 +241,7 @@ const gitOutput = (repoRoot, args) => {
       maxBuffer: 16 * 1024 * 1024,
       stdio: ["ignore", "pipe", "pipe"],
     });
-  } catch (error) {
+  } catch {
     value = null;
   }
   gitCache.set(key, value);
@@ -446,6 +446,154 @@ const parseCli = (argv) => {
 };
 
 /**
+ * @param {string} xml
+ * @returns {{ loc: string, lastmod: string, priority: string }[]}
+ */
+const readUrlEntries = (xml) => {
+  const urlNodeRegex = /<url>\s*<loc>([\s\S]*?)<\/loc>\s*<lastmod>([\s\S]*?)<\/lastmod>\s*<priority>([\s\S]*?)<\/priority>\s*<\/url>/g;
+  const existingEntries = [];
+  for (const match of String(xml).matchAll(urlNodeRegex)) {
+    existingEntries.push({
+      loc: match[1].trim(),
+      lastmod: match[2].trim(),
+      priority: match[3].trim(),
+    });
+  }
+  return existingEntries;
+};
+
+/**
+ * @param {object[]} posts
+ * @returns {Map<string, string>}
+ */
+const postDatesFromPosts = (posts) => {
+  const postDateByUrl = new Map();
+  posts.forEach((post) => {
+    const postPath = normalizeBlogPath(post.url || post.slug);
+    if (!postPath) return;
+    const url = `${BASE_URL}/blog/${postPath}`;
+    const contentDay = dayOf(post.date_modified || post.updated || post.date);
+    postDateByUrl.set(url, contentDay);
+  });
+  return postDateByUrl;
+};
+
+/**
+ * @param {{ loc: string }[]} existingEntries
+ * @param {Map<string, string>} postDateByUrl
+ * @param {string} blogIndexLoc
+ * @returns {string[]}
+ */
+const gitLocsFor = (existingEntries, postDateByUrl, blogIndexLoc) => {
+  const gitLocs = existingEntries.map((entry) => entry.loc);
+  for (const url of postDateByUrl.keys()) {
+    if (!gitLocs.includes(url)) gitLocs.push(url);
+  }
+  if (!gitLocs.includes(blogIndexLoc)) gitLocs.push(blogIndexLoc);
+  return gitLocs;
+};
+
+/**
+ * @param {{ loc: string }[]} existingEntries
+ * @param {Map<string, string>} postDateByUrl
+ * @param {string} blogIndexLoc
+ * @returns {boolean}
+ */
+const sameBlogPostSet = (existingEntries, postDateByUrl, blogIndexLoc) => {
+  const sitemapPostUrls = existingEntries
+    .map((entry) => entry.loc)
+    .filter((loc) => loc.startsWith(`${BASE_URL}/blog/`) && loc !== blogIndexLoc);
+  const postUrlSet = new Set(postDateByUrl.keys());
+  if (sitemapPostUrls.length !== postUrlSet.size) return false;
+  return sitemapPostUrls.every((loc) => postUrlSet.has(loc));
+};
+
+/**
+ * @param {string} xml
+ * @param {string} loc
+ * @param {string} lastmod
+ * @param {string} priority
+ * @returns {string}
+ */
+const appendUrlNode = (xml, loc, lastmod, priority) => {
+  const node = buildUrlNode({ loc, lastmod, priority });
+  return xml.replace("</urlset>", `${node}\n</urlset>`);
+};
+
+/**
+ * @param {string} xml
+ * @param {string} loc
+ * @param {string} stored
+ * @param {string} contentDay
+ * @param {string} today
+ * @returns {string}
+ */
+const applyLastmod = (xml, loc, stored, contentDay, today) => {
+  const lastmod = resolveLastmod(stored, contentDay, today);
+  if (lastmod === stored) return xml;
+  return replaceLastmod(xml, loc, lastmod);
+};
+
+/**
+ * @param {string} xml
+ * @param {Map<string, string>} postDateByUrl
+ * @param {Map<string, { lastmod: string }>} existingByLoc
+ * @param {Map<string, string>} gitDays
+ * @param {string} today
+ * @returns {string}
+ */
+const rewritePostLastmods = (xml, postDateByUrl, existingByLoc, gitDays, today) => {
+  let next = xml;
+  for (const [url, contentDay] of postDateByUrl) {
+    const pageDay = laterDay(contentDay, gitDays.get(url));
+    const existing = existingByLoc.get(url);
+    if (!existing) {
+      next = appendUrlNode(next, url, resolveLastmod("", pageDay, today), BLOG_POST_PRIORITY);
+      continue;
+    }
+    next = applyLastmod(next, url, existing.lastmod, pageDay, today);
+  }
+  return next;
+};
+
+/**
+ * @param {string} xml
+ * @param {{ lastmod: string }|undefined} existingIndex
+ * @param {string|undefined} gitDay
+ * @param {boolean} sameSet
+ * @param {string} blogIndexLoc
+ * @param {string} today
+ * @returns {string}
+ */
+const rewriteBlogIndex = (xml, existingIndex, gitDay, sameSet, blogIndexLoc, today) => {
+  const indexContentDay = laterDay(gitDay, sameSet ? "" : today);
+  if (existingIndex) {
+    return applyLastmod(xml, blogIndexLoc, existingIndex.lastmod, indexContentDay, today);
+  }
+  if (!indexContentDay) return xml;
+  return appendUrlNode(xml, blogIndexLoc, resolveLastmod("", indexContentDay, today), BLOG_PRIORITY);
+};
+
+/**
+ * @param {string} xml
+ * @param {{ loc: string, lastmod: string }[]} existingEntries
+ * @param {Map<string, string>} postDateByUrl
+ * @param {string} blogIndexLoc
+ * @param {Map<string, string>} gitDays
+ * @param {string} today
+ * @returns {string}
+ */
+const rewriteOtherLastmods = (xml, existingEntries, postDateByUrl, blogIndexLoc, gitDays, today) => {
+  let next = xml;
+  for (const entry of existingEntries) {
+    if (isExcludedFromSitemap(entry.loc)) continue;
+    if (postDateByUrl.has(entry.loc) || entry.loc === blogIndexLoc) continue;
+    next = applyLastmod(next, entry.loc, entry.lastmod, gitDays.get(entry.loc) || "", today);
+  }
+  return next;
+};
+
+/**
  * Rewrite lastmod values in one sitemap file.
  * With `fromGit`, each loc also takes the newest commit that changed the
  * page content (working-tree edits count as `today`). Stored days that are
@@ -466,83 +614,20 @@ const updateSitemap = (options = {}) => {
 
   const original = fs.readFileSync(sitemapFile, "utf8");
   const sitemapContent = stripIndexNowKeyUrls(original);
-  const urlNodeRegex = /<url>\s*<loc>([\s\S]*?)<\/loc>\s*<lastmod>([\s\S]*?)<\/lastmod>\s*<priority>([\s\S]*?)<\/priority>\s*<\/url>/g;
-
-  const existingEntries = [];
-  let match = null;
-  while ((match = urlNodeRegex.exec(sitemapContent)) !== null) {
-    existingEntries.push({
-      loc: match[1].trim(),
-      lastmod: match[2].trim(),
-      priority: match[3].trim(),
-    });
-  }
-
-  const posts = JSON.parse(fs.readFileSync(postsFile, "utf8"));
+  const existingEntries = readUrlEntries(sitemapContent);
   const blogIndexLoc = `${BASE_URL}/blog/`;
-  const postDateByUrl = new Map();
-
-  posts.forEach((post) => {
-    const postPath = normalizeBlogPath(post.url || post.slug);
-    if (!postPath) return;
-    const url = `${BASE_URL}/blog/${postPath}`;
-    postDateByUrl.set(url, dayOf(post.date_modified || post.updated || post.date));
-  });
-
-  const gitLocs = existingEntries.map((entry) => entry.loc);
-  for (const url of postDateByUrl.keys()) {
-    if (!gitLocs.includes(url)) gitLocs.push(url);
-  }
-  if (!gitLocs.includes(blogIndexLoc)) gitLocs.push(blogIndexLoc);
-  const gitDays = fromGit ? loadGitContentDays(repoRoot, gitLocs, today) : new Map();
-
+  const postDateByUrl = postDatesFromPosts(JSON.parse(fs.readFileSync(postsFile, "utf8")));
+  const gitDays = fromGit
+    ? loadGitContentDays(repoRoot, gitLocsFor(existingEntries, postDateByUrl, blogIndexLoc), today)
+    : new Map();
   const existingByLoc = new Map(existingEntries.map((entry) => [entry.loc, entry]));
-  let xml = sitemapContent;
+  const sameSet = sameBlogPostSet(existingEntries, postDateByUrl, blogIndexLoc);
 
-  const sitemapPostUrls = existingEntries
-    .map((entry) => entry.loc)
-    .filter((loc) => loc.startsWith(`${BASE_URL}/blog/`) && loc !== blogIndexLoc);
-  const postUrlSet = new Set(postDateByUrl.keys());
-  const samePostSet = sitemapPostUrls.length === postUrlSet.size
-    && sitemapPostUrls.every((loc) => postUrlSet.has(loc));
+  let xml = rewritePostLastmods(sitemapContent, postDateByUrl, existingByLoc, gitDays, today);
+  xml = rewriteBlogIndex(xml, existingByLoc.get(blogIndexLoc), gitDays.get(blogIndexLoc), sameSet, blogIndexLoc, today);
+  xml = rewriteOtherLastmods(xml, existingEntries, postDateByUrl, blogIndexLoc, gitDays, today);
 
-  for (const [url, contentDay] of postDateByUrl) {
-    const pageDay = laterDay(contentDay, gitDays.get(url));
-    const existing = existingByLoc.get(url);
-    if (!existing) {
-      const lastmod = resolveLastmod("", pageDay, today);
-      const node = buildUrlNode({ loc: url, lastmod, priority: BLOG_POST_PRIORITY });
-      xml = xml.replace("</urlset>", `${node}\n</urlset>`);
-      continue;
-    }
-    const lastmod = resolveLastmod(existing.lastmod, pageDay, today);
-    if (lastmod !== existing.lastmod) xml = replaceLastmod(xml, url, lastmod);
-  }
-
-  const existingIndex = existingByLoc.get(blogIndexLoc);
-  const indexContentDay = laterDay(gitDays.get(blogIndexLoc), samePostSet ? "" : today);
-  if (existingIndex) {
-    const lastmod = resolveLastmod(existingIndex.lastmod, indexContentDay, today);
-    if (lastmod !== existingIndex.lastmod) xml = replaceLastmod(xml, blogIndexLoc, lastmod);
-  } else if (indexContentDay) {
-    const node = buildUrlNode({
-      loc: blogIndexLoc,
-      lastmod: resolveLastmod("", indexContentDay, today),
-      priority: BLOG_PRIORITY,
-    });
-    xml = xml.replace("</urlset>", `${node}\n</urlset>`);
-  }
-
-  for (const entry of existingEntries) {
-    if (isExcludedFromSitemap(entry.loc)) continue;
-    if (postDateByUrl.has(entry.loc) || entry.loc === blogIndexLoc) continue;
-    const lastmod = resolveLastmod(entry.lastmod, gitDays.get(entry.loc) || "", today);
-    if (lastmod !== entry.lastmod) xml = replaceLastmod(xml, entry.loc, lastmod);
-  }
-
-  if (xml !== original) {
-    fs.writeFileSync(sitemapFile, xml, "utf8");
-  }
+  if (xml !== original) fs.writeFileSync(sitemapFile, xml, "utf8");
   return xml;
 };
 
