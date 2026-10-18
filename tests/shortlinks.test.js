@@ -1044,6 +1044,7 @@ test("the snapshot drops Clicks and Total clicks", () => {
     " Total Clicks ": 2,
     "Total Clicks": 4,
     "Total clicks": 3,
+    Data: "2026-10-18",
     Notes: "do not keep",
     Activ: "TRUE",
     "Tip redirect": "302",
@@ -1061,6 +1062,7 @@ test("the snapshot drops Clicks and Total clicks", () => {
   assert.equal(serialised.includes("CLICKS"), false);
   assert.equal(serialised.includes("Total"), false);
   assert.equal(serialised.includes("do not keep"), false);
+  assert.equal(serialised.includes("2026-10-18"), false);
 });
 
 test("each published redirect posts one hit and the counter increments per id", () => {

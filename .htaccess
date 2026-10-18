@@ -44,10 +44,10 @@
   RewriteRule ^api/?$ - [E=SLQ:%{QUERY_STRING}]
   RewriteCond %{HTTP:Accept} !text/html
   RewriteCond %{ENV:SLQ} ^$
-  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbwEkYSZNimhG7tp8ysRRa4kZxHetdjibevl_m32e3Rvj3vtKLc4Y-Fo_sV5v0XIy33H/exec [R=302,L,NE]
+  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbzJQOSxwXJGkSAmJnPeY2-cG5e2iCZ4cZr82cC8ft_Fxku1wfjKUHQGo09avC1eDyI3/exec [R=302,L,NE]
   RewriteCond %{HTTP:Accept} !text/html
   RewriteCond %{ENV:SLQ} ^&?(.*)$
-  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbwEkYSZNimhG7tp8ysRRa4kZxHetdjibevl_m32e3Rvj3vtKLc4Y-Fo_sV5v0XIy33H/exec?%1 [R=302,L,NE]
+  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbzJQOSxwXJGkSAmJnPeY2-cG5e2iCZ4cZr82cC8ft_Fxku1wfjKUHQGo09avC1eDyI3/exec?%1 [R=302,L,NE]
   RewriteCond %{HTTP:Accept} text/html
   RewriteRule ^bronze\/lunar/?$ /r/bronze/lunar/index.html [L]
   RewriteCond %{HTTP:Accept} !text/html

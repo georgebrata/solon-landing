@@ -38,7 +38,7 @@ The redirect page sends only `{ "action": "hit", "id": "<id>" }` with `fetch`, `
 
 `connect-src` in the report-only Content-Security-Policy already allows `https://script.google.com` and `https://script.googleusercontent.com`, which is where that POST goes. Do not add other hosts for the counter.
 
-Paste `docs/apps-script/shortlinks-hit.gs` into the bound CRUD script and deploy a new version at the same URL. Do not deploy it from this repo. The counter sets no cookie. It increments `Clicks`, matching the header after trim and without regard to case. It uses `Total clicks` only when no `Clicks` column exists, so `Total Clicks` is that fallback and not a second counter. The snapshot still stores only `id`, `Original URL`, `Short URL`, `Activ`, and `Tip redirect`, and it drops both click columns in any case.
+Paste `docs/apps-script/shortlinks-hit.gs` into the bound CRUD script and deploy a new version at the same URL. Do not deploy it from this repo. The counter sets no cookie. It increments `Clicks`, matching the header after trim and without regard to case. It uses `Total clicks` only when no `Clicks` column exists. The live sheet headers are `id`, `Data`, `Original URL`, `Short URL`, `Clicks`, and `Notes`, so the counter writes `Clicks`. The snapshot still stores only `id`, `Original URL`, `Short URL`, `Activ`, and `Tip redirect`. It drops `Data`, `Notes`, and both click columns in any case.
 
 `r/` is disallowed in `robots.txt` and is excluded from the sitemap and from IndexNow. Do not add these URLs to the homepage carousel.
 
