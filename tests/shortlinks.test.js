@@ -38,8 +38,25 @@ const PUBLISHED_IDS = [
   "32d43dnc",
   "d234c439",
   "d3ejci334",
+  "fdsk43244",
+  "96t5n5434",
+  "9fdsjfd04n",
 ];
-const SKIPPED_KEY_IDS = ["hu43hb44", "fdsk43244", "96t5n5434", "9fdsjfd04n"];
+const SNAPSHOT_IDS = [
+  "a3hb4931",
+  "d1ea9ba3",
+  "nfdajfds3",
+  "dfsfsddf34",
+  "9nr2323n",
+  "de2nd432",
+  "32d43dnc",
+  "d234c439",
+  "d3ejci334",
+  "hu43hb44",
+  "fdsk43244",
+  "96t5n5434",
+  "9fdsjfd04n",
+];
 
 (() => {
 /**
@@ -367,6 +384,8 @@ test("validation skips bad rows, reserved paths, duplicates, and inactive rows",
   assert.equal(reasons.iddup, "duplicate-id");
   assert.equal(reasons.path1, "duplicate-path");
   assert.equal(reasons.path2, "duplicate-path");
+  assert.equal(ids.includes("path1"), false);
+  assert.equal(ids.includes("path2"), false);
   assert.equal(reasons.blog, "reserved");
   assert.equal(reasons.assets, "reserved");
   assert.equal(warnings.some((item) => item.reason === "uppercase" && item.id === "upper"), true);
@@ -567,15 +586,19 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.equal(serialised.includes("apiKey="), false);
   assert.equal(serialised.includes("Total clicks"), false);
   const ids = snapshot.ShortLinks.map((item) => item.id);
-  assert.deepEqual(ids, PUBLISHED_IDS);
+  assert.deepEqual(ids, SNAPSHOT_IDS);
   const allowedKeys = new Set(["id", "Original URL", "Short URL", "Activ", "Tip redirect"]);
   snapshot.ShortLinks.forEach((item) => {
     Object.keys(item).forEach((key) => {
       assert.equal(allowedKeys.has(key), true, key);
     });
   });
-  SKIPPED_KEY_IDS.forEach((id) => {
-    assert.equal(ids.includes(id), false, id);
+  assert.equal(ids.includes("hu43hb44"), true);
+  const apiPage = fs.readFileSync(path.join(ROOT, "r/api/index.html"), "utf8");
+  assert.ok(apiPage.includes('ID="a3hb4931"'));
+  assert.equal(apiPage.includes("hu43hb44"), false);
+  ["r/api/servicii/index.html", "r/api/abonamente/index.html", "r/api/urls/index.html"].forEach((rel) => {
+    assert.equal(fs.existsSync(path.join(ROOT, rel)), true, rel);
   });
 
   const config = JSON.parse(fs.readFileSync(path.join(ROOT, "data/shortlinks.config.json"), "utf8"));
@@ -833,6 +856,107 @@ test("build script does not call sendBeacon or URLSearchParams", () => {
   assert.equal(source.includes("SOLON_DATA_URL"), false);
   assert.equal(source.includes("AKfycbyH3"), false);
   assert.equal(source.includes("fetchTab"), true);
+});
+
+test("identical short URLs keep the first row and differing ones are both skipped", () => {
+  const warnings = [];
+  /**
+   * @param {string} id
+   * @param {string} reason
+   * @returns {void}
+   */
+  function warn(id, reason) {
+    warnings.push(`${reason}:${id}`);
+  }
+  const same = classifyShortLinks([
+    row({ id: "first", short: "https://solon.agency/api", dest: "https://example.com/exec" }),
+    row({ id: "second", short: "https://solon.agency/api/", dest: "https://example.com/exec" }),
+  ], { reserved: new Set(), warn });
+  assert.deepEqual(same.links.map((link) => link.id), ["first"]);
+  assert.deepEqual(same.skipped.map((item) => item.reason), ["duplicate-path"]);
+  assert.deepEqual(warnings, ["duplicate-path:second"]);
+
+  const different = classifyShortLinks([
+    row({ id: "left", short: "https://solon.agency/api", dest: "https://example.com/exec" }),
+    row({ id: "right", short: "https://solon.agency/api", dest: "https://example.com/other" }),
+  ], { reserved: new Set(), warn });
+  assert.deepEqual(different.links, []);
+  assert.deepEqual(different.skipped.map((item) => item.id), ["left", "right"]);
+
+  const typeDiff = classifyShortLinks([
+    row({ id: "tmp", short: "https://solon.agency/go", dest: "https://example.com/exec", tip: "302" }),
+    row({ id: "perm", short: "https://solon.agency/go", dest: "https://example.com/exec", tip: "301" }),
+  ], { reserved: new Set(), warn });
+  assert.deepEqual(typeDiff.links, []);
+  assert.deepEqual(typeDiff.skipped.map((item) => item.reason), ["duplicate-path", "duplicate-path"]);
+});
+
+test("a visitor query is merged into a destination that already has sheet", () => {
+  const dest = "https://script.google.com/macros/s/example/exec?sheet=Servicii";
+  assert.equal(
+    mergeQuery(dest, "?apiKey=abc%3D&page=2", ""),
+    "https://script.google.com/macros/s/example/exec?apiKey=abc%3D&page=2&sheet=Servicii"
+  );
+  assert.equal(
+    mergeQuery(dest, "?sheet=Other&apiKey=k", ""),
+    "https://script.google.com/macros/s/example/exec?sheet=Other&apiKey=k"
+  );
+  const htaccess = rulesFor({ path: "api/servicii", destination: dest, status: 302 });
+  const result = emulateRewrite(htaccess, {
+    path: "/api/servicii",
+    accept: "*/*",
+    query: "apiKey=abc%3D&page=2",
+  });
+  assert.equal(result.status, 302);
+  assert.equal(
+    result.location,
+    "https://script.google.com/macros/s/example/exec?apiKey=abc%3D&page=2&sheet=Servicii"
+  );
+});
+
+test("a visitor apiKey is passed through and is never stored", () => {
+  const secret = "visitor-only-secret";
+  const dest = "https://script.google.com/macros/s/example/exec?sheet=ShortLinks";
+  const link = { id: "9fdsjfd04n", path: "api/urls", destination: dest, status: 302 };
+  const html = renderPage(link, "");
+  const rules = renderInner([link]);
+  const snapshot = snapshotDocument([
+    row({ id: "9fdsjfd04n", short: "https://solon.agency/api/urls", dest }),
+  ]);
+  const stored = `${html}\n${rules}\n${JSON.stringify(snapshot)}`;
+  assert.equal(stored.includes("apiKey="), false);
+  assert.equal(stored.includes(secret), false);
+  const ran = runPage(html, { search: `?apiKey=${secret}&x=1` });
+  assert.equal(ran.calls.length, 0);
+  assert.equal(
+    ran.landed,
+    `https://script.google.com/macros/s/example/exec?apiKey=${secret}&x=1&sheet=ShortLinks`
+  );
+});
+
+test("htaccess, redirect pages, and the snapshot store no apiKey", () => {
+  const htaccess = fs.readFileSync(path.join(ROOT, ".htaccess"), "utf8");
+  const snapshotText = fs.readFileSync(path.join(ROOT, "data/shortlinks.snapshot.json"), "utf8");
+  assert.equal(htaccess.includes("apiKey="), false);
+  assert.equal(snapshotText.includes("apiKey="), false);
+  const walk = (dir) => {
+    fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else assert.equal(fs.readFileSync(full, "utf8").includes("apiKey="), false, full);
+    });
+  };
+  walk(path.join(ROOT, "r"));
+  const snapshot = JSON.parse(snapshotText);
+  const warnings = [];
+  const classified = classifyShortLinks(snapshot.ShortLinks, {
+    reserved: reservedFirstSegments(ROOT),
+    warn(id, reason) {
+      warnings.push(`${reason}:${id}`);
+    },
+  });
+  assert.deepEqual(classified.links.map((link) => link.id), PUBLISHED_IDS);
+  assert.deepEqual(warnings, ["duplicate-path:hu43hb44"]);
 });
 
 /**

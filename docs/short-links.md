@@ -13,7 +13,7 @@ George edits the `ShortLinks` tab. The next deploy publishes each active row as 
 5. Leave `Activ` empty to publish. Set it to FALSE to unpublish. `Tip redirect` is `302` unless the cell is `301` (the `301` applies only to non-browser clients).
 6. Deploy. `node scripts/build-shortlinks.js` reads the ShortLinks tab through the same key-protected client as `scripts/build-pricing.js` (`SHEETS_API_URL` and `SHEETS_API_KEY`). With no key configured it publishes the committed snapshot and logs a message that contains neither the URL nor the key. A bad row is skipped with `::warning::` and the build continues. A fetch, pagination, schema, or validation failure, including a response with no publishable row, logs `::error::` and leaves the snapshot, `.htaccess`, and `r/` untouched.
 
-The first path segment cannot be a top-level file or directory in the repo (`blog`, `assets`, `r`, and the rest), nor `.well-known`, `cgi-bin`, `wp-admin`, `cpanel`, `webmail`, `whm`, `cpcalendars`, `cpcontacts`, `autodiscover`, or `mail`. Two active rows with the same path are both skipped.
+The first path segment cannot be a top-level file or directory in the repo (`blog`, `assets`, `r`, and the rest), nor `.well-known`, `cgi-bin`, `wp-admin`, `cpanel`, `webmail`, `whm`, `cpcalendars`, `cpcontacts`, `autodiscover`, or `mail`. Two active rows with the same path, the same destination, and the same redirect type keep the first row in sheet order and log a warning for each later row. If the destination or the redirect type differs, both rows are skipped.
 
 Check locally:
 
@@ -42,9 +42,9 @@ Paste `docs/apps-script/shortlinks-hit.gs` into the bound CRUD script and deploy
 
 ## apiKey
 
-Rows whose `Original URL` contains an `apiKey` query parameter (any capitalisation of the key) are skipped. The warning names the id and nothing else. `apiKey=` plus a value must not appear in `data/shortlinks.snapshot.json`, `.htaccess`, or `r/`.
+Rows whose `Original URL` contains an `apiKey` query parameter (any capitalisation of the key, including the fragment and nested encodings) are skipped. The warning names the id and nothing else. `apiKey=` plus a value must not appear in `data/shortlinks.snapshot.json`, `.htaccess`, or `r/`.
 
-`/api` (id `a3hb4931`) has no key in the sheet. Visitors add their own key: `/api?apiKey=…&sheet=…`.
+`/api` (id `a3hb4931`) has no key in the sheet. `hu43hb44` is the same path and destination, so the build keeps `a3hb4931` and warns on `hu43hb44`. `/api/servicii`, `/api/abonamente`, and `/api/urls` are separate keyless rows. Visitors add their own key, and the query merge copies it byte for byte: `/api/servicii?apiKey=…`.
 
 Hostico access logs and the visitor's browser history still store the full query, including an apiKey. For server-to-server calls, use the Apps Script URL directly or POST. The redirect page does not put the query in a referrer: the page sets `no-referrer`, and the request omits credentials.
 

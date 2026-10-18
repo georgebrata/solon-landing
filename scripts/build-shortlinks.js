@@ -318,7 +318,7 @@ function classifyShortLinks(rows, options = {}) {
   });
 
   const uniqueIds = dropDuplicates(prepared, (link) => link.id, "duplicate-id", options, skipped);
-  const links = dropDuplicates(uniqueIds, (link) => link.path, "duplicate-path", options, skipped);
+  const links = dropDuplicatePaths(uniqueIds, options, skipped);
   return { links, skipped };
 }
 
@@ -349,6 +349,41 @@ function dropDuplicates(items, keyOf, reason, options, skipped) {
     group.forEach((item) => {
       skipped.push({ id: item.id, reason });
       emitRow(item.id, reason, options, true);
+    });
+  });
+  return kept;
+}
+
+/**
+ * Same path, destination, and redirect type: keep the first row in sheet order.
+ * A different destination or type skips every row in the group.
+ * @param {{ id: string, path: string, destination: string, status: 301|302 }[]} items
+ * @param {{ warn?: (id: string, reason: string) => void }} options
+ * @param {{ id: string, reason: string }[]} skipped
+ * @returns {{ id: string, path: string, destination: string, status: 301|302 }[]}
+ */
+function dropDuplicatePaths(items, options, skipped) {
+  /** @type {Map<string, { id: string, path: string, destination: string, status: 301|302 }[]>} */
+  const groups = new Map();
+  items.forEach((item) => {
+    const group = groups.get(item.path) || [];
+    group.push(item);
+    groups.set(item.path, group);
+  });
+  /** @type {{ id: string, path: string, destination: string, status: 301|302 }[]} */
+  const kept = [];
+  groups.forEach((group) => {
+    if (group.length === 1) {
+      kept.push(group[0]);
+      return;
+    }
+    const first = group[0];
+    const identical = group.every((item) => item.destination === first.destination && item.status === first.status);
+    const losers = identical ? group.slice(1) : group;
+    if (identical) kept.push(first);
+    losers.forEach((item) => {
+      skipped.push({ id: item.id, reason: "duplicate-path" });
+      emitRow(item.id, "duplicate-path", options, true);
     });
   });
   return kept;
