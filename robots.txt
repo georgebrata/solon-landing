@@ -2,4 +2,5 @@ User-agent: *
 Disallow: /onboarding/bronze
 Disallow: /onboarding/silver
 Disallow: /onboarding/gold
+Disallow: /r/
 Sitemap: https://solon.agency/sitemap.xml

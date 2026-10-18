@@ -23,3 +23,9 @@ Sitemap lastmod is preserved for a page whose content date is not newer than the
 The production workflow runs `node scripts/update-sitemap.js --from-git` after the pricing build and before FTP. Each `<lastmod>` becomes the later of the stored day and the last commit that changed that page's content, still clamped to today in Europe/Bucharest. Cache-bust `?v=` tokens and the generated "Articole recente" / "Articole similare" blocks are not content changes, so a page that did not change keeps its stored value. A working-tree edit since `HEAD` (the pricing build can rewrite the homepage) uses today. The refreshed sitemap is uploaded and is not committed back.
 
 Do not add links to the Dumitrescu case-study page from templates, the hub, the carousel, related posts, or `llms.txt`. That page and its sitemap entry stay until Legal clears them.
+
+## Short links
+
+Short URLs come from the `ShortLinks` sheet and are published by `node scripts/build-shortlinks.js`. Browsers (`Accept` contains `text/html`) are rewritten to `r/<path>/index.html`, which sends `{ action: "hit", id }` with `fetch` (`credentials: 'omit'`, `referrerPolicy: 'no-referrer'`) and then `location.replace`. Other clients get a 302 from `.htaccess` with the visitor query copied byte for byte. Do not add `r/` to the sitemap, IndexNow, or the homepage carousel. `robots.txt` disallows `/r/`.
+
+Rows whose Original URL contains an `apiKey` query parameter are skipped with a `::warning::` that names only the id. `hitEndpoint` in `data/shortlinks.config.json` stays empty until the Apps Script `hit` action is deployed. See [docs/short-links.md](docs/short-links.md).

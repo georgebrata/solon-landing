@@ -62,6 +62,12 @@ jobs:
       - name: Test pricing build (snapshot)
         run: npm run test:pricing
 
+      - name: Test short links
+        run: npm run test:shortlinks
+
+      - name: Check short links build
+        run: node scripts/build-shortlinks.js --offline --check
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
@@ -101,6 +107,10 @@ jobs:
       # On endpoint failure it logs ::error:: and keeps the committed snapshot.
       - name: Build pricing from sheet
         run: node scripts/build-pricing.js
+
+      # After pricing. On endpoint failure it logs ::error:: and keeps the snapshot.
+      - name: Build short links from sheet
+        run: node scripts/build-shortlinks.js
 
       # After pricing, so a sheet-driven homepage edit is dated today.
       # The file is uploaded by FTP and not committed: open blog PRs also
@@ -148,19 +158,20 @@ jobs:
             !**/.htaccess
 
       # After FTP: optional snapshot commit on main ([skip ci] avoids dispatch/CI loops). Never blocks deploy.
+      # Short-link snapshot, .htaccess, and r/ ride along in this same bot commit.
       - name: Commit refreshed abonamente snapshot
         if: github.ref == 'refs/heads/main'
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet -- data/abonamente.snapshot.json; then
-            echo "Snapshot unchanged; nothing to commit."
+          if [ -z "$(git status --porcelain -- data/abonamente.snapshot.json data/shortlinks.snapshot.json .htaccess r)" ]; then
+            echo "Snapshots unchanged; nothing to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/abonamente.snapshot.json
+          git add -- data/abonamente.snapshot.json data/shortlinks.snapshot.json .htaccess r
           git commit -m "chore(pricing): refresh abonamente snapshot [skip ci]"
           git pull --rebase --autostash origin main || { echo "::warning::snapshot push: git pull --rebase failed"; exit 0; }
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main \

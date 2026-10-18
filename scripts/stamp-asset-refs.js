@@ -30,6 +30,7 @@ const SKIP_DIR_NAMES = new Set([
   "node_modules",
   "scratch",
   "tests",
+  "r",
 ]);
 
 /**

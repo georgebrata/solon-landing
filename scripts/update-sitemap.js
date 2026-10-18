@@ -48,8 +48,25 @@ const isIndexNowKeyLoc = (loc) => INDEXNOW_KEY_PATH.test(pathnameOfLoc(loc));
 const isExcludedFromSitemap = (loc) => {
   const pathname = pathnameOfLoc(loc);
   if (!pathname) return false;
+  if (pathname === "/r" || pathname.startsWith("/r/")) return true;
   return SITEMAP_EXCLUDED_PATHS.has(pathname) || INDEXNOW_KEY_PATH.test(pathname);
 };
+
+/**
+ * Drop short-link redirect pages under /r/. Other url nodes are copied unchanged.
+ * @param {string} xml Sitemap document.
+ * @returns {string}
+ */
+const stripShortRedirectUrls = (xml) => String(xml).replace(
+  /[ \t]*<url>[\s\S]*?<\/url>\r?\n?/g,
+  (block) => {
+    const locMatch = /<loc>([\s\S]*?)<\/loc>/.exec(block);
+    if (!locMatch) return block;
+    const pathname = pathnameOfLoc(locMatch[1].trim());
+    if (pathname === "/r" || pathname.startsWith("/r/")) return "";
+    return block;
+  }
+);
 
 /**
  * Drop IndexNow key-file URLs. Other url nodes are copied unchanged.
@@ -613,7 +630,7 @@ const updateSitemap = (options = {}) => {
   }
 
   const original = fs.readFileSync(sitemapFile, "utf8");
-  const sitemapContent = stripIndexNowKeyUrls(original);
+  const sitemapContent = stripShortRedirectUrls(stripIndexNowKeyUrls(original));
   const existingEntries = readUrlEntries(sitemapContent);
   const blogIndexLoc = `${BASE_URL}/blog/`;
   const postDateByUrl = postDatesFromPosts(JSON.parse(fs.readFileSync(postsFile, "utf8")));
@@ -645,6 +662,7 @@ module.exports = {
   isIndexNowKeyLoc,
   isExcludedFromSitemap,
   stripIndexNowKeyUrls,
+  stripShortRedirectUrls,
   normalizePageHtml,
   contentChangeDay,
   repoPathForLoc,
