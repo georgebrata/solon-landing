@@ -29,3 +29,14 @@ Do not add links to the Dumitrescu case-study page from templates, the hub, the 
 ## Blog sheet append (optional)
 
 `scripts/append-blog-google-sheets.js` logs a new article title to a Google Sheet via Apps Script (see the blog post workflow above). **`BLOG_SHEETS_APPEND_URL`** must be the full deployment URL, including any required query parameter. Configure it as a GitHub Actions secret or a local env var before running the script. Without it, sheet logging is skipped (stdout names the variable only; exit 0). Tests: `npm run test:append-sheets`. Never commit the URL or secret value.
+
+## Pricing data (SOLON API)
+
+Homepage pricing is built at deploy time (and in tests offline) by `scripts/build-pricing.js` from the **Abonamente** and **Servicii** tabs of the "SOLON API" spreadsheet via the key-protected SOLON CRUD API.
+
+- **URL:** optional env `SHEETS_API_URL` (Actions variable); the script default is the documented deployment URL.
+- **Key:** required env `SHEETS_API_KEY` (GitHub Actions secret, same value as the Apps Script Script Property `API_KEY`). Never print, commit, or put it in browser JS.
+- **Tabs** must include an `id` column; rows with a blank `id` are omitted by the API. Without ids, the live fetch fails validation and deploy falls back to `data/abonamente.snapshot.json` (build still succeeds; look for `::error::build-pricing`).
+- **Snapshot:** `data/abonamente.snapshot.json` stores **Abonamente only** (allowlisted fields: `id`, package name, `Activ`, both RON prices, inclusion `Servicii` text, NETOPIA links). Internal columns such as `Notes` or the Servicii tab are not committed. On a successful API fetch, deploy refreshes the sanitized snapshot (bot commit on `main`). Do not hand-edit the snapshot. Offline cleanup: `node scripts/build-pricing.js --sanitize-snapshot`.
+- **Notes/add-ons:** the homepage does not render pricing notes or add-ons; tests assert that block stays removed.
+- **Checks:** `npm run test:pricing`, `node scripts/build-pricing.js --offline --check`.
