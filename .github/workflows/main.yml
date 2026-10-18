@@ -77,10 +77,13 @@ jobs:
       group: production-deploy
       cancel-in-progress: true
     steps:
+      # Full history: lastmod is the last commit that changed page content.
+      # A shallow clone cannot tell that commit from a cache-bust commit.
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       # dangerous-clean-slate is intentionally omitted (defaults to false).
       # Do not enable it: that flag wipes server-dir including excluded paths.
@@ -98,6 +101,12 @@ jobs:
       # On endpoint failure it logs ::error:: and keeps the committed snapshot.
       - name: Build pricing from sheet
         run: node scripts/build-pricing.js
+
+      # After pricing, so a sheet-driven homepage edit is dated today.
+      # The file is uploaded by FTP and not committed: open blog PRs also
+      # edit sitemap.xml, and a follow-up commit on main would collide with them.
+      - name: Refresh sitemap lastmod from page history
+        run: node scripts/update-sitemap.js --from-git
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
