@@ -1,6 +1,7 @@
 {
   "Abonamente": [
     {
+      "id": "lithium",
       "Nume abonament": "Lithium",
       "Activ": false,
       "Pret lunar (RON)": 0,
@@ -10,6 +11,7 @@
       "Netopia Payment Link Year": "-"
     },
     {
+      "id": "bronze",
       "Nume abonament": "Bronze",
       "Activ": true,
       "Pret lunar (RON)": 99,
@@ -19,6 +21,7 @@
       "Netopia Payment Link Year": "https://mpy.ro/99mzfykht?language=ro"
     },
     {
+      "id": "silver",
       "Nume abonament": "Silver",
       "Activ": true,
       "Pret lunar (RON)": 199,
@@ -28,6 +31,7 @@
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0sht?language=ro"
     },
     {
+      "id": "gold",
       "Nume abonament": "Gold",
       "Activ": true,
       "Pret lunar (RON)": 499,
@@ -37,6 +41,7 @@
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0uht?language=ro"
     },
     {
+      "id": "platinum",
       "Nume abonament": "Platinum",
       "Activ": true,
       "Pret lunar (RON)": 999,
