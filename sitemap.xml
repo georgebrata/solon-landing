@@ -57,7 +57,7 @@
     </url>
     <url>
         <loc>https://solon.agency/blog/</loc>
-        <lastmod>2026-10-14</lastmod>
+        <lastmod>2026-10-16</lastmod>
         <priority>0.90</priority>
     </url>
     <url>
@@ -363,6 +363,11 @@
     <url>
         <loc>https://solon.agency/blog/ce-are-voie-avocat-sa-publice-online/</loc>
         <lastmod>2026-10-15</lastmod>
+        <priority>0.50</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/microsoft-copilot-pentru-avocati/</loc>
+        <lastmod>2026-10-17</lastmod>
         <priority>0.50</priority>
     </url>
 </urlset>
