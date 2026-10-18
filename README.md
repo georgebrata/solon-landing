@@ -7,6 +7,8 @@ Demo: https://solon.agency/
 
 Pricing is built at deploy time from the SOLON API (GitHub Actions secret `SHEETS_API_KEY`).
 
+Short links (`/api`, `/bronze/lunar`, and the other ShortLinks rows) are published by `node scripts/build-shortlinks.js`. See [docs/short-links.md](docs/short-links.md).
+
 ## Local Development
 To run the project locally, simply clone the repository and open the root index.html file.
 Optional: use [http-server]([url](https://github.com/http-party/http-server)) for local development

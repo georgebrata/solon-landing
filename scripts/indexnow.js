@@ -65,6 +65,7 @@ const htmlFileToUrl = (filePath) => {
     .replace(/^\/+/, "");
   if (!normalized.endsWith(".html")) return "";
   if (normalized.split("/").includes("..")) return "";
+  if (normalized === "r" || normalized.startsWith("r/")) return "";
   if (normalized === "index.html") return `${ORIGIN}/`;
   if (normalized.endsWith("/index.html")) {
     return `${ORIGIN}/${normalized.slice(0, -"index.html".length)}`;
@@ -126,7 +127,18 @@ const parseNameStatus = (nameStatus) => {
 };
 
 /**
+ * Redirect pages under /r/ are not submitted.
+ * @param {string} loc
+ * @returns {boolean}
+ */
+const isShortRedirectLoc = (loc) => {
+  const prefix = `${ORIGIN}/r`;
+  return loc === prefix || loc === `${prefix}/` || loc.startsWith(`${prefix}/`);
+};
+
+/**
  * HTML changes plus sitemap adds/lastmod edits, limited to current locs.
+ * Redirect pages under /r/ are excluded.
  * @param {{ changedFiles: string[], sitemapChanged: boolean, previousSitemap: string|null, currentSitemap: string }} input
  * @returns {string[]}
  */
@@ -135,11 +147,11 @@ const selectChangedUrls = ({ changedFiles, sitemapChanged, previousSitemap, curr
   const urls = new Set();
   (changedFiles || []).forEach((file) => {
     const url = htmlFileToUrl(file);
-    if (url && allowed.has(url)) urls.add(url);
+    if (url && allowed.has(url) && !isShortRedirectLoc(url)) urls.add(url);
   });
   if (sitemapChanged && typeof previousSitemap === "string") {
     urlsChangedInSitemap(previousSitemap, currentSitemap).forEach((loc) => {
-      if (allowed.has(loc)) urls.add(loc);
+      if (allowed.has(loc) && !isShortRedirectLoc(loc)) urls.add(loc);
     });
   }
   return [...urls];
@@ -333,7 +345,7 @@ const runIndexNow = async (options = {}) => {
       return { urls: [], submitted: 0, statusCodes: [] };
     }
     const currentSitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
-    const urls = options.all
+    const urls = (options.all
       ? [...parseSitemapEntries(currentSitemap).keys()]
       : collectChangedUrls({
         before: options.before || "",
@@ -341,7 +353,7 @@ const runIndexNow = async (options = {}) => {
         currentSitemap,
         gitRunner: options.gitRunner || ((args) => defaultGit(args, root, log)),
         log,
-      });
+      })).filter((loc) => !isShortRedirectLoc(loc));
     if (urls.length === 0) {
       log("IndexNow: no URLs to submit");
       return { urls, submitted: 0, statusCodes: [] };

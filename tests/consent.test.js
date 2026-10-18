@@ -314,7 +314,7 @@ test("accept all activates analytics and marketing inert tags", () => {
  */
 const htmlFiles = function htmlFiles() {
   const files = [];
-  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs"]);
+  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs", "r"]);
   /**
    * @param {string} dir
    */
