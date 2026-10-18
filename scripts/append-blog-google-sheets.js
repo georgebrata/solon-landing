@@ -52,11 +52,11 @@ const appendRow = (webhookUrl, title) =>
   });
 
 /** @returns {string | null} */
-function resolveAppendUrl() {
+const resolveAppendUrl = () => {
   const raw = process.env[ENV_APPEND_URL];
   if (raw == null || String(raw).trim() === "") return null;
   return String(raw).trim();
-}
+};
 
 const main = async () => {
   const webhookUrl = resolveAppendUrl();
