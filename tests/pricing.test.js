@@ -67,7 +67,25 @@ test("pricing block omits notes and add-ons", () => {
     assert.ok(!block.includes(phrase), phrase);
   }
   assert.match(block, /pricing-billing-toggle/);
-  assert.match(block, /PAYMENT-LINK bronze\/monthly/);
+  for (const plan of model(validate(snapshot)).plans) {
+    for (const period of ["monthly", "annual"]) {
+      const link = plan.links[period];
+      if (typeof link === "string" && isNetopiaLink(link)) {
+        const href = link.replace(
+          /[&<>"']/g,
+          (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char],
+        );
+        assert.ok(
+          block.includes(
+            `<a href="${href}" target="_blank" rel="noopener" class="buy-btn" data-plan="${plan.slug}" data-billing="${period}">`,
+          ),
+          `${plan.slug}/${period}`,
+        );
+      } else {
+        assert.ok(block.includes(`PAYMENT-LINK ${plan.slug}/${period}`), `${plan.slug}/${period}`);
+      }
+    }
+  }
   for (const name of ["BRONZE", "SILVER", "GOLD", "PLATINUM"]) {
     assert.ok(block.includes(name), name);
   }
