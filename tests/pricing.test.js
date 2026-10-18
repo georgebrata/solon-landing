@@ -157,23 +157,34 @@ test("known English sheet phrases become Romanian", () => {
 });
 
 /** Fake SOLON API: serves rows in pages and records requested URLs. */
-function fakeApi(tabs, { pageSize = 2, envelope } = {}) {
+const fakeApi = (tabs, { pageSize = 2, envelope } = {}) => {
   const calls = [];
-  const fetchImpl = async (url) => {
-    const u = new URL(url);
-    calls.push(u);
-    if (envelope) return { ok: true, json: async () => envelope };
-    const rows = tabs[u.searchParams.get("sheet")];
-    if (!rows) return { ok: true, json: async () => ({ success: false, error: { code: "NOT_FOUND", message: "Sheet not found." } }) };
-    const offset = Number(u.searchParams.get("offset"));
+  const fetchImpl = (url) => {
+    const requestUrl = new URL(url);
+    calls.push(requestUrl);
+    if (envelope) return { ok: true, json: () => Promise.resolve(envelope) };
+    const rows = tabs[requestUrl.searchParams.get("sheet")];
+    if (!rows) {
+      return {
+        ok: true,
+        json: () => Promise.resolve({ success: false, error: { code: "NOT_FOUND", message: "Sheet not found." } }),
+      };
+    }
+    const offset = Number(requestUrl.searchParams.get("offset"));
     const data = rows.slice(offset, offset + pageSize);
     return {
       ok: true,
-      json: async () => ({ success: true, sheet: u.searchParams.get("sheet"), data, pagination: { total: rows.length, offset, limit: pageSize, hasMore: offset + data.length < rows.length } }),
+      json: () =>
+        Promise.resolve({
+          success: true,
+          sheet: requestUrl.searchParams.get("sheet"),
+          data,
+          pagination: { total: rows.length, offset, limit: pageSize, hasMore: offset + data.length < rows.length },
+        }),
     };
   };
   return { fetchImpl, calls };
-}
+};
 
 const withIds = (rows, prefix) => rows.map((row, index) => ({ id: `${prefix}-${index + 1}`, ...row }));
 
@@ -183,8 +194,8 @@ test("SOLON API: paginated tabs render the same homepage as the snapshot", async
   assert.strictEqual(data.Abonamente.length, snapshot.Abonamente.length);
   assert.strictEqual(data.Servicii.length, snapshot.Servicii.length);
   assert.strictEqual(render(html, model(data)), html);
-  assert.ok(calls.every((u) => u.searchParams.get("apiKey") === "test-key"));
-  assert.deepStrictEqual([...new Set(calls.map((u) => u.searchParams.get("sheet")))], ["Abonamente", "Servicii"]);
+  assert.ok(calls.every((callUrl) => callUrl.searchParams.get("apiKey") === "test-key"));
+  assert.deepStrictEqual([...new Set(calls.map((callUrl) => callUrl.searchParams.get("sheet")))], ["Abonamente", "Servicii"]);
 });
 
 test("SOLON API: success:false is an error and never leaks the key", async () => {

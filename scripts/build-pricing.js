@@ -170,7 +170,7 @@
       url.searchParams.set("offset", String(offset));
       const res = await fetchImpl(url, { redirect: "follow", signal: options.signal });
       if (!res.ok) throw new Error(`${sheet}: HTTP ${res.status}`);
-      let body;
+      let body = null;
       try {
         body = await res.json();
       } catch {
@@ -178,7 +178,7 @@
       }
       // The API always answers HTTP 200; success lives in the JSON envelope.
       if (!body || body.success !== true) {
-        const code = body && body.error && typeof body.error.code === "string" ? body.error.code : "UNKNOWN";
+        const code = typeof body?.error?.code === "string" ? body.error.code : "UNKNOWN";
         throw new Error(`${sheet}: API error ${code}`);
       }
       if (!Array.isArray(body.data)) throw new Error(`${sheet}: data is not an array`);
