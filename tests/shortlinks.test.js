@@ -573,6 +573,13 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.equal(crypto.createHash("sha256").update(stripped).digest("hex"), HTACCESS_HASH);
   assert.ok(htaccess.indexOf("# SHORTLINKS:START") > htaccess.indexOf("RewriteRule ^blog/posts"));
   assert.ok(htaccess.indexOf("# SHORTLINKS:END") < htaccess.indexOf("# BEGIN issue #29"));
+  const lateStart = htaccess.indexOf("# SHORTLINKS-LATE:START");
+  const lateEnd = htaccess.indexOf("# SHORTLINKS-LATE:END");
+  const late = htaccess.slice(lateStart, lateEnd);
+  const guardedOff = late.match(/<IfModule mod_expires\.c>\n\s*ExpiresActive Off\n\s*<\/IfModule>/g) || [];
+  assert.equal(guardedOff.length, 2);
+  assert.equal((late.match(/ExpiresActive Off/g) || []).length, guardedOff.length);
+  assert.match(htaccess, /Header set Cache-Control "no-store"/);
   assert.match(htaccess, /Header always set Cache-Control "no-store"/);
   assert.match(htaccess, /Header unset Cache-Control/);
   assert.match(htaccess, /Header always merge Vary "Accept"/);
@@ -889,6 +896,49 @@ test("identical short URLs keep the first row and differing ones are both skippe
   ], { reserved: new Set(), warn });
   assert.deepEqual(typeDiff.links, []);
   assert.deepEqual(typeDiff.skipped.map((item) => item.reason), ["duplicate-path", "duplicate-path"]);
+});
+
+test("the apache smoke also runs without mod_expires", () => {
+  const script = fs.readFileSync(path.join(ROOT, "scripts/smoke-shortlinks-apache.sh"), "utf8");
+  const withoutAt = script.indexOf('start_apache 0 "without mod_expires"');
+  assert.ok(withoutAt > script.indexOf('start_apache 1 "with mod_expires"'));
+  const without = script.slice(withoutAt);
+  assert.match(without, /check "\/" "text\/html" "200"/);
+  assert.match(without, /check "\/blog\/" "text\/html" "200"/);
+  assert.match(without, /check "\/api" "\*\/\*" "302"/);
+  assert.match(without, /check "\/r\/api\/" "text\/html" "200"/);
+  assert.match(without, /check "\/no-such-short-link-page" "text\/html" "404"/);
+  assert.match(without, /one_cache_control "\/api" "\*\/\*"/);
+  assert.match(without, /one_cache_control "\/r\/api\/" "text\/html"/);
+});
+
+test("the snapshot allowlist drops Notes and other sheet columns", () => {
+  const document = snapshotDocument([{
+    id: "row1",
+    Data: "secret-column",
+    "Original URL": "https://example.com/a",
+    "Short URL": "https://solon.agency/go",
+    "Total clicks": 99,
+    Notes: "do not keep",
+    Activ: "TRUE",
+    "Tip redirect": "302",
+    Extra: "nope",
+  }]);
+  assert.equal(document.ShortLinks.length, 1);
+  assert.deepEqual(Object.keys(document.ShortLinks[0]), [
+    "id",
+    "Original URL",
+    "Short URL",
+    "Activ",
+    "Tip redirect",
+  ]);
+  assert.equal(document.ShortLinks[0].Activ, "TRUE");
+  assert.equal(document.ShortLinks[0]["Tip redirect"], "302");
+  const serialised = JSON.stringify(document);
+  assert.equal(serialised.includes("Notes"), false);
+  assert.equal(serialised.includes("Total clicks"), false);
+  assert.equal(serialised.includes("secret-column"), false);
+  assert.equal(serialised.includes("do not keep"), false);
 });
 
 test("a visitor query is merged into a destination that already has sheet", () => {
