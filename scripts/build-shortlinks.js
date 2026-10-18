@@ -397,8 +397,11 @@ function mergeQuery(dest, search, hash) {
   const extra = [];
   visitor.split("&").forEach((part) => { if (part) seen.add(key(part)); });
   own.split("&").forEach((part) => { if (part && !seen.has(key(part))) extra.push(part); });
-  const merged = extra.length === 0 ? visitor : (visitor ? visitor + "&" + extra.join("&") : extra.join("&"));
-  return base + (merged ? "?" + merged : "") + (frag || String(hash || ""));
+  const joined = extra.join("&");
+  let merged = visitor;
+  if (extra.length > 0) merged = visitor ? `${visitor}&${joined}` : joined;
+  const query = merged ? `?${merged}` : "";
+  return `${base}${query}${frag || String(hash || "")}`;
 }
 
 /**
@@ -518,23 +521,23 @@ function renderLinkRules(link) {
   const target = escapeRewrite(parts.path);
   const fragment = escapeRewrite(parts.fragment);
   const lines = [
-    `  RewriteCond %{HTTP:Accept} text/html`,
+    "  RewriteCond %{HTTP:Accept} text/html",
     `  RewriteRule ${pattern} /r/${link.path}/index.html [L]`,
-    `  RewriteCond %{HTTP:Accept} !text/html`,
+    "  RewriteCond %{HTTP:Accept} !text/html",
     `  RewriteRule ${pattern} - [E=SLQ:%{QUERY_STRING}]`,
   ];
   parts.params.forEach((param) => {
     const eq = param.indexOf("=");
     const key = eq === -1 ? param : param.slice(0, eq);
-    lines.push(`  RewriteCond %{HTTP:Accept} !text/html`);
+    lines.push("  RewriteCond %{HTTP:Accept} !text/html");
     lines.push(`  RewriteCond %{QUERY_STRING} !(^|&)${escapeRegex(key)}(=|&|$)`);
     lines.push(`  RewriteRule ${pattern} - [E=SLQ:%{ENV:SLQ}&${escapeRewrite(param)}]`);
   });
-  lines.push(`  RewriteCond %{HTTP:Accept} !text/html`);
-  lines.push(`  RewriteCond %{ENV:SLQ} ^$`);
+  lines.push("  RewriteCond %{HTTP:Accept} !text/html");
+  lines.push("  RewriteCond %{ENV:SLQ} ^$");
   lines.push(`  RewriteRule ${pattern} ${target}${fragment} ${flags}`);
-  lines.push(`  RewriteCond %{HTTP:Accept} !text/html`);
-  lines.push(`  RewriteCond %{ENV:SLQ} ^&?(.*)$`);
+  lines.push("  RewriteCond %{HTTP:Accept} !text/html");
+  lines.push("  RewriteCond %{ENV:SLQ} ^&?(.*)$");
   lines.push(`  RewriteRule ${pattern} ${target}?%1${fragment} ${flags}`);
   return lines;
 }
@@ -631,7 +634,7 @@ function renderLate(links) {
  * @returns {string}
  */
 function applyLate(source, lateInner) {
-  const existing = /\n\n  # SHORTLINKS-LATE:START[\s\S]*?\n  # SHORTLINKS-LATE:END\n+/u;
+  const existing = /\n\n {2}# SHORTLINKS-LATE:START[\s\S]*?\n {2}# SHORTLINKS-LATE:END\n+/u;
   if (!lateInner) {
     if (!existing.test(source)) return source;
     return source.replace(existing, () => "\n\n");
@@ -651,7 +654,7 @@ function applyLate(source, lateInner) {
  */
 function applyHtaccess(source, inner, lateInner = "") {
   const block = `${MARKER_START}\n${inner}\n${MARKER_END}`;
-  const existing = /\n\n  # SHORTLINKS:START[\s\S]*?\n  # SHORTLINKS:END\n/u;
+  const existing = /\n\n {2}# SHORTLINKS:START[\s\S]*?\n {2}# SHORTLINKS:END\n/u;
   let next = source;
   if (existing.test(source)) {
     next = source.replace(existing, () => `\n\n${block}\n`);
@@ -770,27 +773,6 @@ function removeEmptyDirs(dir, stop) {
 
 /**
  * @param {string} root
- * @param {Map<string, string>} pages
- * @returns {void}
- */
-function writePages(root, pages) {
-  const base = path.join(root, "r");
-  const expected = new Set([...pages.keys()].map((rel) => path.join(root, rel)));
-  listHtml(base).forEach((file) => {
-    if (!expected.has(file)) fs.rmSync(file);
-  });
-  removeEmptyDirs(base, base);
-  pages.forEach((html, rel) => {
-    const file = path.join(root, rel);
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    if (!fs.existsSync(file) || fs.readFileSync(file, "utf8") !== html) {
-      fs.writeFileSync(file, html);
-    }
-  });
-}
-
-/**
- * @param {string} root
  * @param {string} before
  * @param {string} after
  * @param {Map<string, string>} pages
@@ -892,10 +874,6 @@ function commitPublish(root, plan, snapshotText) {
 
 /**
  * @param {string} snapshotPath
- * @returns {unknown[]|null}
- */
-/**
- * @param {string} snapshotPath
  * @returns {unknown[]}
  */
 function readSnapshotRows(snapshotPath) {
@@ -908,6 +886,10 @@ function readSnapshotRows(snapshotPath) {
   }
 }
 
+/**
+ * @param {string} snapshotPath
+ * @returns {unknown[]|null}
+ */
 function loadSnapshotRows(snapshotPath) {
   let parsed = null;
   try {
@@ -945,13 +927,10 @@ function finishPublish(root, rows, options, snapshotText) {
 
 /**
  * Prior-count classification must not print row warnings.
- * @param {string} id
- * @param {string} reason
- * @returns {void}
+ * @returns {undefined}
  */
-function silentWarning(id, reason) {
-  void id;
-  void reason;
+function silentWarning() {
+  return undefined;
 }
 
 /**

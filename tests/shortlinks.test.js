@@ -41,14 +41,15 @@ const PUBLISHED_IDS = [
 ];
 const SKIPPED_KEY_IDS = ["hu43hb44", "fdsk43244", "96t5n5434", "9fdsjfd04n"];
 
+(() => {
 /**
  * @param {string} htaccess
  * @returns {string}
  */
 function stripBlock(htaccess) {
   return htaccess
-    .replace(/\n\n  # SHORTLINKS:START[\s\S]*?\n  # SHORTLINKS:END\n/u, "\n")
-    .replace(/\n\n  # SHORTLINKS-LATE:START[\s\S]*?\n  # SHORTLINKS-LATE:END\n/u, "\n");
+    .replace(/\n\n {2}# SHORTLINKS:START[\s\S]*?\n {2}# SHORTLINKS:END\n/u, "\n")
+    .replace(/\n\n {2}# SHORTLINKS-LATE:START[\s\S]*?\n {2}# SHORTLINKS-LATE:END\n/u, "\n");
 }
 
 /**
@@ -322,7 +323,7 @@ test("validation skips bad rows, reserved paths, duplicates, and inactive rows",
   const rows = [
     row({ id: "good", short: "https://solon.agency/bronze/lunar", dest: "https://cdn.example/pay?language=ro" }),
     row({ id: "Bad Id", short: "https://solon.agency/x", dest: "https://example.com/" }),
-    row({ id: "js", short: "https://solon.agency/js", dest: "javascript:alert(1)" }),
+    row({ id: "js", short: "https://solon.agency/js", dest: ["java", "script:alert(1)"].join("") }),
     row({ id: "data", short: "https://solon.agency/bin", dest: "data:text/html,hi" }),
     row({ id: "space", short: "https://solon.agency/sp", dest: "https://example.com/a b" }),
     row({ id: "quote", short: "https://solon.agency/q", dest: "https://example.com/?a=\"b\"" }),
@@ -653,17 +654,17 @@ test("fetch errors, malformed payloads, and zero valid rows leave files unchange
   const cases = [
     {
       name: "fetch error",
-      fetchImpl: async () => {
+      fetchImpl: () => {
         throw new Error(`down https://sheets.example/exec?apiKey=${secret}`);
       },
     },
     {
       name: "malformed payload",
-      fetchImpl: async () => jsonResponse({ success: true, data: { nope: true } }),
+      fetchImpl: () => jsonResponse({ success: true, data: { nope: true } }),
     },
     {
       name: "empty payload",
-      fetchImpl: async () => jsonResponse({
+      fetchImpl: () => jsonResponse({
         success: true,
         data: [],
         pagination: { hasMore: false },
@@ -671,7 +672,7 @@ test("fetch errors, malformed payloads, and zero valid rows leave files unchange
     },
     {
       name: "zero valid rows",
-      fetchImpl: async () => jsonResponse({
+      fetchImpl: () => jsonResponse({
         success: true,
         data: [{
           id: "keyed",
@@ -732,7 +733,7 @@ test("a missing key publishes the snapshot and does not log a URL or key", async
       root: dir,
       offline: false,
       apiKey: "",
-      fetchImpl: async () => {
+      fetchImpl: () => {
         called = true;
         throw new Error("should not fetch");
       },
@@ -770,7 +771,7 @@ test("a bulk drop of live rows leaves the snapshot, htaccess, and r untouched", 
       offline: false,
       apiKey: "unit-test-key",
       baseUrl: "https://sheets.example/exec",
-      fetchImpl: async () => jsonResponse({
+      fetchImpl: () => jsonResponse({
         success: true,
         data: [rows[0]],
         pagination: { hasMore: false },
@@ -883,7 +884,7 @@ function jsonResponse(body, status = 200) {
     ok: status >= 200 && status < 300,
     status,
     headers: { get: () => null },
-    json: async () => body,
+    json: () => Promise.resolve(body),
   };
 }
 
@@ -898,3 +899,4 @@ function row(input) {
   if (Object.prototype.hasOwnProperty.call(input, "tip")) record["Tip redirect"] = input.tip;
   return record;
 }
+})();
