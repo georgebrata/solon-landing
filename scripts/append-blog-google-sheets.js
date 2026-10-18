@@ -1,8 +1,13 @@
+"use strict";
+
+const http = require("http");
 const https = require("https");
 
-const WEBHOOK_URL =
-  "https://script.google.com/macros/s/AKfycbwn4t5N7pIn2WVMwLLDmncDtzPeUC09D76Wf_eA3QNinWkFkUWeymKMdpn5OethdAGm/exec?secret=kyokid";
+/** Full Apps Script web app URL including any required query secret (never commit the value). */
+const ENV_APPEND_URL = "BLOG_SHEETS_APPEND_URL";
 const AUTHOR = "George";
+/** Per POST request (Apps Script cold start). */
+const APPEND_REQUEST_TIMEOUT_MS = 20000;
 
 const formatToday = () => {
   const now = new Date();
@@ -12,12 +17,26 @@ const formatToday = () => {
   return `${day}/${month}/${year}`;
 };
 
-const appendRow = (title) =>
-  new Promise((resolve, reject) => {
-    const payload = JSON.stringify({ row: [formatToday(), "", title, AUTHOR] });
+/**
+ * @param {string} title
+ * @returns {string}
+ */
+const buildAppendPayload = (title) => JSON.stringify({ row: [formatToday(), "", title, AUTHOR] });
 
-    const request = https.request(
-      WEBHOOK_URL,
+/**
+ * @param {string} webhookUrl
+ * @param {string} title
+ * @param {{ timeoutMs?: number }} [options]
+ */
+const appendRow = (webhookUrl, title, options = {}) =>
+  new Promise((resolve, reject) => {
+    const payload = buildAppendPayload(title);
+    const parsed = new URL(webhookUrl);
+    const transport = parsed.protocol === "https:" ? https : http;
+    const timeoutMs = options.timeoutMs ?? APPEND_REQUEST_TIMEOUT_MS;
+
+    const request = transport.request(
+      webhookUrl,
       {
         method: "POST",
         headers: {
@@ -34,31 +53,52 @@ const appendRow = (title) =>
           if (response.statusCode >= 200 && response.statusCode < 400) {
             resolve(body);
           } else {
-            reject(
-              new Error(`Request failed with status ${response.statusCode}: ${body}`)
-            );
+            reject(new Error(`Request failed with status ${response.statusCode}: ${body}`));
           }
         });
-      }
+      },
     );
 
-    request.on("error", reject);
+    const timer = setTimeout(() => {
+      request.destroy(new Error("append request timed out"));
+    }, timeoutMs);
+
+    /** Clears the per-request timeout when the socket closes or errors. */
+    const clearTimer = () => clearTimeout(timer);
+    request.on("close", clearTimer);
+    request.on("error", (err) => {
+      clearTimer();
+      reject(err);
+    });
     request.write(payload);
     request.end();
   });
 
+/** @returns {string | null} */
+const resolveAppendUrl = () => {
+  const raw = process.env[ENV_APPEND_URL];
+  if (raw == null || String(raw).trim() === "") return null;
+  return String(raw).trim();
+};
+
 const main = async () => {
+  const webhookUrl = resolveAppendUrl();
+  if (!webhookUrl) {
+    console.log(`append-blog-google-sheets: skip (${ENV_APPEND_URL} is not set)`);
+    return;
+  }
+
   const title = process.argv.slice(2).join(" ").trim();
 
   if (!title) {
     console.error('Error: "title" is required.');
-    console.error("Usage: node scripts/append-blog-google-sheets.js \"Article title\"");
+    console.error('Usage: node scripts/append-blog-google-sheets.js "Article title"');
     process.exitCode = 1;
     return;
   }
 
   try {
-    await appendRow(title);
+    await appendRow(webhookUrl, title);
     console.log(`Appended row to Google Sheet: ["${formatToday()}", "", "${title}", "${AUTHOR}"]`);
   } catch (error) {
     console.error(`Failed to append row: ${error.message}`);
@@ -66,4 +106,16 @@ const main = async () => {
   }
 };
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  ENV_APPEND_URL,
+  APPEND_REQUEST_TIMEOUT_MS,
+  AUTHOR,
+  resolveAppendUrl,
+  buildAppendPayload,
+  formatToday,
+  appendRow,
+};

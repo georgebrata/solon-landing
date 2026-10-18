@@ -62,6 +62,9 @@ jobs:
       - name: Test pricing build (snapshot)
         run: npm run test:pricing
 
+      - name: Test blog sheet append script
+        run: npm run test:append-sheets
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
@@ -97,9 +100,12 @@ jobs:
         with:
           node-version: 22
 
-      # Build-time pricing from sheet "SOLON API" / Abonamente.
-      # On endpoint failure it logs ::error:: and keeps the committed snapshot.
-      - name: Build pricing from sheet
+      # Build-time pricing from SOLON API (tabs Abonamente + Servicii).
+      # On API failure it logs ::error:: and keeps the committed snapshot.
+      - name: Build pricing from SOLON API
+        env:
+          SHEETS_API_URL: ${{ vars.SHEETS_API_URL }}
+          SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
         run: node scripts/build-pricing.js
 
       # After pricing, so a sheet-driven homepage edit is dated today.
