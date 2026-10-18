@@ -22,7 +22,7 @@
   const root = path.join(__dirname, "..");
   /** SOLON CRUD API v1.0 (Drive doc "SOLON API Docs"). The URL is not a credential; the key is. */
   const DEFAULT_API_URL =
-    "https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec";
+    "https://script.google.com/macros/s/AKfycbwEkYSZNimhG7tp8ysRRa4kZxHetdjibevl_m32e3Rvj3vtKLc4Y-Fo_sV5v0XIy33H/exec";
   /** Tabs read for the homepage, in this order. */
   const PRICING_TABS = Object.freeze(["Abonamente", "Servicii"]);
   /** API maximum page size (doc 5.3: 1-500). */

@@ -126,16 +126,24 @@ test("the hit script increments Clicks and falls back to Total clicks", () => {
   assert.equal(SOURCE.includes("apiKey"), false);
 
   const clicks = makeSheet(
-    ["id", "Clicks", "Total clicks", "Activ"],
-    [["abc", 4, 9, true]]
+    ["id", "Total Clicks", " CLICKS ", "Activ"],
+    [["abc", 9, 4, true]]
   );
   const hitClicks = loadHit({ sheet: clicks });
   assert.deepEqual(parseHit(hitClicks({ id: "abc" })), { success: true });
-  assert.deepEqual(clicks.writes, [{ row: 2, col: 2, value: 5 }]);
-  assert.equal(clicks.values[1][2], 9);
+  assert.deepEqual(clicks.writes, [{ row: 2, col: 3, value: 5 }]);
+  assert.equal(clicks.values[1][1], 9);
+
+  const clicksOnly = makeSheet(
+    ["id", "Clicks", "Activ"],
+    [["abc", 4, true]]
+  );
+  const hitOnly = loadHit({ sheet: clicksOnly });
+  assert.deepEqual(parseHit(hitOnly({ id: "abc" })), { success: true });
+  assert.deepEqual(clicksOnly.writes, [{ row: 2, col: 2, value: 5 }]);
 
   const legacy = makeSheet(
-    ["id", "Total clicks", "Activ"],
+    ["id", "Total Clicks", "Activ"],
     [["abc", 4, true]]
   );
   const hitLegacy = loadHit({ sheet: legacy });

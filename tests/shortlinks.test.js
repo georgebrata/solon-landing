@@ -38,9 +38,6 @@ const PUBLISHED_IDS = [
   "32d43dnc",
   "d234c439",
   "d3ejci334",
-  "fdsk43244",
-  "96t5n5434",
-  "9fdsjfd04n",
 ];
 const SNAPSHOT_IDS = [
   "a3hb4931",
@@ -53,9 +50,6 @@ const SNAPSHOT_IDS = [
   "d234c439",
   "d3ejci334",
   "hu43hb44",
-  "fdsk43244",
-  "96t5n5434",
-  "9fdsjfd04n",
 ];
 
 (() => {
@@ -534,7 +528,15 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   assert.equal(html.includes("destinație"), false);
   assert.ok(html.indexOf("<script>") < html.indexOf("</head>"));
   assert.ok(html.indexOf(HIT_FETCH) < html.indexOf("location.replace"));
+  assert.equal(html.split("location.replace").length - 1, 1);
+  assert.equal(html.includes("catch(e){location.replace"), false);
   assert.equal(html.includes("setTimeout"), false);
+  assert.match(html, /@media \(prefers-reduced-motion: reduce\)\{\.l\{animation:none\}\}/);
+  assert.match(html, /\.w\{opacity:0;animation:f \.4s ease 3s forwards\}/);
+  const body = html.slice(html.indexOf("<body>"), html.indexOf("</body>"));
+  assert.match(body, /<a class="w" href="https:\/\/example\.com\/a\?b=1">SOLON<\/a>/);
+  assert.ok(body.indexOf('<a class="w"') < body.indexOf("<noscript>"));
+  assert.match(body, /<noscript><a href="https:\/\/example\.com\/a\?b=1">SOLON<\/a><\/noscript>/);
   assert.ok(html.includes('style="background:#03170C"'));
   assert.ok(html.includes("--primary:#03170C"));
   assert.ok(html.includes("--secondary:#3E5C76"));
@@ -584,6 +586,13 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.equal(crypto.createHash("sha256").update(stripped).digest("hex"), HTACCESS_HASH);
   assert.ok(htaccess.indexOf("# SHORTLINKS:START") > htaccess.indexOf("RewriteRule ^blog/posts"));
   assert.ok(htaccess.indexOf("# SHORTLINKS:END") < htaccess.indexOf("# BEGIN issue #29"));
+  const lateStart = htaccess.indexOf("# SHORTLINKS-LATE:START");
+  const lateEnd = htaccess.indexOf("# SHORTLINKS-LATE:END");
+  const late = htaccess.slice(lateStart, lateEnd);
+  const guardedOff = late.match(/<IfModule mod_expires\.c>\n\s*ExpiresActive Off\n\s*<\/IfModule>/g) || [];
+  assert.equal(guardedOff.length, 2);
+  assert.equal((late.match(/ExpiresActive Off/g) || []).length, guardedOff.length);
+  assert.match(htaccess, /Header set Cache-Control "no-store"/);
   assert.match(htaccess, /Header always set Cache-Control "no-store"/);
   assert.match(htaccess, /Header unset Cache-Control/);
   assert.match(htaccess, /Header always merge Vary "Accept"/);
@@ -610,14 +619,16 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.ok(apiPage.includes('ID="a3hb4931"'));
   assert.equal(apiPage.includes("hu43hb44"), false);
   ["r/api/servicii/index.html", "r/api/abonamente/index.html", "r/api/urls/index.html"].forEach((rel) => {
-    assert.equal(fs.existsSync(path.join(ROOT, rel)), true, rel);
+    assert.equal(fs.existsSync(path.join(ROOT, rel)), false, rel);
   });
-
   const config = JSON.parse(fs.readFileSync(path.join(ROOT, "data/shortlinks.config.json"), "utf8"));
   const pricingSource = fs.readFileSync(path.join(ROOT, "scripts/build-pricing.js"), "utf8");
   const apiUrl = pricingSource.match(/const DEFAULT_API_URL =\s+"([^"]+)"/u);
   assert.ok(apiUrl);
   assert.equal(config.hitEndpoint, apiUrl[1]);
+  const apiRows = snapshot.ShortLinks.filter((item) => item["Short URL"] === "https://solon.agency/api");
+  assert.deepEqual(apiRows.map((item) => item.id), ["a3hb4931", "hu43hb44"]);
+  assert.equal(apiRows.every((item) => item["Original URL"] === apiUrl[1]), true);
   assert.equal(config.hitEndpoint.includes("apiKey"), false);
   const cspLine = htaccess.split("\n").find((line) => line.includes("Content-Security-Policy-Report-Only"));
   const connectSrc = cspLine.split(";").find((part) => part.includes("connect-src"));
@@ -911,6 +922,49 @@ test("identical short URLs keep the first row and differing ones are both skippe
   assert.deepEqual(typeDiff.skipped.map((item) => item.reason), ["duplicate-path", "duplicate-path"]);
 });
 
+test("the apache smoke also runs without mod_expires", () => {
+  const script = fs.readFileSync(path.join(ROOT, "scripts/smoke-shortlinks-apache.sh"), "utf8");
+  const withoutAt = script.indexOf('start_apache 0 "without mod_expires"');
+  assert.ok(withoutAt > script.indexOf('start_apache 1 "with mod_expires"'));
+  const without = script.slice(withoutAt);
+  assert.match(without, /check "\/" "text\/html" "200"/);
+  assert.match(without, /check "\/blog\/" "text\/html" "200"/);
+  assert.match(without, /check "\/api" "\*\/\*" "302"/);
+  assert.match(without, /check "\/r\/api\/" "text\/html" "200"/);
+  assert.match(without, /check "\/no-such-short-link-page" "text\/html" "404"/);
+  assert.match(without, /one_cache_control "\/api" "\*\/\*"/);
+  assert.match(without, /one_cache_control "\/r\/api\/" "text\/html"/);
+});
+
+test("the snapshot allowlist drops Notes and other sheet columns", () => {
+  const document = snapshotDocument([{
+    id: "row1",
+    Data: "secret-column",
+    "Original URL": "https://example.com/a",
+    "Short URL": "https://solon.agency/go",
+    "Total clicks": 99,
+    Notes: "do not keep",
+    Activ: "TRUE",
+    "Tip redirect": "302",
+    Extra: "nope",
+  }]);
+  assert.equal(document.ShortLinks.length, 1);
+  assert.deepEqual(Object.keys(document.ShortLinks[0]), [
+    "id",
+    "Original URL",
+    "Short URL",
+    "Activ",
+    "Tip redirect",
+  ]);
+  assert.equal(document.ShortLinks[0].Activ, "TRUE");
+  assert.equal(document.ShortLinks[0]["Tip redirect"], "302");
+  const serialised = JSON.stringify(document);
+  assert.equal(serialised.includes("Notes"), false);
+  assert.equal(serialised.includes("Total clicks"), false);
+  assert.equal(serialised.includes("secret-column"), false);
+  assert.equal(serialised.includes("do not keep"), false);
+});
+
 test("a visitor query is merged into a destination that already has sheet", () => {
   const dest = "https://script.google.com/macros/s/example/exec?sheet=Servicii";
   assert.equal(
@@ -985,6 +1039,10 @@ test("the snapshot drops Clicks and Total clicks", () => {
     "Original URL": "https://example.com/a",
     "Short URL": "https://solon.agency/go",
     Clicks: 7,
+    clicks: 8,
+    CLICKS: 9,
+    " Total Clicks ": 2,
+    "Total Clicks": 4,
     "Total clicks": 3,
     Notes: "do not keep",
     Activ: "TRUE",
@@ -999,7 +1057,9 @@ test("the snapshot drops Clicks and Total clicks", () => {
   ]);
   const serialised = JSON.stringify(document);
   assert.equal(serialised.includes("Clicks"), false);
-  assert.equal(serialised.includes("Total clicks"), false);
+  assert.equal(serialised.includes("clicks"), false);
+  assert.equal(serialised.includes("CLICKS"), false);
+  assert.equal(serialised.includes("Total"), false);
   assert.equal(serialised.includes("do not keep"), false);
 });
 

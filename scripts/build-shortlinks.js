@@ -462,7 +462,7 @@ function htmlEscape(value) {
 }
 
 const PAGE_BYTE_LIMIT = 3072;
-const LOGO_SVG = '<svg viewBox="0 0 24 24" role="img" aria-label="SOLON"><path fill="#F0EBD8" d="M2,0 4,0 24,20 24,22 23,23 21,24 20,23 1,4 0,2ZM2,9 4,10 14,20 15,22 14,23 11,24 0,13 0,11ZM21,0 23,0 24,2 24,4 20,7 24,12 24,13 22,15 20,14 14,7 15,6ZM2,18 4,19 5,21 6,22 5,24 2,24 0,22 0,20Z"/></svg>';
+const LOGO_SVG = '<svg viewBox="0 0 24 24" role="img" aria-label="SOLON"><path fill="#F0EBD8" d="M1,0H5L24,19V23H20L1,4ZM0,10H4L15,21V24H11L0,13ZM21,0H24V4L20,7L24,13L20,14L14,7L15,6ZM0,18H5V23H0Z"/></svg>';
 
 /**
  * @param {{ id: string, destination: string }} link
@@ -482,18 +482,21 @@ function renderPage(link, hitEndpoint) {
 <meta name="referrer" content="no-referrer">
 <style>
 html{--primary:#03170C;--secondary:#3E5C76;--tertiary:#F0EBD8;background:var(--primary);color:var(--tertiary)}
-body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:var(--primary)}
+body{margin:0;min-height:100vh;display:grid;place-items:center;align-content:center;gap:1rem;background:var(--primary)}
 svg{width:4rem;height:4rem}
 .l{width:1.1rem;height:1.1rem;border:.12rem solid var(--secondary);border-top-color:var(--tertiary);border-radius:50%;animation:s .7s linear infinite}
 @keyframes s{to{transform:rotate(1turn)}}
-a{color:var(--tertiary);font:600 1rem Jost,system-ui,sans-serif;letter-spacing:.3em;text-decoration:none}
+a{color:var(--tertiary);font:600 .75rem Jost,system-ui,sans-serif;letter-spacing:.3em;text-decoration:none}
+.w{opacity:0;animation:f .4s ease 3s forwards}
+@keyframes f{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.l{animation:none}}
 </style>
 <script>
 (function(){
 var ID=${jsString(link.id)},D=${jsString(link.destination)},H=${jsString(hit)};
 ${PAGE_MERGE}
 if(H&&typeof fetch==="function"){try{fetch(H,{method:'POST',mode:'no-cors',keepalive:true,credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'hit',id:ID})}).catch(function(){});}catch(e){}}
-try{location.replace(mergeQuery(D,location.search,location.hash));}catch(e){location.replace(mergeQuery(D,location.search,location.hash));}
+location.replace(mergeQuery(D,location.search,location.hash));
 })();
 </script>
 <noscript><meta http-equiv="refresh" content="0;url=${dest}"></noscript>
@@ -501,6 +504,7 @@ try{location.replace(mergeQuery(D,location.search,location.hash));}catch(e){loca
 <body>
 ${LOGO_SVG}
 <div class="l" aria-hidden="true"></div>
+<a class="w" href="${dest}">SOLON</a>
 <noscript><a href="${dest}">SOLON</a></noscript>
 </body>
 </html>
@@ -624,12 +628,12 @@ function assertSafeFlags(text) {
 }
 
 /**
+ * Builds the path alternation used by the short-link Cache-Control expression.
  * @param {string[]} paths
  * @returns {string}
  */
-function requestExpr(paths) {
-  const body = paths.map((item) => item.split("/").map((segment) => escapeRegex(segment)).join("\\/")).join("|");
-  return `m#^/(?:r/)?(?:${body})(?:/index\\.html)?/?$#`;
+function pathAlternation(paths) {
+  return paths.map((item) => item.split("/").map((segment) => escapeRegex(segment)).join("\\/")).join("|");
 }
 
 /**
@@ -645,15 +649,6 @@ function renderInner(links) {
   links.forEach((link) => {
     lines.push(...renderLinkRules(link));
   });
-  if (links.length > 0) {
-    const expr = requestExpr(links.map((link) => link.path));
-    lines.push("  <IfModule mod_headers.c>");
-    lines.push(`    Header unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always merge Vary "Accept" "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push("  </IfModule>");
-  }
   const inner = lines.join("\n");
   assertSafeFlags(inner);
   return inner;
@@ -666,12 +661,27 @@ function renderInner(links) {
  */
 function renderLate(links) {
   if (links.length === 0) return "";
-  const expr = requestExpr(links.map((link) => link.path));
+  const shortExpr = `m#^/(?:${pathAlternation(links.map((link) => link.path))})/?$#`;
   return [
-    "  <IfModule mod_headers.c>",
-    `    Header unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`,
-    `    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ ${expr}"`,
-    "  </IfModule>",
+    "  <If \"%{REQUEST_URI} =~ m#^/r/#\">",
+    "    <IfModule mod_expires.c>",
+    "      ExpiresActive Off",
+    "    </IfModule>",
+    "    Header unset Cache-Control",
+    "    Header always unset Cache-Control",
+    "    Header set Cache-Control \"no-store\"",
+    "    Header always merge Vary \"Accept\"",
+    "  </If>",
+    `  <If "%{REQUEST_URI} =~ ${shortExpr}">`,
+    "    <IfModule mod_expires.c>",
+    "      ExpiresActive Off",
+    "    </IfModule>",
+    "    Header unset Cache-Control",
+    "    Header always unset Cache-Control",
+    "    Header set Cache-Control \"no-store\" \"expr=%{REQUEST_STATUS} < 300\"",
+    "    Header always set Cache-Control \"no-store\" \"expr=%{REQUEST_STATUS} >= 300\"",
+    "    Header always merge Vary \"Accept\"",
+    "  </If>",
   ].join("\n");
 }
 
@@ -714,7 +724,7 @@ function applyHtaccess(source, inner, lateInner = "") {
 }
 
 /**
- * Drop Clicks, Total clicks, and any row whose Original URL carries apiKey.
+ * Drop Clicks and Total clicks in any case, and any row whose Original URL carries apiKey.
  * @param {unknown[]} rows
  * @returns {{ ShortLinks: Record<string, unknown>[] }}
  */
