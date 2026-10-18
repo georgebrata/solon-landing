@@ -9,6 +9,7 @@ const test = require("node:test");
 const vm = require("node:vm");
 const {
   applyHtaccess,
+  assertSafeFlags,
   classifyShortLinks,
   mergeQuery,
   originalUrlHasApiKey,
@@ -45,7 +46,9 @@ const SKIPPED_KEY_IDS = ["hu43hb44", "fdsk43244", "96t5n5434", "9fdsjfd04n"];
  * @returns {string}
  */
 function stripBlock(htaccess) {
-  return htaccess.replace(/\n\n  # SHORTLINKS:START[\s\S]*?\n  # SHORTLINKS:END\n/u, "\n");
+  return htaccess
+    .replace(/\n\n  # SHORTLINKS:START[\s\S]*?\n  # SHORTLINKS:END\n/u, "\n")
+    .replace(/\n\n  # SHORTLINKS-LATE:START[\s\S]*?\n  # SHORTLINKS-LATE:END\n/u, "\n");
 }
 
 /**
@@ -375,7 +378,7 @@ test("reserved paths cover every top-level file and directory", () => {
   fs.readdirSync(ROOT).forEach((name) => {
     assert.equal(reserved.has(name.toLowerCase()), true, name);
   });
-  [".well-known", "cgi-bin", "wp-admin", "node_modules", "r", "tests", "scripts"].forEach((name) => {
+  [".well-known", "cgi-bin", "wp-admin", "node_modules", "r", "tests", "scripts", "cpanel", "webmail", "whm", "cpcalendars", "cpcontacts", "autodiscover", "mail"].forEach((name) => {
     assert.equal(reserved.has(name), true, name);
   });
 });
@@ -435,12 +438,66 @@ test("apiKey rows are skipped with a warning that names only the id", () => {
   assert.equal(serialised.includes("hu43hb44"), false);
   assert.equal(originalUrlHasApiKey("https://example.com/apiKey/path"), false);
   assert.equal(originalUrlHasApiKey(`https://example.com/?apiKey=${secret}`), true);
+  assert.equal(originalUrlHasApiKey(`https://example.com/p#apiKey=${secret}`), true);
+  assert.equal(originalUrlHasApiKey("https://example.com/p#%ZZ"), false);
+  assert.equal(
+    originalUrlHasApiKey("https://example.com/p?next=https%3A%2F%2Fx%3FapiKey%3DSECRET"),
+    true
+  );
+  assert.equal(originalUrlHasApiKey("https://example.com/p?q=%2561piKey%3DSECRET"), true);
+  const fragment = classifyShortLinks([
+    row({ id: "frag", short: "https://solon.agency/frag", dest: `https://example.com/p#apiKey=${secret}` }),
+  ], { reserved: new Set() });
+  assert.deepEqual(fragment.links, []);
+  assert.equal(fragment.skipped[0].reason, "api-key");
   const page = renderPage(links[0], "");
   const rules = renderInner(links);
   assert.equal(page.includes(secret), false);
   assert.equal(page.includes("apiKey="), false);
   assert.equal(rules.includes(secret), false);
   assert.equal(rules.includes("apiKey="), false);
+});
+
+test("comma and bracket destinations are skipped and unsafe flags are refused", () => {
+  const warnings = [];
+  const { links, skipped } = classifyShortLinks([
+    row({ id: "comma", short: "https://solon.agency/comma", dest: "https://ex.com/p?a=1,2&b=3" }),
+    row({ id: "bracket", short: "https://solon.agency/bracket", dest: "https://ex.com/p?a=b]c" }),
+    row({ id: "ok", short: "https://solon.agency/ok", dest: "https://ex.com/p?language=ro" }),
+  ], {
+    reserved: new Set(),
+    warn(id, reason) {
+      warnings.push(`${reason}:${id}`);
+    },
+  });
+  assert.deepEqual(links.map((link) => link.id), ["ok"]);
+  assert.deepEqual(skipped.map((item) => item.reason), ["unsafe-flag", "unsafe-flag"]);
+  assert.deepEqual(warnings, ["unsafe-flag:comma", "unsafe-flag:bracket"]);
+  assert.equal(JSON.stringify(warnings).includes("1,2"), false);
+  const rules = renderInner(links);
+  const fields = [];
+  rules.split("\n").forEach((line) => {
+    const start = line.indexOf("[");
+    const end = line.lastIndexOf("]");
+    if (start === -1 || end <= start) return;
+    line.slice(start + 1, end).split(",").forEach((field) => {
+      fields.push(field);
+    });
+  });
+  assert.ok(fields.length > 0);
+  fields.forEach((field) => {
+    assert.equal(field.includes(","), false, field);
+    assert.equal(field.includes("]"), false, field);
+    assert.equal(field.includes("\""), false, field);
+    assert.equal(field.includes("'"), false, field);
+    for (let index = 0; index < field.length; index += 1) {
+      const code = field.charCodeAt(index);
+      assert.equal(code <= 32 || code === 127, false, field);
+    }
+  });
+  assert.throws(() => assertSafeFlags("  RewriteRule ^x/?$ - [E=SLQ:%{ENV:SLQ}&a=1,2]"), /unsafe rewrite flags/);
+  assert.throws(() => renderInner([{ path: "bad", destination: "https://ex.com/p?a=1,2", status: 302 }]), /unsafe rewrite flags/);
+  assert.doesNotThrow(() => renderInner(links));
 });
 
 test("redirect page counts with credentials omit and never sendBeacon", () => {
@@ -459,6 +516,10 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   assert.equal(html.includes("sendBeacon"), false);
   assert.equal(html.includes("URLSearchParams"), false);
   assert.equal(html.includes("encodeURIComponent"), false);
+  assert.equal(html.includes("=>"), false);
+  assert.equal(html.includes("const "), false);
+  assert.equal(html.includes("new Set"), false);
+  assert.ok(html.includes('typeof fetch==="function"'));
   assert.equal(html.includes("<iframe"), false);
   assert.equal(html.includes("<img"), false);
   assert.ok(Buffer.byteLength(html) <= 2048, `page is ${Buffer.byteLength(html)} bytes`);
@@ -493,7 +554,9 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.ok(htaccess.indexOf("# SHORTLINKS:START") > htaccess.indexOf("RewriteRule ^blog/posts"));
   assert.ok(htaccess.indexOf("# SHORTLINKS:END") < htaccess.indexOf("# BEGIN issue #29"));
   assert.match(htaccess, /Header always set Cache-Control "no-store"/);
-  assert.match(htaccess, /Header always set Vary "Accept"/);
+  assert.match(htaccess, /Header unset Cache-Control/);
+  assert.match(htaccess, /Header always merge Vary "Accept"/);
+  assert.equal(htaccess.includes("Header always set Vary"), false);
   assert.match(htaccess, /RewriteCond %\{HTTP:Accept\} text\/html/);
   assert.match(htaccess, /\[R=302,L,NE\]/);
   assert.equal(htaccess.includes("sendBeacon"), false);
@@ -504,6 +567,12 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.equal(serialised.includes("Total clicks"), false);
   const ids = snapshot.ShortLinks.map((item) => item.id);
   assert.deepEqual(ids, PUBLISHED_IDS);
+  const allowedKeys = new Set(["id", "Original URL", "Short URL", "Activ", "Tip redirect"]);
+  snapshot.ShortLinks.forEach((item) => {
+    Object.keys(item).forEach((key) => {
+      assert.equal(allowedKeys.has(key), true, key);
+    });
+  });
   SKIPPED_KEY_IDS.forEach((id) => {
     assert.equal(ids.includes(id), false, id);
   });
@@ -593,6 +662,14 @@ test("fetch errors, malformed payloads, and zero valid rows leave files unchange
       fetchImpl: async () => jsonResponse({ success: true, data: { nope: true } }),
     },
     {
+      name: "empty payload",
+      fetchImpl: async () => jsonResponse({
+        success: true,
+        data: [],
+        pagination: { hasMore: false },
+      }),
+    },
+    {
       name: "zero valid rows",
       fetchImpl: async () => jsonResponse({
         success: true,
@@ -667,6 +744,44 @@ test("a missing key publishes the snapshot and does not log a URL or key", async
     assert.equal(fs.existsSync(path.join(dir, "r/one/index.html")), true);
   } finally {
     console.log = originalLog;
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a bulk drop of live rows leaves the snapshot, htaccess, and r untouched", async () => {
+  const dir = fixtureDir();
+  const rows = ["one", "two", "three", "four"].map((id) => row({
+    id,
+    short: `https://solon.agency/${id}`,
+    dest: `https://example.com/${id}`,
+  }));
+  fs.writeFileSync(path.join(dir, "data/shortlinks.snapshot.json"), `${JSON.stringify({ ShortLinks: rows }, null, 2)}\n`);
+  fs.mkdirSync(path.join(dir, "r/keep"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "r/keep/index.html"), "keep\n");
+  const before = treeBytes(dir);
+  const logs = [];
+  const originalError = console.error;
+  console.error = (line) => {
+    logs.push(String(line));
+  };
+  try {
+    const code = await run({
+      root: dir,
+      offline: false,
+      apiKey: "unit-test-key",
+      baseUrl: "https://sheets.example/exec",
+      fetchImpl: async () => jsonResponse({
+        success: true,
+        data: [rows[0]],
+        pagination: { hasMore: false },
+      }),
+    });
+    assert.equal(code, 0);
+    assert.equal(treeBytes(dir), before);
+    assert.match(logs.join("\n"), /::error::build-shortlinks: SOLON API failed \(bulk drop/);
+    assert.equal(logs.join("\n").includes("unit-test-key"), false);
+  } finally {
+    console.error = originalError;
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });

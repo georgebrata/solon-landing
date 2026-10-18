@@ -71,6 +71,9 @@ jobs:
       - name: Check short links build
         run: node scripts/build-shortlinks.js --offline --check
 
+      - name: Apache short-link smoke
+        run: bash scripts/smoke-shortlinks-apache.sh
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 

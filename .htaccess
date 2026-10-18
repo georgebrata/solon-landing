@@ -153,8 +153,10 @@
   RewriteCond %{ENV:SLQ} ^&?(.*)$
   RewriteRule ^platinum\/anual/?$ https://mpy.ro/99mzg0wht?%1 [R=302,L,NE]
   <IfModule mod_headers.c>
+    Header unset Cache-Control "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
+    Header always unset Cache-Control "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
     Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
-    Header always set Vary "Accept" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
+    Header always merge Vary "Accept" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
   </IfModule>
   # SHORTLINKS:END
 </IfModule>
@@ -277,6 +279,13 @@ AddDefaultCharset utf-8
   <FilesMatch "\.(?i:html|htm)$">
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
+
+  # SHORTLINKS-LATE:START
+  <IfModule mod_headers.c>
+    Header unset Cache-Control "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
+    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)(?:/index\.html)?/?$#"
+  </IfModule>
+  # SHORTLINKS-LATE:END
 
   <Files "posts.json">
     Header set Cache-Control "no-cache, must-revalidate"

@@ -36,9 +36,26 @@ const EXTRA_RESERVED = Object.freeze([
   "cgi-bin",
   "wp-admin",
   "r",
+  "cpanel",
+  "webmail",
+  "whm",
+  "cpcalendars",
+  "cpcontacts",
+  "autodiscover",
+  "mail",
+]);
+const SNAPSHOT_KEYS = Object.freeze([
+  "id",
+  "Original URL",
+  "Short URL",
+  "Activ",
+  "Tip redirect",
 ]);
 const MARKER_START = "  # SHORTLINKS:START";
 const MARKER_END = "  # SHORTLINKS:END";
+const LATE_START = "  # SHORTLINKS-LATE:START";
+const LATE_END = "  # SHORTLINKS-LATE:END";
+const LATE_ANCHOR = "  <FilesMatch \"\\.(?i:html|htm)$\">\n    Header set Cache-Control \"no-cache, must-revalidate\"\n  </FilesMatch>";
 const HTACCESS_ANCHOR = "  RewriteRule ^blog/posts(?:/|$) - [F,L]\n</IfModule>";
 const ANALYTICS_HOSTS = Object.freeze([
   "googletagmanager.com",
@@ -80,29 +97,67 @@ function safeId(value) {
 }
 
 /**
- * True when a query key is apiKey, compared case-insensitively.
+ * One decode step. A broken escape returns null and never throws to the caller.
+ * @param {string} text
+ * @returns {string|null}
+ */
+function decodeOnce(text) {
+  try {
+    return decodeURIComponent(String(text).replace(/\+/gu, " "));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * True when the URL carries apiKey in the query or fragment, including
+ * percent-encoded and nested forms (up to 3 decodes). Never throws.
  * @param {unknown} url
  * @returns {boolean}
  */
 function originalUrlHasApiKey(url) {
-  const text = String(url || "");
-  const queryAt = text.indexOf("?");
-  if (queryAt === -1) return false;
-  let query = text.slice(queryAt + 1);
-  const hashAt = query.indexOf("#");
-  if (hashAt !== -1) query = query.slice(0, hashAt);
-  return query.split("&").some((part) => {
-    if (!part) return false;
-    const eq = part.indexOf("=");
-    const rawKey = eq === -1 ? part : part.slice(0, eq);
-    let key = rawKey;
-    try {
-      key = decodeURIComponent(rawKey.replace(/\+/gu, " "));
-    } catch {
-      key = rawKey;
+  try {
+    let text = String(url || "");
+    for (let pass = 0; pass < 4; pass += 1) {
+      if (/apiKey=/iu.test(text)) return true;
+      const next = decodeOnce(text);
+      if (next === null || next === text) break;
+      text = next;
     }
-    return key.toLowerCase() === "apikey";
-  });
+    return /apiKey=/iu.test(text);
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Comma anywhere, or a flag-breaking character in the query.
+ * Those characters are copied into Apache [E=...] flags.
+ * @param {string} url
+ * @returns {boolean}
+ */
+function destinationHasUnsafeFlag(url) {
+  const text = String(url || "");
+  if (text.indexOf(",") !== -1) return true;
+  const hashAt = text.indexOf("#");
+  const before = hashAt === -1 ? text : text.slice(0, hashAt);
+  const queryAt = before.indexOf("?");
+  if (queryAt === -1) return false;
+  return hasFlagBreaker(before.slice(queryAt + 1));
+}
+
+/**
+ * @param {string} text
+ * @returns {boolean}
+ */
+function hasFlagBreaker(text) {
+  for (let index = 0; index < text.length; index += 1) {
+    const code = text.charCodeAt(index);
+    if (code <= 32 || code === 127) return true;
+    const ch = text.charAt(index);
+    if (ch === "," || ch === "]" || ch === "[" || ch === "\"" || ch === "'") return true;
+  }
+  return false;
 }
 
 /**
@@ -236,6 +291,10 @@ function classifyShortLinks(rows, options = {}) {
       skip("bad-destination");
       return;
     }
+    if (destinationHasUnsafeFlag(destination)) {
+      skip("unsafe-flag");
+      return;
+    }
     const shortPath = parseShortPath(record["Short URL"]);
     if (!shortPath) {
       skip("bad-short-url");
@@ -301,14 +360,14 @@ function dropDuplicates(items, keyOf, reason, options, skipped) {
  */
 const PAGE_MERGE = [
   "function mergeQuery(d,s,h){",
-  "const k=p=>{const i=p.indexOf(\"=\"),r=i<0?p:p.slice(0,i);try{return decodeURIComponent(r)}catch{return r}};",
-  "const t=String(d||\"\"),n=t.indexOf(\"#\"),a=n<0?t:t.slice(0,n),f=n<0?\"\":t.slice(n);",
-  "const q=a.indexOf(\"?\"),b=q<0?a:a.slice(0,q),o=q<0?\"\":a.slice(q+1);",
-  "const u=String(s||\"\"),v=u.charAt(0)===\"?\"?u.slice(1):u,seen=new Set(),ex=[];",
-  "v.split(\"&\").forEach(p=>{if(p)seen.add(k(p))});",
-  "o.split(\"&\").forEach(p=>{if(p&&!seen.has(k(p)))ex.push(p)});",
-  "const m=ex.length?(v?v+\"&\"+ex.join(\"&\"):ex.join(\"&\")):v;",
-  "return b+(m?\"?\"+m:\"\")+(f||String(h||\"\"))}",
+  "function k(p){var i=p.indexOf(\"=\"),r=i<0?p:p.slice(0,i),out=r;try{out=decodeURIComponent(r);}catch(e){out=r;}return out;}",
+  "var t=String(d||\"\"),n=t.indexOf(\"#\"),a=n<0?t:t.slice(0,n),f=n<0?\"\":t.slice(n);",
+  "var q=a.indexOf(\"?\"),b=q<0?a:a.slice(0,q),o=q<0?\"\":a.slice(q+1);",
+  "var u=String(s||\"\"),v=u.charAt(0)===\"?\"?u.slice(1):u,seen=Object.create(null),ex=[],parts,i,p;",
+  "parts=v.split(\"&\");for(i=0;i<parts.length;i++){p=parts[i];if(p)seen[k(p)]=1;}",
+  "parts=o.split(\"&\");for(i=0;i<parts.length;i++){p=parts[i];if(p&&!seen[k(p)])ex.push(p);}",
+  "var m=ex.length?(v?v+\"&\"+ex.join(\"&\"):ex.join(\"&\")):v;",
+  "return b+(m?\"?\"+m:\"\")+(f||String(h||\"\"));}",
 ].join("");
 
 /**
@@ -388,7 +447,7 @@ function renderPage(link, hitEndpoint) {
 (function(){
 var ID=${jsString(link.id)},D=${jsString(link.destination)},H=${jsString(hit)};
 ${PAGE_MERGE}
-if(H){try{fetch(H,{method:'POST',mode:'no-cors',keepalive:true,credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'hit',id:ID})}).catch(function(){});}catch(e){}}
+if(H&&typeof fetch==="function"){try{fetch(H,{method:'POST',mode:'no-cors',keepalive:true,credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'hit',id:ID})}).catch(function(){});}catch(e){}}
 var go=function(){location.replace(mergeQuery(D,location.search,location.hash));};
 setTimeout(go,0);setTimeout(go,300);
 })();
@@ -481,6 +540,40 @@ function renderLinkRules(link) {
 }
 
 /**
+ * Refuse a flag field that Apache would split or misread.
+ * @param {string} field
+ * @returns {boolean}
+ */
+function flagFieldIsSafe(field) {
+  if (field === "L" || field === "NE" || field === "R=301" || field === "R=302") return true;
+  if (field === "E=SLQ:%{QUERY_STRING}") return true;
+  const prefix = "E=SLQ:%{ENV:SLQ}&";
+  if (field.indexOf(prefix) === 0) return !hasFlagBreaker(field.slice(prefix.length));
+  return false;
+}
+
+/**
+ * Scan generated [E=...] and [R=...] fields. Throws before any file is written.
+ * @param {string} text
+ * @returns {void}
+ */
+function assertSafeFlags(text) {
+  String(text).split("\n").forEach((line) => {
+    const start = line.indexOf("[");
+    if (start === -1) return;
+    const end = line.lastIndexOf("]");
+    if (end <= start || line.slice(end + 1).trim() !== "") {
+      throw new Error("unsafe rewrite flags");
+    }
+    const inner = line.slice(start + 1, end);
+    if (hasFlagBreaker(inner.replace(/,/g, ""))) throw new Error("unsafe rewrite flags");
+    inner.split(",").forEach((field) => {
+      if (!flagFieldIsSafe(field)) throw new Error("unsafe rewrite flags");
+    });
+  });
+}
+
+/**
  * @param {string[]} paths
  * @returns {string}
  */
@@ -505,29 +598,69 @@ function renderInner(links) {
   if (links.length > 0) {
     const expr = requestExpr(links.map((link) => link.path));
     lines.push("  <IfModule mod_headers.c>");
+    lines.push(`    Header unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`);
+    lines.push(`    Header always unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`);
     lines.push(`    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always set Vary "Accept" "expr=%{REQUEST_URI} =~ ${expr}"`);
+    lines.push(`    Header always merge Vary "Accept" "expr=%{REQUEST_URI} =~ ${expr}"`);
     lines.push("  </IfModule>");
   }
-  return lines.join("\n");
+  const inner = lines.join("\n");
+  assertSafeFlags(inner);
+  return inner;
 }
 
 /**
- * Insert or replace the short-link block. Everything outside it stays put.
- * @param {string} source
- * @param {string} inner
+ * Runs after the HTML FilesMatch so /r/ keeps a single Cache-Control.
+ * @param {{ path: string }[]} links
  * @returns {string}
  */
-function applyHtaccess(source, inner) {
+function renderLate(links) {
+  if (links.length === 0) return "";
+  const expr = requestExpr(links.map((link) => link.path));
+  return [
+    "  <IfModule mod_headers.c>",
+    `    Header unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`,
+    `    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ ${expr}"`,
+    "  </IfModule>",
+  ].join("\n");
+}
+
+/**
+ * @param {string} source
+ * @param {string} lateInner
+ * @returns {string}
+ */
+function applyLate(source, lateInner) {
+  const existing = /\n\n  # SHORTLINKS-LATE:START[\s\S]*?\n  # SHORTLINKS-LATE:END\n+/u;
+  if (!lateInner) {
+    if (!existing.test(source)) return source;
+    return source.replace(existing, () => "\n\n");
+  }
+  const block = `${LATE_START}\n${lateInner}\n${LATE_END}`;
+  if (existing.test(source)) return source.replace(existing, () => `\n\n${block}\n\n`);
+  const anchorBreak = `${LATE_ANCHOR}\n\n`;
+  if (!source.includes(anchorBreak)) return source;
+  return source.replace(anchorBreak, () => `${LATE_ANCHOR}\n\n${block}\n\n`);
+}
+
+/**
+ * @param {string} source
+ * @param {string} inner
+ * @param {string} [lateInner]
+ * @returns {string}
+ */
+function applyHtaccess(source, inner, lateInner = "") {
   const block = `${MARKER_START}\n${inner}\n${MARKER_END}`;
   const existing = /\n\n  # SHORTLINKS:START[\s\S]*?\n  # SHORTLINKS:END\n/u;
+  let next = source;
   if (existing.test(source)) {
-    return source.replace(existing, () => `\n\n${block}\n`);
-  }
-  if (!source.includes(HTACCESS_ANCHOR)) {
+    next = source.replace(existing, () => `\n\n${block}\n`);
+  } else if (!source.includes(HTACCESS_ANCHOR)) {
     throw new Error("mod_rewrite deny block not found in .htaccess");
+  } else {
+    next = source.replace(HTACCESS_ANCHOR, () => `  RewriteRule ^blog/posts(?:/|$) - [F,L]\n\n${block}\n</IfModule>`);
   }
-  return source.replace(HTACCESS_ANCHOR, () => `  RewriteRule ^blog/posts(?:/|$) - [F,L]\n\n${block}\n</IfModule>`);
+  return applyLate(next, lateInner);
 }
 
 /**
@@ -543,13 +676,14 @@ function snapshotDocument(rows) {
     if (originalUrlHasApiKey(record["Original URL"])) return;
     /** @type {Record<string, unknown>} */
     const copy = {};
-    Object.keys(record).forEach((key) => {
-      if (key.toLowerCase() === "total clicks") return;
+    SNAPSHOT_KEYS.forEach((key) => {
+      if (!Object.prototype.hasOwnProperty.call(record, key)) return;
       const value = record[key];
       if (typeof value === "string" && /apiKey=/iu.test(value)) return;
       copy[key] = value;
     });
     if (originalUrlHasApiKey(copy["Original URL"])) return;
+    if (!copy.id || !copy["Original URL"] || !copy["Short URL"]) return;
     clean.push(copy);
   });
   return { ShortLinks: clean };
@@ -689,7 +823,8 @@ function planPublish(root, rows, options) {
   });
   const htaccessPath = path.join(root, ".htaccess");
   const current = fs.readFileSync(htaccessPath, "utf8");
-  const next = applyHtaccess(current, renderInner(classified.links));
+  const inner = renderInner(classified.links);
+  const next = applyHtaccess(current, inner, renderLate(classified.links));
   /** @type {Map<string, string>} */
   const pages = new Map();
   classified.links.forEach((link) => {
@@ -704,16 +839,52 @@ function planPublish(root, rows, options) {
 }
 
 /**
+ * @param {string} file
+ * @param {string} text
+ * @returns {void}
+ */
+function writeAtomic(file, text) {
+  const tmp = `${file}.${process.pid}.tmp`;
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(tmp, text);
+  fs.renameSync(tmp, file);
+}
+
+/**
  * @param {string} root
  * @param {ReturnType<typeof planPublish>} plan
  * @param {string|null} snapshotText
  * @returns {void}
  */
 function commitPublish(root, plan, snapshotText) {
-  if (plan.next !== plan.current) fs.writeFileSync(plan.htaccessPath, plan.next);
-  writePages(root, plan.pages);
-  if (snapshotText != null) {
-    fs.writeFileSync(path.join(root, "data", "shortlinks.snapshot.json"), snapshotText);
+  /** @type {{ tmp: string, file: string }[]} */
+  const staged = [];
+  try {
+    plan.pages.forEach((html, rel) => {
+      const file = path.join(root, rel);
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      const tmp = `${file}.${process.pid}.tmp`;
+      fs.writeFileSync(tmp, html);
+      staged.push({ tmp, file });
+    });
+    staged.forEach((item) => {
+      fs.renameSync(item.tmp, item.file);
+    });
+    staged.length = 0;
+    if (plan.next !== plan.current) writeAtomic(plan.htaccessPath, plan.next);
+    if (snapshotText != null) {
+      writeAtomic(path.join(root, "data", "shortlinks.snapshot.json"), snapshotText);
+    }
+    const expected = new Set([...plan.pages.keys()].map((rel) => path.join(root, rel)));
+    listHtml(path.join(root, "r")).forEach((file) => {
+      if (!expected.has(file)) fs.rmSync(file);
+    });
+    removeEmptyDirs(path.join(root, "r"), path.join(root, "r"));
+  } catch (error) {
+    staged.forEach((item) => {
+      fs.rmSync(item.tmp, { force: true });
+    });
+    throw error;
   }
   const ids = plan.classified.links.map((link) => link.id).join(", ");
   console.log(`build-shortlinks: published ${ids}`);
@@ -723,6 +894,20 @@ function commitPublish(root, plan, snapshotText) {
  * @param {string} snapshotPath
  * @returns {unknown[]|null}
  */
+/**
+ * @param {string} snapshotPath
+ * @returns {unknown[]}
+ */
+function readSnapshotRows(snapshotPath) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
+    if (!parsed || !Array.isArray(parsed.ShortLinks)) return [];
+    return parsed.ShortLinks;
+  } catch {
+    return [];
+  }
+}
+
 function loadSnapshotRows(snapshotPath) {
   let parsed = null;
   try {
@@ -759,6 +944,17 @@ function finishPublish(root, rows, options, snapshotText) {
 }
 
 /**
+ * Prior-count classification must not print row warnings.
+ * @param {string} id
+ * @param {string} reason
+ * @returns {void}
+ */
+function silentWarning(id, reason) {
+  void id;
+  void reason;
+}
+
+/**
  * @param {{ root?: string, offline?: boolean, check?: boolean, fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string, warn?: (id: string, reason: string) => void }} [options]
  * @returns {Promise<number>}
  */
@@ -782,8 +978,16 @@ async function run(options = {}) {
         const document = snapshotDocument(fetched);
         assertNoApiKey(document);
         const plan = planPublish(root, fetched, options);
+        const priorRows = readSnapshotRows(snapshotPath);
+        const priorCount = classifyShortLinks(priorRows, {
+          reserved: reservedFirstSegments(root),
+          warn: silentWarning,
+        }).links.length;
         if (plan.classified.links.length === 0 || document.ShortLinks.length === 0) {
           throw new Error("no publishable ShortLinks rows");
+        }
+        if (priorCount > 0 && plan.classified.links.length * 2 < priorCount) {
+          throw new Error("bulk drop of ShortLinks rows");
         }
         if (options.check === true) {
           if (hasDrift(root, plan.current, plan.next, plan.pages)) {
@@ -827,6 +1031,7 @@ module.exports = {
   classifyShortLinks,
   mergeQuery,
   PAGE_MERGE,
+  assertSafeFlags,
   originalUrlHasApiKey,
   renderInner,
   renderPage,
