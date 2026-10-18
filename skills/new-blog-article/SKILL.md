@@ -22,10 +22,10 @@ Create one new article for the SOLON Agency blog (a digital agency for lawyers).
 - [ ] 4. node scripts/humanize.js
 - [ ] 5. node scripts/build.js
 - [ ] 6. node scripts/update-sitemap.js
-- [ ] 7. node scripts/append-blog-google-sheets.js "ARTICLE_TITLE"
+- [ ] 7. node scripts/append-blog-google-sheets.js "ARTICLE_TITLE" (optional; needs env `BLOG_SHEETS_APPEND_URL`)
 ```
 
-Run the four scripts in this exact order. Step 7 takes the article title (with diacritics) as the argument and needs network access.
+Run the four scripts in this exact order. Step 7 takes the article title (with diacritics) as the argument. Set **`BLOG_SHEETS_APPEND_URL`** to the full Apps Script web app URL (including any required query parameter); never commit that value. If the variable is unset, the script logs a skip message and exits 0 so CI is not blocked.
 
 ## Step 1 — Calibrate
 
@@ -104,10 +104,10 @@ If the user provides images, use those. Otherwise pick fitting `undraw_*.png` fi
 node scripts/humanize.js          # normalises typography (em dashes → hyphens)
 node scripts/build.js             # compiles .md → HTML, regenerates posts.json + blog/index.html
 node scripts/update-sitemap.js    # adds the new URL to sitemap.xml (priority 0.80)
-node scripts/append-blog-google-sheets.js "TITLU ARTICOL"   # logs the article; needs network
+node scripts/append-blog-google-sheets.js "TITLU ARTICOL"   # optional sheet log; needs BLOG_SHEETS_APPEND_URL
 ```
 
-`build.js` creates `blog/[slug]/index.html`, updates `blog/posts.json` (sorted by date desc) and regenerates `blog/index.html`. Pass the exact title (with diacritics) to the last script.
+`build.js` creates `blog/[slug]/index.html`, updates `blog/posts.json` (sorted by date desc) and regenerates `blog/index.html`. Pass the exact title (with diacritics) to the last script when `BLOG_SHEETS_APPEND_URL` is configured; otherwise step 7 is skipped safely.
 
 ## Final checklist
 

@@ -9,6 +9,8 @@
 
 A post PR should add the markdown file and then regenerate with `node scripts/build.js && node scripts/update-homepage-blog-carousel.js`. Do not hand-edit `blog/index.html` or the homepage carousel.
 
+After the build, optionally log the article title to the editorial Google Sheet with `node scripts/append-blog-google-sheets.js "Article title"`. That script reads the full Apps Script web app URL from env **`BLOG_SHEETS_APPEND_URL`** (set it as a GitHub Actions secret or locally when you run the script; never commit the value). If **`BLOG_SHEETS_APPEND_URL`** is unset, sheet logging is skipped with a clear message and exit code 0 so CI and deploy are not blocked.
+
 Optional fields:
 
 - `cluster`: one topical key. The build links every other post in that cluster under "Articole similare". A post with no cluster, or the only post in a cluster, gets no related block.
@@ -26,4 +28,4 @@ Do not add links to the Dumitrescu case-study page from templates, the hub, the 
 
 ## Blog sheet append (optional)
 
-`scripts/append-blog-google-sheets.js` logs a new article title to a Google Sheet via Apps Script. Set the full deployment URL (including any required query parameter) in env **`BLOG_SHEETS_APPEND_URL`** (GitHub Actions secret when a workflow runs the script). If the variable is unset, the script logs a skip message and exits 0 so CI never fails. Never commit the URL or secret value.
+`scripts/append-blog-google-sheets.js` logs a new article title to a Google Sheet via Apps Script (see the blog post workflow above). **`BLOG_SHEETS_APPEND_URL`** must be the full deployment URL, including any required query parameter. Configure it as a GitHub Actions secret or a local env var before running the script. Without it, sheet logging is skipped (stdout names the variable only; exit 0). Tests: `npm run test:append-sheets`. Never commit the URL or secret value.

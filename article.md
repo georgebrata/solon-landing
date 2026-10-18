@@ -11,7 +11,7 @@ Use the following images inside the article:
 - assets/img/[image2.png]
 After creating the .md file, run node scripts/humanize.js,
 then node scripts/build.js, then node scripts/update-sitemap.js.
-Finally, run node scripts/append-blog-google-sheets.js "ARTICLE_TITLE" (pass the article title as the argument).
+Finally, optionally run `node scripts/append-blog-google-sheets.js "ARTICLE_TITLE"` (pass the article title as the argument). This step needs the **`BLOG_SHEETS_APPEND_URL`** environment variable set to the full Apps Script web app URL; if it is unset, the script logs a skip message and exits 0.
 
 Constraints: 
 - title max 50 characters

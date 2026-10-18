@@ -1,10 +1,13 @@
 "use strict";
 
+const http = require("http");
 const https = require("https");
 
 /** Full Apps Script web app URL including any required query secret (never commit the value). */
 const ENV_APPEND_URL = "BLOG_SHEETS_APPEND_URL";
 const AUTHOR = "George";
+/** Per POST request (Apps Script cold start). */
+const APPEND_REQUEST_TIMEOUT_MS = 20000;
 
 const formatToday = () => {
   const now = new Date();
@@ -15,14 +18,24 @@ const formatToday = () => {
 };
 
 /**
+ * @param {string} title
+ * @returns {string}
+ */
+const buildAppendPayload = (title) => JSON.stringify({ row: [formatToday(), "", title, AUTHOR] });
+
+/**
  * @param {string} webhookUrl
  * @param {string} title
+ * @param {{ timeoutMs?: number }} [options]
  */
-const appendRow = (webhookUrl, title) =>
+const appendRow = (webhookUrl, title, options = {}) =>
   new Promise((resolve, reject) => {
-    const payload = JSON.stringify({ row: [formatToday(), "", title, AUTHOR] });
+    const payload = buildAppendPayload(title);
+    const parsed = new URL(webhookUrl);
+    const transport = parsed.protocol === "https:" ? https : http;
+    const timeoutMs = options.timeoutMs ?? APPEND_REQUEST_TIMEOUT_MS;
 
-    const request = https.request(
+    const request = transport.request(
       webhookUrl,
       {
         method: "POST",
@@ -46,7 +59,16 @@ const appendRow = (webhookUrl, title) =>
       },
     );
 
-    request.on("error", reject);
+    const timer = setTimeout(() => {
+      request.destroy(new Error("append request timed out"));
+    }, timeoutMs);
+
+    const clearTimer = () => clearTimeout(timer);
+    request.on("close", clearTimer);
+    request.on("error", (err) => {
+      clearTimer();
+      reject(err);
+    });
     request.write(payload);
     request.end();
   });
@@ -89,6 +111,10 @@ if (require.main === module) {
 
 module.exports = {
   ENV_APPEND_URL,
+  APPEND_REQUEST_TIMEOUT_MS,
+  AUTHOR,
   resolveAppendUrl,
+  buildAppendPayload,
+  formatToday,
   appendRow,
 };
