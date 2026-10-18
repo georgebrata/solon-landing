@@ -1,6 +1,7 @@
 {
   "Abonamente": [
     {
+      "id": "lithium",
       "Nume abonament": "Lithium",
       "Activ": false,
       "Pret lunar (RON)": 0,
@@ -12,6 +13,7 @@
       "Netopia Payment Link Year": "-"
     },
     {
+      "id": "bronze",
       "Nume abonament": "Bronze",
       "Activ": true,
       "Pret lunar (RON)": 99,
@@ -23,6 +25,7 @@
       "Netopia Payment Link Year": "https://mpy.ro/99mzfykht?language=ro"
     },
     {
+      "id": "silver",
       "Nume abonament": "Silver",
       "Activ": true,
       "Pret lunar (RON)": 199,
@@ -34,6 +37,7 @@
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0sht?language=ro"
     },
     {
+      "id": "gold",
       "Nume abonament": "Gold",
       "Activ": true,
       "Pret lunar (RON)": 499,
@@ -45,6 +49,7 @@
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0uht?language=ro"
     },
     {
+      "id": "platinum",
       "Nume abonament": "Platinum",
       "Activ": true,
       "Pret lunar (RON)": 999,
@@ -58,6 +63,7 @@
   ],
   "Servicii": [
     {
+      "id": "logo",
       "Category": "Branding",
       "Activ": true,
       "Service": "Logo",
@@ -69,6 +75,7 @@
       "Notes": ""
     },
     {
+      "id": "manual-de-brand",
       "Category": "Branding",
       "Activ": true,
       "Service": "Manual de brand",
@@ -80,6 +87,7 @@
       "Notes": ""
     },
     {
+      "id": "carti-de-vizita",
       "Category": "Branding",
       "Activ": true,
       "Service": "Cărți de vizită",
@@ -91,6 +99,7 @@
       "Notes": ""
     },
     {
+      "id": "sedinta-foto-profesionala",
       "Category": "Branding",
       "Activ": true,
       "Service": "Ședință foto profesională",
@@ -102,6 +111,7 @@
       "Notes": ""
     },
     {
+      "id": "template-docs-cu-antet-personalizat",
       "Category": "Branding",
       "Activ": true,
       "Service": "Template docs cu antet personalizat",
@@ -113,6 +123,7 @@
       "Notes": ""
     },
     {
+      "id": "dosare-personalizate",
       "Category": "Branding",
       "Activ": true,
       "Service": "Dosare personalizate",
@@ -124,6 +135,7 @@
       "Notes": ""
     },
     {
+      "id": "consumabile-personalizate",
       "Category": "Branding",
       "Activ": false,
       "Service": "Consumabile personalizate",
@@ -135,6 +147,7 @@
       "Notes": "Serviciu marcat ca idee/on hold"
     },
     {
+      "id": "strategie-de-marketing",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Strategie de Marketing",
@@ -146,6 +159,7 @@
       "Notes": "Audiență: cabinete/societăți proaspăt înființate; avocați definitivi care vor clienți noi"
     },
     {
+      "id": "strategie-seo",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Strategie SEO",
@@ -157,6 +171,7 @@
       "Notes": ""
     },
     {
+      "id": "management-social-media",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Management Social Media",
@@ -168,6 +183,7 @@
       "Notes": ""
     },
     {
+      "id": "management-google-my-business",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Management Google My Business",
@@ -179,6 +195,7 @@
       "Notes": ""
     },
     {
+      "id": "copywriting-website",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Copywriting website",
@@ -190,6 +207,7 @@
       "Notes": ""
     },
     {
+      "id": "newsletter-email",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Newsletter (email)",
@@ -201,6 +219,7 @@
       "Notes": ""
     },
     {
+      "id": "ads",
       "Category": "Marketing",
       "Activ": true,
       "Service": "Ads",
@@ -212,6 +231,7 @@
       "Notes": ""
     },
     {
+      "id": "implementare-website",
       "Category": "Development",
       "Activ": true,
       "Service": "Implementare website",
@@ -223,6 +243,7 @@
       "Notes": ""
     },
     {
+      "id": "qa-website",
       "Category": "Development",
       "Activ": true,
       "Service": "QA Website",
@@ -234,6 +255,7 @@
       "Notes": ""
     },
     {
+      "id": "security-audits-website",
       "Category": "Development",
       "Activ": true,
       "Service": "Security Audits Website",
@@ -245,6 +267,7 @@
       "Notes": "Idei suplimentare: load testing, WordPress scans"
     },
     {
+      "id": "mentenanta-anuala-website",
       "Category": "Development",
       "Activ": true,
       "Service": "Mentenanță anuală website",
@@ -256,6 +279,7 @@
       "Notes": ""
     },
     {
+      "id": "implementare-aplicatie-web-mobila",
       "Category": "Development",
       "Activ": true,
       "Service": "Implementare aplicație web/mobilă",
@@ -267,6 +291,7 @@
       "Notes": ""
     },
     {
+      "id": "reducere-la-juridis-ro",
       "Category": "Unelte",
       "Activ": true,
       "Service": "Reducere la juridis.ro",
