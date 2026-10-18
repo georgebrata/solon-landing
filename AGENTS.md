@@ -23,3 +23,14 @@ Sitemap lastmod is preserved for a page whose content date is not newer than the
 The production workflow runs `node scripts/update-sitemap.js --from-git` after the pricing build and before FTP. Each `<lastmod>` becomes the later of the stored day and the last commit that changed that page's content, still clamped to today in Europe/Bucharest. Cache-bust `?v=` tokens and the generated "Articole recente" / "Articole similare" blocks are not content changes, so a page that did not change keeps its stored value. A working-tree edit since `HEAD` (the pricing build can rewrite the homepage) uses today. The refreshed sitemap is uploaded and is not committed back.
 
 Do not add links to the Dumitrescu case-study page from templates, the hub, the carousel, related posts, or `llms.txt`. That page and its sitemap entry stay until Legal clears them.
+
+## Pricing data (SOLON API)
+
+Homepage pricing is built at deploy time (and in tests offline) by `scripts/build-pricing.js` from the **Abonamente** and **Servicii** tabs of the "SOLON API" spreadsheet via the key-protected SOLON CRUD API.
+
+- **URL:** optional env `SHEETS_API_URL` (Actions variable); the script default is the documented deployment URL.
+- **Key:** required env `SHEETS_API_KEY` (GitHub Actions secret, same value as the Apps Script Script Property `API_KEY`). Never print, commit, or put it in browser JS.
+- **Tabs** must include an `id` column; rows with a blank `id` are omitted by the API. Without ids, the live fetch fails validation and deploy falls back to `data/abonamente.snapshot.json` (build still succeeds; look for `::error::build-pricing`).
+- **Snapshot:** `data/abonamente.snapshot.json` is the committed fallback. On a successful API fetch, deploy refreshes it (bot commit on `main`). Do not hand-edit the snapshot.
+- **Notes/add-ons:** the homepage does not render pricing notes or add-ons; tests assert that block stays removed.
+- **Checks:** `npm run test:pricing`, `node scripts/build-pricing.js --offline --check`.

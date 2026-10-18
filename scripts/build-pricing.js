@@ -1,7 +1,7 @@
 "use strict";
 /**
- * Build-time pricing: fetch "SOLON API" (tabs Abonamente +
- * Servicii) from the Apps Script endpoint, render active RON packages into
+ * Build-time pricing: read "SOLON API" tabs Abonamente + Servicii through the
+ * SOLON CRUD API (env SHEETS_API_URL, secret SHEETS_API_KEY), render active RON packages into
  * index.html between PRICING markers. Servicii rows stay in the snapshot;
  * the homepage does not render pricing notes or add-ons.
  *
@@ -19,9 +19,15 @@
   const path = require("path");
 
   const root = path.join(__dirname, "..");
-  const ENDPOINT =
-    process.env.SOLON_DATA_URL ||
-    "https://script.google.com/macros/s/AKfycbyH3CjUOWBxTKpjzHrjMkFbn_YBqFZ6MXLjH3WE4mDU9wNBPTViBMsC0wClML_S15yS/exec";
+  /** SOLON CRUD API v1.0 (Drive doc "SOLON API Docs"). The URL is not a credential; the key is. */
+  const DEFAULT_API_URL =
+    "https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec";
+  /** Tabs read for the homepage, in this order. */
+  const PRICING_TABS = Object.freeze(["Abonamente", "Servicii"]);
+  /** API maximum page size (doc 5.3: 1-500). */
+  const PAGE_LIMIT = 500;
+  /** Safety stop so a broken pagination response cannot loop forever. */
+  const MAX_PAGES = 20;
   const SNAPSHOT = path.join(root, "data", "abonamente.snapshot.json");
   const INDEX = path.join(root, "index.html");
 
@@ -142,14 +148,61 @@
     return data;
   }
 
-  /** @returns {Promise<ReturnType<typeof validate>>} */
-  async function fetchData() {
+  /**
+   * Read every record of one tab through the SOLON API (GET, apiKey query param,
+   * paginated). Errors never include the request URL, because it carries the key.
+   * @param {string} sheet exact tab name
+   * @param {{ fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string, signal?: AbortSignal }} [options]
+   * @returns {Promise<Record<string, unknown>[]>}
+   */
+  async function fetchTab(sheet, options = {}) {
+    const fetchImpl = options.fetchImpl || fetch;
+    const baseUrl = options.baseUrl || process.env.SHEETS_API_URL || DEFAULT_API_URL;
+    const apiKey = options.apiKey ?? process.env.SHEETS_API_KEY ?? "";
+    if (!apiKey) throw new Error("SHEETS_API_KEY is not set");
+    const rows = [];
+    let offset = 0;
+    for (let page = 0; page < MAX_PAGES; page += 1) {
+      const url = new URL(baseUrl);
+      url.searchParams.set("apiKey", apiKey);
+      url.searchParams.set("sheet", sheet);
+      url.searchParams.set("limit", String(PAGE_LIMIT));
+      url.searchParams.set("offset", String(offset));
+      const res = await fetchImpl(url, { redirect: "follow", signal: options.signal });
+      if (!res.ok) throw new Error(`${sheet}: HTTP ${res.status}`);
+      let body;
+      try {
+        body = await res.json();
+      } catch {
+        throw new Error(`${sheet}: response is not JSON`);
+      }
+      // The API always answers HTTP 200; success lives in the JSON envelope.
+      if (!body || body.success !== true) {
+        const code = body && body.error && typeof body.error.code === "string" ? body.error.code : "UNKNOWN";
+        throw new Error(`${sheet}: API error ${code}`);
+      }
+      if (!Array.isArray(body.data)) throw new Error(`${sheet}: data is not an array`);
+      rows.push(...body.data);
+      if (!body.pagination || body.pagination.hasMore !== true) return rows;
+      if (body.data.length === 0) throw new Error(`${sheet}: pagination reports more rows but returned none`);
+      offset += body.data.length;
+    }
+    throw new Error(`${sheet}: more than ${MAX_PAGES} pages`);
+  }
+
+  /**
+   * @param {{ fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string }} [options]
+   * @returns {Promise<ReturnType<typeof validate>>}
+   */
+  async function fetchData(options = {}) {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 20000);
+    const timer = setTimeout(() => ctrl.abort(), 30000);
     try {
-      const res = await fetch(ENDPOINT, { redirect: "follow", signal: ctrl.signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return validate(await res.json());
+      /** @type {Record<string, Record<string, unknown>[]>} */
+      const data = {};
+      // Sequential on purpose: each call makes Apps Script read the whole tab.
+      for (const tab of PRICING_TABS) data[tab] = await fetchTab(tab, { ...options, signal: ctrl.signal });
+      return validate(data);
     } finally {
       clearTimeout(timer);
     }
@@ -307,9 +360,9 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
         data = await fetchData();
         const snapshotBody = `${JSON.stringify({ Abonamente: data.Abonamente, Servicii: data.Servicii }, null, 2)}\n`;
         fs.writeFileSync(SNAPSHOT, snapshotBody);
-        console.log(`build-pricing: fetched ${data.Abonamente.length} Abonamente rows from endpoint`);
+        console.log(`build-pricing: fetched ${data.Abonamente.length} Abonamente + ${data.Servicii.length} Servicii rows from SOLON API`);
       } catch (err) {
-        console.error(`::error::build-pricing: endpoint failed (${err.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`);
+        console.error(`::error::build-pricing: SOLON API failed (${err.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`);
       }
     }
     if (!data) data = validate(JSON.parse(fs.readFileSync(SNAPSHOT, "utf8")));
@@ -337,6 +390,8 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
   module.exports = {
     isNetopiaLink,
     roInclusion,
+    fetchTab,
+    fetchData,
     model,
     render,
     validate,

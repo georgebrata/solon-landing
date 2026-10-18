@@ -5,6 +5,8 @@ Lightweight &amp; fast lading page for a digital agency from Cluj-Napoca.
 
 Demo: https://solon.agency/
 
+Pricing is built at deploy time from the SOLON API (GitHub Actions secret `SHEETS_API_KEY`).
+
 ## Local Development
 To run the project locally, simply clone the repository and open the root index.html file.
 Optional: use [http-server]([url](https://github.com/http-party/http-server)) for local development

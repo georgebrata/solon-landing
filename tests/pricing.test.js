@@ -3,7 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
-const { isNetopiaLink, roInclusion, model, render, validate } = require("../scripts/build-pricing");
+const { isNetopiaLink, roInclusion, model, render, validate, fetchTab, fetchData } = require("../scripts/build-pricing");
 
 const root = path.join(__dirname, "..");
 const snapshot = JSON.parse(fs.readFileSync(path.join(root, "data/abonamente.snapshot.json"), "utf8"));
@@ -154,4 +154,55 @@ test("model renders canonical package names regardless of sheet casing", () => {
 test("known English sheet phrases become Romanian", () => {
   assert.strictEqual(roInclusion("- 2 website updates / month;"), "2 modificări pe website / lună");
   assert.strictEqual(roInclusion("- GoogleMyBusines maintenance, "), "Mentenanță Google My Business");
+});
+
+/** Fake SOLON API: serves rows in pages and records requested URLs. */
+function fakeApi(tabs, { pageSize = 2, envelope } = {}) {
+  const calls = [];
+  const fetchImpl = async (url) => {
+    const u = new URL(url);
+    calls.push(u);
+    if (envelope) return { ok: true, json: async () => envelope };
+    const rows = tabs[u.searchParams.get("sheet")];
+    if (!rows) return { ok: true, json: async () => ({ success: false, error: { code: "NOT_FOUND", message: "Sheet not found." } }) };
+    const offset = Number(u.searchParams.get("offset"));
+    const data = rows.slice(offset, offset + pageSize);
+    return {
+      ok: true,
+      json: async () => ({ success: true, sheet: u.searchParams.get("sheet"), data, pagination: { total: rows.length, offset, limit: pageSize, hasMore: offset + data.length < rows.length } }),
+    };
+  };
+  return { fetchImpl, calls };
+}
+
+const withIds = (rows, prefix) => rows.map((row, index) => ({ id: `${prefix}-${index + 1}`, ...row }));
+
+test("SOLON API: paginated tabs render the same homepage as the snapshot", async () => {
+  const { fetchImpl, calls } = fakeApi({ Abonamente: withIds(snapshot.Abonamente, "ab"), Servicii: withIds(snapshot.Servicii, "sv") });
+  const data = await fetchData({ fetchImpl, baseUrl: "https://example.test/exec", apiKey: "test-key" });
+  assert.strictEqual(data.Abonamente.length, snapshot.Abonamente.length);
+  assert.strictEqual(data.Servicii.length, snapshot.Servicii.length);
+  assert.strictEqual(render(html, model(data)), html);
+  assert.ok(calls.every((u) => u.searchParams.get("apiKey") === "test-key"));
+  assert.deepStrictEqual([...new Set(calls.map((u) => u.searchParams.get("sheet")))], ["Abonamente", "Servicii"]);
+});
+
+test("SOLON API: success:false is an error and never leaks the key", async () => {
+  const { fetchImpl } = fakeApi({}, { envelope: { success: false, error: { code: "UNAUTHORIZED", message: "Invalid or missing API key." } } });
+  await assert.rejects(fetchTab("Abonamente", { fetchImpl, baseUrl: "https://example.test/exec", apiKey: "secret-123" }), (err) => {
+    assert.match(err.message, /UNAUTHORIZED/);
+    assert.ok(!err.message.includes("secret-123"));
+    return true;
+  });
+});
+
+test("SOLON API: missing key fails before any request", async () => {
+  const { fetchImpl, calls } = fakeApi({ Abonamente: [] });
+  await assert.rejects(fetchTab("Abonamente", { fetchImpl, baseUrl: "https://example.test/exec", apiKey: "" }), /SHEETS_API_KEY/);
+  assert.strictEqual(calls.length, 0);
+});
+
+test("SOLON API: tab without ids (empty list) fails validation so the snapshot is kept", async () => {
+  const { fetchImpl } = fakeApi({ Abonamente: [], Servicii: [] });
+  await assert.rejects(fetchData({ fetchImpl, baseUrl: "https://example.test/exec", apiKey: "k" }), /got 0/);
 });
