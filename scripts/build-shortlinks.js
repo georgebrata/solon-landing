@@ -504,8 +504,7 @@ location.replace(mergeQuery(D,location.search,location.hash));
 <body>
 ${LOGO_SVG}
 <div class="l" aria-hidden="true"></div>
-<a class="w" href="${dest}">SOLON</a>
-<noscript><a href="${dest}">SOLON</a></noscript>
+<a class="w" href="${dest}" aria-label="Mergi la pagina destinație">SOLON</a>
 </body>
 </html>
 `;

@@ -30,7 +30,7 @@ Example: destination `https://x/p?language=ro&a=1`, visit `?language=en&q=%C8%99
 
 Browsers (`Accept` contains `text/html`) are rewritten internally to `r/<path>/index.html`. The page is a minimal SOLON screen: the logo, the brand colors, and a small loader, with the background set on `html`. The script in `head` fires the hit, then calls `location.replace` immediately. Everyone else receives a `302` (or `301`) from `.htaccess`, with `NE`, one `Cache-Control: no-store`, and `Vary: Accept` merged. `ExpiresActive Off` for those URLs sits inside `<IfModule mod_expires.c>`, so Apache does not add a second cache header and a host without that module does not return 500. Non-browser requests are not counted, so `/api?apiKey=…&sheet=…` works for scripts.
 
-Without JavaScript the noscript refresh opens the destination without the visitor query, and the click is not counted. The noscript link shows the SOLON wordmark. The same wordmark is also outside noscript: it stays hidden, then a CSS animation fades it in after 3 seconds if the script does not redirect. The spinner stops when the visitor prefers reduced motion.
+Without JavaScript the noscript refresh opens the destination without the visitor query, and the click is not counted. One SOLON wordmark link points at the destination. It stays hidden, then fades in after 3 seconds if the script does not redirect. The link's accessible name is “Mergi la pagina destinație”. The spinner stops when the visitor prefers reduced motion.
 
 ## Click counter
 

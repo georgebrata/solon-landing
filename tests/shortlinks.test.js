@@ -525,7 +525,8 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   assert.ok(html.includes("<title>SOLON</title>"));
   assert.ok(html.includes('content="0;url=https://example.com/a?b=1"'));
   assert.equal(html.includes("Continuă"), false);
-  assert.equal(html.includes("destinație"), false);
+  assert.equal(html.includes("Continuați"), false);
+  assert.equal(/\bsite\b/u.test(html), false);
   assert.ok(html.indexOf("<script>") < html.indexOf("</head>"));
   assert.ok(html.indexOf(HIT_FETCH) < html.indexOf("location.replace"));
   assert.equal(html.split("location.replace").length - 1, 1);
@@ -534,9 +535,10 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   assert.match(html, /@media \(prefers-reduced-motion: reduce\)\{\.l\{animation:none\}\}/);
   assert.match(html, /\.w\{opacity:0;animation:f \.4s ease 3s forwards\}/);
   const body = html.slice(html.indexOf("<body>"), html.indexOf("</body>"));
-  assert.match(body, /<a class="w" href="https:\/\/example\.com\/a\?b=1">SOLON<\/a>/);
-  assert.ok(body.indexOf('<a class="w"') < body.indexOf("<noscript>"));
-  assert.match(body, /<noscript><a href="https:\/\/example\.com\/a\?b=1">SOLON<\/a><\/noscript>/);
+  assert.equal((body.match(/<a\b/gu) || []).length, 1);
+  assert.match(body, /<a class="w" href="https:\/\/example\.com\/a\?b=1" aria-label="Mergi la pagina destinație">SOLON<\/a>/);
+  assert.equal(body.includes("<noscript>"), false);
+  assert.ok(html.includes('<noscript><meta http-equiv="refresh"'));
   assert.ok(html.includes('style="background:#03170C"'));
   assert.ok(html.includes("--primary:#03170C"));
   assert.ok(html.includes("--secondary:#3E5C76"));

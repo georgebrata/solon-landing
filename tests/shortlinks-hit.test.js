@@ -121,6 +121,22 @@ function parseHit(output) {
   return JSON.parse(output.text);
 }
 
+/**
+ * @param {string} source
+ * @returns {string}
+ */
+function handleHitSource(source) {
+  const start = source.indexOf("function handleHit_(body) {");
+  const end = source.indexOf("function hitOut_(", start);
+  assert.ok(start >= 0 && end > start);
+  return source.slice(start, end).trim();
+}
+
+test("handleHit_ in solon-api.js matches shortlinks-hit.gs", () => {
+  const api = fs.readFileSync(path.join(__dirname, "../docs/apps-script/solon-api.js"), "utf8");
+  assert.equal(handleHitSource(api), handleHitSource(SOURCE));
+});
+
 test("the hit script increments Clicks and falls back to Total clicks", () => {
   assert.equal(SOURCE.includes("https://"), false);
   assert.equal(SOURCE.includes("apiKey"), false);
