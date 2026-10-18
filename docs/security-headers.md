@@ -76,7 +76,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | Ahrefs | `analytics.ahrefs.com` | script, connect |
 | counter.dev | `cdn.counter.dev`, `t.counter.dev` | script, connect |
 | Google Fonts | `fonts.googleapis.com`, `fonts.gstatic.com` | style, font |
-| Forms / FAQ Sheets | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action |
+| Forms, FAQ Sheets, and the short-link click counter | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action. The counter POST uses `connect-src` only and sends no API key. |
 | IP lookup | `api64.ipify.org` | connect |
 | Support chat (disabled; re-enable per Trello jIwDAiCn) | `solon-agency.app.n8n.cloud` — omit from CSP while off | connect |
 | Stripe Payment Links | `buy.stripe.com` is a **top-level navigation** (not CSP). `js.stripe.com` / `hooks.stripe.com` reserved if Checkout is ever embedded | frame, script |

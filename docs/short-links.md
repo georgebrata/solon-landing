@@ -2,7 +2,7 @@
 
 George edits the `ShortLinks` tab. The next deploy publishes each active row as a short URL on solon.agency. There is no link-creation UI in this repo.
 
-`data/shortlinks.config.json` keeps `hitEndpoint` empty until the Apps Script `hit` action is deployed. With an empty endpoint the redirect still runs and the click is not counted.
+`data/shortlinks.config.json` sets `hitEndpoint` to the same keyed SOLON API exec URL as `scripts/build-pricing.js`. The browser posts `{ "action": "hit", "id" }` only. It never sends the API key. With an empty endpoint the redirect still runs and the click is not counted.
 
 ## Add, disable, or change a link
 
@@ -28,15 +28,17 @@ The visitor's query is copied byte for byte, in the original order and encoding.
 
 Example: destination `https://x/p?language=ro&a=1`, visit `?language=en&q=%C8%99+x` → `https://x/p?language=en&q=%C8%99+x&a=1`.
 
-Browsers (`Accept` contains `text/html`) are rewritten internally to `r/<path>/index.html`, then `location.replace` runs. Everyone else receives a `302` (or `301`) from `.htaccess`, with `NE`, `Cache-Control: no-store`, and `Vary: Accept`. Non-browser requests are not counted, so `/api?apiKey=…&sheet=…` works for scripts.
+Browsers (`Accept` contains `text/html`) are rewritten internally to `r/<path>/index.html`. The page is a minimal SOLON screen: the logo, the brand colors, and a small loader, with the background set on `html`. The script in `head` fires the hit, then calls `location.replace` immediately. Everyone else receives a `302` (or `301`) from `.htaccess`, with `NE`, `Cache-Control: no-store`, and `Vary: Accept`. Non-browser requests are not counted, so `/api?apiKey=…&sheet=…` works for scripts.
 
-Without JavaScript the noscript refresh opens the destination without the visitor query, and the click is not counted.
+Without JavaScript the noscript refresh opens the destination without the visitor query, and the click is not counted. The noscript link shows the SOLON wordmark.
 
 ## Click counter
 
-The redirect page sends only `{ "action": "hit", "id": "<id>" }` with `fetch`, `credentials: 'omit'`, `referrerPolicy: 'no-referrer'`, and `mode: 'no-cors'`. It does not use `sendBeacon`, and it does not send the query, the path, or an apiKey. The redirect does not wait more than 300 ms.
+The redirect page sends only `{ "action": "hit", "id": "<id>" }` with `fetch`, `credentials: 'omit'`, `referrerPolicy: 'no-referrer'`, and `mode: 'no-cors'`. It does not use `sendBeacon`, and it does not send the query, the path, or an apiKey. The hit is not awaited, and nothing delays `location.replace`.
 
-Paste `docs/apps-script/shortlinks-hit.gs` into the bound CRUD script and deploy a new version at the same URL. Then a follow-up change can set `hitEndpoint`. The counter sets no cookie and writes only `Total clicks`.
+`connect-src` in the report-only Content-Security-Policy already allows `https://script.google.com` and `https://script.googleusercontent.com`, which is where that POST goes. Do not add other hosts for the counter.
+
+Paste `docs/apps-script/shortlinks-hit.gs` into the bound CRUD script and deploy a new version at the same URL. Do not deploy it from this repo. The counter sets no cookie. It increments `Clicks`, and uses `Total clicks` only when `Clicks` is missing. The snapshot still stores only `id`, `Original URL`, `Short URL`, `Activ`, and `Tip redirect`.
 
 `r/` is disallowed in `robots.txt` and is excluded from the sitemap and from IndexNow. Do not add these URLs to the homepage carousel.
 

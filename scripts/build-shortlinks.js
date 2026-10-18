@@ -390,7 +390,7 @@ function dropDuplicatePaths(items, options, skipped) {
 }
 
 /**
- * Compact copy of mergeQuery inlined into each redirect page (≤ 2 KB).
+ * Compact copy of mergeQuery inlined into each redirect page.
  * tests/shortlinks.test.js checks it against mergeQuery.
  */
 const PAGE_MERGE = [
@@ -461,6 +461,9 @@ function htmlEscape(value) {
   })[char]);
 }
 
+const PAGE_BYTE_LIMIT = 3072;
+const LOGO_SVG = '<svg viewBox="0 0 24 24" role="img" aria-label="SOLON"><path fill="#F0EBD8" d="M2,0 4,0 24,20 24,22 23,23 21,24 20,23 1,4 0,2ZM2,9 4,10 14,20 15,22 14,23 11,24 0,13 0,11ZM21,0 23,0 24,2 24,4 20,7 24,12 24,13 22,15 20,14 14,7 15,6ZM2,18 4,19 5,21 6,22 5,24 2,24 0,22 0,20Z"/></svg>';
+
 /**
  * @param {{ id: string, destination: string }} link
  * @param {string} hitEndpoint
@@ -470,26 +473,35 @@ function renderPage(link, hitEndpoint) {
   const dest = htmlEscape(link.destination);
   const hit = typeof hitEndpoint === "string" ? hitEndpoint : "";
   const html = `<!DOCTYPE html>
-<html lang="ro">
+<html lang="ro" style="background:#03170C">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redirecționare | SOLON</title>
+<title>SOLON</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<noscript><meta http-equiv="refresh" content="0;url=${dest}"></noscript>
-</head>
-<body>
-<p><a href="${dest}">Continuă către pagina de destinație</a></p>
+<style>
+html{--primary:#03170C;--secondary:#3E5C76;--tertiary:#F0EBD8;background:var(--primary);color:var(--tertiary)}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:var(--primary)}
+svg{width:4rem;height:4rem}
+.l{width:1.1rem;height:1.1rem;border:.12rem solid var(--secondary);border-top-color:var(--tertiary);border-radius:50%;animation:s .7s linear infinite}
+@keyframes s{to{transform:rotate(1turn)}}
+a{color:var(--tertiary);font:600 1rem Jost,system-ui,sans-serif;letter-spacing:.3em;text-decoration:none}
+</style>
 <script>
 (function(){
 var ID=${jsString(link.id)},D=${jsString(link.destination)},H=${jsString(hit)};
 ${PAGE_MERGE}
 if(H&&typeof fetch==="function"){try{fetch(H,{method:'POST',mode:'no-cors',keepalive:true,credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'hit',id:ID})}).catch(function(){});}catch(e){}}
-var go=function(){location.replace(mergeQuery(D,location.search,location.hash));};
-setTimeout(go,0);setTimeout(go,300);
+try{location.replace(mergeQuery(D,location.search,location.hash));}catch(e){location.replace(mergeQuery(D,location.search,location.hash));}
 })();
 </script>
+<noscript><meta http-equiv="refresh" content="0;url=${dest}"></noscript>
+</head>
+<body>
+${LOGO_SVG}
+<div class="l" aria-hidden="true"></div>
+<noscript><a href="${dest}">SOLON</a></noscript>
 </body>
 </html>
 `;
@@ -702,7 +714,7 @@ function applyHtaccess(source, inner, lateInner = "") {
 }
 
 /**
- * Drop Total clicks and any row whose Original URL carries apiKey.
+ * Drop Clicks, Total clicks, and any row whose Original URL carries apiKey.
  * @param {unknown[]} rows
  * @returns {{ ShortLinks: Record<string, unknown>[] }}
  */
@@ -847,7 +859,7 @@ function planPublish(root, rows, options) {
   classified.links.forEach((link) => {
     const rel = path.join("r", ...link.path.split("/"), "index.html");
     const html = renderPage(link, hitEndpoint);
-    if (Buffer.byteLength(html) > 2048) {
+    if (Buffer.byteLength(html) > PAGE_BYTE_LIMIT) {
       console.warn(`::warning::build-shortlinks: ${safeId(link.id)}`);
     }
     pages.set(rel, html);

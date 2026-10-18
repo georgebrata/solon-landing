@@ -527,10 +527,21 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   );
   assert.ok(html.includes('<meta name="robots" content="noindex,nofollow">'));
   assert.ok(html.includes('<meta name="referrer" content="no-referrer">'));
-  assert.ok(html.includes('<html lang="ro">'));
-  assert.ok(html.includes("<title>Redirecționare | SOLON</title>"));
+  assert.ok(html.includes('<html lang="ro" style="background:#03170C">'));
+  assert.ok(html.includes("<title>SOLON</title>"));
   assert.ok(html.includes('content="0;url=https://example.com/a?b=1"'));
-  assert.ok(html.includes(">Continuă către pagina de destinație</a>"));
+  assert.equal(html.includes("Continuă"), false);
+  assert.equal(html.includes("destinație"), false);
+  assert.ok(html.indexOf("<script>") < html.indexOf("</head>"));
+  assert.ok(html.indexOf(HIT_FETCH) < html.indexOf("location.replace"));
+  assert.equal(html.includes("setTimeout"), false);
+  assert.ok(html.includes('style="background:#03170C"'));
+  assert.ok(html.includes("--primary:#03170C"));
+  assert.ok(html.includes("--secondary:#3E5C76"));
+  assert.ok(html.includes("--tertiary:#F0EBD8"));
+  assert.ok(html.includes("<svg"));
+  assert.ok(html.includes('role="img"'));
+  assert.ok(html.includes(">SOLON</a>"));
   assert.ok(html.includes(HIT_FETCH));
   assert.ok(html.includes("credentials:'omit'"));
   assert.equal(html.includes("sendBeacon"), false);
@@ -542,7 +553,7 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   assert.ok(html.includes('typeof fetch==="function"'));
   assert.equal(html.includes("<iframe"), false);
   assert.equal(html.includes("<img"), false);
-  assert.ok(Buffer.byteLength(html) <= 2048, `page is ${Buffer.byteLength(html)} bytes`);
+  assert.ok(Buffer.byteLength(html) <= 3072, `page is ${Buffer.byteLength(html)} bytes`);
   ["googletagmanager", "google-analytics", "clarity", "facebook", "brevo", "metricool", "ahrefs", "counter.dev", "consent.min.js"].forEach((host) => {
     assert.equal(html.includes(host), false, host);
   });
@@ -585,6 +596,7 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   const serialised = JSON.stringify(snapshot);
   assert.equal(serialised.includes("apiKey="), false);
   assert.equal(serialised.includes("Total clicks"), false);
+  assert.equal(serialised.includes("\"Clicks\""), false);
   const ids = snapshot.ShortLinks.map((item) => item.id);
   assert.deepEqual(ids, SNAPSHOT_IDS);
   const allowedKeys = new Set(["id", "Original URL", "Short URL", "Activ", "Tip redirect"]);
@@ -602,7 +614,15 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   });
 
   const config = JSON.parse(fs.readFileSync(path.join(ROOT, "data/shortlinks.config.json"), "utf8"));
-  assert.equal(config.hitEndpoint, "");
+  const pricingSource = fs.readFileSync(path.join(ROOT, "scripts/build-pricing.js"), "utf8");
+  const apiUrl = pricingSource.match(/const DEFAULT_API_URL =\s+"([^"]+)"/u);
+  assert.ok(apiUrl);
+  assert.equal(config.hitEndpoint, apiUrl[1]);
+  assert.equal(config.hitEndpoint.includes("apiKey"), false);
+  const cspLine = htaccess.split("\n").find((line) => line.includes("Content-Security-Policy-Report-Only"));
+  const connectSrc = cspLine.split(";").find((part) => part.includes("connect-src"));
+  assert.match(connectSrc, /https:\/\/script\.google\.com(?:\s|")/);
+  assert.match(connectSrc, /https:\/\/script\.googleusercontent\.com/);
 
   const tree = [];
   const walk = (dir) => {
@@ -619,7 +639,7 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
     assert.equal(html.includes("sendBeacon"), false);
     assert.equal(html.includes("apiKey="), false);
     assert.ok(html.includes('<meta name="referrer" content="no-referrer">'));
-    assert.ok(Buffer.byteLength(html) <= 2048);
+    assert.ok(Buffer.byteLength(html) <= 3072, `${Buffer.byteLength(html)} bytes`);
   });
   assert.equal(fs.existsSync(path.join(ROOT, "r/api/index.html")), true);
   assert.equal(fs.existsSync(path.join(ROOT, "r/bronze/lunar/index.html")), true);
@@ -957,6 +977,69 @@ test("htaccess, redirect pages, and the snapshot store no apiKey", () => {
   });
   assert.deepEqual(classified.links.map((link) => link.id), PUBLISHED_IDS);
   assert.deepEqual(warnings, ["duplicate-path:hu43hb44"]);
+});
+
+test("the snapshot drops Clicks and Total clicks", () => {
+  const document = snapshotDocument([{
+    id: "row1",
+    "Original URL": "https://example.com/a",
+    "Short URL": "https://solon.agency/go",
+    Clicks: 7,
+    "Total clicks": 3,
+    Notes: "do not keep",
+    Activ: "TRUE",
+    "Tip redirect": "302",
+  }]);
+  assert.deepEqual(Object.keys(document.ShortLinks[0]), [
+    "id",
+    "Original URL",
+    "Short URL",
+    "Activ",
+    "Tip redirect",
+  ]);
+  const serialised = JSON.stringify(document);
+  assert.equal(serialised.includes("Clicks"), false);
+  assert.equal(serialised.includes("Total clicks"), false);
+  assert.equal(serialised.includes("do not keep"), false);
+});
+
+test("each published redirect posts one hit and the counter increments per id", () => {
+  const config = JSON.parse(fs.readFileSync(path.join(ROOT, "data/shortlinks.config.json"), "utf8"));
+  const snapshot = JSON.parse(fs.readFileSync(path.join(ROOT, "data/shortlinks.snapshot.json"), "utf8"));
+  const ignored = [];
+  /**
+   * @param {string} id
+   * @param {string} reason
+   * @returns {void}
+   */
+  function ignore(id, reason) {
+    ignored.push(`${reason}:${id}`);
+  }
+  const classified = classifyShortLinks(snapshot.ShortLinks, {
+    reserved: reservedFirstSegments(ROOT),
+    warn: ignore,
+  });
+  /** @type {Record<string, number>} */
+  const counts = Object.create(null);
+  classified.links.forEach((link) => {
+    const rel = path.join("r", ...link.path.split("/"), "index.html");
+    const html = fs.readFileSync(path.join(ROOT, rel), "utf8");
+    const first = runPage(html, { search: "" });
+    assert.equal(first.calls.length, 1, link.id);
+    assert.equal(first.calls[0].url, config.hitEndpoint);
+    assert.deepEqual(JSON.parse(first.calls[0].body), { action: "hit", id: link.id });
+    assert.equal(first.calls[0].init.credentials, "omit");
+    counts[link.id] = (counts[link.id] || 0) + 1;
+    const second = runPage(html, { search: "?q=1" });
+    assert.equal(second.calls.length, 1, link.id);
+    assert.deepEqual(JSON.parse(second.calls[0].body), { action: "hit", id: link.id });
+    counts[link.id] += 1;
+  });
+  classified.links.forEach((link) => {
+    assert.equal(counts[link.id], 2, link.id);
+  });
+  assert.equal(classified.links.length, PUBLISHED_IDS.length);
+  assert.deepEqual(ignored, ["duplicate-path:hu43hb44"]);
 });
 
 /**

@@ -1,4 +1,5 @@
 // Public, increment-only click counter for ShortLinks. No API key; no other writes.
+// Increments Clicks. Falls back to Total clicks when that column is absent.
 var HIT_MAX_PER_MIN = 60;
 function handleHit_(body) {
   var id = String((body && body.id) || '').trim();
@@ -16,7 +17,9 @@ function handleHit_(body) {
     var v = sh.getDataRange().getValues();
     var h = v[0].map(function (x) { return String(x).trim(); });
     var idC = h.map(function (x) { return x.toLowerCase(); }).indexOf('id');
-    var cC = h.indexOf('Total clicks'), aC = h.indexOf('Activ');
+    var cC = h.indexOf('Clicks');
+    if (cC < 0) cC = h.indexOf('Total clicks');
+    var aC = h.indexOf('Activ');
     if (idC < 0 || cC < 0) return hitOut_(false, 'SCHEMA_ERROR');
     for (var r = 1; r < v.length; r++) {
       if (String(v[r][idC]).trim() !== id) continue;
