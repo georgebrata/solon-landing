@@ -5,6 +5,8 @@ Lightweight &amp; fast lading page for a digital agency from Cluj-Napoca.
 
 Demo: https://solon.agency/
 
+Pricing is built at deploy time from the SOLON API (GitHub Actions secret `SHEETS_API_KEY`).
+
 Short links (`/api`, `/bronze/lunar`, and the other ShortLinks rows) are published by `node scripts/build-shortlinks.js`. See [docs/short-links.md](docs/short-links.md).
 
 ## Local Development
@@ -91,6 +93,8 @@ See [docs/forms.md](docs/forms.md) for form-specific error states.
 ## Blog System
 
 The project includes a minimal, performant static blog architecture.
+
+After publishing a post, you can log the title to the editorial Google Sheet with `node scripts/append-blog-google-sheets.js "Article title"` (requires env `BLOG_SHEETS_APPEND_URL`; the script skips quietly when unset).
 
 ### How it works
 1.  **Content**: Write blog posts in Markdown (`.md`) in `/blog/posts/`.

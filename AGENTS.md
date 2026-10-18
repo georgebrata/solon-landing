@@ -9,6 +9,8 @@
 
 A post PR should add the markdown file and then regenerate with `node scripts/build.js && node scripts/update-homepage-blog-carousel.js`. Do not hand-edit `blog/index.html` or the homepage carousel.
 
+After the build, optionally log the article title to the editorial Google Sheet with `node scripts/append-blog-google-sheets.js "Article title"`. That script reads the full Apps Script web app URL from env **`BLOG_SHEETS_APPEND_URL`** (set it as a GitHub Actions secret or locally when you run the script; never commit the value). If **`BLOG_SHEETS_APPEND_URL`** is unset, sheet logging is skipped with a clear message and exit code 0 so CI and deploy are not blocked.
+
 Optional fields:
 
 - `cluster`: one topical key. The build links every other post in that cluster under "Articole similare". A post with no cluster, or the only post in a cluster, gets no related block.
@@ -23,6 +25,21 @@ Sitemap lastmod is preserved for a page whose content date is not newer than the
 The production workflow runs `node scripts/update-sitemap.js --from-git` after the pricing build and before FTP. Each `<lastmod>` becomes the later of the stored day and the last commit that changed that page's content, still clamped to today in Europe/Bucharest. Cache-bust `?v=` tokens and the generated "Articole recente" / "Articole similare" blocks are not content changes, so a page that did not change keeps its stored value. A working-tree edit since `HEAD` (the pricing build can rewrite the homepage) uses today. The refreshed sitemap is uploaded and is not committed back.
 
 Do not add links to the Dumitrescu case-study page from templates, the hub, the carousel, related posts, or `llms.txt`. That page and its sitemap entry stay until Legal clears them.
+
+## Blog sheet append (optional)
+
+`scripts/append-blog-google-sheets.js` logs a new article title to a Google Sheet via Apps Script (see the blog post workflow above). **`BLOG_SHEETS_APPEND_URL`** must be the full deployment URL, including any required query parameter. Configure it as a GitHub Actions secret or a local env var before running the script. Without it, sheet logging is skipped (stdout names the variable only; exit 0). Tests: `npm run test:append-sheets`. Never commit the URL or secret value.
+
+## Pricing data (SOLON API)
+
+Homepage pricing is built at deploy time (and in tests offline) by `scripts/build-pricing.js` from the **Abonamente** and **Servicii** tabs of the "SOLON API" spreadsheet via the key-protected SOLON CRUD API.
+
+- **URL:** optional env `SHEETS_API_URL` (Actions variable); the script default is the documented deployment URL.
+- **Key:** required env `SHEETS_API_KEY` (GitHub Actions secret, same value as the Apps Script Script Property `API_KEY`). Never print, commit, or put it in browser JS.
+- **Tabs** must include an `id` column; rows with a blank `id` are omitted by the API. Without ids, the live fetch fails validation and deploy falls back to `data/abonamente.snapshot.json` (build still succeeds; look for `::error::build-pricing`).
+- **Snapshot:** `data/abonamente.snapshot.json` stores **Abonamente only** (allowlisted fields: `id`, package name, `Activ`, both RON prices, inclusion `Servicii` text, NETOPIA links). Internal columns such as `Notes` or the Servicii tab are not committed. On a successful API fetch, deploy refreshes the sanitized snapshot (bot commit on `main`). Do not hand-edit the snapshot. Offline cleanup: `node scripts/build-pricing.js --sanitize-snapshot`.
+- **Notes/add-ons:** the homepage does not render pricing notes or add-ons; tests assert that block stays removed.
+- **Checks:** `npm run test:pricing`, `node scripts/build-pricing.js --offline --check`.
 
 ## Short links
 

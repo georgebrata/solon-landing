@@ -159,7 +159,8 @@ node scripts/update-sitemap.js
 # 4. Update the homepage carousel with the latest posts
 node scripts/update-homepage-blog-carousel.js
 
-# 5. Record publication in Google Sheets (pass article title)
+# 5. Record publication in Google Sheets (optional; pass article title)
+# Requires env BLOG_SHEETS_APPEND_URL (full Apps Script URL, never commit). Skips with exit 0 if unset.
 node scripts/append-blog-google-sheets.js "TITLUL ARTICOLULUI"
 ```
 
