@@ -44,10 +44,10 @@
   RewriteRule ^api/?$ - [E=SLQ:%{QUERY_STRING}]
   RewriteCond %{HTTP:Accept} !text/html
   RewriteCond %{ENV:SLQ} ^$
-  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec [R=302,L,NE]
+  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbzJQOSxwXJGkSAmJnPeY2-cG5e2iCZ4cZr82cC8ft_Fxku1wfjKUHQGo09avC1eDyI3/exec [R=302,L,NE]
   RewriteCond %{HTTP:Accept} !text/html
   RewriteCond %{ENV:SLQ} ^&?(.*)$
-  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec?%1 [R=302,L,NE]
+  RewriteRule ^api/?$ https://script.google.com/macros/s/AKfycbzJQOSxwXJGkSAmJnPeY2-cG5e2iCZ4cZr82cC8ft_Fxku1wfjKUHQGo09avC1eDyI3/exec?%1 [R=302,L,NE]
   RewriteCond %{HTTP:Accept} text/html
   RewriteRule ^bronze\/lunar/?$ /r/bronze/lunar/index.html [L]
   RewriteCond %{HTTP:Accept} !text/html
@@ -152,45 +152,6 @@
   RewriteCond %{HTTP:Accept} !text/html
   RewriteCond %{ENV:SLQ} ^&?(.*)$
   RewriteRule ^platinum\/anual/?$ https://mpy.ro/99mzg0wht?%1 [R=302,L,NE]
-  RewriteCond %{HTTP:Accept} text/html
-  RewriteRule ^api\/servicii/?$ /r/api/servicii/index.html [L]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteRule ^api\/servicii/?$ - [E=SLQ:%{QUERY_STRING}]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{QUERY_STRING} !(^|&)sheet(=|&|$)
-  RewriteRule ^api\/servicii/?$ - [E=SLQ:%{ENV:SLQ}&sheet=Servicii]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{ENV:SLQ} ^$
-  RewriteRule ^api\/servicii/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec [R=302,L,NE]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{ENV:SLQ} ^&?(.*)$
-  RewriteRule ^api\/servicii/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec?%1 [R=302,L,NE]
-  RewriteCond %{HTTP:Accept} text/html
-  RewriteRule ^api\/abonamente/?$ /r/api/abonamente/index.html [L]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteRule ^api\/abonamente/?$ - [E=SLQ:%{QUERY_STRING}]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{QUERY_STRING} !(^|&)sheet(=|&|$)
-  RewriteRule ^api\/abonamente/?$ - [E=SLQ:%{ENV:SLQ}&sheet=Abonamente]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{ENV:SLQ} ^$
-  RewriteRule ^api\/abonamente/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec [R=302,L,NE]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{ENV:SLQ} ^&?(.*)$
-  RewriteRule ^api\/abonamente/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec?%1 [R=302,L,NE]
-  RewriteCond %{HTTP:Accept} text/html
-  RewriteRule ^api\/urls/?$ /r/api/urls/index.html [L]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteRule ^api\/urls/?$ - [E=SLQ:%{QUERY_STRING}]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{QUERY_STRING} !(^|&)sheet(=|&|$)
-  RewriteRule ^api\/urls/?$ - [E=SLQ:%{ENV:SLQ}&sheet=ShortLinks]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{ENV:SLQ} ^$
-  RewriteRule ^api\/urls/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec [R=302,L,NE]
-  RewriteCond %{HTTP:Accept} !text/html
-  RewriteCond %{ENV:SLQ} ^&?(.*)$
-  RewriteRule ^api\/urls/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec?%1 [R=302,L,NE]
   # SHORTLINKS:END
 </IfModule>
 
@@ -323,7 +284,7 @@ AddDefaultCharset utf-8
     Header set Cache-Control "no-store"
     Header always merge Vary "Accept"
   </If>
-  <If "%{REQUEST_URI} =~ m#^/(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)/?$#">
+  <If "%{REQUEST_URI} =~ m#^/(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual)/?$#">
     <IfModule mod_expires.c>
       ExpiresActive Off
     </IfModule>

@@ -1,4 +1,6 @@
 // Public, increment-only click counter for ShortLinks. No API key; no other writes.
+// Increments Clicks. The header match is trimmed and case-insensitive.
+// Falls back to Total clicks only when no Clicks column exists.
 var HIT_MAX_PER_MIN = 60;
 function handleHit_(body) {
   var id = String((body && body.id) || '').trim();
@@ -14,9 +16,11 @@ function handleHit_(body) {
     var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('ShortLinks');
     if (!sh) return hitOut_(false, 'NOT_FOUND');
     var v = sh.getDataRange().getValues();
-    var h = v[0].map(function (x) { return String(x).trim(); });
-    var idC = h.map(function (x) { return x.toLowerCase(); }).indexOf('id');
-    var cC = h.indexOf('Total clicks'), aC = h.indexOf('Activ');
+    var h = v[0].map(function (x) { return String(x).trim().toLowerCase(); });
+    var idC = h.indexOf('id');
+    var cC = h.indexOf('clicks');
+    if (cC < 0) cC = h.indexOf('total clicks');
+    var aC = h.indexOf('activ');
     if (idC < 0 || cC < 0) return hitOut_(false, 'SCHEMA_ERROR');
     for (var r = 1; r < v.length; r++) {
       if (String(v[r][idC]).trim() !== id) continue;
