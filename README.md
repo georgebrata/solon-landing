@@ -92,6 +92,8 @@ See [docs/forms.md](docs/forms.md) for form-specific error states.
 
 The project includes a minimal, performant static blog architecture.
 
+After publishing a post, you can log the title to the editorial Google Sheet with `node scripts/append-blog-google-sheets.js "Article title"` (requires env `BLOG_SHEETS_APPEND_URL`; the script skips quietly when unset).
+
 ### How it works
 1.  **Content**: Write blog posts in Markdown (`.md`) in `/blog/posts/`.
 2.  **Frontmatter**: Each post must include YAML frontmatter (title, date, slug, description, tags).

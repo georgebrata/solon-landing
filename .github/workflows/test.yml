@@ -41,3 +41,6 @@ jobs:
 
       - name: Run IndexNow tests
         run: npm run test:indexnow
+
+      - name: Run blog sheet append tests
+        run: npm run test:append-sheets
