@@ -98,9 +98,7 @@ test("success logging never references the webhook URL", () => {
 
 test("appendRow times out slow responses", async () => {
   const server = http.createServer((req, res) => {
-    req.on("data", (chunk) => {
-      void chunk;
-    });
+    req.resume();
     req.on("end", () => {
       setTimeout(() => {
         res.statusCode = 200;
