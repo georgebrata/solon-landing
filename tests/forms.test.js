@@ -569,15 +569,23 @@ test("every HTML page with a Telefon form includes the legal phone notice after 
   }
 });
 
-test("contact and newsletter forms carry the Brevo notice above submit", () => {
+test("contact and newsletter forms carry their privacy notice above submit", () => {
   const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj.";
+  const contactOptIn = "Dacă bifezi abonarea, primești newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email.";
+  const visitLink = "Brevo poate lega vizitele";
   const newsletterNote = "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
   const contactPages = ["index.html", "studii-de-caz/index.html"];
   const newsletterPages = ["templates/layout.html", "newsletter.html", "index.html"];
   for (const rel of contactPages) {
     const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
     const form = html.slice(html.indexOf('data-solon-form="Contact"'), html.indexOf("</form>", html.indexOf('data-solon-form="Contact"')));
+    const noteStart = form.indexOf('class="solon-form-note"');
+    const note = form.slice(noteStart, form.indexOf("</p>", noteStart));
+    const optInStart = form.indexOf('class="solon-opt-in"');
+    const optIn = form.slice(optInStart, form.indexOf("</label>", optInStart));
     assert.ok(form.includes(contactNote), rel);
+    assert.equal(note.includes(visitLink), false, rel);
+    assert.ok(optIn.includes(contactOptIn), rel);
     assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
   }
   for (const rel of newsletterPages) {
@@ -610,7 +618,7 @@ test("never identifies Brevo from the Telefon form", async () => {
   assert.equal(identifies.length, 0);
 });
 
-test("identifies Brevo for newsletter, and for contact only when the newsletter opt-in is checked", async () => {
+test("identifies Brevo only for the standalone newsletter form, never from contact", async () => {
   const plain = harness(["Contact", "Telefon", "Newsletter"]);
   for (const form of plain.forms) await form.dispatch();
   assert.equal(plain.identifies.length, 1);
@@ -625,48 +633,45 @@ test("identifies Brevo for newsletter, and for contact only when the newsletter 
     })
   );
 
+  const contact = harness(["Contact"]);
+  await contact.forms[0].dispatch();
+  assert.equal(contact.identifies.length, 0);
+
   const opted = harness(["Contact"], { optIn: true });
   await opted.forms[0].dispatch();
-  assert.equal(opted.identifies.length, 2);
-  assert.equal(
-    JSON.stringify(opted.identifies[0]),
-    JSON.stringify({
-      email: "ada@example.com",
-      attributes: {
-        SOURCE: "Contact",
-        PAGE_URL: "https://solon.agency/contact/#formular",
-      },
-    })
-  );
-  assert.equal(
-    JSON.stringify(opted.identifies[1]),
-    JSON.stringify({
-      email: "ada@example.com",
-      attributes: {
-        SOURCE: "Newsletter",
-        PAGE_URL: "https://solon.agency/contact/#formular",
-      },
-    })
+  assert.equal(opted.identifies.length, 0);
+  const sent = dataRequests(opted.requests);
+  assert.deepEqual(
+    sent.map(({ url }) => new URL(url).searchParams.get("sheet")),
+    ["Contact", "Newsletter"]
   );
 });
 
 test("sends FIRSTNAME only from an explicit first-name or name field", async () => {
-  const fromFirstName = harness(["Contact"], { optIn: true });
+  const fromFirstName = harness(["Newsletter"]);
   fromFirstName.forms[0].values["first-name"] = "  Ada  ";
   await fromFirstName.forms[0].dispatch();
+  assert.equal(fromFirstName.identifies.length, 1);
   assert.equal(fromFirstName.identifies[0].attributes.FIRSTNAME, "Ada");
+  assert.equal(fromFirstName.identifies[0].attributes.SOURCE, "Newsletter");
 
   const fromName = harness(["Newsletter"]);
   fromName.forms[0].values.name = "  Grace  ";
   await fromName.forms[0].dispatch();
   assert.equal(fromName.identifies[0].attributes.FIRSTNAME, "Grace");
 
-  const blank = harness(["Contact"], { optIn: true });
+  const blank = harness(["Newsletter"]);
   blank.forms[0].values["first-name"] = "   ";
   blank.forms[0].values.name = "   ";
   await blank.forms[0].dispatch();
+  assert.equal(blank.identifies.length, 1);
   assert.equal(Object.hasOwn(blank.identifies[0].attributes, "FIRSTNAME"), false);
-  assert.equal(blank.identifies[0].attributes.SOURCE, "Contact");
+  assert.equal(blank.identifies[0].attributes.SOURCE, "Newsletter");
+
+  const contact = harness(["Contact"], { optIn: true });
+  contact.forms[0].values["first-name"] = "  Ada  ";
+  await contact.forms[0].dispatch();
+  assert.equal(contact.identifies.length, 0);
 });
 
 test("does not identify Brevo when the save fails, the honeypot trips, or the tracker is absent", async () => {
