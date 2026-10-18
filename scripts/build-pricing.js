@@ -2,17 +2,18 @@
 /**
  * Build-time pricing: read "SOLON API" tabs Abonamente + Servicii through the
  * SOLON CRUD API (env SHEETS_API_URL, secret SHEETS_API_KEY), render active RON packages into
- * index.html between PRICING markers. Servicii rows stay in the snapshot;
- * the homepage does not render pricing notes or add-ons.
+ * index.html between PRICING markers. The committed snapshot stores Abonamente only
+ * (allowlisted fields); Servicii is validated on live fetch but not written to git.
  *
- * Fail-safe: if the endpoint is down or returns invalid data, the committed
+ * Fail-safe: if the API is down or returns invalid data, the committed
  * snapshot data/abonamente.snapshot.json is used and an ::error:: line is
  * logged (the build still succeeds so the site keeps the last good prices).
- * On success the snapshot is refreshed.
+ * On success the snapshot is refreshed (sanitized).
  *
- * Usage: node scripts/build-pricing.js [--offline] [--check]
- *   --offline  use the snapshot only (tests / no network)
- *   --check    exit 1 if index.html would change (CI drift check)
+ * Usage: node scripts/build-pricing.js [--offline] [--check] [--sanitize-snapshot]
+ *   --offline           use the snapshot only (tests / no network)
+ *   --check             exit 1 if index.html would change (CI drift check)
+ *   --sanitize-snapshot rewrite the snapshot from disk through the allowlist (no network)
  */
 (() => {
   const fs = require("fs");
@@ -28,22 +29,34 @@
   const PAGE_LIMIT = 500;
   /** Safety stop so a broken pagination response cannot loop forever. */
   const MAX_PAGES = 20;
+  /** Per HTTP request (each paginated GET). */
+  const REQUEST_TIMEOUT_MS = 30000;
+  const ALLOWED_APPS_SCRIPT_REDIRECT_HOST = "script.googleusercontent.com";
   const SNAPSHOT = path.join(root, "data", "abonamente.snapshot.json");
   const INDEX = path.join(root, "index.html");
+
+  /** Keys persisted in data/abonamente.snapshot.json (render/model fields only). */
+  const ABONAMENTE_SNAPSHOT_KEYS = Object.freeze([
+    "id",
+    "Nume abonament",
+    "Activ",
+    "Pret lunar (RON)",
+    "Pret anual (RON)",
+    "Servicii",
+    "Netopia Payment Link Month",
+    "Netopia Payment Link Year",
+  ]);
 
   /** Public packages on solon.agency/#pricing (Bronze, Silver, Gold, Platinum). */
   const REQUIRED_ACTIVE_PACKAGES = 4;
   const ALLOWED_ACTIVE_PACKAGE_NAMES = Object.freeze(["Bronze", "Silver", "Gold", "Platinum"]);
 
   /** @param {Record<string, unknown>} row */
-  function packageDisplayName(row) {
-    return String(row["Nume abonament"] || "").trim();
-  }
+  const packageDisplayName = (row) => String(row["Nume abonament"] || "").trim();
 
   /** @param {string} name */
-  function canonicalPackageName(name) {
-    return ALLOWED_ACTIVE_PACKAGE_NAMES.find((allowed) => allowed.toLowerCase() === name.toLowerCase()) ?? null;
-  }
+  const canonicalPackageName = (name) =>
+    ALLOWED_ACTIVE_PACKAGE_NAMES.find((allowed) => allowed.toLowerCase() === name.toLowerCase()) ?? null;
 
   /** Only NETOPIA checkout hosts are accepted. Anything else (Stripe, placeholders) hides the button. */
   const NETOPIA_HOSTS = [/^mpy\.ro$/u, /(^|\.)mobilpay\.ro$/u, /(^|\.)netopia-payments\.com$/u];
@@ -118,13 +131,49 @@
   };
 
   /**
-   * @param {{ Abonamente?: unknown, Servicii?: unknown }} data
+   * @param {Record<string, unknown>} row
+   * @returns {Record<string, unknown>}
    */
-  function validate(data) {
-    if (!data || !Array.isArray(data.Abonamente) || !Array.isArray(data.Servicii)) {
-      throw new Error("payload has no Abonamente/Servicii arrays");
+  const sanitizeAbonamenteRow = (row) => {
+    /** @type {Record<string, unknown>} */
+    const out = {};
+    for (const key of ABONAMENTE_SNAPSHOT_KEYS) {
+      if (row && Object.prototype.hasOwnProperty.call(row, key) && row[key] !== undefined) {
+        out[key] = row[key];
+      }
     }
-    const active = data.Abonamente.filter((row) => row && row.Activ === true && packageDisplayName(row));
+    return out;
+  };
+
+  /**
+   * @param {{ Abonamente?: unknown }} data
+   * @returns {{ Abonamente: Record<string, unknown>[] }}
+   */
+  const sanitizeSnapshotPayload = (data) => ({
+    Abonamente: Array.isArray(data?.Abonamente) ? data.Abonamente.map((row) => sanitizeAbonamenteRow(row)) : [],
+  });
+
+  /**
+   * @param {unknown} rows
+   */
+  const validateServiciiTab = (rows) => {
+    if (!Array.isArray(rows) || rows.length === 0) {
+      throw new Error("Servicii tab is empty");
+    }
+    for (const row of rows) {
+      const rowId = row && typeof row.id === "string" ? row.id.trim() : "";
+      if (!rowId) throw new Error("Servicii row missing id");
+    }
+  };
+
+  /**
+   * @param {Record<string, unknown>[]} abonamente
+   */
+  const validateAbonamentePackages = (abonamente) => {
+    if (!Array.isArray(abonamente)) {
+      throw new Error("payload has no Abonamente array");
+    }
+    const active = abonamente.filter((row) => row && row.Activ === true && packageDisplayName(row));
     if (active.length !== REQUIRED_ACTIVE_PACKAGES) {
       throw new Error(
         `expected exactly ${REQUIRED_ACTIVE_PACKAGES} active packages (${ALLOWED_ACTIVE_PACKAGE_NAMES.join(", ")}), got ${active.length}`,
@@ -141,21 +190,81 @@
         throw new Error(`duplicate active package: ${canonical}`);
       }
       seen.add(canonical);
-      if (!toNumber(row["Pret lunar (RON)"]) && !toNumber(row["Pret anual (RON)"])) {
-        throw new Error(`active package "${displayName}" has no price`);
+      if (!toNumber(row["Pret lunar (RON)"])) {
+        throw new Error(`active package "${canonical}" missing monthly price`);
+      }
+      if (!toNumber(row["Pret anual (RON)"])) {
+        throw new Error(`active package "${canonical}" missing annual price`);
       }
     }
-    return data;
-  }
+    for (const required of ALLOWED_ACTIVE_PACKAGE_NAMES) {
+      const match = abonamente.find(
+        (row) => row && row.Activ === true && canonicalPackageName(packageDisplayName(row)) === required,
+      );
+      if (!match) {
+        throw new Error(`required active package missing: ${required}`);
+      }
+    }
+  };
+
+  /**
+   * Validate committed snapshot (Abonamente only).
+   * @param {{ Abonamente?: unknown }} data
+   * @returns {{ Abonamente: Record<string, unknown>[] }}
+   */
+  const validateSnapshot = (data) => {
+    const sanitized = sanitizeSnapshotPayload(data);
+    validateAbonamentePackages(sanitized.Abonamente);
+    return sanitized;
+  };
+
+  /**
+   * Validate a live API payload before sanitizing for git.
+   * @param {{ Abonamente?: unknown, Servicii?: unknown }} data
+   * @returns {{ Abonamente: Record<string, unknown>[] }}
+   */
+  const validateLivePayload = (data) => {
+    validateServiciiTab(data?.Servicii);
+    const sanitized = sanitizeSnapshotPayload(data);
+    validateAbonamentePackages(sanitized.Abonamente);
+    return sanitized;
+  };
+
+  /** @deprecated alias for snapshot validation in tests */
+  const validate = validateSnapshot;
+
+  /**
+   * Apps Script /exec may 302 once to googleusercontent.com. Never forward apiKey to the redirect URL.
+   * @param {typeof fetch} fetchImpl
+   * @param {URL | string} requestUrl
+   * @param {RequestInit} init
+   * @param {string} sheet for error codes only
+   */
+  const fetchWithSafeRedirect = async (fetchImpl, requestUrl, init, sheet) => {
+    let response = await fetchImpl(requestUrl, { ...init, redirect: "manual" });
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location) throw new Error(`${sheet}: API error REDIRECT_NO_LOCATION`);
+      const nextUrl = new URL(location, requestUrl);
+      if (nextUrl.protocol !== "https:" || nextUrl.hostname !== ALLOWED_APPS_SCRIPT_REDIRECT_HOST) {
+        throw new Error(`${sheet}: API error REDIRECT_HOST`);
+      }
+      if (nextUrl.searchParams.has("apiKey")) {
+        throw new Error(`${sheet}: API error REDIRECT_KEY`);
+      }
+      response = await fetchImpl(nextUrl, { ...init, redirect: "manual" });
+    }
+    return response;
+  };
 
   /**
    * Read every record of one tab through the SOLON API (GET, apiKey query param,
    * paginated). Errors never include the request URL, because it carries the key.
    * @param {string} sheet exact tab name
-   * @param {{ fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string, signal?: AbortSignal }} [options]
+   * @param {{ fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string }} [options]
    * @returns {Promise<Record<string, unknown>[]>}
    */
-  async function fetchTab(sheet, options = {}) {
+  const fetchTab = async (sheet, options = {}) => {
     const fetchImpl = options.fetchImpl || fetch;
     const baseUrl = options.baseUrl || process.env.SHEETS_API_URL || DEFAULT_API_URL;
     const apiKey = options.apiKey ?? process.env.SHEETS_API_KEY ?? "";
@@ -163,20 +272,28 @@
     const rows = [];
     let offset = 0;
     for (let page = 0; page < MAX_PAGES; page += 1) {
-      const url = new URL(baseUrl);
-      url.searchParams.set("apiKey", apiKey);
-      url.searchParams.set("sheet", sheet);
-      url.searchParams.set("limit", String(PAGE_LIMIT));
-      url.searchParams.set("offset", String(offset));
-      const res = await fetchImpl(url, { redirect: "follow", signal: options.signal });
-      if (!res.ok) throw new Error(`${sheet}: HTTP ${res.status}`);
+      const requestUrl = new URL(baseUrl);
+      requestUrl.searchParams.set("apiKey", apiKey);
+      requestUrl.searchParams.set("sheet", sheet);
+      requestUrl.searchParams.set("limit", String(PAGE_LIMIT));
+      requestUrl.searchParams.set("offset", String(offset));
+
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
+      let response;
+      try {
+        response = await fetchWithSafeRedirect(fetchImpl, requestUrl, { signal: ctrl.signal }, sheet);
+      } finally {
+        clearTimeout(timer);
+      }
+
+      if (!response.ok) throw new Error(`${sheet}: HTTP ${response.status}`);
       let body = null;
       try {
-        body = await res.json();
+        body = await response.json();
       } catch {
         throw new Error(`${sheet}: response is not JSON`);
       }
-      // The API always answers HTTP 200; success lives in the JSON envelope.
       if (!body || body.success !== true) {
         const code = typeof body?.error?.code === "string" ? body.error.code : "UNKNOWN";
         throw new Error(`${sheet}: API error ${code}`);
@@ -188,28 +305,21 @@
       offset += body.data.length;
     }
     throw new Error(`${sheet}: more than ${MAX_PAGES} pages`);
-  }
+  };
 
   /**
    * @param {{ fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string }} [options]
-   * @returns {Promise<ReturnType<typeof validate>>}
+   * @returns {Promise<ReturnType<typeof validateSnapshot>>}
    */
-  async function fetchData(options = {}) {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 30000);
-    try {
-      /** @type {Record<string, Record<string, unknown>[]>} */
-      const data = {};
-      // Sequential on purpose: each call makes Apps Script read the whole tab.
-      for (const tab of PRICING_TABS) data[tab] = await fetchTab(tab, { ...options, signal: ctrl.signal });
-      return validate(data);
-    } finally {
-      clearTimeout(timer);
-    }
-  }
+  const fetchData = async (options = {}) => {
+    /** @type {Record<string, Record<string, unknown>[]>} */
+    const raw = {};
+    for (const tab of PRICING_TABS) raw[tab] = await fetchTab(tab, options);
+    return validateLivePayload(raw);
+  };
 
   /**
-   * @param {ReturnType<typeof validate>} data
+   * @param {ReturnType<typeof validateSnapshot>} data
    */
   function model(data) {
     const plans = data.Abonamente.filter((row) => row.Activ === true && packageDisplayName(row)).map((row) => {
@@ -348,26 +458,62 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     out = replaceBlock(out, "PRICING-FAQ", renderFaq(viewModel));
     out = replaceBlock(out, "PRICING-JSONLD", renderJsonLd(viewModel));
     return out;
-  }
+  };
 
-  /** CLI entry: fetch sheet (optional), render pricing blocks into index.html. */
-  async function main() {
-    const offline = process.argv.includes("--offline");
-    const check = process.argv.includes("--check");
-    let data = null;
+  const writeSnapshotFile = (data) => {
+    fs.writeFileSync(SNAPSHOT, `${JSON.stringify(data, null, 2)}\n`);
+  };
+
+  const readSnapshotFile = () => {
+    const parsed = JSON.parse(fs.readFileSync(SNAPSHOT, "utf8"));
+    return validateSnapshot({ Abonamente: parsed.Abonamente });
+  };
+
+  /**
+   * @param {{ offline?: boolean, fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string }} [options]
+   * @returns {Promise<{ data: ReturnType<typeof validateSnapshot>, source: "api" | "snapshot", errorMessage?: string }>}
+   */
+  const resolvePricingData = async (options = {}) => {
+    const offline = options.offline === true;
     if (!offline) {
       try {
-        data = await fetchData();
-        const snapshotBody = `${JSON.stringify({ Abonamente: data.Abonamente, Servicii: data.Servicii }, null, 2)}\n`;
-        fs.writeFileSync(SNAPSHOT, snapshotBody);
-        console.log(`build-pricing: fetched ${data.Abonamente.length} Abonamente + ${data.Servicii.length} Servicii rows from SOLON API`);
+        const data = await fetchData(options);
+        return { data, source: "api" };
       } catch (err) {
-        console.error(`::error::build-pricing: SOLON API failed (${err.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`);
+        const message = err instanceof Error ? err.message : String(err);
+        return { data: readSnapshotFile(), source: "snapshot", errorMessage: message };
       }
     }
-    if (!data) data = validate(JSON.parse(fs.readFileSync(SNAPSHOT, "utf8")));
+    return { data: readSnapshotFile(), source: "snapshot" };
+  };
+
+  /** CLI entry: fetch sheet (optional), render pricing blocks into index.html. */
+  const main = async () => {
+    const offline = process.argv.includes("--offline");
+    const check = process.argv.includes("--check");
+    const sanitizeOnly = process.argv.includes("--sanitize-snapshot");
+
+    if (sanitizeOnly) {
+      const raw = JSON.parse(fs.readFileSync(SNAPSHOT, "utf8"));
+      const data = validateSnapshot({ Abonamente: raw.Abonamente });
+      writeSnapshotFile(data);
+      console.log(`build-pricing: sanitized snapshot (${data.Abonamente.length} Abonamente rows)`);
+      return;
+    }
+
+    const resolved = await resolvePricingData({ offline });
+    if (resolved.errorMessage) {
+      console.error(
+        `::error::build-pricing: SOLON API failed (${resolved.errorMessage}); using committed snapshot ${path.relative(root, SNAPSHOT)}`,
+      );
+    }
+    if (resolved.source === "api") {
+      writeSnapshotFile(resolved.data);
+      console.log(`build-pricing: fetched ${resolved.data.Abonamente.length} Abonamente rows from SOLON API`);
+    }
+
     const before = fs.readFileSync(INDEX, "utf8");
-    const viewModel = model(data);
+    const viewModel = model(resolved.data);
     const after = render(before, viewModel);
     if (check) {
       if (before !== after) {
@@ -378,7 +524,7 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     }
     if (after !== before) fs.writeFileSync(INDEX, after);
     console.log(`build-pricing: rendered ${viewModel.plans.map((plan) => plan.name).join(", ")}`);
-  }
+  };
 
   if (require.main === module) {
     main().catch((err) => {
@@ -392,9 +538,17 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     roInclusion,
     fetchTab,
     fetchData,
+    fetchWithSafeRedirect,
     model,
     render,
     validate,
+    validateSnapshot,
+    validateLivePayload,
+    sanitizeSnapshotPayload,
+    sanitizeAbonamenteRow,
+    resolvePricingData,
+    ABONAMENTE_SNAPSHOT_KEYS,
+    REQUEST_TIMEOUT_MS,
     REQUIRED_ACTIVE_PACKAGES,
     ALLOWED_ACTIVE_PACKAGE_NAMES,
   };

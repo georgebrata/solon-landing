@@ -6,8 +6,6 @@
       "Pret lunar (RON)": 0,
       "Pret anual (RON)": 0,
       "Servicii": "Everything",
-      "Addons disponibile": "All services (including non-active services)",
-      "Notes": "Close friends and early adopters only. Must provide feedback and introduce to potential connections reccurently. ",
       "Netopia Payment Link Month": "-",
       "Netopia Payment Link Year": "-"
     },
@@ -17,8 +15,6 @@
       "Pret lunar (RON)": 99,
       "Pret anual (RON)": 1099,
       "Servicii": "- 1 website update / month;\n- 1 social media post / month;\n- domeniu .ro inclus la abonament anual",
-      "Addons disponibile": "All active services",
-      "Notes": "First tier, perfect for individual lawyers",
       "Netopia Payment Link Month": "https://mpy.ro/99mzfyjht?language=ro",
       "Netopia Payment Link Year": "https://mpy.ro/99mzfykht?language=ro"
     },
@@ -28,8 +24,6 @@
       "Pret lunar (RON)": 199,
       "Pret anual (RON)": 2299,
       "Servicii": "- 2 website updates / month;\n- 2 social media posts / month;\n- GoogleMyBusines maintenance, \n- domeniu .ro inclus la abonament anual",
-      "Addons disponibile": "All active services",
-      "Notes": "Second tier, adapted for grouped lawyers or small legal companies ",
       "Netopia Payment Link Month": "https://mpy.ro/99mzg0rht?language=ro",
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0sht?language=ro"
     },
@@ -39,8 +33,6 @@
       "Pret lunar (RON)": 499,
       "Pret anual (RON)": 5899,
       "Servicii": "- 3 website updates / month;\n- 3 social media posts / month;\n- sync up to 3 social media profiles;\n- GoogleMyBusines maintenance, \n- domeniu .ro inclus la abonament anual",
-      "Addons disponibile": "All active services",
-      "Notes": "Third tier for legal companies serious about digitalization, with up 10 employees",
       "Netopia Payment Link Month": "https://mpy.ro/99mzg0tht?language=ro",
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0uht?language=ro"
     },
@@ -50,232 +42,8 @@
       "Pret lunar (RON)": 999,
       "Pret anual (RON)": 10999,
       "Servicii": "- 5 website updates / month;\n- 5 social media posts / month;\n- sync up to 5 social media profiles;\n- GoogleMyBusines maintenance;\n- 1 sesiune de consultanta 1:1\n- .ro domain included for annual subs,",
-      "Addons disponibile": "All active services",
-      "Notes": "Fourth tier is for established legal societies with over 10 employees, partners and collaborators",
       "Netopia Payment Link Month": "https://mpy.ro/99mzg0vht?language=ro",
       "Netopia Payment Link Year": "https://mpy.ro/99mzg0wht?language=ro"
-    }
-  ],
-  "Servicii": [
-    {
-      "Category": "Branding",
-      "Activ": true,
-      "Service": "Logo",
-      "Duration": "2-4 zile",
-      "Description": "Conturarea unui logo personalizat.",
-      "Pret (RON)": "600RON",
-      "Deliverables": "Logo în format .png; Favicon (pentru website)",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Branding",
-      "Activ": true,
-      "Service": "Manual de brand",
-      "Duration": "3-5 zile",
-      "Description": "Document în care se descrie vizual detaliat cum se folosește un brand, de la culori la fonturi.",
-      "Pret (RON)": "900RON",
-      "Deliverables": "Manual de brand în format .pdf",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Branding",
-      "Activ": true,
-      "Service": "Cărți de vizită",
-      "Duration": "5-7 zile",
-      "Description": "Definirea unei identități vizuale uniforme pentru o firmă juridică.",
-      "Pret (RON)": "- 500RON design digital; \n- 1RON/bucată standard print (minim 100); \n- 5RON/bucată premium print (minim 100)",
-      "Deliverables": "Design cărți de vizită; Cărți de vizită print",
-      "Suppliers/Tools": "agrafa.ro; printshop Str. București nr. 48",
-      "Notes": ""
-    },
-    {
-      "Category": "Branding",
-      "Activ": true,
-      "Service": "Ședință foto profesională",
-      "Duration": "7-10 zile",
-      "Description": "Serviciile foto profesionale zugrăvesc identitatea vizuală completă.",
-      "Pret (RON)": "1000RON / sedinta / persoana",
-      "Deliverables": "10–20 poze / persoana editate în format digital",
-      "Suppliers/Tools": "Adalbert Dohotariu (studio Cal. Dorobanților nr. 107); Crăciun Cosmin",
-      "Notes": ""
-    },
-    {
-      "Category": "Branding",
-      "Activ": true,
-      "Service": "Template docs cu antet personalizat",
-      "Duration": "1-2 zile",
-      "Description": "Un set de documente în diferite formate, personalizate cu brand-ul clientului.",
-      "Pret (RON)": "100RON",
-      "Deliverables": "1 template document .doc; 1 template document .pdf; 1 document tutorial",
-      "Suppliers/Tools": "sejda.com (editare PDF online)",
-      "Notes": ""
-    },
-    {
-      "Category": "Branding",
-      "Activ": true,
-      "Service": "Dosare personalizate",
-      "Duration": "5-7 zile",
-      "Description": "Definirea unei identități vizuale uniforme pentru o firmă juridică.",
-      "Pret (RON)": "- 500RON design digital conform brand; \n- 10RON/bucată premium print (minim 10).",
-      "Deliverables": "Design dosare personalizat; Print dosare personalizat",
-      "Suppliers/Tools": "Massive Media, Str. București nr. 68",
-      "Notes": ""
-    },
-    {
-      "Category": "Branding",
-      "Activ": false,
-      "Service": "Consumabile personalizate",
-      "Duration": "?",
-      "Description": "Un set de materiale consumabile de birotică personalizate livrate direct la biroul clientului.",
-      "Pret (RON)": "- 500RON standard; \n- ~1000RON premium.",
-      "Deliverables": "10 mape; 5 pixuri; 1 cană",
-      "Suppliers/Tools": "IPB Iulius; agrafa.ro",
-      "Notes": "Serviciu marcat ca idee/on hold"
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Strategie de Marketing",
-      "Duration": "2-5 zile",
-      "Description": "Definirea unui plan de marketing pentru mediul online.",
-      "Pret (RON)": "500 RON",
-      "Deliverables": "Document Strategie Marketing .pdf",
-      "Suppliers/Tools": "",
-      "Notes": "Audiență: cabinete/societăți proaspăt înființate; avocați definitivi care vor clienți noi"
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Strategie SEO",
-      "Duration": "3-7 zile",
-      "Description": "Definirea unei strategii coerente pentru motoarele de căutare și agenți AI.",
-      "Pret (RON)": "250RON",
-      "Deliverables": "Document Strategie SEO.pdf",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Management Social Media",
-      "Duration": "-",
-      "Description": "Gestionare profile de Social Media, postări, stories, descrieri, engagement fani etc.",
-      "Pret (RON)": "- 200RON creare cont/platformă; \n- 500RON/platformă/lună",
-      "Deliverables": "Postări la intervalul stabilit; Raport de activitate",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Management Google My Business",
-      "Duration": "-",
-      "Description": "Creare profil Google My Business și optimizare pentru Search, Maps etc.",
-      "Pret (RON)": "300RON",
-      "Deliverables": "Creare profil Google My Business; Optimizare pentru Search, Maps, Imagini",
-      "Suppliers/Tools": "SEO Keywords Planner tool",
-      "Notes": ""
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Copywriting website",
-      "Duration": "3-7 zile",
-      "Description": "Dezvoltare conținut scris pentru website.",
-      "Pret (RON)": "- 500RON/500 cuvinte; \n- 1000RON/1.500 cuvinte",
-      "Deliverables": "3 variante de slogan; Document cu conținut text website",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Newsletter (email)",
-      "Duration": "7-14 zile",
-      "Description": "Dezvoltare tehnica newsletter pe email cu conținut scris și imagini.",
-      "Pret (RON)": "400RON",
-      "Deliverables": "Implementare newsletter",
-      "Suppliers/Tools": "brevo.com",
-      "Notes": ""
-    },
-    {
-      "Category": "Marketing",
-      "Activ": true,
-      "Service": "Ads",
-      "Duration": "2-5 zile",
-      "Description": "Setup și gestionare Ads pe orice platforma online (Facebook, Instagram, TikTok, Youtube, Google, etc)",
-      "Pret (RON)": "- setup 500RON;\n- gestionare 500RON / lună.",
-      "Deliverables": "Setup Ads",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Development",
-      "Activ": true,
-      "Service": "Implementare website",
-      "Duration": "7-14 zile",
-      "Description": "Implementare și publicare website modern.",
-      "Pret (RON)": "- 500RON setup website; \n- 500RON/implementare pagină web; \n- 200RON/an publicare",
-      "Deliverables": "Website; Publicare website; Raport de activitate vizitatori (lunar)",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Development",
-      "Activ": true,
-      "Service": "QA Website",
-      "Duration": "3-5 zile",
-      "Description": "Testare website actual pe mai multe dispozitive.",
-      "Pret (RON)": "- 100RON/pagină fără teste automate; \n- 300RON/pagină cu teste automate",
-      "Deliverables": "Strategie de testare; Suită de teste automate la cerere; Raport de activitate lunar (menționat cu incertitudine)",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Development",
-      "Activ": true,
-      "Service": "Security Audits Website",
-      "Duration": "5-7 zile",
-      "Description": "Audit de securitate pentru un website.",
-      "Pret (RON)": "- 500RON/website with up to 3 pages;\n- 1000RON/website with unlimited pages;",
-      "Deliverables": "Deep security audit document PDF; utilizare instrumente de pentesting",
-      "Suppliers/Tools": "Sucuri; SSL Labs; Pentester.com",
-      "Notes": "Idei suplimentare: load testing, WordPress scans"
-    },
-    {
-      "Category": "Development",
-      "Activ": true,
-      "Service": "Mentenanță anuală website",
-      "Duration": "-",
-      "Description": "Menținere infrastructură website și aplicat regulat security updates",
-      "Pret (RON)": "- 1200RON/website/an with up to 3 pages;\n- 1999RON/website/an with unlimited pages;",
-      "Deliverables": "Website functional",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Development",
-      "Activ": true,
-      "Service": "Implementare aplicație web/mobilă",
-      "Duration": "",
-      "Description": "Implementare aplicație web/mobile (iOS/Android).",
-      "Pret (RON)": "- 500RON setup aplicație; \n- 500RON/pagină aplicație; \n- 200RON/an publicare web; \n- 500RON/an publicare mobile;",
-      "Deliverables": "Aplicație web/mobile; Publicare aplicație",
-      "Suppliers/Tools": "",
-      "Notes": ""
-    },
-    {
-      "Category": "Unelte",
-      "Activ": true,
-      "Service": "Reducere la juridis.ro",
-      "Duration": "-",
-      "Description": "Cod de reducere la platforma pentru avocati Juridis.ro",
-      "Pret (RON)": "",
-      "Deliverables": "Acces la platformă",
-      "Suppliers/Tools": "juridis.ro",
-      "Notes": ""
     }
   ]
 }
