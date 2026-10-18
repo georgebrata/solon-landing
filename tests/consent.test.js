@@ -504,7 +504,9 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
   }
   assert.equal(html.includes("Nu desfășurăm activități de tip publicitate personalizată"), false);
   assert.ok(
-    html.includes("identificarea când te abonezi prin formularul de newsletter"),
+    html.includes(
+      "și trackerul Brevo (vizitele tale și identificarea când te abonezi prin formularul de newsletter), pe paginile website-ului."
+    ),
     "Marketing Brevo copy must describe newsletter form only"
   );
   assert.equal(html.includes("trimiți un formular cu email"), false);
@@ -513,10 +515,11 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
 test("consent marketing category describes Brevo visit linking via newsletter only", () => {
   assert.ok(
     source.includes(
-      "Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale de pe site de adresa ta."
+      "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale pe website de adresa ta. Pot implica publicitate măsurată."
     )
   );
   assert.equal(source.includes("Dacă trimiți un formular cu emailul tău, Brevo poate lega"), false);
+  assert.equal(source.includes("vizitele tale de pe site de adresa ta"), false);
 });
 
 test("privacy policy limits Brevo visit linking to newsletter subscription", () => {
@@ -524,14 +527,15 @@ test("privacy policy limits Brevo visit linking to newsletter subscription", () 
   assert.ok(html.includes("dacă te abonezi prin formularul de newsletter, adresa de email"));
   assert.ok(
     html.includes(
-      "legând vizitele tale pe site de adresa ta de email dacă te abonezi prin formularul de newsletter."
+      "<strong>De ce:</strong> ca să îți trimitem newsletterul la care te-ai abonat și ca să înțelegem ce conținut te interesează, legând vizitele tale pe website de adresa ta de email după ce te abonezi prin formularul de newsletter."
     )
   );
   assert.ok(
     html.includes(
-      "Dacă bifezi abonarea la newsletter, adresa ta de email intră și în lista de newsletter din Brevo; această bifare nu leagă vizitele tale pe website de adresa ta."
+      "Nu folosim aceste date pentru newsletter sau pentru alte comunicări de marketing decât dacă te abonezi. Dacă bifezi abonarea la newsletter în formularul de contact, adresa ta de email intră și în lista de newsletter din Brevo; bifarea nu leagă vizitele tale pe website de adresa ta."
     )
   );
   assert.equal(html.includes("dacă trimiți un formular, adresa de email"), false);
   assert.equal(html.includes("după ce te identifici printr-un formular"), false);
+  assert.equal(html.includes("decât dacă te abonezi separat. Dacă bifezi"), false);
 });
