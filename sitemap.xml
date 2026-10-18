@@ -57,7 +57,7 @@
     </url>
     <url>
         <loc>https://solon.agency/blog/</loc>
-        <lastmod>2026-10-16</lastmod>
+        <lastmod>2026-10-18</lastmod>
         <priority>0.90</priority>
     </url>
     <url>
@@ -367,7 +367,12 @@
     </url>
     <url>
         <loc>https://solon.agency/blog/microsoft-copilot-pentru-avocati/</loc>
-        <lastmod>2026-10-17</lastmod>
+        <lastmod>2026-10-18</lastmod>
+        <priority>0.50</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/domeniu-email-profesional-cabinet-avocat/</loc>
+        <lastmod>2026-10-18</lastmod>
         <priority>0.50</priority>
     </url>
 </urlset>
