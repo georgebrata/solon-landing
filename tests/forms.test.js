@@ -570,7 +570,7 @@ test("every HTML page with a Telefon form includes the legal phone notice after 
 });
 
 test("contact and newsletter forms carry the Brevo notice above submit", () => {
-  const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj. Dacă bifezi abonarea la newsletter și ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta de email.";
+  const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj.";
   const newsletterNote = "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
   const contactPages = ["index.html", "studii-de-caz/index.html"];
   const newsletterPages = ["templates/layout.html", "newsletter.html", "index.html"];
