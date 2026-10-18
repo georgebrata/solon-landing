@@ -553,35 +553,17 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.match(curl.location, /^https:\/\/mpy\.ro\/99mzfyjht\?language=en&x=%C8%99$/u);
 });
 
-test("offline build falls back to the snapshot, is idempotent, and --check catches drift", async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-short-"));
-  fs.mkdirSync(path.join(dir, "data"));
-  fs.writeFileSync(path.join(dir, "index.html"), "<!DOCTYPE html><title>x</title>\n");
-  fs.writeFileSync(path.join(dir, ".htaccess"), "  RewriteRule ^blog/posts(?:/|$) - [F,L]\n</IfModule>\n");
-  fs.writeFileSync(path.join(dir, "data/shortlinks.config.json"), "{\"hitEndpoint\":\"\"}\n");
+test("offline build is idempotent and --check catches drift", async () => {
+  const dir = fixtureDir();
   const rows = [
     row({ id: "one", short: "https://solon.agency/one", dest: "https://example.com/one" }),
     row({ id: "two", short: "https://solon.agency/two", dest: "https://example.com/two" }),
   ];
   fs.writeFileSync(path.join(dir, "data/shortlinks.snapshot.json"), `${JSON.stringify({ ShortLinks: rows }, null, 2)}\n`);
-  const errors = [];
-  const original = console.error;
-  console.error = (line) => {
-    errors.push(String(line));
-  };
   try {
-    const failed = await run({
-      root: dir,
-      offline: false,
-      fetchImpl: async () => {
-        throw new Error("down");
-      },
-    });
-    assert.equal(failed, 0);
-    assert.match(errors.join("\n"), /::error::build-shortlinks: endpoint failed/);
+    assert.equal(await run({ root: dir, offline: true }), 0);
     assert.equal(fs.existsSync(path.join(dir, "r/one/index.html")), true);
     assert.equal(fs.existsSync(path.join(dir, "r/two/index.html")), true);
-
     fs.writeFileSync(
       path.join(dir, "data/shortlinks.snapshot.json"),
       `${JSON.stringify({ ShortLinks: [rows[0]] }, null, 2)}\n`
@@ -589,12 +571,102 @@ test("offline build falls back to the snapshot, is idempotent, and --check catch
     assert.equal(await run({ root: dir, offline: true }), 0);
     assert.equal(fs.existsSync(path.join(dir, "r/one/index.html")), true);
     assert.equal(fs.existsSync(path.join(dir, "r/two/index.html")), false);
-
     assert.equal(await run({ root: dir, offline: true, check: true }), 0);
     fs.writeFileSync(path.join(dir, "r/one/index.html"), "drift\n");
     assert.equal(await run({ root: dir, offline: true, check: true }), 1);
   } finally {
-    console.error = original;
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("fetch errors, malformed payloads, and zero valid rows leave files unchanged", async () => {
+  const secret = "unit-test-key";
+  const cases = [
+    {
+      name: "fetch error",
+      fetchImpl: async () => {
+        throw new Error(`down https://sheets.example/exec?apiKey=${secret}`);
+      },
+    },
+    {
+      name: "malformed payload",
+      fetchImpl: async () => jsonResponse({ success: true, data: { nope: true } }),
+    },
+    {
+      name: "zero valid rows",
+      fetchImpl: async () => jsonResponse({
+        success: true,
+        data: [{
+          id: "keyed",
+          "Original URL": `https://example.com/path?apiKey=${secret}`,
+          "Short URL": "https://solon.agency/keyed",
+        }],
+        pagination: { hasMore: false },
+      }),
+    },
+  ];
+  for (const item of cases) {
+    const dir = fixtureDir();
+    fs.mkdirSync(path.join(dir, "r/keep"), { recursive: true });
+    fs.writeFileSync(path.join(dir, "r/keep/index.html"), "keep\n");
+    const before = treeBytes(dir);
+    const logs = [];
+    const originalError = console.error;
+    const originalLog = console.log;
+    console.error = (line) => {
+      logs.push(String(line));
+    };
+    console.log = (line) => {
+      logs.push(String(line));
+    };
+    try {
+      const code = await run({
+        root: dir,
+        offline: false,
+        apiKey: secret,
+        baseUrl: "https://sheets.example/exec",
+        fetchImpl: item.fetchImpl,
+      });
+      assert.equal(code, 0, item.name);
+      assert.equal(treeBytes(dir), before, item.name);
+      assert.match(logs.join("\n"), /::error::build-shortlinks: SOLON API failed/, item.name);
+      assert.equal(logs.join("\n").includes(secret), false, item.name);
+      assert.equal(logs.join("\n").includes("https://"), false, item.name);
+    } finally {
+      console.error = originalError;
+      console.log = originalLog;
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+});
+
+test("a missing key publishes the snapshot and does not log a URL or key", async () => {
+  const dir = fixtureDir();
+  const rows = [row({ id: "one", short: "https://solon.agency/one", dest: "https://example.com/one" })];
+  fs.writeFileSync(path.join(dir, "data/shortlinks.snapshot.json"), `${JSON.stringify({ ShortLinks: rows }, null, 2)}\n`);
+  const logs = [];
+  const originalLog = console.log;
+  let called = false;
+  console.log = (line) => {
+    logs.push(String(line));
+  };
+  try {
+    const code = await run({
+      root: dir,
+      offline: false,
+      apiKey: "",
+      fetchImpl: async () => {
+        called = true;
+        throw new Error("should not fetch");
+      },
+    });
+    assert.equal(code, 0);
+    assert.equal(called, false);
+    assert.match(logs.join("\n"), /SHEETS_API_KEY is not set; using committed snapshot/);
+    assert.equal(logs.join("\n").includes("https://"), false);
+    assert.equal(fs.existsSync(path.join(dir, "r/one/index.html")), true);
+  } finally {
+    console.log = originalLog;
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
@@ -642,12 +714,64 @@ test("build script does not call sendBeacon or URLSearchParams", () => {
   assert.equal(source.includes("sendBeacon"), false);
   assert.equal(source.includes("URLSearchParams"), false);
   assert.equal(source.includes("encodeURIComponent"), false);
+  assert.equal(source.includes("SOLON_DATA_URL"), false);
+  assert.equal(source.includes("AKfycbyH3"), false);
+  assert.equal(source.includes("fetchTab"), true);
 });
 
 /**
  * @param {{ id: string, short: string, dest: string, activ?: unknown, tip?: unknown }} input
  * @returns {Record<string, unknown>}
  */
+/**
+ * @returns {string}
+ */
+function fixtureDir() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-short-"));
+  fs.mkdirSync(path.join(dir, "data"));
+  fs.writeFileSync(path.join(dir, "index.html"), "<!DOCTYPE html><title>x</title>\n");
+  fs.writeFileSync(path.join(dir, ".htaccess"), "  RewriteRule ^blog/posts(?:/|$) - [F,L]\n</IfModule>\n");
+  fs.writeFileSync(path.join(dir, "data/shortlinks.config.json"), "{\"hitEndpoint\":\"\"}\n");
+  fs.writeFileSync(path.join(dir, "data/shortlinks.snapshot.json"), "{\"ShortLinks\":[]}\n");
+  return dir;
+}
+
+/**
+ * @param {string} dir
+ * @returns {string}
+ */
+function treeBytes(dir) {
+  /** @type {string[]} */
+  const rels = [];
+  const walk = (rel) => {
+    const full = path.join(dir, rel);
+    if (!fs.existsSync(full)) return;
+    const stat = fs.statSync(full);
+    if (stat.isDirectory()) {
+      fs.readdirSync(full).forEach((name) => walk(path.join(rel, name)));
+      return;
+    }
+    rels.push(rel);
+  };
+  [".htaccess", path.join("data", "shortlinks.snapshot.json"), "r"].forEach(walk);
+  rels.sort();
+  return rels.map((rel) => `${rel}\0${fs.readFileSync(path.join(dir, rel), "utf8")}`).join("\n");
+}
+
+/**
+ * @param {unknown} body
+ * @param {number} [status]
+ * @returns {{ ok: boolean, status: number, headers: { get: () => null }, json: () => Promise<unknown> }}
+ */
+function jsonResponse(body, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    headers: { get: () => null },
+    json: async () => body,
+  };
+}
+
 function row(input) {
   const record = {
     id: input.id,

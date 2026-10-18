@@ -11,7 +11,7 @@ George edits the `ShortLinks` tab. The next deploy publishes each active row as 
 3. `Short URL` is `https://solon.agency/<path>` with one to three lowercase segments, no query and no fragment. A trailing slash is ignored. Uppercase is lowercased and warned.
 4. `Original URL` is an absolute `http:` or `https:` URL, at most 2048 characters. Any host is allowed. `javascript:` and `data:` are rejected.
 5. Leave `Activ` empty to publish. Set it to FALSE to unpublish. `Tip redirect` is `302` unless the cell is `301` (the `301` applies only to non-browser clients).
-6. Deploy. `node scripts/build-shortlinks.js` reads the same public endpoint as `scripts/build-pricing.js` (`SOLON_DATA_URL` or the default). A bad row is skipped with `::warning::` and the build continues.
+6. Deploy. `node scripts/build-shortlinks.js` reads the ShortLinks tab through the same key-protected client as `scripts/build-pricing.js` (`SHEETS_API_URL` and `SHEETS_API_KEY`). With no key configured it publishes the committed snapshot and logs a message that contains neither the URL nor the key. A bad row is skipped with `::warning::` and the build continues. A fetch, pagination, schema, or validation failure, including a response with no publishable row, logs `::error::` and leaves the snapshot, `.htaccess`, and `r/` untouched.
 
 The first path segment cannot be a top-level file or directory in the repo (`blog`, `assets`, `r`, and the rest), nor `.well-known`, `cgi-bin`, or `wp-admin`. Two active rows with the same path are both skipped.
 
@@ -51,6 +51,7 @@ Hostico access logs and the visitor's browser history still store the full query
 ## Troubleshooting
 
 - Unknown or inactive slug: Apache returns the normal 404. Existing pages are unchanged.
-- Endpoint down: the build logs `::error::` and publishes the committed snapshot. Deploy stays green.
+- API down, malformed, or empty: the build logs `::error::` and does not write the snapshot, `.htaccess`, or `r/`. Deploy stays green and uploads the last committed files.
+- No `SHEETS_API_KEY`: the build publishes `data/shortlinks.snapshot.json` and the log line does not include a URL or a key.
 - `--check` exits 1 when `.htaccess` or `r/` would change. Run `node scripts/build-shortlinks.js --offline` and commit the result.
 - A second run with the same snapshot does not change files.

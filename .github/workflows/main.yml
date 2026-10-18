@@ -114,8 +114,11 @@ jobs:
           SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
         run: node scripts/build-pricing.js
 
-      # After pricing. On endpoint failure it logs ::error:: and keeps the snapshot.
-      - name: Build short links from sheet
+      # After pricing. On API failure it logs ::error:: and does not rewrite the snapshot, .htaccess, or r/.
+      - name: Build short links from SOLON API
+        env:
+          SHEETS_API_URL: ${{ vars.SHEETS_API_URL }}
+          SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
         run: node scripts/build-shortlinks.js
 
       # After pricing, so a sheet-driven homepage edit is dated today.

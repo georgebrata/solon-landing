@@ -11,17 +11,17 @@
  *   --offline  use data/shortlinks.snapshot.json (tests / no network)
  *   --check    exit 1 if .htaccess or r/ would change
  *
- * The fetch matches scripts/build-pricing.js: SOLON_DATA_URL or the public
- * endpoint, 20s timeout. A failed fetch logs ::error:: and keeps the snapshot.
+ * Live rows come from fetchTab("ShortLinks") in scripts/build-pricing.js
+ * (SHEETS_API_URL + SHEETS_API_KEY). A missing key uses the committed snapshot.
+ * A failed fetch logs ::error:: and does not write the snapshot, .htaccess, or r/.
  */
 
+(() => {
 const fs = require("fs");
 const path = require("path");
+const { fetchTab } = require("./build-pricing");
 
 const ROOT = path.join(__dirname, "..");
-const DEFAULT_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbyH3CjUOWBxTKpjzHrjMkFbn_YBqFZ6MXLjH3WE4mDU9wNBPTViBMsC0wClML_S15yS/exec";
-const FETCH_TIMEOUT_MS = 20000;
 const ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 const SEGMENT_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const EXTRA_RESERVED = Object.freeze([
@@ -106,21 +106,34 @@ function originalUrlHasApiKey(url) {
 }
 
 /**
+ * @param {string} text
+ * @returns {boolean}
+ */
+function hasWhitespaceOrControl(text) {
+  for (let index = 0; index < text.length; index += 1) {
+    const code = text.charCodeAt(index);
+    if (code <= 32 || code === 127) return true;
+    if (/\s/u.test(text.charAt(index))) return true;
+  }
+  return false;
+}
+
+/**
  * @param {unknown} url
  * @returns {string|null} The original string, or null when it cannot be published.
  */
 function validateDestination(url) {
   const text = String(url || "");
   if (!text || text.length > 2048) return null;
-  if (/[\s\u0000-\u001F\u007F]/u.test(text)) return null;
+  if (hasWhitespaceOrControl(text)) return null;
   if (/["<>\\`]/u.test(text)) return null;
-  let parsed;
+  let parsed = null;
   try {
     parsed = new URL(text);
   } catch {
     return null;
   }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+  if (!parsed || (parsed.protocol !== "http:" && parsed.protocol !== "https:")) return null;
   return text;
 }
 
@@ -152,9 +165,10 @@ function isActive(row) {
   const value = row.Activ;
   if (value === false) return false;
   if (value == null) return true;
-  if (typeof value === "string" && value.trim() === "") return true;
-  if (typeof value === "string" && value.trim().toLowerCase() === "false") return false;
-  return true;
+  if (typeof value !== "string") return true;
+  const text = value.trim().toLowerCase();
+  if (text === "") return true;
+  return text !== "false";
 }
 
 /**
@@ -202,6 +216,7 @@ function classifyShortLinks(rows, options = {}) {
   list.forEach((row, index) => {
     const record = row && typeof row === "object" ? /** @type {Record<string, unknown>} */ (row) : {};
     const id = String(record.id ?? "").trim();
+    /** @param {string} reason */
     const skip = (reason) => {
       const safe = safeId(id || `row-${index + 1}`);
       skipped.push({ id: safe, reason });
@@ -304,6 +319,7 @@ const PAGE_MERGE = [
  * @returns {string}
  */
 function mergeQuery(dest, search, hash) {
+  /** @param {string} part */
   const key = (part) => {
     const cut = part.indexOf("=");
     const raw = cut < 0 ? part : part.slice(0, cut);
@@ -565,24 +581,29 @@ function readHitEndpoint(configPath) {
 }
 
 /**
- * @param {string} endpoint
- * @param {typeof fetch} fetchImpl
- * @returns {Promise<unknown[]>}
+ * Drop URLs and key material before anything is logged.
+ * @param {unknown} value
+ * @returns {string}
  */
-async function fetchShortLinkRows(endpoint, fetchImpl) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
-  try {
-    const res = await fetchImpl(endpoint, { redirect: "follow", signal: ctrl.signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (!data || !Array.isArray(data.ShortLinks)) {
-      throw new Error("payload has no ShortLinks array");
-    }
-    return data.ShortLinks;
-  } finally {
-    clearTimeout(timer);
+function redactLog(value) {
+  return String(value || "request failed")
+    .replace(/https?:\/\/\S+/giu, "[url]")
+    .replace(/apiKey=[^&\s]*/giu, "apiKey=[redacted]")
+    .replace(/SHEETS_API_KEY[=:]\s*\S+/giu, "SHEETS_API_KEY=[redacted]")
+    .slice(0, 400);
+}
+
+/**
+ * options.apiKey wins, including an explicit empty string. Otherwise the env key.
+ * @param {{ apiKey?: string }} options
+ * @returns {string}
+ */
+function configuredApiKey(options) {
+  if (Object.prototype.hasOwnProperty.call(options, "apiKey")) {
+    return options.apiKey == null ? "" : String(options.apiKey);
   }
+  const fromEnv = process.env.SHEETS_API_KEY;
+  return fromEnv == null ? "" : String(fromEnv);
 }
 
 /**
@@ -655,54 +676,18 @@ function hasDrift(root, before, after, pages) {
 }
 
 /**
- * @param {{ root?: string, offline?: boolean, check?: boolean, fetchImpl?: typeof fetch, endpoint?: string, warn?: (id: string, reason: string) => void }} [options]
- * @returns {Promise<number>}
+ * @param {string} root
+ * @param {unknown[]} rows
+ * @param {{ warn?: (id: string, reason: string) => void }} options
+ * @returns {{ classified: ReturnType<typeof classifyShortLinks>, current: string, next: string, pages: Map<string, string>, htaccessPath: string }}
  */
-async function run(options = {}) {
-  const root = options.root || ROOT;
-  const offline = options.offline === true;
-  const check = options.check === true;
-  const fetchImpl = options.fetchImpl || globalThis.fetch;
-  const endpoint = options.endpoint || process.env.SOLON_DATA_URL || DEFAULT_ENDPOINT;
-  const snapshotPath = path.join(root, "data", "shortlinks.snapshot.json");
-  const configPath = path.join(root, "data", "shortlinks.config.json");
-  const htaccessPath = path.join(root, ".htaccess");
-
-  let rows = null;
-  if (!offline) {
-    try {
-      const fetched = await fetchShortLinkRows(endpoint, fetchImpl);
-      const document = snapshotDocument(fetched);
-      assertNoApiKey(document);
-      if (!check) fs.writeFileSync(snapshotPath, `${JSON.stringify(document, null, 2)}\n`);
-      rows = fetched;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`::error::build-shortlinks: endpoint failed (${message}); using committed snapshot`);
-      rows = null;
-    }
-  }
-
-  if (!rows) {
-    let parsed;
-    try {
-      parsed = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
-    } catch {
-      console.error("::error::build-shortlinks: committed snapshot is unreadable");
-      return 0;
-    }
-    if (!parsed || !Array.isArray(parsed.ShortLinks)) {
-      console.error("::error::build-shortlinks: snapshot has no ShortLinks array");
-      return 0;
-    }
-    rows = parsed.ShortLinks;
-  }
-
-  const hitEndpoint = readHitEndpoint(configPath);
+function planPublish(root, rows, options) {
+  const hitEndpoint = readHitEndpoint(path.join(root, "data", "shortlinks.config.json"));
   const classified = classifyShortLinks(rows, {
     reserved: reservedFirstSegments(root),
     warn: options.warn,
   });
+  const htaccessPath = path.join(root, ".htaccess");
   const current = fs.readFileSync(htaccessPath, "utf8");
   const next = applyHtaccess(current, renderInner(classified.links));
   /** @type {Map<string, string>} */
@@ -715,20 +700,111 @@ async function run(options = {}) {
     }
     pages.set(rel, html);
   });
+  return { classified, current, next, pages, htaccessPath };
+}
 
-  if (check) {
-    if (hasDrift(root, current, next, pages)) {
+/**
+ * @param {string} root
+ * @param {ReturnType<typeof planPublish>} plan
+ * @param {string|null} snapshotText
+ * @returns {void}
+ */
+function commitPublish(root, plan, snapshotText) {
+  if (plan.next !== plan.current) fs.writeFileSync(plan.htaccessPath, plan.next);
+  writePages(root, plan.pages);
+  if (snapshotText != null) {
+    fs.writeFileSync(path.join(root, "data", "shortlinks.snapshot.json"), snapshotText);
+  }
+  const ids = plan.classified.links.map((link) => link.id).join(", ");
+  console.log(`build-shortlinks: published ${ids}`);
+}
+
+/**
+ * @param {string} snapshotPath
+ * @returns {unknown[]|null}
+ */
+function loadSnapshotRows(snapshotPath) {
+  let parsed = null;
+  try {
+    parsed = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
+  } catch {
+    console.error("::error::build-shortlinks: committed snapshot is unreadable");
+    return null;
+  }
+  if (!parsed || !Array.isArray(parsed.ShortLinks)) {
+    console.error("::error::build-shortlinks: snapshot has no ShortLinks array");
+    return null;
+  }
+  return parsed.ShortLinks;
+}
+
+/**
+ * @param {string} root
+ * @param {unknown[]} rows
+ * @param {{ check?: boolean, warn?: (id: string, reason: string) => void }} options
+ * @param {string|null} snapshotText
+ * @returns {number}
+ */
+function finishPublish(root, rows, options, snapshotText) {
+  const plan = planPublish(root, rows, options);
+  if (options.check === true) {
+    if (hasDrift(root, plan.current, plan.next, plan.pages)) {
       console.error("::error::build-shortlinks: .htaccess or r/ is out of date; run node scripts/build-shortlinks.js --offline");
       return 1;
     }
     return 0;
   }
-
-  if (next !== current) fs.writeFileSync(htaccessPath, next);
-  writePages(root, pages);
-  const ids = classified.links.map((link) => link.id).join(", ");
-  console.log(`build-shortlinks: published ${ids}`);
+  commitPublish(root, plan, snapshotText);
   return 0;
+}
+
+/**
+ * @param {{ root?: string, offline?: boolean, check?: boolean, fetchImpl?: typeof fetch, baseUrl?: string, apiKey?: string, warn?: (id: string, reason: string) => void }} [options]
+ * @returns {Promise<number>}
+ */
+async function run(options = {}) {
+  const root = options.root || ROOT;
+  const offline = options.offline === true;
+  const snapshotPath = path.join(root, "data", "shortlinks.snapshot.json");
+
+  if (!offline) {
+    const apiKey = configuredApiKey(options);
+    if (!apiKey.trim()) {
+      console.log("build-shortlinks: SHEETS_API_KEY is not set; using committed snapshot");
+    } else {
+      try {
+        /** @type {{ apiKey: string, fetchImpl?: typeof fetch, baseUrl?: string }} */
+        const fetchOptions = { apiKey };
+        if (options.fetchImpl) fetchOptions.fetchImpl = options.fetchImpl;
+        if (options.baseUrl) fetchOptions.baseUrl = options.baseUrl;
+        const fetched = await fetchTab("ShortLinks", fetchOptions);
+        if (!Array.isArray(fetched)) throw new Error("ShortLinks data is not an array");
+        const document = snapshotDocument(fetched);
+        assertNoApiKey(document);
+        const plan = planPublish(root, fetched, options);
+        if (plan.classified.links.length === 0 || document.ShortLinks.length === 0) {
+          throw new Error("no publishable ShortLinks rows");
+        }
+        if (options.check === true) {
+          if (hasDrift(root, plan.current, plan.next, plan.pages)) {
+            console.error("::error::build-shortlinks: .htaccess or r/ is out of date; run node scripts/build-shortlinks.js --offline");
+            return 1;
+          }
+          return 0;
+        }
+        commitPublish(root, plan, `${JSON.stringify(document, null, 2)}\n`);
+        return 0;
+      } catch (error) {
+        const detail = redactLog(error instanceof Error ? error.message : error);
+        console.error(`::error::build-shortlinks: SOLON API failed (${detail}); keeping the committed snapshot`);
+        return 0;
+      }
+    }
+  }
+
+  const rows = loadSnapshotRows(snapshotPath);
+  if (!rows) return 0;
+  return finishPublish(root, rows, options, null);
 }
 
 if (require.main === module) {
@@ -739,8 +815,8 @@ if (require.main === module) {
   }).then((code) => {
     process.exitCode = code;
   }).catch((error) => {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`::error::build-shortlinks: ${message}`);
+    const detail = redactLog(error instanceof Error ? error.message : error);
+    console.error(`::error::build-shortlinks: ${detail}`);
     process.exitCode = 1;
   });
 }
@@ -758,3 +834,4 @@ module.exports = {
   run,
   snapshotDocument,
 };
+})();
