@@ -191,12 +191,6 @@
   RewriteCond %{HTTP:Accept} !text/html
   RewriteCond %{ENV:SLQ} ^&?(.*)$
   RewriteRule ^api\/urls/?$ https://script.google.com/macros/s/AKfycbxxs-JqsCU_yxghpQ9oX35nLpBZABaxTnW3kOHa3xE4nWCGoIZ-G3-UwLD9sxhwciOO/exec?%1 [R=302,L,NE]
-  <IfModule mod_headers.c>
-    Header unset Cache-Control "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)(?:/index\.html)?/?$#"
-    Header always unset Cache-Control "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)(?:/index\.html)?/?$#"
-    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)(?:/index\.html)?/?$#"
-    Header always merge Vary "Accept" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)(?:/index\.html)?/?$#"
-  </IfModule>
   # SHORTLINKS:END
 </IfModule>
 
@@ -320,10 +314,21 @@ AddDefaultCharset utf-8
   </FilesMatch>
 
   # SHORTLINKS-LATE:START
-  <IfModule mod_headers.c>
-    Header unset Cache-Control "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)(?:/index\.html)?/?$#"
-    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ m#^/(?:r/)?(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)(?:/index\.html)?/?$#"
-  </IfModule>
+  <If "%{REQUEST_URI} =~ m#^/r/#">
+    ExpiresActive Off
+    Header unset Cache-Control
+    Header always unset Cache-Control
+    Header set Cache-Control "no-store"
+    Header always merge Vary "Accept"
+  </If>
+  <If "%{REQUEST_URI} =~ m#^/(?:api|bronze\/lunar|bronze\/anual|silver\/lunar|silver\/anual|gold\/lunar|gold\/anual|platinum\/lunar|platinum\/anual|api\/servicii|api\/abonamente|api\/urls)/?$#">
+    ExpiresActive Off
+    Header unset Cache-Control
+    Header always unset Cache-Control
+    Header set Cache-Control "no-store" "expr=%{REQUEST_STATUS} < 300"
+    Header always set Cache-Control "no-store" "expr=%{REQUEST_STATUS} >= 300"
+    Header always merge Vary "Accept"
+  </If>
   # SHORTLINKS-LATE:END
 
   <Files "posts.json">

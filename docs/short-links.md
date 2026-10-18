@@ -28,7 +28,7 @@ The visitor's query is copied byte for byte, in the original order and encoding.
 
 Example: destination `https://x/p?language=ro&a=1`, visit `?language=en&q=%C8%99+x` → `https://x/p?language=en&q=%C8%99+x&a=1`.
 
-Browsers (`Accept` contains `text/html`) are rewritten internally to `r/<path>/index.html`, then `location.replace` runs. Everyone else receives a `302` (or `301`) from `.htaccess`, with `NE`, `Cache-Control: no-store`, and `Vary: Accept`. Non-browser requests are not counted, so `/api?apiKey=…&sheet=…` works for scripts.
+Browsers (`Accept` contains `text/html`) are rewritten internally to `r/<path>/index.html`, then `location.replace` runs. Everyone else receives a `302` (or `301`) from `.htaccess`, with `NE`, one `Cache-Control: no-store`, and `Vary: Accept` merged. `ExpiresActive` is off for those URLs so Apache does not add a second cache header. Non-browser requests are not counted, so `/api?apiKey=…&sheet=…` works for scripts.
 
 Without JavaScript the noscript refresh opens the destination without the visitor query, and the click is not counted.
 

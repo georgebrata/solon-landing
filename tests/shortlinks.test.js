@@ -573,6 +573,8 @@ test("committed short links match the snapshot and leave the rest of .htaccess u
   assert.equal(crypto.createHash("sha256").update(stripped).digest("hex"), HTACCESS_HASH);
   assert.ok(htaccess.indexOf("# SHORTLINKS:START") > htaccess.indexOf("RewriteRule ^blog/posts"));
   assert.ok(htaccess.indexOf("# SHORTLINKS:END") < htaccess.indexOf("# BEGIN issue #29"));
+  assert.match(htaccess, /ExpiresActive Off/);
+  assert.match(htaccess, /Header set Cache-Control "no-store"/);
   assert.match(htaccess, /Header always set Cache-Control "no-store"/);
   assert.match(htaccess, /Header unset Cache-Control/);
   assert.match(htaccess, /Header always merge Vary "Accept"/);
@@ -889,6 +891,35 @@ test("identical short URLs keep the first row and differing ones are both skippe
   ], { reserved: new Set(), warn });
   assert.deepEqual(typeDiff.links, []);
   assert.deepEqual(typeDiff.skipped.map((item) => item.reason), ["duplicate-path", "duplicate-path"]);
+});
+
+test("the snapshot allowlist drops Notes and other sheet columns", () => {
+  const document = snapshotDocument([{
+    id: "row1",
+    Data: "secret-column",
+    "Original URL": "https://example.com/a",
+    "Short URL": "https://solon.agency/go",
+    "Total clicks": 99,
+    Notes: "do not keep",
+    Activ: "TRUE",
+    "Tip redirect": "302",
+    Extra: "nope",
+  }]);
+  assert.equal(document.ShortLinks.length, 1);
+  assert.deepEqual(Object.keys(document.ShortLinks[0]), [
+    "id",
+    "Original URL",
+    "Short URL",
+    "Activ",
+    "Tip redirect",
+  ]);
+  assert.equal(document.ShortLinks[0].Activ, "TRUE");
+  assert.equal(document.ShortLinks[0]["Tip redirect"], "302");
+  const serialised = JSON.stringify(document);
+  assert.equal(serialised.includes("Notes"), false);
+  assert.equal(serialised.includes("Total clicks"), false);
+  assert.equal(serialised.includes("secret-column"), false);
+  assert.equal(serialised.includes("do not keep"), false);
 });
 
 test("a visitor query is merged into a destination that already has sheet", () => {

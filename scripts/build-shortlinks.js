@@ -612,12 +612,12 @@ function assertSafeFlags(text) {
 }
 
 /**
+ * Builds the path alternation used by the short-link Cache-Control expression.
  * @param {string[]} paths
  * @returns {string}
  */
-function requestExpr(paths) {
-  const body = paths.map((item) => item.split("/").map((segment) => escapeRegex(segment)).join("\\/")).join("|");
-  return `m#^/(?:r/)?(?:${body})(?:/index\\.html)?/?$#`;
+function pathAlternation(paths) {
+  return paths.map((item) => item.split("/").map((segment) => escapeRegex(segment)).join("\\/")).join("|");
 }
 
 /**
@@ -633,15 +633,6 @@ function renderInner(links) {
   links.forEach((link) => {
     lines.push(...renderLinkRules(link));
   });
-  if (links.length > 0) {
-    const expr = requestExpr(links.map((link) => link.path));
-    lines.push("  <IfModule mod_headers.c>");
-    lines.push(`    Header unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push(`    Header always merge Vary "Accept" "expr=%{REQUEST_URI} =~ ${expr}"`);
-    lines.push("  </IfModule>");
-  }
   const inner = lines.join("\n");
   assertSafeFlags(inner);
   return inner;
@@ -654,12 +645,23 @@ function renderInner(links) {
  */
 function renderLate(links) {
   if (links.length === 0) return "";
-  const expr = requestExpr(links.map((link) => link.path));
+  const shortExpr = `m#^/(?:${pathAlternation(links.map((link) => link.path))})/?$#`;
   return [
-    "  <IfModule mod_headers.c>",
-    `    Header unset Cache-Control "expr=%{REQUEST_URI} =~ ${expr}"`,
-    `    Header always set Cache-Control "no-store" "expr=%{REQUEST_URI} =~ ${expr}"`,
-    "  </IfModule>",
+    "  <If \"%{REQUEST_URI} =~ m#^/r/#\">",
+    "    ExpiresActive Off",
+    "    Header unset Cache-Control",
+    "    Header always unset Cache-Control",
+    "    Header set Cache-Control \"no-store\"",
+    "    Header always merge Vary \"Accept\"",
+    "  </If>",
+    `  <If "%{REQUEST_URI} =~ ${shortExpr}">`,
+    "    ExpiresActive Off",
+    "    Header unset Cache-Control",
+    "    Header always unset Cache-Control",
+    "    Header set Cache-Control \"no-store\" \"expr=%{REQUEST_STATUS} < 300\"",
+    "    Header always set Cache-Control \"no-store\" \"expr=%{REQUEST_STATUS} >= 300\"",
+    "    Header always merge Vary \"Accept\"",
+    "  </If>",
   ].join("\n");
 }
 

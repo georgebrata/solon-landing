@@ -58,7 +58,7 @@ APACHE_GROUP="$(id -gn)"
   printf '%s\n' "User ${APACHE_USER}"
   printf '%s\n' "Group ${APACHE_GROUP}"
   printf '%s\n' "Mutex file:${TMP}/runtime default"
-  for module in mod_mpm_event mod_authn_core mod_authz_core mod_mime mod_rewrite mod_headers mod_dir; do
+  for module in mod_mpm_event mod_authn_core mod_authz_core mod_mime mod_rewrite mod_headers mod_dir mod_expires; do
     file="${MODDIR}/${module}.so"
     if [[ ! -f "${file}" ]]; then
       echo "::error::missing ${file}" >&2
@@ -119,4 +119,31 @@ check "/" "text/html" "200"
 check "/blog/" "text/html" "200"
 check "/bronze/lunar" "text/html" "200"
 check "/api" "*/*" "302"
+
+one_cache_control() {
+  local path="$1"
+  local accept="$2"
+  local headers
+  local count
+  headers="$(curl -sD - -o /dev/null --max-time 5 \
+    -H "X-Forwarded-Proto: https" \
+    -H "Accept: ${accept}" \
+    "http://127.0.0.1:${PORT}${path}")"
+  count="$(printf '%s\n' "${headers}" | grep -c -i '^Cache-Control:' || true)"
+  if [[ "${count}" -ne 1 ]]; then
+    echo "::error::${path} sent ${count} Cache-Control headers" >&2
+    printf '%s\n' "${headers}" >&2
+    cat "${TMP}/error.log" >&2 || true
+    exit 1
+  fi
+  if ! printf '%s\n' "${headers}" | grep -q -i '^Cache-Control:[[:space:]]*no-store[[:space:]]*$'; then
+    echo "::error::${path} Cache-Control is not a single no-store" >&2
+    printf '%s\n' "${headers}" >&2
+    exit 1
+  fi
+}
+
+one_cache_control "/api" "*/*"
+one_cache_control "/r/api/" "text/html"
+one_cache_control "/bronze/lunar" "text/html"
 echo "apache short-link smoke ok"
