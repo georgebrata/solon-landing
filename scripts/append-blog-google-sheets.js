@@ -63,6 +63,7 @@ const appendRow = (webhookUrl, title, options = {}) =>
       request.destroy(new Error("append request timed out"));
     }, timeoutMs);
 
+    /** Clears the per-request timeout when the socket closes or errors. */
     const clearTimer = () => clearTimeout(timer);
     request.on("close", clearTimer);
     request.on("error", (err) => {

@@ -35,7 +35,7 @@ test("tracked files do not contain Apps Script exec URLs with secret or token qu
     .filter(Boolean);
   for (const relativePath of files) {
     const absolutePath = path.join(root, relativePath);
-    let content;
+    let content = "";
     try {
       content = fs.readFileSync(absolutePath, "utf8");
     } catch {
@@ -98,7 +98,9 @@ test("success logging never references the webhook URL", () => {
 
 test("appendRow times out slow responses", async () => {
   const server = http.createServer((req, res) => {
-    req.on("data", () => {});
+    req.on("data", (chunk) => {
+      void chunk;
+    });
     req.on("end", () => {
       setTimeout(() => {
         res.statusCode = 200;
@@ -114,6 +116,7 @@ test("appendRow times out slow responses", async () => {
   const started = Date.now();
   await assert.rejects(appendRow(webhookUrl, "Slow", { timeoutMs: 80 }), /timed out/);
   assert.ok(Date.now() - started < 500);
+  assert.ok(APPEND_REQUEST_TIMEOUT_MS >= 15000);
 
   await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
 });
