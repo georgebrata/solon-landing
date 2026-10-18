@@ -15,7 +15,6 @@ const {
   fetchData,
   fetchWithSafeRedirect,
   resolvePricingData,
-  sanitizeSnapshotPayload,
   ABONAMENTE_SNAPSHOT_KEYS,
   REQUEST_TIMEOUT_MS,
 } = require("../scripts/build-pricing");
@@ -32,8 +31,6 @@ const makeServicii = (count) =>
     Service: `Service ${index + 1}`,
     Activ: true,
   }));
-
-const legacyServicii = Array.isArray(snapshot.Servicii) ? snapshot.Servicii : makeServicii(20);
 
 test("only NETOPIA https links are accepted, never Stripe or placeholders", () => {
   assert.ok(isNetopiaLink("https://mpy.ro/99mzfyjht?language=ro"));

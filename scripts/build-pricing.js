@@ -280,7 +280,7 @@
 
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
-      let response;
+      let response = null;
       try {
         response = await fetchWithSafeRedirect(fetchImpl, requestUrl, { signal: ctrl.signal }, sheet);
       } finally {
@@ -460,10 +460,12 @@ ${JSON.stringify(doc, null, 2).replace(/</g, "\\u003c").replace(/^/gm, "  ")}
     return out;
   };
 
+  /** @param {ReturnType<typeof validateSnapshot>} data */
   const writeSnapshotFile = (data) => {
     fs.writeFileSync(SNAPSHOT, `${JSON.stringify(data, null, 2)}\n`);
   };
 
+  /** @returns {ReturnType<typeof validateSnapshot>} */
   const readSnapshotFile = () => {
     const parsed = JSON.parse(fs.readFileSync(SNAPSHOT, "utf8"));
     return validateSnapshot({ Abonamente: parsed.Abonamente });
