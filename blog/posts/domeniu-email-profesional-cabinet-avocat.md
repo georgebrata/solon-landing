@@ -106,7 +106,7 @@ Peste toate stă **DNS-ul**: setările domeniului care spun unde se deschide web
 
 Fiecare piesă are propriul cont, propria parolă și propriul titular. Faptul că plătești factura nu înseamnă automat că ești titularul.
 
-## 2. Ce înseamnă „al cui e” un domeniu.ro
+## 2. Ce înseamnă „al cui e” un domeniu `.ro`
 
 Pentru domeniile `.ro`, registrul național este RoTLD. Tehnic, nu „cumperi” un domeniu, ci obții un drept de folosință asupra lui, pentru o perioadă pe care o reînnoiești. Persoana sau entitatea înregistrată ca **deținător** este cea care decide ce se întâmplă cu domeniul.
 
@@ -118,7 +118,7 @@ Asta contează în trei situații:
 
 În toate trei, contează cine apare ca deținător, nu cine a plătit și nici cine l-a configurat.
 
-## 3. Cum verifici deținătorul unui domeniu.ro
+## 3. Cum verifici deținătorul unui domeniu `.ro`
 
 Primul pas este căutarea **WHOIS** pe [rotld.ro](https://www.rotld.ro/). Aici apare o limită importantă: potrivit RoTLD, datele deținătorului se afișează doar când acesta este persoană juridică. Dacă deținătorul este persoană fizică, datele nu apar public, conform GDPR ([explicația RoTLD](https://rotld.ro/blog/can-the-data-on-a-holder-be-required-to-not-be-displayed-in-the-rotld-national-registry-database/)).
 
