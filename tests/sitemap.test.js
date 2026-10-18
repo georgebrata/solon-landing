@@ -13,7 +13,13 @@ const path = require("node:path");
 const test = require("node:test");
 
 const ROOT = path.join(__dirname, "..");
-const { stripIndexNowKeyUrls, isIndexNowKeyLoc } = require(path.join(ROOT, "scripts/update-sitemap.js"));
+const {
+  stripIndexNowKeyUrls,
+  isIndexNowKeyLoc,
+  normalizePageHtml,
+  contentChangeDay,
+  repoPathForLoc,
+} = require(path.join(ROOT, "scripts/update-sitemap.js"));
 const BASE_URL = "https://solon.agency";
 const SITEMAP = path.join(ROOT, "sitemap.xml");
 const POSTS = path.join(ROOT, "blog/posts.json");
@@ -88,14 +94,16 @@ const contentDayByUrl = (posts) => {
  * @param {string} sitemapPath
  * @param {string} postsPath
  * @param {string} today
+ * @param {string[]} [extraArgs]
  * @returns {string}
  */
-const runScript = (sitemapPath, postsPath, today) => {
+const runScript = (sitemapPath, postsPath, today, extraArgs = []) => {
   execFileSync(process.execPath, [
     SCRIPT,
     "--sitemap", sitemapPath,
     "--posts", postsPath,
     "--today", today,
+    ...extraArgs,
   ], { cwd: ROOT, encoding: "utf8" });
   return fs.readFileSync(sitemapPath, "utf8");
 };
@@ -289,5 +297,201 @@ test("update-sitemap strips an IndexNow key URL and does not rewrite the real si
   assert.equal(parseEntries(once).get(pageLoc), "2026-10-09");
   assert.equal(parseEntries(once).get(indexLoc), "2026-10-09");
   fs.rmSync(dir, { recursive: true, force: true });
+  assert.equal(fs.readFileSync(SITEMAP, "utf8"), realBefore);
+});
+
+test("normalizePageHtml ignores cache-bust tokens and generated blog sidebars", () => {
+  const left = [
+    "<p>Body</p>",
+    "<link href=\"assets/css/style.min.css?v=abc123def0\" rel=\"stylesheet\">",
+    "<div class=\"blog-recent-articles\"><ul><li>Old</li></ul></div>",
+    "<section class=\"blog-related-posts\" aria-labelledby=\"related-posts-heading\"><ul><li>A</li></ul></section>",
+  ].join("");
+  const right = [
+    "<p>Body</p>",
+    "<link href=\"assets/css/style.min.css?v=ffffffffff\" rel=\"stylesheet\">",
+    "<div class=\"wrap blog-recent-articles\"><ul><li>New</li></ul></div>",
+    "<section class=\"blog-related-posts\"><ul><li>B</li></ul></section>",
+  ].join("");
+  assert.equal(normalizePageHtml(left), normalizePageHtml(right));
+  assert.match(normalizePageHtml(left), /Body/);
+  assert.doesNotMatch(normalizePageHtml(left), /blog-recent-articles|Old|Articole/);
+  assert.equal(repoPathForLoc(`${BASE_URL}/`), "index.html");
+  assert.equal(repoPathForLoc(`${BASE_URL}/cookies/`), "cookies/index.html");
+  assert.equal(repoPathForLoc("https://example.com/cookies/"), "");
+  assert.equal(repoPathForLoc(`${BASE_URL}/../../etc/passwd`), "");
+});
+
+test("contentChangeDay uses the newest real edit and the Bucharest day", () => {
+  const body = "<p>Body</p>";
+  const stamped = (token) => `${body}<link href="a.css?v=${token}" rel="stylesheet">`;
+  assert.equal(contentChangeDay({
+    today: "2026-10-18",
+    revisions: [
+      {
+        committedAt: "2026-10-19T10:00:00+03:00",
+        before: stamped("aaa"),
+        after: stamped("bbb"),
+      },
+      {
+        committedAt: "2026-10-15T22:30:00Z",
+        before: null,
+        after: body,
+      },
+    ],
+  }), "2026-10-16");
+
+  assert.equal(contentChangeDay({
+    today: "2026-10-18",
+    head: body,
+    working: "<p>Pricing</p>",
+    revisions: [],
+  }), "2026-10-18");
+
+  assert.equal(contentChangeDay({
+    today: "2026-10-18",
+    head: stamped("aaa"),
+    working: stamped("bbb"),
+    revisions: [{ committedAt: "2026-09-01T10:00:00+03:00", before: null, after: body }],
+  }), "2026-09-01");
+});
+
+/**
+ * @param {string} cwd
+ * @param {string[]} args
+ * @param {string} [iso]
+ */
+const gitCommitEnv = (iso) => ({
+  ...process.env,
+  GIT_AUTHOR_NAME: "Sitemap Test",
+  GIT_AUTHOR_EMAIL: "sitemap-test@example.com",
+  GIT_COMMITTER_NAME: "Sitemap Test",
+  GIT_COMMITTER_EMAIL: "sitemap-test@example.com",
+  GIT_AUTHOR_DATE: iso,
+  GIT_COMMITTER_DATE: iso,
+});
+
+/**
+ * @param {string} cwd
+ * @param {string[]} args
+ * @param {string} [iso]
+ */
+const gitIn = (cwd, args, iso) => {
+  execFileSync("git", args, {
+    cwd,
+    encoding: "utf8",
+    env: iso ? gitCommitEnv(iso) : process.env,
+  });
+};
+
+/**
+ * Tiny site whose history mixes real edits with cache-bust and sidebar noise.
+ * @returns {string} repo directory
+ */
+const buildHistoryRepo = () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-sitemap-git-"));
+  gitIn(dir, ["init", "-b", "main"]);
+  gitIn(dir, ["config", "user.email", "sitemap-test@example.com"]);
+  gitIn(dir, ["config", "user.name", "Sitemap Test"]);
+
+  const write = (relative, body) => {
+    const file = path.join(dir, relative);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, body);
+  };
+  const page = (copy, token, extra = "") => `<!DOCTYPE html><html><head><link href="assets/css/style.min.css?v=${token}" rel="stylesheet"></head><body><p>${copy}</p>${extra}</body></html>\n`;
+  const notes = (item, token) => page(
+    "Notes body",
+    token,
+    `<div class="blog-recent-articles"><ul><li>${item}</li></ul></div>`
+  );
+
+  write("index.html", page("Home", "aaa"));
+  write("cookies/index.html", page("Cookies", "aaa"));
+  write("notes/index.html", notes("Old", "aaa"));
+  write("stay/index.html", page("Stay", "aaa"));
+  gitIn(dir, ["add", "-A"]);
+  gitIn(dir, ["commit", "-m", "initial pages"], "2026-09-01T10:00:00+03:00");
+
+  write("cookies/index.html", page("Cookies", "bbb"));
+  write("notes/index.html", notes("New", "bbb"));
+  gitIn(dir, ["add", "-A"]);
+  gitIn(dir, ["commit", "-m", "cache bust and recent list"], "2026-10-10T10:00:00+03:00");
+
+  write("index.html", page("Home pricing", "aaa"));
+  gitIn(dir, ["add", "-A"]);
+  gitIn(dir, ["commit", "-m", "homepage pricing"], "2026-10-18T09:00:00+03:00");
+
+  write("index.html", page("Home pricing", "ccc"));
+  gitIn(dir, ["add", "-A"]);
+  gitIn(dir, ["commit", "-m", "homepage token only"], "2026-10-19T09:00:00+03:00");
+
+  write("future/index.html", page("Future", "aaa"));
+  gitIn(dir, ["add", "-A"]);
+  gitIn(dir, ["commit", "-m", "future page"], "2026-12-01T09:00:00+03:00");
+
+  return dir;
+};
+
+/**
+ * @param {string} dir
+ * @returns {string}
+ */
+const historySitemap = (dir) => {
+  const loc = (slug) => `${BASE_URL}${slug}`;
+  const file = path.join(dir, "sitemap.xml");
+  fs.writeFileSync(file, wrapSitemap([
+    `    <url>\n        <loc>${loc("/")}</loc>\n        <lastmod>2026-09-01T00:00:00Z</lastmod>\n        <priority>1.00</priority>\n    </url>`,
+    `    <url>\n        <loc>${loc("/cookies/")}</loc>\n        <lastmod>2026-09-01T08:00:00Z</lastmod>\n        <priority>0.20</priority>\n    </url>`,
+    `    <url>\n        <loc>${loc("/notes/")}</loc>\n        <lastmod>2026-09-01T08:00:00Z</lastmod>\n        <priority>0.50</priority>\n    </url>`,
+    `    <url>\n        <loc>${loc("/stay/")}</loc>\n        <lastmod>2026-08-01T00:00:00Z</lastmod>\n        <priority>0.50</priority>\n    </url>`,
+    `    <url>\n        <loc>${loc("/future/")}</loc>\n        <lastmod>2026-01-01</lastmod>\n        <priority>0.50</priority>\n    </url>`,
+  ].join("\n")));
+  fs.writeFileSync(path.join(dir, "posts.json"), "[]\n");
+  return file;
+};
+
+test("--from-git dates changed pages and leaves noise-only pages on their stored lastmod", () => {
+  const realBefore = fs.readFileSync(SITEMAP, "utf8");
+  const dir = buildHistoryRepo();
+  const sitemapPath = historySitemap(dir);
+  const postsPath = path.join(dir, "posts.json");
+  const home = `${BASE_URL}/`;
+  const cookies = `${BASE_URL}/cookies/`;
+  const notes = `${BASE_URL}/notes/`;
+  const stay = `${BASE_URL}/stay/`;
+  const future = `${BASE_URL}/future/`;
+
+  const withoutGit = runScript(sitemapPath, postsPath, "2026-10-18");
+  assert.equal(parseEntries(withoutGit).get(home), "2026-09-01T00:00:00Z");
+  assert.equal(parseEntries(withoutGit).get(cookies), "2026-09-01T08:00:00Z");
+
+  const once = runScript(sitemapPath, postsPath, "2026-10-18", ["--from-git", "--repo", dir]);
+  const twice = runScript(sitemapPath, postsPath, "2026-10-18", ["--from-git", "--repo", dir]);
+  assert.equal(twice, once, "second --from-git run changed the sitemap");
+  const dated = parseEntries(once);
+  assert.equal(dated.get(home), "2026-10-18");
+  assert.equal(dated.get(cookies), "2026-09-01T08:00:00Z");
+  assert.equal(dated.get(notes), "2026-09-01T08:00:00Z");
+  assert.equal(dated.get(stay), "2026-09-01");
+  assert.equal(dated.get(future), "2026-10-18");
+
+  const shallow = fs.mkdtempSync(path.join(os.tmpdir(), "solon-sitemap-shallow-"));
+  execFileSync("git", ["clone", "--depth", "1", `file://${dir}`, shallow], { encoding: "utf8" });
+  const shallowSitemap = historySitemap(shallow);
+  const shallowXml = runScript(shallowSitemap, path.join(shallow, "posts.json"), "2026-10-18", ["--from-git", "--repo", shallow]);
+  const shallowEntries = parseEntries(shallowXml);
+  assert.equal(shallowEntries.get(home), "2026-09-01T00:00:00Z");
+  assert.equal(shallowEntries.get(future), "2026-01-01");
+
+  fs.writeFileSync(path.join(dir, "stay/index.html"), "<!DOCTYPE html><html><body><p>Stay updated</p></body></html>\n");
+  const edited = runScript(sitemapPath, postsPath, "2026-10-18", ["--from-git", "--repo", dir]);
+  assert.equal(parseEntries(edited).get(stay), "2026-10-18");
+  assert.equal(parseEntries(edited).get(cookies), "2026-09-01T08:00:00Z");
+  const editedAgain = runScript(sitemapPath, postsPath, "2026-10-18", ["--from-git", "--repo", dir]);
+  assert.equal(editedAgain, edited);
+
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(shallow, { recursive: true, force: true });
   assert.equal(fs.readFileSync(SITEMAP, "utf8"), realBefore);
 });
