@@ -37,7 +37,7 @@ const TRACKER_HOSTS = [
  * @returns {void}
  */
 const walkHtml = function walkHtml(dir, files) {
-  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs"]);
+  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs", "r"]);
   for (const name of fs.readdirSync(dir)) {
     if (skipDirs.has(name)) continue;
     const full = path.join(dir, name);

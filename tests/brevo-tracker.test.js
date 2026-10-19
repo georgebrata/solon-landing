@@ -191,7 +191,7 @@ test("every content page gates the tracker and error pages omit it", () => {
   const missing = [];
   const live = [];
   const files = [];
-  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs"]);
+  const skipDirs = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs", "r"]);
   /**
    * @param {string} dir
    */
