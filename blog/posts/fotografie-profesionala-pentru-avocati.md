@@ -61,7 +61,7 @@ json_ld: |-
             "name": "Cine poate publica fotografiile după ședință?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Fotograful este autorul fotografiei. Înainte de ședință, cere în scris dreptul de a folosi imaginile pe website, pe Google Business Profile și pe LinkedIn, inclusiv decupajele, și cere fișierele. Acordul fotografului nu înlocuiește acordul persoanelor din cadru. Art. 89 din Legea nr. 8/1996, republicată, cere consimțământul persoanei dintr-un portret, în condițiile Codului civil."
+              "text": "Fotograful este autorul fotografiei. Înainte de ședință, cere în scris dreptul de a folosi imaginile pe website, pe Google Business Profile și pe LinkedIn, inclusiv decupajele, și cere fișierele. Legea nr. 8/1996 prezumă, la art. 87 alin. (2), că drepturile patrimoniale asupra unei fotografii făcute la comandă aparțin celui care a comandat-o doar 3 ani, dacă prin contract nu s-a prevăzut altfel. De aceea scrii în contract canalele și durata. Acordul fotografului nu înlocuiește acordul persoanelor din cadru. Art. 89 din Legea nr. 8/1996, republicată, cere consimțământul persoanei dintr-un portret, în condițiile Codului civil."
             }
           },
           {
@@ -123,7 +123,9 @@ O poză în care se vede fața fiecăruia, nu doar siluete pe un hol.
 
 Anunță ședința din timp. Cine nu vrea să apară nu stă „doar la margine, că oricum nu se vede”. Dacă se vede, este în fotografie.
 
-Colegii care au plecat ies din pagină odată cu plecarea. Păstrează fișierul, nu publicația. O pagină „echipa” cu oameni care nu mai sunt acolo spune o poveste care nu mai este adevărată.
+Colegii care au plecat ies din pagină odată cu plecarea. Fișierul îl păstrezi doar dacă ai convenit asta în acord și ai un motiv clar; altfel îl ștergi.
+
+O pagină „echipa” cu oameni care nu mai sunt acolo spune o poveste care nu mai este adevărată.
 
 ## 4. Biroul
 
@@ -181,13 +183,13 @@ Pe website arată ca o poză luată din alt album. La fel vacanța, petrecerea f
 
 Nu pune o fotografie de stoc cu „un avocat” care nu ești tu. Omul care te sună se așteaptă să te recunoască.
 
-Nu prezenta un portret generat de un model ca și cum ai fi tu. Dacă publici o imagine generată care poate fi luată drept o persoană reală, Regulamentul privind inteligența artificială, art. 50, cere să se știe că este generată. Un chip generat tot nu ești tu. Ilustrațiile din acest articol sunt desene, nu fotografii ale unui avocat.
+Nu prezenta un portret generat de un model ca și cum ai fi tu. Dacă publici o imagine generată care poate fi luată drept o persoană reală, [Regulamentul (UE) 2024/1689 privind inteligența artificială](https://eur-lex.europa.eu/eli/reg/2024/1689/oj), la art. 50 alin. (4), cere să se știe că este generată. Obligația se aplică de la 2 august 2026. Un chip generat tot nu ești tu. Ilustrațiile din acest articol sunt desene, nu fotografii ale unui avocat.
 
 Filtrele care îți schimbă fața, pielea, vârsta, au aceeași problemă practică: nu te mai recunoaște omul de la ușă.
 
 ## 9. Oamenii din cadru
 
-Chipul unei persoane care poate fi recunoscută este o dată cu caracter personal. Art. 4 pct. 1 din Regulamentul (UE) 2016/679 definește data prin raportare la o persoană identificată sau identificabilă. Art. 73 din Codul civil spune că orice persoană are dreptul la propria imagine și poate să se opună reproducerii înfățișării sale sau folosirii acelei reproduceri.
+Chipul unei persoane care poate fi recunoscută este o dată cu caracter personal. Art. 4 pct. 1 din [Regulamentul (UE) 2016/679](https://eur-lex.europa.eu/eli/reg/2016/679/oj) definește data prin raportare la o persoană identificată sau identificabilă. Art. 73 din [Codul civil](https://legislatie.just.ro/Public/DetaliiDocument/175630) spune că orice persoană are dreptul la propria imagine și poate să interzică ori să împiedice reproducerea înfățișării sale fizice ori a vocii sale sau utilizarea unei asemenea reproduceri.
 
 Pentru o fotografie pe care o publici tu, regula practică este un acord scris, înainte de publicare, nu după ce poza este deja pe website. În bilet scrii:
 
@@ -196,13 +198,13 @@ Pentru o fotografie pe care o publici tu, regula practică este un acord scris, 
 - canalele: website-ul, Google Business Profile, LinkedIn;
 - că persoana poate cere retragerea de pe canalele pe care le controlezi.
 
-Comisia Europeană explică faptul că un consimțământ nu este liber când există un dezechilibru clar între persoană și organizație, iar exemplul dat este relația angajator-angajat. Un „da” spus pe hol de un colaborator, ca să nu încurce ședința, este un acord fragil.
+[Comitetul European pentru Protecția Datelor (EDPB), Ghidurile 05/2020 privind consimțământul](https://www.edpb.europa.eu/our-work-tools/our-documents/guidelines/guidelines-052020-consent-under-regulation-2016679_en) explică faptul că un consimțământ nu este liber când există un dezechilibru clar între persoană și organizație, iar exemplul dat este relația angajator-angajat. Un „da” spus pe hol de un colaborator, ca să nu încurce ședința, este un acord fragil.
 
 Nu condiționa colaborarea de apariția în poză. Pentru temeiul prelucrării în situația ta, întreabă un specialist. Acest text nu îl alege și nu ține loc de informare GDPR.
 
-Art. 76 din Codul civil prezumă consimțământul doar când persoana însăși dă materialul cuiva despre care știe că informează publicul. O ședință pe care ai organizat-o tu nu este cazul acela. Nu te baza pe prezumție.
+Art. 76 din [Codul civil](https://legislatie.just.ro/Public/DetaliiDocument/175630) prezumă consimțământul doar când persoana însăși dă materialul cuiva despre care știe că informează publicul. O ședință pe care ai organizat-o tu nu este cazul acela. Nu te baza pe prezumție.
 
-Art. 89 alin. (1) din Legea nr. 8/1996, republicată, spune că utilizarea unei opere care conține un portret cere consimțământul persoanei reprezentate, în condițiile art. 73, 74 și 79 din Codul civil. Alineatul (2) prevede că, în lipsa unei clauze contrare, consimțământul nu este necesar dacă persoana este model de profesie sau a fost plătită ca să pozeze pentru acel portret. Un coleg de cabinet nu este model de profesie. O sumă dată „pentru poză” nu îți spune pe ce canale ai voie să publici și nu răspunde la întrebarea despre date. Canalul și retragerea rămân scrise.
+Art. 89 alin. (1) din [Legea nr. 8/1996](https://legislatie.just.ro/Public/DetaliiDocument/201472), republicată, spune că utilizarea unei opere care conține un portret cere consimțământul persoanei reprezentate, în condițiile art. 73, 74 și 79 din Codul civil. Alineatul (2) prevede că, în lipsa unei clauze contrare, consimțământul nu este necesar dacă persoana este model de profesie sau a fost plătită ca să pozeze pentru acel portret. Un coleg de cabinet nu este model de profesie. O sumă dată „pentru poză” nu îți spune pe ce canale ai voie să publici și nu răspunde la întrebarea despre date. Canalul și retragerea rămân în acordul scris.
 
 Ce ai voie să spui lângă fotografie, titulatură, arii, formulări, stă în ghidul despre [ce are voie un avocat să publice online](../ce-are-voie-avocat-sa-publice-online/). Poza nu ocolește regulile de publicitate doar pentru că este imagine, nu paragraf.
 
@@ -216,9 +218,9 @@ Verifici fiecare cadru înainte să îl trimiți mai departe:
 
 - niciun ecran cu text;
 - nicio foaie cu un nume, un CNP, o adresă sau numărul unui dosar;
-- nicio ecuson de vizitator;
+- niciun ecuson de vizitator;
 - nicio persoană în fundal pe care nu ai pus-o tu în listă;
-- nicio firmă de corespondență deschisă pe masă.
+- nicio corespondență deschisă pe masă.
 
 Dacă un cadru nu trece lista, nu îl „decupezi un pic”. Îl lași nepublicat.
 
@@ -265,7 +267,7 @@ Nu o face pentru materialele de prezentare ale cabinetului. Un acord verbal, în
 
 ### Cine poate publica fotografiile după ședință?
 
-Fotograful este autorul fotografiei. Înainte de ședință, cere în scris dreptul de a folosi imaginile pe website, pe Google Business Profile și pe LinkedIn, inclusiv decupajele, și cere fișierele. Acordul fotografului nu înlocuiește acordul persoanelor din cadru. Art. 89 din Legea nr. 8/1996, republicată, cere consimțământul persoanei dintr-un portret, în condițiile Codului civil.
+Fotograful este autorul fotografiei. Înainte de ședință, cere în scris dreptul de a folosi imaginile pe website, pe Google Business Profile și pe LinkedIn, inclusiv decupajele, și cere fișierele. [Legea nr. 8/1996](https://legislatie.just.ro/Public/DetaliiDocument/201472) prezumă, la art. 87 alin. (2), că drepturile patrimoniale asupra unei fotografii făcute la comandă aparțin celui care a comandat-o doar 3 ani, dacă prin contract nu s-a prevăzut altfel. De aceea scrii în contract canalele și durata. Acordul fotografului nu înlocuiește acordul persoanelor din cadru. Art. 89 din Legea nr. 8/1996, republicată, cere consimțământul persoanei dintr-un portret, în condițiile Codului civil.
 
 ### Trebuie fotografii diferite pe website, Google și LinkedIn?
 
@@ -281,6 +283,6 @@ Dacă dorești o ședință foto și un set coerent de imagini pentru website-ul
 
 ---
 
-> *Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul Legii nr. 51/1995. Pentru o situație concretă, consultă un avocat.*
+> *Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul [Legii nr. 51/1995](https://legislatie.just.ro/Public/DetaliiDocument/265997). Pentru o situație concretă, consultă un avocat.*
 >
 > *Articol redactat cu asistență AI, verificat și asumat editorial de echipa SOLON.*
