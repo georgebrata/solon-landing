@@ -267,7 +267,7 @@ Nu o face pentru materialele de prezentare ale cabinetului. Un acord verbal, în
 
 ### Cine poate publica fotografiile după ședință?
 
-Fotograful este autorul fotografiei. Înainte de ședință, cere în scris dreptul de a folosi imaginile pe website, pe Google Business Profile și pe LinkedIn, inclusiv decupajele, și cere fișierele. [Legea nr. 8/1996](https://legislatie.just.ro/Public/DetaliiDocument/201472) prezumă, la art. 87 alin. (2), că drepturile patrimoniale asupra unei fotografii făcute la comandă aparțin celui care a comandat-o doar 3 ani, dacă prin contract nu s-a prevăzut altfel. De aceea scrii în contract canalele și durata. Acordul fotografului nu înlocuiește acordul persoanelor din cadru. Art. 89 din Legea nr. 8/1996, republicată, cere consimțământul persoanei dintr-un portret, în condițiile Codului civil.
+Fotograful este autorul fotografiei. Înainte de ședință, cere în scris dreptul de a folosi imaginile pe website, pe Google Business Profile și pe LinkedIn, inclusiv decupajele, și cere fișierele. Legea nr. 8/1996 prezumă, la art. 87 alin. (2), că drepturile patrimoniale asupra unei fotografii făcute la comandă aparțin celui care a comandat-o doar 3 ani, dacă prin contract nu s-a prevăzut altfel. De aceea scrii în contract canalele și durata. Acordul fotografului nu înlocuiește acordul persoanelor din cadru. Art. 89 din Legea nr. 8/1996, republicată, cere consimțământul persoanei dintr-un portret, în condițiile Codului civil.
 
 ### Trebuie fotografii diferite pe website, Google și LinkedIn?
 
