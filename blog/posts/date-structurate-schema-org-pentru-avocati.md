@@ -98,7 +98,7 @@ Termenul pe care îl vei vedea în oferte este [schema markup](../glosar-marketi
 
 ## 2. De ce le citește Google
 
-Pentru o afacere locală, Google documentează tipul `LocalBusiness`. Proprietățile cerute sunt `name` și `address`. Restul, telefon, program, imagine, adresă web, crește calitatea descrierii, dar nu este pe lista de obligatorii. `LegalService`, tipul pentru un cabinet, este un fel de `LocalBusiness`, deci aceleași două câmpuri rămân baza.
+Pentru o afacere locală, [Google documentează tipul `LocalBusiness`](https://developers.google.com/search/docs/appearance/structured-data/local-business). Proprietățile cerute sunt `name` și `address`. Restul, telefon, program, imagine, adresă web, crește calitatea descrierii, dar nu este pe lista de obligatorii. `LegalService`, tipul pentru un cabinet, este un fel de `LocalBusiness`, deci aceleași două câmpuri rămân baza.
 
 La organizații, Google spune că marcajul de pe pagina principală îl ajută să deosebească entitatea ta de altele cu nume apropiat și poate influența detalii precum logo-ul din panoul de cunoștințe. Nu spune că marcajul stabilește ordinea rezultatelor.
 
@@ -106,7 +106,7 @@ Asta se leagă de profilul tău public. Numele, adresa și telefonul din marcaj 
 
 ## 3. Ce poți aștepta de la ChatGPT și Gemini
 
-ChatGPT și Gemini nu sunt Google. Niciunul nu publică o regulă de forma „pune JSON-LD și vei fi citat”. Pentru funcțiile generative din Google Search, ghidul oficial din mai 2026 spune că datele structurate nu sunt obligatorii, că nu există un tip schema.org special pentru răspunsurile generate și că indexarea nu este promisă. În același ghid, „AEO” și „GEO” nu sunt o disciplină separată de SEO.
+ChatGPT și Gemini nu sunt Google. Niciunul nu publică o regulă de forma „pune JSON-LD și vei fi citat”. Pentru funcțiile generative din Google Search, [ghidul oficial din mai 2026](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) spune că datele structurate nu sunt obligatorii. [Pagina despre funcțiile AI](https://developers.google.com/search/docs/appearance/ai-features) precizează că nu există un tip schema.org special pentru răspunsurile generate și că indexarea nu este promisă. În același ghid din mai 2026, „AEO” și „GEO” nu sunt o disciplină separată de SEO.
 
 Marcajul rămâne util mai îngust: pune în vocabular comun faptele pe care un sistem le poate amesteca, numele cabinetului, numele avocatului, localitatea și ariile în care lucrezi. Cum aleg asistenții sursele este tratat în ghidul despre [cum apare un avocat în ChatGPT, Gemini și AI Overviews](../avocat-chatgpt-gemini-ai-overviews/). Dacă cineva îți vinde marcajul ca pe o cheie către acele răspunsuri, ghidul din mai 2026 spune contrariul.
 
@@ -125,11 +125,11 @@ Pentru un cabinet, patru tipuri acoperă aproape tot ce merită descris.
 
 </div>
 
-`Attorney` încă există pe schema.org, dar pagina tipului îl marchează ca învechit: `LegalService` este mai cuprinzător și mai puțin ambiguu. Un tip învechit nu este o eroare de sintaxă. Este o etichetă pe care vocabularul nu o mai recomandă.
+`Attorney` încă există pe schema.org, dar [pagina tipului](https://schema.org/Attorney) îl marchează ca învechit: [`LegalService`](https://schema.org/LegalService) este mai cuprinzător și mai puțin ambiguu. Un tip învechit nu este o eroare de sintaxă. Este o etichetă pe care vocabularul nu o mai recomandă.
 
 `Person` este pentru om, nu pentru firmă. `jobTitle` poate fi „avocat”. Nu pune un titlu de specialist dacă nu îl ai în condițiile legii. `worksFor` leagă persoana de cabinet prin `@id`, nu prin a doua copie a adresei.
 
-`FAQPage` descrie întrebările și răspunsurile vizibile pe pagină. Din 8 august 2023, Google limita afișarea extinsă la website-uri guvernamentale și de sănătate. Pe 8 mai 2026 a anunțat că funcția nu mai apare deloc în Google Search din 7 mai 2026, iar în iunie 2026 a retras documentația. Întrebările rămân pentru cititor.
+`FAQPage` descrie întrebările și răspunsurile vizibile pe pagină. [Din 8 august 2023, Google limita afișarea extinsă la website-uri guvernamentale și de sănătate](https://developers.google.com/search/blog/2023/08/howto-faq-changes). [Pe 8 mai 2026 a anunțat că funcția nu mai apare deloc în Google Search din 7 mai 2026, iar în iunie 2026 a retras documentația](https://developers.google.com/search/updates). Întrebările rămân pentru cititor.
 
 ## 5. Unde pui blocul în pagină
 
@@ -137,7 +137,7 @@ JSON-LD stă într-un element `<script type="application/ld+json">`, de obicei �
 
 Trei reguli practice:
 
-- Cabinetul are un `@id` stabil, de forma `https://exemplu.ro/#cabinet`. Celelalte pagini trimit la el, nu îl redefinesc cu altă adresă.
+- Cabinetul are un `@id` stabil, de forma `https://example.com/cabinet-exemplu/#cabinet`. Celelalte pagini trimit la el, nu îl redefinesc cu altă adresă.
 - Fiecare pagină descrie ce se vede pe ea. Pagina unei arii de practică nu repetă întregul istoric al tuturor colegilor.
 - Nu pui marcaj pentru recenzii pe care nu le afișezi. Google cere ca recenzia să fie vizibilă și să fie despre altcineva decât propria afacere. Pentru un cabinet, zona asta este și una pe care regulile profesiei o tratează strict. O lași goală.
 
