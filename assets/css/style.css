@@ -1380,7 +1380,13 @@ section {
   transform: scale(1.15);
 }
 
-.portfolio .portfolio-item:hover .portfolio-info {
+.portfolio .portfolio-item .portfolio-img a:focus-visible {
+  outline: 2px solid var(--tertiary-darkeeer);
+  outline-offset: -4px;
+}
+
+.portfolio .portfolio-item:hover .portfolio-info,
+.portfolio .portfolio-item:focus-within .portfolio-info {
   opacity: 1;
 }
 
