@@ -5,14 +5,18 @@
  *
  * The two rules turned off in .htmlvalidate.json were already off in CI.
  * Do not add further disables. Pages that still fail for a content or design
- * reason are listed with an exact count in data/html-validate-baseline.json.
- * A new error fails the run. A baselined error that disappeared fails the run
- * until the count is lowered, so the allowlist cannot grow slack.
+ * reason are listed in data/html-validate-baseline.json. That file is a ceiling:
+ * a page that gains errors fails, and a page that is not listed fails as soon
+ * as it has any error. A lower count does not fail. Shrink the ceiling with
+ * `node scripts/validate-html.js --shrink`, which only lowers or drops counts
+ * and refuses to add a file or raise a number. Once the file exists on main,
+ * a pull request that raises an allowance fails the same check.
  *
  * studii-de-caz/avocat-dumitrescu-alexandru/index.html is excluded while PR #94
  * edits that page. Remove the exclusion after it merges.
  */
 
+const { execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 const { HtmlValidate } = require("html-validate");
@@ -92,13 +96,18 @@ const assertConfig = (config) => {
 };
 
 /**
+ * Ceiling check. Counts above the baseline and errors on a page that has no
+ * allowance fail. Counts below the baseline are shrinkable and do not fail.
+ *
  * @param {Record<string, Record<string, number>>} actual
- * @param {{ files?: Record<string, Record<string, number>>, excludedFiles?: { file: string, reason?: string }[], rules?: Record<string, string> }} baseline
- * @returns {{ kind: string, file: string, rule: string, got: number, allowed: number }[]}
+ * @param {{ files?: Record<string, Record<string, number>> }} baseline
+ * @returns {{ problems: { kind: string, file: string, rule: string, got: number, allowed: number }[], shrinkable: { file: string, rule: string, got: number, allowed: number }[] }}
  */
 const diffBaseline = (actual, baseline) => {
   /** @type {{ kind: string, file: string, rule: string, got: number, allowed: number }[]} */
   const problems = [];
+  /** @type {{ file: string, rule: string, got: number, allowed: number }[]} */
+  const shrinkable = [];
   const allowed = baseline.files || {};
   const seen = new Set();
 
@@ -108,14 +117,10 @@ const diffBaseline = (actual, baseline) => {
       const allowedCount = allowed[file] && allowed[file][rule];
       if (allowedCount === undefined) {
         problems.push({ kind: "unexpected", file, rule, got: count, allowed: 0 });
-      } else if (count !== allowedCount) {
-        problems.push({
-          kind: count > allowedCount ? "regression" : "stale",
-          file,
-          rule,
-          got: count,
-          allowed: allowedCount,
-        });
+      } else if (count > allowedCount) {
+        problems.push({ kind: "regression", file, rule, got: count, allowed: allowedCount });
+      } else if (count < allowedCount) {
+        shrinkable.push({ file, rule, got: count, allowed: allowedCount });
       }
     }
   }
@@ -123,12 +128,87 @@ const diffBaseline = (actual, baseline) => {
   for (const [file, rules] of Object.entries(allowed)) {
     for (const [rule, count] of Object.entries(rules)) {
       if (!seen.has(`${file}\0${rule}`)) {
-        problems.push({ kind: "stale", file, rule, got: 0, allowed: count });
+        shrinkable.push({ file, rule, got: 0, allowed: count });
       }
     }
   }
 
+  const byFile = (a, b) => a.file.localeCompare(b.file) || a.rule.localeCompare(b.rule);
+  problems.sort(byFile);
+  shrinkable.sort(byFile);
+  return { problems, shrinkable };
+};
+
+/**
+ * Compare a proposed baseline with the one on main. Allowances may fall or
+ * disappear. A higher count, or a file/rule that main does not list, fails.
+ *
+ * @param {{ files?: Record<string, Record<string, number>> } | null} previous
+ * @param {{ files?: Record<string, Record<string, number>> }} current
+ * @returns {{ kind: string, file: string, rule: string, got: number, allowed: number }[]}
+ */
+const assertRatchet = (previous, current) => {
+  if (!previous) return [];
+  /** @type {{ kind: string, file: string, rule: string, got: number, allowed: number }[]} */
+  const problems = [];
+  const prevFiles = previous.files || {};
+  for (const [file, rules] of Object.entries(current.files || {})) {
+    for (const [rule, count] of Object.entries(rules)) {
+      const prev = prevFiles[file] && prevFiles[file][rule];
+      if (prev === undefined) {
+        problems.push({ kind: "ratchet", file, rule, got: count, allowed: 0 });
+      } else if (count > prev) {
+        problems.push({ kind: "ratchet", file, rule, got: count, allowed: prev });
+      }
+    }
+  }
   return problems.sort((a, b) => a.file.localeCompare(b.file) || a.rule.localeCompare(b.rule));
+};
+
+/**
+ * Lower baseline counts to the current page. Refuses when that would hide a
+ * new or larger error.
+ *
+ * @param {object} baseline
+ * @param {Record<string, Record<string, number>>} actual
+ * @returns {{ problems: object[], shrinkable: object[], next: object | null }}
+ */
+const applyShrink = (baseline, actual) => {
+  const { problems, shrinkable } = diffBaseline(actual, baseline);
+  if (problems.length > 0) return { problems, shrinkable, next: null };
+
+  /** @type {Record<string, Record<string, number>>} */
+  const files = {};
+  for (const file of Object.keys(baseline.files || {}).sort()) {
+    /** @type {Record<string, number>} */
+    const nextRules = {};
+    for (const rule of Object.keys(baseline.files[file]).sort()) {
+      const got = actual[file] && actual[file][rule];
+      const nextCount = got === undefined ? 0 : got;
+      if (nextCount > 0) nextRules[rule] = nextCount;
+    }
+    if (Object.keys(nextRules).length > 0) files[file] = nextRules;
+  }
+
+  return { problems, shrinkable, next: { ...baseline, files } };
+};
+
+/**
+ * Baseline committed on origin/main, or null when that file is not there yet.
+ * @param {string} root
+ * @returns {object | null}
+ */
+const loadPreviousBaseline = (root) => {
+  try {
+    const text = execFileSync("git", ["show", "origin/main:data/html-validate-baseline.json"], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -217,14 +297,16 @@ const validateServedHtml = async (root = ROOT) => {
     }
   }
 
+  const diff = diffBaseline(actual, baseline);
   const problems = [
     ...assertConfig(config).map((message) => ({ kind: "config", message })),
     ...assertBaselineShape(baseline, root).map((message) => ({ kind: "baseline", message })),
     ...findDisableComments(files, root).map((message) => ({ kind: "disable", message })),
-    ...diffBaseline(actual, baseline),
+    ...diff.problems,
+    ...assertRatchet(loadPreviousBaseline(root), baseline),
   ];
 
-  return { files, actual, baseline, problems };
+  return { files, actual, baseline, problems, shrinkable: diff.shrinkable };
 };
 
 /**
@@ -243,20 +325,54 @@ const printProblems = (problems) => {
   }
 };
 
+const countAllowances = (baseline) => Object.values(baseline.files || {}).reduce(
+  (sum, rules) => sum + Object.values(rules).reduce((inner, count) => inner + count, 0),
+  0
+);
+
 const main = async () => {
-  const { files, problems, baseline } = await validateServedHtml(ROOT);
+  const shrink = process.argv.includes("--shrink");
+  const { files, problems, baseline, actual, shrinkable } = await validateServedHtml(ROOT);
   if (problems.length > 0) {
     console.error(`HTML validation failed (${files.length} served files).`);
     printProblems(problems);
     process.exit(1);
   }
-  const baselined = Object.values(baseline.files).reduce(
-    (sum, rules) => sum + Object.values(rules).reduce((inner, count) => inner + count, 0),
-    0
-  );
+
+  if (shrink) {
+    const applied = applyShrink(baseline, actual);
+    if (!applied.next) {
+      console.error("Refusing to shrink.");
+      printProblems(applied.problems);
+      process.exit(1);
+    }
+    const ratchetProblems = assertRatchet(loadPreviousBaseline(ROOT), applied.next);
+    if (ratchetProblems.length > 0) {
+      console.error("Refusing to shrink: the result would allow more than origin/main.");
+      printProblems(ratchetProblems);
+      process.exit(1);
+    }
+    if (!applied.shrinkable.length) {
+      console.log("Baseline is already tight.");
+      return;
+    }
+    fs.writeFileSync(BASELINE_PATH, `${JSON.stringify(applied.next, null, 2)}\n`);
+    for (const item of applied.shrinkable) {
+      console.log(`shrunk ${item.file} ${item.rule} ${item.allowed} -> ${item.got}`);
+    }
+    console.log(`Baseline shrunk to ${countAllowances(applied.next)} errors.`);
+    return;
+  }
+
+  const baselined = countAllowances(baseline);
   console.log(
     `HTML validation passed (${files.length} served files, ${baselined} baselined errors, ${baseline.excludedFiles.length} excluded file).`
   );
+  if (shrinkable.length > 0) {
+    console.log(
+      `${shrinkable.length} allowance(s) are above the current pages. Run \`node scripts/validate-html.js --shrink\` to lower them.`
+    );
+  }
 };
 
 module.exports = {
@@ -264,8 +380,10 @@ module.exports = {
   CONFIG_PATH,
   HISTORICAL_OFF_RULES,
   ROOT,
+  applyShrink,
   assertBaselineShape,
   assertConfig,
+  assertRatchet,
   collectServedHtml,
   diffBaseline,
   shouldValidate,

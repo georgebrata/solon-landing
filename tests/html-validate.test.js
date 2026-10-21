@@ -6,7 +6,9 @@ const path = require("node:path");
 const test = require("node:test");
 const {
   ROOT,
+  applyShrink,
   assertConfig,
+  assertRatchet,
   collectServedHtml,
   diffBaseline,
   shouldValidate,
@@ -72,24 +74,66 @@ test("recommended rules stay on except the two historical exceptions", () => {
   );
 });
 
-test("baseline diff fails on a new error and on a stale allowance", () => {
+test("baseline fails when a file gains errors or a new file has errors", () => {
   const sample = {
     files: { "index.html": { "no-inline-style": 2 } },
     rules: { "no-inline-style": "documented" },
     excludedFiles: [],
   };
-  assert.deepEqual(diffBaseline({ "index.html": { "no-inline-style": 2 } }, sample), []);
-  assert.equal(
-    diffBaseline({ "index.html": { "no-inline-style": 3 } }, sample)[0].kind,
-    "regression"
+  const same = diffBaseline({ "index.html": { "no-inline-style": 2 } }, sample);
+  assert.deepEqual(same.problems, []);
+  assert.deepEqual(same.shrinkable, []);
+
+  const gained = diffBaseline({ "index.html": { "no-inline-style": 3 } }, sample);
+  assert.equal(gained.problems[0].kind, "regression");
+
+  const fresh = diffBaseline({ "blog/new/index.html": { "long-title": 1 } }, sample);
+  assert.equal(fresh.problems[0].kind, "unexpected");
+
+  const fixed = diffBaseline({ "index.html": { "no-inline-style": 1 } }, sample);
+  assert.deepEqual(fixed.problems, []);
+  assert.equal(fixed.shrinkable[0].got, 1);
+  assert.equal(fixed.shrinkable[0].allowed, 2);
+});
+
+test("shrink only lowers allowances", () => {
+  const sample = {
+    version: 1,
+    files: {
+      "index.html": { "no-inline-style": 2 },
+      "cookies/index.html": { "empty-heading": 1 },
+    },
+  };
+  const lowered = applyShrink(sample, { "index.html": { "no-inline-style": 1 } });
+  assert.deepEqual(lowered.problems, []);
+  assert.deepEqual(lowered.next.files, { "index.html": { "no-inline-style": 1 } });
+
+  const raised = applyShrink(sample, { "index.html": { "no-inline-style": 4 } });
+  assert.equal(raised.next, null);
+  assert.equal(raised.problems[0].kind, "regression");
+
+  const added = applyShrink(sample, {
+    "index.html": { "no-inline-style": 2 },
+    "blog/new/index.html": { "long-title": 1 },
+  });
+  assert.equal(added.next, null);
+  assert.equal(added.problems[0].kind, "unexpected");
+});
+
+test("a later baseline cannot rise above main", () => {
+  const onMain = { files: { "index.html": { "no-inline-style": 2 } } };
+  assert.deepEqual(assertRatchet(null, onMain), []);
+  assert.deepEqual(
+    assertRatchet(onMain, { files: { "index.html": { "no-inline-style": 1 } } }),
+    []
   );
   assert.equal(
-    diffBaseline({ "index.html": { "no-inline-style": 1 } }, sample)[0].kind,
-    "stale"
+    assertRatchet(onMain, { files: { "index.html": { "no-inline-style": 3 } } })[0].kind,
+    "ratchet"
   );
   assert.equal(
-    diffBaseline({ "blog/new/index.html": { "long-title": 1 } }, sample)[0].kind,
-    "unexpected"
+    assertRatchet(onMain, { files: { "blog/new/index.html": { "long-title": 1 } } })[0].kind,
+    "ratchet"
   );
 });
 

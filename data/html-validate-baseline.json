@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "shrink": "node scripts/validate-html.js --shrink lowers a recorded count when the page now has fewer errors. It refuses to add a file or raise a count. The check fails when a scanned page has more errors than this file, or when a page that is not listed here has any error.",
   "excludedFiles": [
     {
       "file": "studii-de-caz/avocat-dumitrescu-alexandru/index.html",
