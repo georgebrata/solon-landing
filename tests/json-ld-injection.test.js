@@ -13,12 +13,59 @@ const {
 } = require("../scripts/json-ld");
 
 const GRAPHEME_SEGMENTER = new Intl.Segmenter("ro", { granularity: "grapheme" });
+const PAGE = "https://solon.agency/blog/example/";
 
 /**
  * @param {string} text
  * @returns {number}
  */
 const graphemeLength = (text) => [...GRAPHEME_SEGMENTER.segment(text)].length;
+
+/**
+ * @param {string} value
+ * @returns {boolean}
+ */
+const hasLoneSurrogate = (value) => {
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index);
+    if (code >= 0xD800 && code <= 0xDBFF) {
+      const next = value.charCodeAt(index + 1);
+      if (!(next >= 0xDC00 && next <= 0xDFFF)) return true;
+      index += 1;
+    } else if (code >= 0xDC00 && code <= 0xDFFF) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * @param {string|string[]|undefined} type
+ * @returns {boolean}
+ */
+const isArticleType = (type) => {
+  const types = Array.isArray(type) ? type : [type];
+  return types.some((entry) => typeof entry === "string"
+    && (/Article|BlogPosting/u.test(entry) || entry === "Report" || entry.endsWith("Report")));
+};
+
+/**
+ * @param {object|object[]} node
+ * @param {string} rel
+ * @param {{ rel: string, headline: string }[]} found
+ * @returns {void}
+ */
+const collectArticleHeadlines = (node, rel, found) => {
+  if (!node || typeof node !== "object") return;
+  if (Array.isArray(node)) {
+    for (const item of node) collectArticleHeadlines(item, rel, found);
+    return;
+  }
+  if (isArticleType(node["@type"]) && typeof node.headline === "string") {
+    found.push({ rel, headline: node.headline });
+  }
+  for (const value of Object.values(node)) collectArticleHeadlines(value, rel, found);
+};
 
 /**
  * @param {string} title
@@ -29,8 +76,6 @@ const headlineFor = (title) => defaultArticleDocument({
   description: "D",
   date: "2026-10-15",
 }, PAGE).headline;
-
-const PAGE = "https://solon.agency/blog/example/";
 
 test("JSON-LD injection escapes </script> and does not expand $&", () => {
   const payload = {
@@ -196,9 +241,8 @@ test("a headline cut keeps emoji, ZWJ sequences, and combining marks whole", () 
   const combiningHead = `${"c".repeat(109)}${combining}`;
   assert.equal(headlineFor(`${combiningHead} depaseste limita`), combiningHead);
 
-  const lone = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/;
-  assert.equal(lone.test(headlineFor(`${emojiHead} depaseste`)), false);
-  assert.equal(lone.test(headlineFor(`${familyHead} depaseste`)), false);
+  assert.equal(hasLoneSurrogate(headlineFor(`${emojiHead} depaseste`)), false);
+  assert.equal(hasLoneSurrogate(headlineFor(`${familyHead} depaseste`)), false);
 });
 
 test("a headline cut prefers the last whitespace inside the limit", () => {
@@ -274,9 +318,9 @@ test("every built JSON-LD article headline is at most 110 characters", () => {
   });
   const files = listed.split("\0").filter(Boolean).filter((rel) => {
     const parts = rel.split("/");
-    if (parts[0] === "templates" || parts.includes("node_modules")) return false;
-    if (parts[0] === "assets" && parts[1] === "vendor") return false;
-    return true;
+    return parts[0] !== "templates"
+      && !parts.includes("node_modules")
+      && !(parts[0] === "assets" && parts[1] === "vendor");
   });
   const required = [
     "blog/ce-are-voie-avocat-sa-publice-online/index.html",
@@ -291,14 +335,8 @@ test("every built JSON-LD article headline is at most 110 characters", () => {
     "blog/avocat-chatgpt-gemini-ai-overviews/index.html",
     "blog/domeniu-email-profesional-cabinet-avocat/index.html",
   ];
-  const scriptPattern = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
-  const isArticleType = (type) => {
-    const types = Array.isArray(type) ? type : [type];
-    return types.some((entry) => typeof entry === "string"
-      && (/Article|BlogPosting/.test(entry) || entry === "Report" || entry.endsWith("Report")));
-  };
-  const seen = new Set();
-  let headlines = 0;
+  const scriptPattern = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/giu;
+  const found = [];
 
   for (const rel of files) {
     const html = fs.readFileSync(path.join(root, rel), "utf8");
@@ -310,28 +348,20 @@ test("every built JSON-LD article headline is at most 110 characters", () => {
         const message = error instanceof Error ? error.message : String(error);
         assert.fail(`${rel} has invalid JSON-LD: ${message}`);
       }
-      const walk = (node) => {
-        if (!node || typeof node !== "object") return;
-        if (Array.isArray(node)) {
-          for (const item of node) walk(item);
-          return;
-        }
-        if (isArticleType(node["@type"]) && typeof node.headline === "string") {
-          headlines += 1;
-          seen.add(rel);
-          const length = graphemeLength(node.headline);
-          assert.ok(
-            length <= 110,
-            `${rel} headline has ${length} characters: ${node.headline}`
-          );
-        }
-        for (const value of Object.values(node)) walk(value);
-      };
-      walk(data);
+      collectArticleHeadlines(data, rel, found);
     }
   }
 
-  assert.ok(headlines >= required.length, `expected article headlines, found ${headlines}`);
+  for (const item of found) {
+    const length = graphemeLength(item.headline);
+    assert.ok(
+      length <= 110,
+      `${item.rel} headline has ${length} characters: ${item.headline}`
+    );
+  }
+
+  const seen = new Set(found.map((item) => item.rel));
+  assert.ok(found.length >= required.length, `expected article headlines, found ${found.length}`);
   for (const rel of required) {
     assert.ok(seen.has(rel), `missing a JSON-LD headline on ${rel}`);
   }
