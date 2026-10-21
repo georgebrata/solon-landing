@@ -22,6 +22,10 @@ Optional fields:
 
 Sitemap lastmod is preserved for a page whose content date is not newer than the stored value. A date after today in Europe/Bucharest is clamped to today (`YYYY-MM-DD`). Running `node scripts/update-sitemap.js` twice must not change `sitemap.xml`.
 
+## Case studies
+
+Every directory under `studii-de-caz/` with an `index.html` is a published case study. Keep it linked like the others: homepage portfolio and inline nav, `studii-de-caz/index.html` hub grid, blog hub list in `templates/list.html`, `llms.txt`, and the sitemap. Related-case-study blocks on other case study pages should include it when rotating peers. Do not remove inbound links because a client relationship ended unless product or legal explicitly requests a takedown.
+
 The production workflow runs `node scripts/update-sitemap.js --from-git` after the pricing build and before FTP. Each `<lastmod>` becomes the later of the stored day and the last commit that changed that page's content, still clamped to today in Europe/Bucharest. Cache-bust `?v=` tokens and the generated "Articole recente" / "Articole similare" blocks are not content changes, so a page that did not change keeps its stored value. A working-tree edit since `HEAD` (the pricing build can rewrite the homepage) uses today. The refreshed sitemap is uploaded and is not committed back.
 
 ## Blog sheet append (optional)
