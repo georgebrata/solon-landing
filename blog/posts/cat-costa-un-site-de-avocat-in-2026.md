@@ -1,6 +1,7 @@
 ---
 title: "Cât costă un site de avocat în 2026: intervale de preț și ce influențează costul"
-seo_title: "Cât costă un website de avocat în 2026 și de ce depinde"
+# "site" keyword exception approved by George on Oct 21, 2026. Applies only to this seo_title.
+seo_title: "Cât costă un site de avocat în 2026 și de ce depinde"
 date: "2026-10-08"
 slug: "cat-costa-un-site-de-avocat-in-2026"
 description: "Cât costă un site de avocat în 2026? Intervale de preț publicate în România și factorii care influențează costul: pagini, conținut, SEO, mentenanță."
