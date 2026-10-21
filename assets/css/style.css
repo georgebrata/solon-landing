@@ -1830,6 +1830,10 @@ img[width][height] {
   width: 100%;
 }
 
+.ald-jump {
+  display: inline;
+}
+
 /* Mobile: show small logo, hide big logo */
 @media (max-width: 768px) {
 
