@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="canonical" href="https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/" />
+
+  <!-- Primary Meta Tags -->
+  <title>Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT | SOLON Blog</title>
+  <meta name="title" content="Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT | SOLON Blog" />
+  <meta name="description" content="Date structurate (schema markup) pentru avocat: exemplu JSON-LD și cum îl testezi gratuit." />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/" />
+  <meta property="og:title" content="Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT | SOLON Blog" />
+  <meta property="og:description" content="Date structurate (schema markup) pentru avocat: exemplu JSON-LD și cum îl testezi gratuit." />
+  <meta property="og:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/" />
+  <meta property="twitter:title" content="Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT | SOLON Blog" />
+  <meta property="twitter:description" content="Date structurate (schema markup) pentru avocat: exemplu JSON-LD și cum îl testezi gratuit." />
+  <meta property="twitter:image" content="https://solon.agency/assets/img/solon-metaimage.png" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="../../assets/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="../../assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+    <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../../assets/vendor/aos/aos.min.css?v=1271739290" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css?v=f6d642a5c9" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=e8c36e8eb7" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../../assets/css/style.min.css?v=190e51bdb0" rel="stylesheet">
+  <link href="../../assets/css/blog.css?v=ea588ee21e" rel="stylesheet">
+
+  <style>
+    /* Ensure the header is visible on blog pages */
+    .breadcrumbs {
+      margin-top: 70px;
+    }
+  </style>
+
+    <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
+  <script src="/assets/js/consent.min.js?v=67e1576257"></script>
+
+<!-- ahrefs analytics tracking code for SOLON -->
+  <script type="text/plain" data-consent-category="analytics" src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
+
+  <!-- clarity -->
+  <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
+  <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/#article",
+      "headline": "Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT",
+      "description": "Date structurate (schema markup) pentru avocat: exemplu JSON-LD și cum îl testezi gratuit.",
+      "inLanguage": "ro-RO",
+      "url": "https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/",
+      "mainEntityOfPage": "https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/",
+      "datePublished": "2026-10-21",
+      "dateModified": "2026-10-21",
+      "author": {
+        "@id": "https://solon.agency/#organization"
+      },
+      "publisher": {
+        "@id": "https://solon.agency/#organization"
+      },
+      "image": "https://solon.agency/assets/img/solon-metaimage.png"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Datele structurate îmi schimbă poziția în Google?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nu există o regulă de la Google care să spună că marcajul te urcă în rezultate. Îl folosește ca să înțeleagă cine ești și, acolo unde tipul de rezultat încă există, ca să fii eligibil pentru un afișaj îmbogățit. Indexarea și afișarea nu sunt promise."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Tipul Attorney mai este cel potrivit pentru un cabinet?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nu. Pe schema.org, tipul Attorney este marcat ca învechit, pentru că LegalService este mai cuprinzător și mai puțin ambiguu. Pentru cabinet folosești LegalService, iar pentru avocat, ca persoană, tipul Person."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "FAQPage mai aduce un rezultat extins în Google?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nu. Din 7 mai 2026, rezultatul extins de tip FAQ nu mai apare în Google Search. Google a anunțat retragerea pe 8 mai 2026 și a scos documentația în iunie 2026. Secțiunea de întrebări rămâne utilă pentru cititor. Marcajul poate descrie aceleași întrebări, fără un afișaj special."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Unde testez marcajul, gratuit?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "În Rich Results Test, la search.google.com/test/rich-results. Lipești codul sau adresa paginii. Rezultatul îți arată erorile critice. Un test trecut nu înseamnă că pagina va fi afișată într-un anume fel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Pot copia exemplul din articol pe website-ul meu?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Doar ca punct de plecare. Înlocuiești numele, adresa, telefonul și adresele web cu datele reale ale cabinetului. Exemplul folosește un cabinet fictiv, pe domeniul example.com, și nu descrie un cabinet real."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top header-inner-pages">
+    <div class="container d-flex align-items-center">
+
+      <div class="logo me-auto"><a href="../../" class="hover-no-underline" aria-label="SOLON - pagina principală">
+          <img alt="Logo SOLON, agenția digitală pentru avocați" src="../../assets/img/solon-logo.png" width="250" height="250" />
+          <span aria-hidden="true">SOLON</span></a></div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link" href="../../#servicii">Servicii</a></li>
+          <li><a class="nav-link" href="../../studii-de-caz/">Studii de caz</a></li>
+          <li><a class="nav-link active" href="../../blog/">Blog</a></li>
+          <li><a class="getstarted scrollto mr-1" href="../../programare-consultanta-gratuita/">Programează consultanță
+              gratuită</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <section class="breadcrumbs">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Blog LegalTech</h2>
+      <ol>
+        <li><a href="../../">Home</a></li>
+        <li><a href="../">Blog LegalTech</a></li>
+        <li>Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="blog-post" class="blog-post">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
+      <div class="col-lg-7">
+        <article class="entry entry-single">
+          <h1 class="entry-title">Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT</h1>
+          <div class="entry-meta">
+            <ul>
+              <li class="d-flex align-items-center"><i class="bi bi-calendar"></i> <time datetime="2026-10-21">2026-10-21</time></li>
+              <li class="d-flex align-items-center"><i class="bi bi-clock"></i> lectură de 12 min</li>
+            </ul>
+          </div>
+          <div class="entry-tags">
+            <i class="bi bi-tags"></i>
+            <ul class="tags">
+              <li><a href="../?tag=avocați">avocați</a></li><li><a href="../?tag=date structurate">date structurate</a></li><li><a href="../?tag=schema.org">schema.org</a></li><li><a href="../?tag=seo">seo</a></li><li><a href="../?tag=website avocat">website avocat</a></li>
+            </ul>
+          </div>
+          <div class="entry-content">
+            <p>Dacă numele tău este și numele altui avocat, Google și un asistent de chat pot amesteca cele două practici: adresa unuia, ariile celuilalt, un telefon care nu mai este al tău. Pagina spune lucrurile astea în propoziții, dar o mașină le ghicește. Datele structurate sunt varianta scurtă și standard a acelorași fapte, ca să se vadă cine ești, unde ești și cu ce te ocupi.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_search-engines_k649.png" alt="Ilustrație: motoare de căutare care citesc informațiile unui cabinet de avocatură" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<h2>1. Ce sunt datele structurate</h2>
+<p><a href="../glosar-marketing-digital-avocati/#term-date-structurate">Datele structurate</a> sunt fapte despre pagină, scrise într-un format pe care un program îl poate citi fără să interpreteze un paragraf. Vocabularul folosit aproape peste tot este <a href="https://schema.org/">schema.org</a>. Forma pe care o recomandă Google este JSON-LD: un bloc de text, pus în pagină, care nu se vede pentru vizitator.</p>
+<p>Nu înlocuiesc textul paginii. Îl repetă, într-o formă fixă. Dacă pe pagină scrie că ești avocat în Cluj și în marcaj apare București, marcajul este greșit, nu „mai tehnic”. Ghidul Google spune că datele structurate trebuie să descrie conținutul vizibil.</p>
+<p>Termenul pe care îl vei vedea în oferte este <a href="../glosar-marketing-digital-avocati/#term-schema-markup">schema markup</a>. Este același lucru: etichetele prin care spui că un nume este numele cabinetului, nu titlul unui articol.</p>
+<h2>2. De ce le citește Google</h2>
+<p>Pentru o afacere locală, <a href="https://developers.google.com/search/docs/appearance/structured-data/local-business">Google documentează tipul <code>LocalBusiness</code></a>. Proprietățile cerute sunt <code>name</code> și <code>address</code>. Restul, telefon, program, imagine, adresă web, crește calitatea descrierii, dar nu este pe lista de obligatorii. <code>LegalService</code>, tipul pentru un cabinet, este un fel de <code>LocalBusiness</code>, deci aceleași două câmpuri rămân baza.</p>
+<p>La organizații, Google spune că marcajul de pe pagina principală îl ajută să deosebească entitatea ta de altele cu nume apropiat și poate influența detalii precum logo-ul din panoul de cunoștințe. Nu spune că marcajul stabilește ordinea rezultatelor.</p>
+<p>Asta se leagă de profilul tău public. Numele, adresa și telefonul din marcaj trebuie să fie aceleași cu cele din <a href="../google-business-profile-avocati/">Google Business Profile</a>. Dacă profilul spune o stradă și website-ul alta, ai două versiuni ale aceluiași cabinet.</p>
+<h2>3. Ce poți aștepta de la ChatGPT și Gemini</h2>
+<p>ChatGPT și Gemini nu sunt Google. Niciunul nu publică o regulă de forma „pune JSON-LD și vei fi citat”. Pentru funcțiile generative din Google Search, <a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">ghidul oficial din mai 2026</a> spune că datele structurate nu sunt obligatorii. <a href="https://developers.google.com/search/docs/appearance/ai-features">Pagina despre funcțiile AI</a> precizează că nu există un tip schema.org special pentru răspunsurile generate și că indexarea nu este promisă. În același ghid din mai 2026, „AEO” și „GEO” nu sunt o disciplină separată de SEO.</p>
+<p>Marcajul rămâne util mai îngust: pune în vocabular comun faptele pe care un sistem le poate amesteca, numele cabinetului, numele avocatului, localitatea și ariile în care lucrezi. Cum aleg asistenții sursele este tratat în ghidul despre <a href="../avocat-chatgpt-gemini-ai-overviews/">cum apare un avocat în ChatGPT, Gemini și AI Overviews</a>. Dacă cineva îți vinde marcajul ca pe o cheie către acele răspunsuri, ghidul din mai 2026 spune contrariul.</p>
+<h2>4. Patru tipuri și unul care s-a învechit</h2>
+<p>Pentru un cabinet, patru tipuri acoperă aproape tot ce merită descris.</p>
+<div class="table-wrap">
+
+<table>
+<thead>
+<tr>
+<th>Tip</th>
+<th>Pe cine descrie</th>
+<th>Unde stă, de obicei</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LegalService</code></td>
+<td>Cabinetul, ca activitate locală</td>
+<td>Pagina principală sau pagina de contact</td>
+</tr>
+<tr>
+<td><code>Person</code></td>
+<td>Avocatul, ca persoană</td>
+<td>Pagina de prezentare</td>
+</tr>
+<tr>
+<td><code>FAQPage</code></td>
+<td>Întrebările vizibile pe pagină</td>
+<td>Doar pagina care chiar are acele întrebări</td>
+</tr>
+<tr>
+<td><code>Attorney</code></td>
+<td>Vechiul tip pentru „avocat” ca firmă</td>
+<td>Nu îl mai folosi pentru un marcaj nou</td>
+</tr>
+</tbody></table>
+</div>
+
+<p><code>Attorney</code> încă există pe schema.org, dar <a href="https://schema.org/Attorney">pagina tipului</a> îl marchează ca învechit: <a href="https://schema.org/LegalService"><code>LegalService</code></a> este mai cuprinzător și mai puțin ambiguu. Un tip învechit nu este o eroare de sintaxă. Este o etichetă pe care vocabularul nu o mai recomandă.</p>
+<p><code>Person</code> este pentru om, nu pentru firmă. <code>jobTitle</code> poate fi „avocat”. Nu pune un titlu de specialist dacă nu îl ai în condițiile legii. <code>worksFor</code> leagă persoana de cabinet prin <code>@id</code>, nu prin a doua copie a adresei.</p>
+<p><code>FAQPage</code> descrie întrebările și răspunsurile vizibile pe pagină. <a href="https://developers.google.com/search/blog/2023/08/howto-faq-changes">Din 8 august 2023, Google limita afișarea extinsă la website-uri guvernamentale și de sănătate</a>. <a href="https://developers.google.com/search/updates">Pe 8 mai 2026 a anunțat că funcția nu mai apare deloc în Google Search din 7 mai 2026, iar în iunie 2026 a retras documentația</a>. Întrebările rămân pentru cititor.</p>
+<h2>5. Unde pui blocul în pagină</h2>
+<p>JSON-LD stă într-un element <code>&lt;script type=&quot;application/ld+json&quot;&gt;</code>, de obicei în <code>&lt;head&gt;</code>. Vizitatorul nu îl vede. Un singur bloc poate conține mai multe obiecte, legate prin <code>@graph</code> și prin <code>@id</code>.</p>
+<p>Trei reguli practice:</p>
+<ul>
+<li>Cabinetul are un <code>@id</code> stabil, de forma <code>https://example.com/cabinet-exemplu/#cabinet</code>. Celelalte pagini trimit la el, nu îl redefinesc cu altă adresă.</li>
+<li>Fiecare pagină descrie ce se vede pe ea. Pagina unei arii de practică nu repetă întregul istoric al tuturor colegilor.</li>
+<li>Nu pui marcaj pentru recenzii pe care nu le afișezi. Google cere ca recenzia să fie vizibilă și să fie despre altcineva decât propria afacere. Pentru un cabinet, zona asta este și una pe care regulile profesiei o tratează strict. O lași goală.</li>
+</ul>
+<h2>6. Exemplu JSON-LD pentru un cabinet fictiv</h2>
+<p>Exemplul de mai jos nu descrie un client și nu descrie SOLON. Numele, strada, telefonul și domeniul sunt inventate. <code>example.com</code> este un domeniu rezervat pentru exemple, nu un website real. Poți lipi blocul într-un test. Nu îl publica neschimbat.</p>
+<pre><code class="language-json">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@graph&quot;: [
+    {
+      &quot;@type&quot;: &quot;LegalService&quot;,
+      &quot;@id&quot;: &quot;https://example.com/cabinet-exemplu/#cabinet&quot;,
+      &quot;name&quot;: &quot;Cabinet de Avocat Exemplu&quot;,
+      &quot;url&quot;: &quot;https://example.com/cabinet-exemplu/&quot;,
+      &quot;image&quot;: &quot;https://example.com/cabinet-exemplu/portret.jpg&quot;,
+      &quot;telephone&quot;: &quot;+40-21-000-0000&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;streetAddress&quot;: &quot;Strada Exemplu nr. 10&quot;,
+        &quot;addressLocality&quot;: &quot;București&quot;,
+        &quot;postalCode&quot;: &quot;010101&quot;,
+        &quot;addressCountry&quot;: &quot;RO&quot;
+      },
+      &quot;areaServed&quot;: &quot;București&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Person&quot;,
+      &quot;@id&quot;: &quot;https://example.com/cabinet-exemplu/#ana-exemplu&quot;,
+      &quot;name&quot;: &quot;Ana Exemplu&quot;,
+      &quot;jobTitle&quot;: &quot;avocat&quot;,
+      &quot;url&quot;: &quot;https://example.com/cabinet-exemplu/ana-exemplu/&quot;,
+      &quot;image&quot;: &quot;https://example.com/cabinet-exemplu/portret.jpg&quot;,
+      &quot;worksFor&quot;: { &quot;@id&quot;: &quot;https://example.com/cabinet-exemplu/#cabinet&quot; },
+      &quot;knowsAbout&quot;: [&quot;drept civil&quot;, &quot;dreptul muncii&quot;]
+    },
+    {
+      &quot;@type&quot;: &quot;FAQPage&quot;,
+      &quot;mainEntity&quot;: [
+        {
+          &quot;@type&quot;: &quot;Question&quot;,
+          &quot;name&quot;: &quot;În ce situații de drept civil lucrează cabinetul?&quot;,
+          &quot;acceptedAnswer&quot;: {
+            &quot;@type&quot;: &quot;Answer&quot;,
+            &quot;text&quot;: &quot;Textul acesta trebuie să fie identic cu răspunsul vizibil pe pagină.&quot;
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>Comentariile cu <code>//</code> nu sunt JSON valid și pică la test. De aceea explicația stă lângă cod, nu în interiorul lui.</p>
+<div class="row justify-content-center my-4">
+  <div class="col-md-9">
+    <img src="../../assets/img/undraw_add-information_06qr.png" alt="Ilustrație: adăugarea datelor despre un cabinet într-un format pe care îl poate citi un motor de căutare" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+  </div>
+</div>
+
+<h2>7. Cum citești exemplul, câmp cu câmp</h2>
+<p><code>@context</code> fixează vocabularul schema.org. <code>@graph</code> ține laolaltă cabinetul, persoana și întrebările.</p>
+<ul>
+<li><code>name</code> este numele de pe ușă și din profilul Google, nu un slogan.</li>
+<li><code>url</code> este pagina canonică, cu <code>https</code>.</li>
+<li><code>image</code> este o fotografie reală, la o adresă pe care Google o poate descărca. În exemplu, adresa este fictivă.</li>
+<li><code>telephone</code> este numărul de pe pagină, în format internațional.</li>
+<li><code>address</code> este o <code>PostalAddress</code>, cu <code>addressCountry</code> <code>RO</code>. Strada din exemplu se înlocuiește.</li>
+<li><code>areaServed</code> este localitatea în care lucrezi, nu lista tuturor județelor.</li>
+<li><code>worksFor</code> trimite la <code>@id</code>-ul cabinetului. <code>knowsAbout</code> enumeră teme, nu un titlu profesional.</li>
+<li>Răspunsul din <code>FAQPage</code> este fraza vizibilă pe pagină. Dacă schimbi textul și uiți codul, ai două versiuni.</li>
+</ul>
+<p><code>sameAs</code> lipsește pentru că un cabinet fictiv nu are pagini reale. La tine, aici stau doar paginile care sunt ale tale: profilul Google, pagina de pe website și, dacă o folosești, LinkedIn. Nu pune profilul unui coleg cu nume asemănător.</p>
+<h2>8. Cum testezi gratuit cu Rich Results Test</h2>
+<p>Testul gratuit al Google este <a href="https://search.google.com/test/rich-results">Rich Results Test</a>. Ai două intrări: adresa unei pagini deja publicate sau codul lipit. Pentru exemplu, lipești codul.</p>
+<p>Ce urmărești:</p>
+<ol>
+<li>Codul este JSON valid. O virgulă în plus îl oprește înainte de orice analiză.</li>
+<li>Nu ai erori critice la proprietățile cerute. Pentru o afacere locală, astea sunt <code>name</code> și <code>address</code>.</li>
+<li>Avertismentele sunt separate de erori. O imagine de pe <code>example.com</code> nu poate fi descărcată. În exemplu este normal. Pe website-ul tău, imaginea trebuie să se deschidă.</li>
+</ol>
+<p>Un test fără erori critice înseamnă că blocul este bine format pentru tipurile pe care Google încă le verifică. Nu înseamnă panou, loc anume sau citare. FAQ, retras din mai 2026, poate lipsi din rezultatele îmbogățite fără ca restul blocului să fie invalid.</p>
+<p>După publicare, inspectarea adresei din Search Console îți arată pagina așa cum o vede Google.</p>
+<h2>9. Ce urmărești în Search Console</h2>
+<p><a href="../cum-sa-folosesti-google-search-console-ca-avocat/">Google Search Console</a> este locul în care vezi dacă Google a citit pagina. Pentru marcaj, te uiți la două lucruri.</p>
+<p>Întâi, pagina este indexată și are voie să arate un fragment. Ghidul din mai 2026 spune că o pagină trebuie să îndeplinească condițiile tehnice de Search ca să poată apărea în funcțiile generative. Condiția este necesară. Nu este și suficientă.</p>
+<p>Apoi, rapoartele de îmbunătățiri îți arată tipurile de date structurate pe care Google le-a recunoscut. Dacă ai retras un tip, raportul vechi poate rămâne o vreme.</p>
+<p>Dispariția rezultatului FAQ din 2026 este o schimbare de produs, nu o penalizare a paginii tale.</p>
+<p>Când schimbi adresa sau telefonul, actualizezi textul vizibil, marcajul și profilul Google în aceeași zi. Apoi ceri o recitire a paginii. Google scrie că recitirea poate dura câteva zile.</p>
+<h2>10. Greșeli care strică marcajul</h2>
+<p>Cele mai dese nu sunt de sintaxă.</p>
+<ul>
+<li>Numele din <code>name</code> este un slogan, nu numele cabinetului.</li>
+<li>Adresa este a unui spațiu de co-working pe care nu îl mai folosești.</li>
+<li><code>Person</code> descrie un colaborator care a plecat, iar fotografia încă este pe pagină.</li>
+<li>Aceeași întrebare are un răspuns pe ecran și altul în JSON-LD.</li>
+<li>Ai pus <code>aggregateRating</code> sau <code>review</code> ca să umpli stele. Pentru propria afacere, Google nu acceptă recenziile scrise de tine despre tine. Pentru profesie, recenzia publică este oricum un subiect separat de acest articol.</li>
+<li>Ai copiat un exemplu american, cu <code>addressCountry</code> <code>US</code> și un <code>priceRange</code> de restaurant. Prețul nu are ce căuta într-un marcaj de cabinet.</li>
+<li>Ai lăsat <code>Attorney</code> într-un șablon vechi, lângă un <code>LegalService</code> care spune alt nume.</li>
+</ul>
+<p>O verificare simplă: citești cu voce tare <code>name</code>, localitatea și telefonul din cod. Dacă nu le-ai spune și la telefon, codul nu se publică.</p>
+<h2>11. Ce nu pui, dincolo de tehnică</h2>
+<p>Marcajul nu este un loc în care regulile de publicitate dispar pentru că textul nu se vede pe ecran. Motoarele îl pot afișa. Scrii acolo doar ce ai putea scrie și pe pagină.</p>
+<p>Nu pui nume de clienți, numere de dosare, rezultate din cauze și nici formulări care promit un deznodământ. Nu pui un titlu de specialist pe care nu îl deții. <code>knowsAbout</code> rămâne o temă („dreptul muncii”), nu o revendicare.</p>
+<p>Nu pui datele unui client în <code>address</code> sau în <code>image</code>. Portretul din <code>image</code> este al tău sau al sediului, cu acordul oamenilor care se văd. În marcaj intră doar o fotografie pe care ai voie să o publici.</p>
+<p>Dacă termenii din jur, de la SEO local la profilul Google, ți se amestecă, <a href="../glosar-marketing-digital-avocati/">glosarul de marketing digital pentru avocați</a> îi ține separați. Articolul de față este doar bucata de date structurate.</p>
+<h2>12. Checklist</h2>
+<ul>
+<li><code>LegalService</code> are <code>name</code> și <code>address</code>, identice cu pagina și cu profilul Google.</li>
+<li>Avocatul este <code>Person</code>, legat prin <code>worksFor</code> de <code>@id</code>-ul cabinetului.</li>
+<li>Nu folosești <code>Attorney</code> într-un marcaj nou.</li>
+<li><code>FAQPage</code> copiază întrebările și răspunsurile vizibile, dacă pagina chiar are o astfel de secțiune.</li>
+<li>Nu ai <code>review</code>, <code>aggregateRating</code> sau <code>priceRange</code>.</li>
+<li>Imaginea se deschide și ai dreptul să o publici.</li>
+<li><code>url</code> este adresa canonică, cu <code>https</code>.</li>
+<li>Rich Results Test nu arată erori critice pe codul real, nu pe exemplul fictiv.</li>
+<li>În Search Console, pagina este indexată, iar după o schimbare de adresă ai cerut recitirea.</li>
+<li>Ai recitit câmpurile cu regulile de publicitate în minte.</li>
+</ul>
+<h2>Întrebări frecvente</h2>
+<h3>Datele structurate îmi schimbă poziția în Google?</h3>
+<p>Nu există o regulă de la Google care să spună că marcajul te urcă în rezultate. Îl folosește ca să înțeleagă cine ești și, acolo unde tipul de rezultat încă există, ca să fii eligibil pentru un afișaj îmbogățit. Indexarea și afișarea nu sunt promise.</p>
+<h3>Tipul Attorney mai este cel potrivit pentru un cabinet?</h3>
+<p>Nu. Pe schema.org, tipul Attorney este marcat ca învechit, pentru că LegalService este mai cuprinzător și mai puțin ambiguu. Pentru cabinet folosești LegalService, iar pentru avocat, ca persoană, tipul Person.</p>
+<h3>FAQPage mai aduce un rezultat extins în Google?</h3>
+<p>Nu. Din 7 mai 2026, rezultatul extins de tip FAQ nu mai apare în Google Search. Google a anunțat retragerea pe 8 mai 2026 și a scos documentația în iunie 2026. Secțiunea de întrebări rămâne utilă pentru cititor. Marcajul poate descrie aceleași întrebări, fără un afișaj special.</p>
+<h3>Unde testez marcajul, gratuit?</h3>
+<p>În Rich Results Test, la search.google.com/test/rich-results. Lipești codul sau adresa paginii. Rezultatul îți arată erorile critice. Un test trecut nu înseamnă că pagina va fi afișată într-un anume fel.</p>
+<h3>Pot copia exemplul din articol pe website-ul meu?</h3>
+<p>Doar ca punct de plecare. Înlocuiești numele, adresa, telefonul și adresele web cu datele reale ale cabinetului. Exemplul folosește un cabinet fictiv, pe domeniul example.com, și nu descrie un cabinet real.</p>
+<h2>Concluzie</h2>
+<p>Datele structurate fac explicite câteva fapte pe care o mașină altfel le ghicește: cine este cabinetul, unde este și ce avocat lucrează acolo. Pentru Google, <code>name</code> și <code>address</code> sunt baza la o activitate locală. Pentru chat-uri, marcajul nu este o condiție de citare și nu există un tip special care să te ducă într-un răspuns.</p>
+<p>Limita este de întreținere. Codul se învechește când te muți, schimbi telefonul sau pleacă un coleg din <code>Person</code>. FAQ nu mai este afișat din mai 2026, iar testul gratuit îți spune doar dacă blocul este coerent.</p>
+<p>Dacă dorești să pui date structurate pe website-ul cabinetului tău, aliniate cu pagina și cu profilul Google, echipa <strong>SOLON</strong> oferă consultanță de digitalizare adaptată specificului practicii tale juridice.</p>
+<hr>
+<blockquote>
+<p><em>Prezentul articol are un caracter pur informativ și educațional și nu constituie consultanță juridică în sensul Legii nr. 51/1995. Pentru o situație concretă, consultă un avocat.</em></p>
+<p><em>Articol redactat cu asistență AI, verificat și asumat editorial de echipa SOLON.</em></p>
+</blockquote>
+
+          </div>
+        </article>
+      </div>
+      <aside class="col-lg-4 d-none d-lg-block blog-sidebar" aria-label="Sidebar blog">
+        <div class="" data-blog-sidebar>
+          <!-- <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-search-title">
+            <h3 id="blog-sidebar-search-title" class="blog-sidebar-title">Caută</h3>
+            <form class="blog-sidebar-search-form" data-blog-sidebar-search role="search">
+              <label class="visually-hidden" for="blog-sidebar-search-input">Caută articole</label>
+              <div class="blog-sidebar-search-input-wrap">
+                <input id="blog-sidebar-search-input" type="search" class="form-control" placeholder="Caută articole..." aria-label="Caută articole">
+                <button type="submit" class="btn btn-sm blog-sidebar-search-button">Caută</button>
+              </div>
+            </form>
+          </section> -->
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-recent-title">
+            <h3 id="blog-sidebar-recent-title" class="blog-sidebar-title">Articole recente</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-recent></ul>
+          </section>
+
+          <section class="blog-sidebar-widget" aria-labelledby="blog-sidebar-tags-title">
+            <h3 id="blog-sidebar-tags-title" class="blog-sidebar-title">Taguri populare</h3>
+            <ul class="blog-sidebar-list" data-blog-sidebar-tags></ul>
+          </section>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+<section class="blog-article-extras">
+  <div class="container" data-aos="fade-up">
+    <div class="blog-recent-articles">
+      <h2>ARTICOLE RECENTE</h2>
+      <ul>
+        <li><a href="../fotografie-profesionala-pentru-avocati/">Fotografia profesională pentru avocați: ghid de ședință foto</a>, 22 octombrie 2026</li>
+<li><a href="../domeniu-email-profesional-cabinet-avocat/">Domeniu și email profesional pentru cabinet: al cui e, de fapt?</a>, 20 octombrie 2026</li>
+<li><a href="../pagini-arii-de-practica-website-avocat/">Pagini de arii de practică pe website-ul de avocat: cum le structurezi</a>, 19 octombrie 2026</li>
+<li><a href="../microsoft-copilot-pentru-avocati/">Microsoft Copilot pentru avocați: ce înseamnă pentru cabinetul tău</a>, 18 octombrie 2026</li>
+<li><a href="../ce-are-voie-avocat-sa-publice-online/">Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei de avocat</a>, 15 octombrie 2026</li>
+      </ul>
+    </div>
+
+    <div class="blog-services">
+      <div class="section-title text-start">
+        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+      </div>
+      <div class="row gy-4">
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-headset"></i></div>
+            <h3>Consultanță digitală</h3>
+            <p>Transformăm expertiza ta juridică în succes digital, ghidându-te spre inovație și eficiență cu soluții digitale personalizate.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-brush"></i></div>
+            <h3>Branding</h3>
+            <p>Sculptăm identitatea brandului tău cu măiestrie și viziune, pentru o amprentă memorabilă în lumea juridică.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-puzzle"></i></div>
+            <h3>Marketing</h3>
+            <p>Strategiile noastre de marketing vorbesc direct publicului țintă și cresc respectul pentru brandul tău juridic.</p>
+          </article>
+        </div>
+        <div class="col-12 col-md-6">
+          <article class="blog-service-card">
+            <div class="blog-service-icon"><i class="bi bi-laptop"></i></div>
+            <h3>Development</h3>
+            <p>Site-ul tău devine mai mult decât o carte de vizită online. Este o prezență vie care spune povestea firmei tale de avocatură.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <!-- ======= Newsletter Section ======= -->
+    <div class="footer-newsletter blog-newsletter">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="section-title">
+            <h2>Newsletter</h2>
+          </div>
+          <div class="col-lg-7">
+            <h3>Abonează-te la noutăți din domeniul LegalTech</h3>
+            <div>
+              <div>
+                <form data-solon-form="Newsletter" class="solon-newsletter-form">
+      <div class="solon-hp" aria-hidden="true" inert>
+        <label for="solon-hp-newsletter">Website</label>
+        <input id="solon-hp-newsletter" name="company_url" type="text" value="" tabindex="-1" autocomplete="off">
+      </div>
+                  <div class="mc-field-group">
+                    <label for="solon-newsletter-email" class="form-label visually-hidden">Adresă de email pentru
+                    newsletter</label>
+                    <input type="email" class="required email"
+                    value="" autocomplete="email" name="Email" required="required" id="solon-newsletter-email">
+                  </div>
+                  <p class="solon-form-note">Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
+                  <div class="clear"><input type="submit" id="solon-newsletter-submit"
+                  class="button" value="Subscribe"></div>
+                </form>
+                <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Newsletter Section -->
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6 footer-links">
+            <h3>Follow us</h3>
+            <ul>
+              <li>
+                  <i class="bi bi-instagram" aria-hidden="true" ></i>
+                  <a href="https://www.instagram.com/solon.agency" target="_blank">Instagram</a>
+              </li>
+              <li>
+                  <i class="bi bi-facebook" aria-hidden="true"></i>
+                  <a href="https://www.facebook.com/people/SOLON-Agency/61554025732235/" target="_blank">Facebook</a>
+              </li>
+              <li>
+                  <i class="bi bi-linkedin" aria-hidden="true"></i> 
+                  <a href="https://www.linkedin.com/company/solonagency/" target="_blank">LinkedIn</a>
+              </li>
+              <li>
+                  <i class="bi bi-twitter-x" aria-hidden="true"></i> 
+                  <a href="https://x.com/solon_agency" target="_blank">Twitter</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-6 col-sm-6 footer-links">
+            <h3>Linkuri utile</h3>
+            <ul>
+              <li> <a href="/blog/">Blog LegalTech</a></li>
+              <li> <a target="_blank" href="../../terms/">Termeni și condiții</a></li>
+              <li> <a target="_blank" href="../../cookies/">Politica cookie</a></li>
+              <li><a href="/cookies/#preferinte" data-solon-consent-open>Setări cookie</a></li>
+              <li> <a target="_blank" href="../../privacy/">Politică de confidențialitate</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-12 footer-contact">
+            <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
+            <h3>SOLON</h3>
+            <p>
+              <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
+              <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        <b>SOLON</b> &copy; <span data-current-year></span>
+      </div>
+      <div class="credits">
+        Servicii digitale complete pentru mediul juridic
+      </div>
+    </div>
+  </footer>
+  <!-- End Footer -->
+
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    aria-label="Înapoi la începutul paginii"><i class="bi bi-arrow-up-short" aria-hidden="true"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../../assets/vendor/aos/aos.min.js?v=49abaecc06"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js?v=82f64f62bb"></script>
+  <script src="../../assets/vendor/isotope-layout/isotope.pkgd.min.js?v=081ae9baaa"></script>
+  <script src="../../assets/vendor/waypoints/noframework.waypoints.min.js?v=2e619e0fde"></script>
+
+  <!-- Template Main JS File -->
+  <script src="../../assets/js/error-log.min.js?v=a3055d3d93"></script>
+  <script src="../../assets/js/main.min.js?v=a0a2a53b4b"></script>
+  <script src="../../assets/js/dynamic-year.min.js?v=7b00e57578"></script>
+  <script src="../../assets/js/blog-sidebar.js?v=15913f0b06"></script>
+  <script src="../../assets/js/forms.min.js?v=597533e06f"></script>
+</body>
+
+</html>
