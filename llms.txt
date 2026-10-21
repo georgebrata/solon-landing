@@ -10,6 +10,7 @@ This site is not Multisoft SOLON, the restaurant and hotel management software.
 
 - [Homepage](https://solon.agency/): Digital agency for Romanian lawyers and LegalTech
 - [Case studies](https://solon.agency/studii-de-caz/): Client work for law firms and lawyers
+- [Avocat Dumitrescu Alexandru case study](https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/): Branding, website, and SEO for a law office in Turda
 - [Free consultation](https://solon.agency/programare-consultanta-gratuita/): Book a consultation
 - [Blog](https://solon.agency/blog/): Guides on digitalization and LegalTech for lawyers
 - [Services](https://solon.agency/#servicii): Branding, development, and marketing on the homepage

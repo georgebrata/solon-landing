@@ -2,17 +2,17 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://solon.agency/</loc>
-        <lastmod>2026-10-08T11:40:00Z</lastmod>
+        <lastmod>2026-10-21</lastmod>
         <priority>1.00</priority>
     </url>
     <url>
         <loc>https://solon.agency/studii-de-caz/</loc>
-        <lastmod>2026-03-27T15:25:01Z</lastmod>
+        <lastmod>2026-10-21</lastmod>
         <priority>0.90</priority>
     </url>
     <url>
         <loc>https://solon.agency/studii-de-caz/avocat-sebastian-nagy/</loc>
-        <lastmod>2024-10-10T09:09:30+00:00</lastmod>
+        <lastmod>2026-10-21</lastmod>
         <priority>0.80</priority>
     </url>
     <url>
@@ -22,7 +22,7 @@
     </url>
     <url>
         <loc>https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/</loc>
-        <lastmod>2024-10-10T09:09:30+00:00</lastmod>
+        <lastmod>2026-10-21</lastmod>
         <priority>0.80</priority>
     </url>
     <url>

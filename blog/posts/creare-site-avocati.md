@@ -202,6 +202,7 @@ Pentru a vedea cum arată acești pași aplicați în practică, studiile de caz
 - [Marinău și Asociații](https://solon.agency/studii-de-caz/marinau-si-asociatii/): redesign de identitate și site de prezentare pentru o societate de avocați din Oradea.
 - [Avocat Cristian Gurițanu](https://solon.agency/studii-de-caz/avocat-cristian-guritanu/): site cu blog juridic și profil Google Business Profile pentru un cabinet individual din Cluj-Napoca.
 - [TSLaw](https://solon.agency/studii-de-caz/tslaw/): identitate vizuală, site și fluxuri automatizate pentru cabinete grupate de avocatură.
+- [Avocat Dumitrescu Alexandru](https://solon.agency/studii-de-caz/avocat-dumitrescu-alexandru/): branding, website cu blog juridic, SEO și Google Business Profile pentru un cabinet individual din Turda.
 
 ## Pași următori
 
