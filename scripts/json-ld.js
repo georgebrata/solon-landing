@@ -131,6 +131,25 @@ const buildJsonLdTag = (jsonLdValue, pageUrl) => {
   return `<script type="application/ld+json">\n${body}\n</script>`;
 };
 
+const HEADLINE_LIMIT = 110;
+
+/**
+ * Article headline of at most 110 characters.
+ * When the visible title is longer, a seo_title that fits is used whole.
+ * Otherwise the title is cut on a word boundary, with no ellipsis.
+ * @param {object} frontmatter Post front-matter (`title`, optional `seo_title`).
+ * @returns {string}
+ */
+const articleHeadline = (frontmatter) => {
+  const title = String(frontmatter.title || "").trim();
+  if (title.length <= HEADLINE_LIMIT) return title;
+  const seoTitle = typeof frontmatter.seo_title === "string" ? frontmatter.seo_title.trim() : "";
+  if (seoTitle && seoTitle.length <= HEADLINE_LIMIT) return seoTitle;
+  const room = title.slice(0, HEADLINE_LIMIT + 1);
+  const space = room.lastIndexOf(" ");
+  return (space > 0 ? title.slice(0, space) : title.slice(0, HEADLINE_LIMIT)).trim();
+};
+
 /**
  * Article used when a post has no JSON-LD of its own.
  * @param {object} frontmatter Post front-matter (title, description, date).
@@ -141,7 +160,7 @@ const defaultArticleDocument = (frontmatter, pageUrl) => {
   const document = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: frontmatter.title,
+    headline: articleHeadline(frontmatter),
     description: frontmatter.description,
     inLanguage: "ro-RO",
     url: pageUrl,

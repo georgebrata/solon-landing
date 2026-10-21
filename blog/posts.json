@@ -1,7 +1,6 @@
 [
   {
     "title": "Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT",
-    "seo_title": "Date structurate: cum te înțeleg Google și ChatGPT",
     "date": "2026-10-21",
     "date_modified": "2026-10-21",
     "slug": "date-structurate-schema-org-pentru-avocati",
@@ -23,11 +22,10 @@
   },
   {
     "title": "Domeniu și email profesional pentru cabinet: al cui e, de fapt?",
-    "seo_title": "Al cui e domeniul și emailul cabinetului tău?",
     "date": "2026-10-20",
     "date_modified": "2026-10-20",
     "slug": "domeniu-email-profesional-cabinet-avocat",
-    "description": "Cum verifici al cui e domeniul cabinetului, cine administrează e-mailul și cum îl muți pe domeniul propriu, pas cu pas.",
+    "description": "Cum verifici al cui e domeniul cabinetului, cine administrează emailul și cum îl muți pe domeniul propriu, pas cu pas.",
     "categories": [
       "securitate",
       "digitalizare",
@@ -46,7 +44,6 @@
   },
   {
     "title": "Pagini de arii de practică pe website-ul de avocat: cum le structurezi",
-    "seo_title": "Arii de practică pe website: cum le structurezi",
     "date": "2026-10-19",
     "date_modified": "2026-10-19",
     "slug": "pagini-arii-de-practica-website-avocat",
@@ -69,7 +66,6 @@
   },
   {
     "title": "Microsoft Copilot pentru avocați: ce înseamnă pentru cabinetul tău",
-    "seo_title": "Ce înseamnă Microsoft Copilot pentru cabinetul tău",
     "date": "2026-10-18",
     "date_modified": "2026-10-18",
     "slug": "microsoft-copilot-pentru-avocati",
@@ -92,7 +88,6 @@
   },
   {
     "title": "Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei de avocat",
-    "seo_title": "Ce ai voie să publici online ca avocat: legea",
     "slug": "ce-are-voie-avocat-sa-publice-online",
     "date": "2026-10-15",
     "description": "Ce are voie un avocat să publice online: tabel Permis / Interzis / Zonă gri pe site, Facebook, LinkedIn și Google, cu trimiteri la lege și Statut.",
@@ -126,7 +121,6 @@
   },
   {
     "title": "Creare site pentru avocați: ghid pas cu pas, de la domeniu la lansare",
-    "seo_title": "Cum îți faci website-ul de avocat, pas cu pas",
     "date": "2026-10-14",
     "date_modified": "2026-10-14",
     "slug": "creare-site-avocati",
@@ -149,7 +143,6 @@
   },
   {
     "title": "Cum apare un avocat în răspunsurile ChatGPT, Gemini și Google AI Overviews",
-    "seo_title": "Cum apari în ChatGPT, Gemini și Google AI Overviews",
     "date": "2026-10-13",
     "slug": "avocat-chatgpt-gemini-ai-overviews",
     "description": "Ce este GEO și cum aleg ChatGPT, Gemini și Google AI Overviews sursele: un studiu de caz SOLON pe piața juridică din România și un checklist în 8 pași.",
@@ -190,7 +183,6 @@
   },
   {
     "title": "Mentenanță site pentru avocați: ce include, cât de des se face și ce riscuri apar fără ea",
-    "seo_title": "Mentenanța website-ului tău: include, frecvență, riscuri",
     "date": "2026-10-12",
     "date_modified": "2026-10-12",
     "slug": "mentenanta-site-avocati",
@@ -211,7 +203,6 @@
   },
   {
     "title": "Google Business Profile pentru avocați: checklist complet în 12 pași",
-    "seo_title": "Google Business Profile pentru cabinetul tău, în 12 pași",
     "date": "2026-10-11",
     "slug": "google-business-profile-avocati",
     "description": "Cum îți faci profil Google Business ca avocat: checklist în 12 pași, de la categorie și adresă la verificare și recenzii, cu atenție la regulile UNBR.",
@@ -232,7 +223,6 @@
   },
   {
     "title": "Glosar de marketing digital pentru avocați: 30 de termeni explicați simplu",
-    "seo_title": "Glosar de marketing digital: 30 de termeni pentru tine",
     "date": "2026-10-10",
     "slug": "glosar-marketing-digital-avocati",
     "description": "Glosar pentru avocați: 30 de termeni de marketing digital explicați simplu, de la SEO local, lead și Google Business Profile la schema markup și GEO.",
@@ -253,7 +243,6 @@
   },
   {
     "title": "Cât costă un site de avocat în 2026: intervale de preț și ce influențează costul",
-    "seo_title": "Cât te costă un website de avocat în 2026 și de ce",
     "date": "2026-10-08",
     "slug": "cat-costa-un-site-de-avocat-in-2026",
     "description": "Cât costă un site de avocat în 2026? Intervale de preț publicate în România și factorii care influențează costul: pagini, conținut, SEO, mentenanță.",

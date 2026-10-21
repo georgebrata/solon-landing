@@ -52,10 +52,12 @@ let warnedMissingRef = false;
 class HtmlValidationError extends Error {
   /**
    * @param {string} message
+   * @param {{ reported?: boolean }} [options] Set reported when the message is already printed.
    */
-  constructor(message) {
+  constructor(message, options = {}) {
     super(message);
     this.name = "HtmlValidationError";
+    this.reported = options.reported === true;
   }
 }
 
@@ -585,7 +587,23 @@ const countAllowances = (baseline) => Object.values(baseline.files || {}).reduce
 const failValidation = (headline, problems) => {
   console.error(headline);
   printProblems(problems);
-  throw new HtmlValidationError(headline);
+  throw new HtmlValidationError(headline, { reported: true });
+};
+
+/**
+ * Print a failure that has not already been written, then set a failing status.
+ * failValidation prints before it throws. A missing origin/main ref throws
+ * before that, so this is the path that makes the error visible.
+ * @param {unknown} error
+ * @returns {void}
+ */
+const handleCliError = (error) => {
+  if (error instanceof HtmlValidationError) {
+    if (!error.reported) console.error(error.message);
+  } else {
+    console.error(error);
+  }
+  process.exitCode = 1;
 };
 
 /**
@@ -646,6 +664,9 @@ module.exports = {
   collectServedHtml,
   diffBaseline,
   gateProblems,
+  failValidation,
+  handleCliError,
+  HtmlValidationError,
   loadGitText,
   occurrenceId,
   shouldValidate,
@@ -654,7 +675,6 @@ module.exports = {
 
 if (require.main === module) {
   main().catch((error) => {
-    if (!(error instanceof HtmlValidationError)) console.error(error);
-    process.exitCode = 1;
+    handleCliError(error);
   });
 }

@@ -14,6 +14,9 @@ const {
   collectServedHtml,
   diffBaseline,
   gateProblems,
+  failValidation,
+  handleCliError,
+  HtmlValidationError,
   loadGitText,
   shouldValidate,
   validateServedHtml,
@@ -210,6 +213,34 @@ test("git enumeration ignores untracked HTML and CI requires origin/main", () =>
     /fetch origin\/main/
   );
   assert.equal(loadGitText(ROOT, "origin/does-not-exist:data/html-validate-baseline.json", false), null);
+});
+
+test("a missing origin/main ref prints its error, and a reported failure is not printed twice", () => {
+  const lines = [];
+  const original = console.error;
+  console.error = (value) => {
+    lines.push(String(value));
+  };
+  const previousCode = process.exitCode;
+  try {
+    handleCliError(new HtmlValidationError(
+      "Could not read origin/main:data/html-validate-baseline.json. CI must fetch origin/main before HTML validation."
+    ));
+    assert.match(lines.join("\n"), /Could not read origin\/main/);
+    assert.equal(process.exitCode, 1);
+
+    lines.length = 0;
+    process.exitCode = undefined;
+    try {
+      failValidation("HTML validation failed (1 served files).", []);
+    } catch (error) {
+      handleCliError(error);
+    }
+    assert.deepEqual(lines, ["HTML validation failed (1 served files)."]);
+  } finally {
+    console.error = original;
+    process.exitCode = previousCode;
+  }
 });
 
 test("every served page matches the HTML baseline", async () => {

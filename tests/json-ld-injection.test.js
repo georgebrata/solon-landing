@@ -128,3 +128,30 @@ test("unquoted YAML dates become YYYY-MM-DD in Europe/Bucharest", () => {
   assert.equal(fromString.datePublished, "2026-03-24");
   assert.equal(Object.hasOwn(fromString, "dateModified"), false);
 });
+
+test("a headline over 110 characters uses seo_title, or a word-boundary cut", () => {
+  const longTitle = "Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei de avocat";
+  assert.equal(longTitle.length, 120);
+  const withSeo = defaultArticleDocument({
+    title: longTitle,
+    seo_title: "Publicitate pentru avocați: ce ai voie să publici online",
+    description: "D",
+    date: "2026-10-15",
+  }, PAGE);
+  assert.equal(withSeo.headline, "Publicitate pentru avocați: ce ai voie să publici online");
+  assert.ok(withSeo.headline.length <= 110);
+
+  const cut = defaultArticleDocument({
+    title: longTitle,
+    description: "D",
+    date: "2026-10-15",
+  }, PAGE);
+  assert.equal(
+    cut.headline,
+    "Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei"
+  );
+  assert.equal(cut.headline.includes("…"), false);
+  assert.equal(cut.headline.endsWith(" "), false);
+  assert.ok(cut.headline.length <= 110);
+  assert.equal(longTitle.startsWith(cut.headline), true);
+});

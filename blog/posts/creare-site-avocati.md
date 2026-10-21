@@ -1,6 +1,6 @@
 ---
 title: "Creare site pentru avocați: ghid pas cu pas, de la domeniu la lansare"
-seo_title: "Cum îți faci website-ul de avocat, pas cu pas"
+seo_title: "Creare website pentru avocați: ghid pas cu pas"
 date: "2026-10-14"
 date_modified: "2026-10-14"
 slug: "creare-site-avocati"

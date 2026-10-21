@@ -295,6 +295,7 @@ const POSTS_JSON_OMIT = new Set([
   'schema_extra',
   'publish_date',
   'meta_description',
+  'seo_title',
 ]);
 
 /** Compile markdown posts into static HTML under /blog/. */

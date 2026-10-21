@@ -1,6 +1,6 @@
 ---
 title: 'Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei de avocat'
-seo_title: "Ce ai voie să publici online ca avocat: legea"
+seo_title: "Publicitate pentru avocați: ce ai voie să publici online"
 slug: ce-are-voie-avocat-sa-publice-online
 date: "2026-10-15"
 description: 'Ce are voie un avocat să publice online: tabel Permis / Interzis / Zonă gri pe site, Facebook, LinkedIn și Google, cu trimiteri la lege și Statut.'
@@ -75,7 +75,7 @@ json_ld: |-
       {
         "@type": "Article",
         "@id": "https://solon.agency/blog/ce-are-voie-avocat-sa-publice-online/#article",
-        "headline": "Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei de avocat",
+        "headline": "Publicitate pentru avocați: ce ai voie să publici online",
         "description": "Ce are voie un avocat să publice online: tabel Permis / Interzis / Zonă gri pe site, Facebook, LinkedIn și Google, cu trimiteri la lege și Statut.",
         "inLanguage": "ro-RO",
         "url": "https://solon.agency/blog/ce-are-voie-avocat-sa-publice-online/",
