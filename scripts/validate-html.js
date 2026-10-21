@@ -51,6 +51,10 @@ const shouldValidate = (rel, baseline) => {
 const collectServedHtml = (root, baseline) => {
   /** @type {string[]} */
   const files = [];
+  /**
+   * @param {string} dir
+   * @returns {void}
+   */
   const walk = (dir) => {
     for (const name of fs.readdirSync(dir)) {
       if (dir === root && SKIP_DIR_NAMES.has(name)) continue;
@@ -114,7 +118,7 @@ const diffBaseline = (actual, baseline) => {
   for (const [file, rules] of Object.entries(actual)) {
     for (const [rule, count] of Object.entries(rules)) {
       seen.add(`${file}\0${rule}`);
-      const allowedCount = allowed[file] && allowed[file][rule];
+      const allowedCount = allowed[file]?.[rule];
       if (allowedCount === undefined) {
         problems.push({ kind: "unexpected", file, rule, got: count, allowed: 0 });
       } else if (count > allowedCount) {
@@ -133,7 +137,12 @@ const diffBaseline = (actual, baseline) => {
     }
   }
 
-  const byFile = (a, b) => a.file.localeCompare(b.file) || a.rule.localeCompare(b.rule);
+  /**
+   * @param {{ file: string, rule: string }} left
+   * @param {{ file: string, rule: string }} right
+   * @returns {number}
+   */
+  const byFile = (left, right) => left.file.localeCompare(right.file) || left.rule.localeCompare(right.rule);
   problems.sort(byFile);
   shrinkable.sort(byFile);
   return { problems, shrinkable };
@@ -154,7 +163,7 @@ const assertRatchet = (previous, current) => {
   const prevFiles = previous.files || {};
   for (const [file, rules] of Object.entries(current.files || {})) {
     for (const [rule, count] of Object.entries(rules)) {
-      const prev = prevFiles[file] && prevFiles[file][rule];
+      const prev = prevFiles[file]?.[rule];
       if (prev === undefined) {
         problems.push({ kind: "ratchet", file, rule, got: count, allowed: 0 });
       } else if (count > prev) {
@@ -183,7 +192,7 @@ const applyShrink = (baseline, actual) => {
     /** @type {Record<string, number>} */
     const nextRules = {};
     for (const rule of Object.keys(baseline.files[file]).sort()) {
-      const got = actual[file] && actual[file][rule];
+      const got = actual[file]?.[rule];
       const nextCount = got === undefined ? 0 : got;
       if (nextCount > 0) nextRules[rule] = nextCount;
     }
@@ -325,32 +334,55 @@ const printProblems = (problems) => {
   }
 };
 
+/**
+ * @param {{ files?: Record<string, Record<string, number>> }} baseline
+ * @returns {number}
+ */
 const countAllowances = (baseline) => Object.values(baseline.files || {}).reduce(
   (sum, rules) => sum + Object.values(rules).reduce((inner, count) => inner + count, 0),
   0
 );
 
+class HtmlValidationError extends Error {
+  /**
+   * @param {string} message
+   */
+  constructor(message) {
+    super(message);
+    this.name = "HtmlValidationError";
+  }
+}
+
+/**
+ * @param {string} headline
+ * @param {object[]} problems
+ * @returns {never}
+ */
+const failValidation = (headline, problems) => {
+  console.error(headline);
+  printProblems(problems);
+  throw new HtmlValidationError(headline);
+};
+
+/**
+ * Scan served pages and exit through the process status when this file is the program.
+ * @returns {Promise<void>}
+ */
 const main = async () => {
   const shrink = process.argv.includes("--shrink");
   const { files, problems, baseline, actual, shrinkable } = await validateServedHtml(ROOT);
   if (problems.length > 0) {
-    console.error(`HTML validation failed (${files.length} served files).`);
-    printProblems(problems);
-    process.exit(1);
+    failValidation(`HTML validation failed (${files.length} served files).`, problems);
   }
 
   if (shrink) {
     const applied = applyShrink(baseline, actual);
     if (!applied.next) {
-      console.error("Refusing to shrink.");
-      printProblems(applied.problems);
-      process.exit(1);
+      failValidation("Refusing to shrink.", applied.problems);
     }
     const ratchetProblems = assertRatchet(loadPreviousBaseline(ROOT), applied.next);
     if (ratchetProblems.length > 0) {
-      console.error("Refusing to shrink: the result would allow more than origin/main.");
-      printProblems(ratchetProblems);
-      process.exit(1);
+      failValidation("Refusing to shrink: the result would allow more than origin/main.", ratchetProblems);
     }
     if (!applied.shrinkable.length) {
       console.log("Baseline is already tight.");
@@ -392,7 +424,7 @@ module.exports = {
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error(error);
-    process.exit(1);
+    if (!(error instanceof HtmlValidationError)) console.error(error);
+    process.exitCode = 1;
   });
 }
