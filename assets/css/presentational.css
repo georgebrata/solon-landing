@@ -35,10 +35,6 @@
   min-width: 150px;
 }
 
-.case-jump {
-  display: inline;
-}
-
 /* The list is a direct child of .row.gy-4, so .row > * adds a 1.5rem top margin.
    The old inline margin-top: 0 cleared that gutter. */
 .case-list-flush {

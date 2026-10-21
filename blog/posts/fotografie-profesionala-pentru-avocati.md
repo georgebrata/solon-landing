@@ -1,6 +1,6 @@
 ---
 title: "Fotografia profesională pentru avocați: ghid de ședință foto"
-seo_title: "Fotografia profesională pentru avocați: ghid ședință foto"
+seo_title: "Fotografia profesională pentru avocați: ghid practic"
 date: "2026-10-22"
 date_modified: "2026-10-22"
 slug: "fotografie-profesionala-pentru-avocati"
