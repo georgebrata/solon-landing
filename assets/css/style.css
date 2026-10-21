@@ -1381,8 +1381,32 @@ section {
 }
 
 .portfolio .portfolio-item .portfolio-img a:focus-visible {
-  outline: 2px solid var(--tertiary-darkeeer);
-  outline-offset: -4px;
+  outline: none;
+}
+
+/* Keyboard ring on the card, above the title overlay (z-index 3), so all four
+   sides stay visible. From the edge inward: 2px --primary, 2px --tertiary,
+   2px --primary. The dark bands clear 3:1 on the white page and light images;
+   the inner gold band clears 3:1 on the dark overlay. :focus-visible only, so
+   hover and pointer tap do not show the ring. */
+.portfolio .portfolio-item:has(:focus-visible) {
+  position: relative;
+  z-index: 1;
+}
+
+.portfolio .portfolio-item:has(:focus-visible)::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+  right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+  box-shadow:
+    inset 0 0 0 2px var(--primary),
+    inset 0 0 0 4px var(--tertiary),
+    inset 0 0 0 6px var(--primary);
 }
 
 .portfolio .portfolio-item:hover .portfolio-info,
