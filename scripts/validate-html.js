@@ -195,7 +195,7 @@ const loadPreviousBaseline = (root, enforceMain) => {
 const loadPreviousConfig = async (root, enforceMain) => {
   const text = loadGitText(root, "origin/main:.htmlvalidate.json", enforceMain);
   if (text === null) return null;
-  return resolvedRuleMap(JSON.parse(text), root);
+  return await resolvedRuleMap(JSON.parse(text), root);
 };
 
 /**
@@ -269,6 +269,13 @@ const assertConfigRatchet = (previous, current) => {
 };
 
 /**
+ * @param {{ file: string, rule: string }} left
+ * @param {{ file: string, rule: string }} right
+ * @returns {number}
+ */
+const byFile = (left, right) => left.file.localeCompare(right.file) || left.rule.localeCompare(right.rule);
+
+/**
  * @param {string[]} ids
  * @returns {Map<string, number>}
  */
@@ -335,12 +342,6 @@ const diffBaseline = (actual, baseline) => {
     }
   }
 
-  /**
-   * @param {{ file: string, rule: string }} left
-   * @param {{ file: string, rule: string }} right
-   * @returns {number}
-   */
-  const byFile = (left, right) => left.file.localeCompare(right.file) || left.rule.localeCompare(right.rule);
   problems.sort(byFile);
   shrinkable.sort(byFile);
   return { problems, shrinkable };
@@ -382,9 +383,7 @@ const assertRatchet = (previous, current) => {
       added.push({ kind: "ratchet", file: entry.file, rule: "excluded", got: 1, allowed: 0 });
     }
   }
-  return [...raised, ...added].sort(
-    (left, right) => left.file.localeCompare(right.file) || left.rule.localeCompare(right.rule)
-  );
+  return [...raised, ...added].sort(byFile);
 };
 
 /**
@@ -596,7 +595,7 @@ const failValidation = (headline, problems) => {
 const main = async () => {
   const shrink = process.argv.includes("--shrink");
   const enforceMain = Boolean(process.env.CI);
-  const { files, problems, baseline, actual, shrinkable } = await validateServedHtml(ROOT, {
+  const { files, problems, baseline, actual } = await validateServedHtml(ROOT, {
     reportLeftovers: !shrink,
     enforceMain,
   });
