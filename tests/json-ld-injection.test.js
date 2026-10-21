@@ -272,7 +272,7 @@ test("a headline cut strips trailing punctuation and dashes", () => {
 });
 
 test("a headline cut drops short dangling words repeatedly", () => {
-  for (const word of ["și", "și/sau", "de", "la", "în", "pe", "cu", "pentru", "din", "a", "o", "un", "al", "ale", "sau"]) {
+  for (const word of ["și", "și/sau", "si", "de", "la", "în", "pe", "cu", "pentru", "din", "a", "o", "un", "al", "ale", "sau", "or", "ori"]) {
     const tail = ` ${word}`;
     const stem = "Y".repeat(110 - graphemeLength(tail));
     const head = `${stem}${tail}`;
@@ -295,8 +295,18 @@ test("a headline cut drops short dangling words repeatedly", () => {
   assert.equal(headlineFor("Publicitate: ce ai voie și"), "Publicitate: ce ai voie și");
 });
 
-test("a headline cut removes an unclosed parenthesis or bracket", () => {
-  for (const [open, close] of [["(", ")"], ["[", "]"], ["{", "}"]]) {
+test("a headline cut keeps the period on abbreviations", () => {
+  for (const abbr of ["nr.", "art.", "alin.", "lit.", "etc.", "pct.", "ed.", "vol.", "cf.", "pag.", "cap.", "sec.", "Nr."]) {
+    const tail = ` ${abbr}`;
+    const stem = "Y".repeat(110 - graphemeLength(tail));
+    const head = `${stem}${tail}`;
+    assert.equal(graphemeLength(head), 110, abbr);
+    assert.equal(headlineFor(`${head} continuare peste limita`), head, abbr);
+  }
+});
+
+test("a headline cut removes an unclosed parenthesis, bracket, or Romanian quote", () => {
+  for (const [open, close] of [["(", ")"], ["[", "]"], ["{", "}"], ["\u201E", "\u201D"]]) {
     const stem = "Titlu clar";
     const head = `${stem} ${open}${"z".repeat(110 - stem.length - 2)}`;
     assert.equal(graphemeLength(head), 110, open);
@@ -308,9 +318,27 @@ test("a headline cut removes an unclosed parenthesis or bracket", () => {
   const head = `${prefix}${"z".repeat(110 - graphemeLength(prefix))}`;
   assert.equal(graphemeLength(head), 110);
   assert.equal(headlineFor(`${head}) overflow text here`), balanced);
+
+  const quoted = "Ghid \u201E2026\u201D";
+  const quotePrefix = `${quoted} \u201E`;
+  const quoteHead = `${quotePrefix}${"z".repeat(110 - graphemeLength(quotePrefix))}`;
+  assert.equal(graphemeLength(quoteHead), 110);
+  assert.equal(headlineFor(`${quoteHead}\u201D overflow text here`), quoted);
 });
 
-test("every built JSON-LD article headline is at most 110 characters", () => {
+test("a title that starts with an unclosed opener keeps the word-boundary cut", () => {
+  const stem = `(${"a".repeat(50)}`;
+  const title = `${stem} ${"z".repeat(80)}`;
+  assert.ok(graphemeLength(title) > 110);
+  assert.equal(headlineFor(title), stem);
+
+  const quoted = `\u201E${"a".repeat(40)}`;
+  const quotedTitle = `${quoted} ${"z".repeat(90)}`;
+  assert.ok(graphemeLength(quotedTitle) > 110);
+  assert.equal(headlineFor(quotedTitle), quoted);
+});
+
+test("every built JSON-LD article headline is at most 110 graphemes", () => {
   const root = path.join(__dirname, "..");
   const listed = execFileSync("git", ["ls-files", "-z", "--", "*.html"], {
     cwd: root,
@@ -356,7 +384,7 @@ test("every built JSON-LD article headline is at most 110 characters", () => {
     const length = graphemeLength(item.headline);
     assert.ok(
       length <= 110,
-      `${item.rel} headline has ${length} characters: ${item.headline}`
+      `${item.rel} headline has ${length} graphemes: ${item.headline}`
     );
   }
 

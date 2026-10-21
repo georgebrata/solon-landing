@@ -150,12 +150,30 @@ const DANGLING_HEADLINE_WORDS = new Set([
   "al",
   "ale",
   "sau",
+  "si",
+  "or",
+  "ori",
 ]);
-const HEADLINE_OPENERS = new Set(["(", "[", "{"]);
+const HEADLINE_ABBREVIATIONS = new Set([
+  "nr",
+  "art",
+  "alin",
+  "lit",
+  "etc",
+  "pct",
+  "ed",
+  "vol",
+  "cf",
+  "pag",
+  "cap",
+  "sec",
+]);
+const HEADLINE_OPENERS = new Set(["(", "[", "{", "\u201E"]);
 const HEADLINE_CLOSERS = new Map([
   [")", "("],
   ["]", "["],
   ["}", "{"],
+  ["\u201D", "\u201E"],
 ]);
 
 /**
@@ -188,7 +206,21 @@ const lastWordRange = (parts) => {
 };
 
 /**
- * Index of the earliest `(` `[` `{` that has no matching closer, or -1.
+ * True when a trailing period belongs to an abbreviation such as "nr." or "art.".
+ * @param {string[]} parts
+ * @returns {boolean}
+ */
+const endsWithAbbreviation = (parts) => {
+  if (parts[parts.length - 1] !== ".") return false;
+  const stem = parts.slice(0, -1);
+  const range = lastWordRange(stem);
+  const word = stem.slice(range.start, range.end).join("").toLocaleLowerCase("ro");
+  return HEADLINE_ABBREVIATIONS.has(word);
+};
+
+/**
+ * Index of the earliest `(` `[` `{` `„` that has no matching closer, or -1.
+ * `„` closes with `”`.
  * @param {string[]} parts
  * @returns {number}
  */
@@ -216,6 +248,7 @@ const cleanCutHeadline = (parts) => {
   for (;;) {
     let next = trimEndGraphemes(kept);
     while (next.length && TRAILING_HEADLINE_PUNCTUATION.has(next[next.length - 1])) {
+      if (endsWithAbbreviation(next)) break;
       next = next.slice(0, -1);
     }
     next = trimEndGraphemes(next);
@@ -257,12 +290,14 @@ const cutGraphemes = (text, limit) => {
 };
 
 /**
- * Article headline of at most 110 characters.
+ * Article headline of at most 110 graphemes (user-perceived characters).
  * A fitting seo_title is used whole. Otherwise the title is cut on a grapheme
  * boundary (the last whitespace inside the limit, or mid-word when there is
  * no space), with no ellipsis. Emoji and surrogate pairs stay whole. The cut
  * then drops trailing punctuation, short dangling words, and any phrase that
- * would leave a parenthesis or bracket unclosed.
+ * would leave a parenthesis, bracket, or Romanian quote unclosed. A period on
+ * an abbreviation such as "nr." stays. When that cleanup would leave the
+ * headline empty, the raw word-boundary cut is kept.
  * @param {object} frontmatter Post front-matter (`title`, optional `seo_title`).
  * @returns {string}
  */
@@ -271,7 +306,8 @@ const articleHeadline = (frontmatter) => {
   if (graphemesOf(title).length <= HEADLINE_LIMIT) return title;
   const seoTitle = typeof frontmatter.seo_title === "string" ? frontmatter.seo_title.trim() : "";
   if (seoTitle && graphemesOf(seoTitle).length <= HEADLINE_LIMIT) return seoTitle;
-  return cleanCutHeadline(cutGraphemes(title, HEADLINE_LIMIT));
+  const cut = cutGraphemes(title, HEADLINE_LIMIT);
+  return cleanCutHeadline(cut) || cut.join("").trim();
 };
 
 /**

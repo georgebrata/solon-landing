@@ -9,3 +9,5 @@
 /package-lock.json @georgebrata
 /.github/CODEOWNERS @georgebrata
 /tests/html-validate.test.js @georgebrata
+/scripts/json-ld.js @georgebrata
+/tests/json-ld-injection.test.js @georgebrata
