@@ -66,12 +66,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
-      - name: Install html-validate
-        run: npm install -g html-validate
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Validate root index.html
-        run: html-validate --config '{"extends":["html-validate:recommended"],"rules":{"no-trailing-whitespace":"off","void-style":"off"}}' index.html || true
+      - name: Fetch main for the baseline ratchet
+        run: git fetch --depth=1 origin main
+
+      - name: Validate served HTML
+        run: npm run validate:html
 
       - name: Check sitemap structure
         run: |

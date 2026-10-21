@@ -16,6 +16,35 @@ const { applyPostJsonLd } = require('./json-ld');
 const replaceToken = (template, token, value) =>
   template.replace(new RegExp(`\\{\\{${token}\\}\\}`, "g"), () => String(value));
 
+const DOCUMENT_TITLE_SUFFIX = " | SOLON Blog";
+const DOCUMENT_TITLE_LIMIT = 70;
+
+/**
+ * Warn when the document title would fail the long-title rule. The build still
+ * writes the page. The HTML gate rejects a title over 70 characters.
+ * @param {string} slug Post slug.
+ * @param {string} documentTitle Frontmatter title, or seo_title when that is set.
+ * @returns {void}
+ */
+const warnIfDocumentTitleExceedsLimit = (slug, documentTitle) => {
+  const titled = `${documentTitle}${DOCUMENT_TITLE_SUFFIX}`;
+  if (titled.length > DOCUMENT_TITLE_LIMIT) {
+    console.warn(
+      `::warning::blog/${slug}: document title is ${titled.length} characters (limit ${DOCUMENT_TITLE_LIMIT}). Shorten title or set seo_title.`
+    );
+  }
+};
+
+/**
+ * Head title. An empty seo_title falls back to the visible title.
+ * @param {object} frontmatter Parsed front matter.
+ * @returns {string}
+ */
+const documentTitleFrom = (frontmatter) => {
+  const seoTitle = typeof frontmatter.seo_title === "string" ? frontmatter.seo_title.trim() : "";
+  return seoTitle || String(frontmatter.title || "");
+};
+
 const POSTS_DIR = path.join(__dirname, '../blog/posts');
 const OUTPUT_DIR = path.join(__dirname, '../blog');
 const TEMPLATES_DIR = path.join(__dirname, '../templates');
@@ -129,7 +158,12 @@ const generatePostHTML = (post, posts, marked) => {
   const { frontmatter, content } = post;
   const parsed = marked.parse(content)
     // Keep only one document H1 (the template's .entry-title).
-    .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+    .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '')
+    // marked emits presentational align="left" on every GFM cell. Bootstrap
+    // already inherits start alignment, so dropping the attribute does not
+    // move the text. Boolean attributes are written without a value.
+    .replace(/\salign="left"/g, "")
+    .replace(/\sdisabled=""/g, " disabled");
   const pageUrl = `https://solon.agency/blog/${frontmatter.slug}/`;
   const { htmlContent, headJsonLd } = applyPostJsonLd(parsed, frontmatter, pageUrl);
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
@@ -145,8 +179,11 @@ const generatePostHTML = (post, posts, marked) => {
   postHtml = replaceToken(postHtml, 'related_posts_html', relatedPostsHtml);
   postHtml = replaceToken(postHtml, 'content', htmlContent);
 
+  const documentTitle = documentTitleFrom(frontmatter);
+  warnIfDocumentTitleExceedsLimit(frontmatter.slug, documentTitle);
+
   let page = layoutTemplate;
-  page = replaceToken(page, 'title', frontmatter.title);
+  page = replaceToken(page, 'seo_title', documentTitle);
   page = replaceToken(page, 'description', frontmatter.description);
   page = replaceToken(page, 'slug', frontmatter.slug);
   page = replaceToken(page, 'slugWithTrailingSlash', `${frontmatter.slug}/`);
@@ -199,7 +236,7 @@ const generateListHTML = (posts) => {
       .filter(Boolean)
       .join('\n');
     const tagsBlock = tagLinks
-      ? `                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+      ? `                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
 ${tagLinks}
                     </div>`
       : '';
@@ -232,7 +269,8 @@ ${tagsBlock}
     + replaceToken(replaceToken(listTemplate, 'filters_html', filtersHtml), 'posts_html', postsHtml);
 
   const blogIndexTitle = 'Blog marketing și digitalizare pentru avocați | SOLON';
-  let page = layoutTemplate.replaceAll('{{title}} | SOLON Blog', blogIndexTitle);
+  let page = layoutTemplate.replaceAll('{{seo_title}} | SOLON Blog', blogIndexTitle);
+  page = replaceToken(page, 'seo_title', '');
   page = replaceToken(page, 'title', '');
   page = replaceToken(page, 'description', 'SOLON Blog LegalTech - digitalizare juridică, unelte digitale și productivitate pentru practica avocaturii moderne');
   page = replaceToken(page, 'slug', '');
@@ -257,6 +295,7 @@ const POSTS_JSON_OMIT = new Set([
   'schema_extra',
   'publish_date',
   'meta_description',
+  'seo_title',
 ]);
 
 /** Compile markdown posts into static HTML under /blog/. */

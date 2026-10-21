@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "shrink": "node scripts/validate-html.js --shrink drops a recorded occurrence when the page no longer has that finding. It refuses to add an occurrence or raise a count. The check fails when a scanned page has a finding this file does not list, and when a listed finding is gone: a fixed error does not free a slot.",
+  "excludedFiles": [],
+  "rules": {
+    "prefer-native-element": "Two comparison tables use div.table-wrap with role=region, the scrollable-region pattern this repo requires. A native section would inherit section { padding: 60px 0; overflow: hidden; } and change the layout."
+  },
+  "files": {
+    "blog/mentenanta-site-avocati/index.html": {
+      "prefer-native-element": [
+        "#blog-post > div > div > div > article > div > div\nPrefer to use the native <section> element\nrole=\"region\""
+      ]
+    },
+    "blog/microsoft-copilot-pentru-avocati/index.html": {
+      "prefer-native-element": [
+        "#blog-post > div > div > div > article > div > div\nPrefer to use the native <section> element\nrole=\"region\""
+      ]
+    }
+  }
+}

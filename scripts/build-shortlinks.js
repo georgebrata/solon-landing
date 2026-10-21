@@ -473,7 +473,7 @@ function renderPage(link, hitEndpoint) {
   const dest = htmlEscape(link.destination);
   const hit = typeof hitEndpoint === "string" ? hitEndpoint : "";
   const html = `<!DOCTYPE html>
-<html lang="ro" style="background:#03170C">
+<html lang="ro">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

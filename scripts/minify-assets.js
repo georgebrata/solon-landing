@@ -71,13 +71,15 @@ const minifyStyleMerged = function minifyStyleMerged() {
   const cssDir = path.join(root, "assets/css");
   const togglePath = path.join(cssDir, "toggle.css");
   const stylePath = path.join(cssDir, "style.css");
+  const presentationalPath = path.join(cssDir, "presentational.css");
   const toggleCss = fs.readFileSync(togglePath, "utf8");
+  const presentationalCss = fs.readFileSync(presentationalPath, "utf8");
   let styleCss = fs.readFileSync(stylePath, "utf8");
   styleCss = styleCss.replace(
     /@import\s+url\(['"]?\.\/toggle\.css['"]?\)\s*;?/i,
     ""
   );
-  const input = `${toggleCss}\n${styleCss}`;
+  const input = `${toggleCss}\n${styleCss}\n${presentationalCss}`;
   const out = new CleanCSS({
     level: 2,
     relativeTo: cssDir,
@@ -89,7 +91,7 @@ const minifyStyleMerged = function minifyStyleMerged() {
   const outPath = path.join(cssDir, "style.min.css");
   fs.writeFileSync(outPath, out.styles);
   console.log(
-    `OK style.css (+ toggle.css) → style.min.css (${input.length} → ${out.styles.length} bytes)`
+    `OK style.css (+ toggle.css + presentational.css) → style.min.css (${input.length} → ${out.styles.length} bytes)`
   );
   return true;
 };

@@ -1,5 +1,6 @@
 ---
 title: "Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT"
+seo_title: "Date structurate: cum te înțeleg Google și ChatGPT"
 date: "2026-10-21"
 date_modified: "2026-10-21"
 slug: "date-structurate-schema-org-pentru-avocati"

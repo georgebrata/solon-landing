@@ -1,5 +1,6 @@
 ---
 title: "Mentenanță site pentru avocați: ce include, cât de des se face și ce riscuri apar fără ea"
+seo_title: "Mentenanța website-ului tău: ce include și cât de des"
 date: "2026-10-12"
 date_modified: "2026-10-12"
 slug: "mentenanta-site-avocati"
@@ -100,9 +101,9 @@ Mentenanța nu înseamnă redesign și nici scrierea de conținut nou. Este part
 
 Tabelul de mai jos este un punct de plecare pentru un site de prezentare construit pe un CMS (de exemplu WordPress). Un site static are mai puține componente de actualizat, dar verificările de domeniu, SSL, formulare și conformitate rămân valabile.
 
-<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel: frecvența verificărilor de mentenanță pentru un site de cabinet">
+<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel: frecvența verificărilor de mentenanță pentru un website de cabinet">
 <table>
-<caption class="visually-hidden">Frecvența verificărilor de mentenanță pentru un site de cabinet de avocatură</caption>
+<caption class="visually-hidden">Frecvența verificărilor de mentenanță pentru un website de cabinet de avocatură</caption>
 <thead>
 <tr>
 <th scope="col">Frecvență</th>

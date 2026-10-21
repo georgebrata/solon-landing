@@ -131,6 +131,193 @@ const buildJsonLdTag = (jsonLdValue, pageUrl) => {
   return `<script type="application/ld+json">\n${body}\n</script>`;
 };
 
+const HEADLINE_LIMIT = 110;
+const GRAPHEME_SEGMENTER = new Intl.Segmenter("ro", { granularity: "grapheme" });
+const TRAILING_HEADLINE_PUNCTUATION = new Set([":", ",", ";", ".", "-", "\u2013", "\u2014"]);
+const DANGLING_HEADLINE_WORDS = new Set([
+  "și",
+  "și/sau",
+  "de",
+  "la",
+  "în",
+  "pe",
+  "cu",
+  "pentru",
+  "din",
+  "a",
+  "o",
+  "un",
+  "al",
+  "ale",
+  "sau",
+  "si",
+  "or",
+]);
+const HEADLINE_ABBREVIATIONS = new Set([
+  "nr",
+  "art",
+  "alin",
+  "lit",
+  "etc",
+  "pct",
+  "ed",
+  "vol",
+  "cf",
+  "pag",
+  "cap",
+  "sec",
+]);
+const HEADLINE_OPENERS = new Set(["(", "[", "{", "\u201E", "\u201C"]);
+
+/**
+ * True when `closer` ends the quote or bracket opened by `opener`.
+ * Romanian `„` closes with `”` or `“`. A `“` that does not close `„` is an
+ * English opener and closes with `”`.
+ * @param {string} closer
+ * @param {string} opener
+ * @returns {boolean}
+ */
+const headlineCloserMatches = (closer, opener) =>
+  (closer === ")" && opener === "(")
+  || (closer === "]" && opener === "[")
+  || (closer === "}" && opener === "{")
+  || ((closer === "\u201C" || closer === "\u201D") && opener === "\u201E")
+  || (closer === "\u201D" && opener === "\u201C");
+
+/**
+ * Extended grapheme clusters, so an emoji or a combining mark stays one character.
+ * @param {string} text
+ * @returns {string[]}
+ */
+const graphemesOf = (text) => [...GRAPHEME_SEGMENTER.segment(text)].map((part) => part.segment);
+
+/**
+ * @param {string[]} parts
+ * @returns {string[]}
+ */
+const trimEndGraphemes = (parts) => {
+  let end = parts.length;
+  while (end > 0 && parts[end - 1].trim() === "") end -= 1;
+  return parts.slice(0, end);
+};
+
+/**
+ * @param {string[]} parts
+ * @returns {{ start: number, end: number }}
+ */
+const lastWordRange = (parts) => {
+  let end = parts.length;
+  while (end > 0 && parts[end - 1].trim() === "") end -= 1;
+  let start = end;
+  while (start > 0 && parts[start - 1].trim() !== "") start -= 1;
+  return { start, end };
+};
+
+/**
+ * True when a trailing period belongs to an abbreviation such as "nr." or "art.".
+ * @param {string[]} parts
+ * @returns {boolean}
+ */
+const endsWithAbbreviation = (parts) => {
+  if (parts[parts.length - 1] !== ".") return false;
+  const stem = parts.slice(0, -1);
+  const range = lastWordRange(stem);
+  const word = stem.slice(range.start, range.end).join("").toLocaleLowerCase("ro");
+  return HEADLINE_ABBREVIATIONS.has(word);
+};
+
+/**
+ * Index of the earliest unclosed `(` `[` `{` `„` or English `“`, or -1.
+ * `„` closes with `”` or `“`. A `“` that is not closing `„` is an opener.
+ * @param {string[]} parts
+ * @returns {number}
+ */
+const earliestUnclosedOpener = (parts) => {
+  const stack = [];
+  for (let index = 0; index < parts.length; index += 1) {
+    const grapheme = parts[index];
+    const top = stack.length ? parts[stack[stack.length - 1]] : "";
+    if (top && headlineCloserMatches(grapheme, top)) {
+      stack.pop();
+    } else if (HEADLINE_OPENERS.has(grapheme)) {
+      stack.push(index);
+    }
+  }
+  return stack.length ? stack[0] : -1;
+};
+
+/**
+ * Drop a ragged ending left by the length cut.
+ * @param {string[]} parts Graphemes inside the limit, possibly ending mid-phrase.
+ * @returns {string}
+ */
+const cleanCutHeadline = (parts) => {
+  let kept = parts;
+  for (;;) {
+    let next = trimEndGraphemes(kept);
+    while (next.length && TRAILING_HEADLINE_PUNCTUATION.has(next[next.length - 1])) {
+      if (endsWithAbbreviation(next)) break;
+      next = next.slice(0, -1);
+    }
+    next = trimEndGraphemes(next);
+
+    const range = lastWordRange(next);
+    const word = next.slice(range.start, range.end).join("");
+    if (word && DANGLING_HEADLINE_WORDS.has(word.toLocaleLowerCase("ro"))) {
+      kept = next.slice(0, range.start);
+      continue;
+    }
+
+    const opener = earliestUnclosedOpener(next);
+    if (opener >= 0) {
+      kept = next.slice(0, opener);
+      continue;
+    }
+
+    return next.join("").trim();
+  }
+};
+
+/**
+ * Cut to `limit` graphemes. Prefer the last whitespace inside the limit.
+ * A title with no space is cut mid-word, still on a grapheme boundary.
+ * @param {string} text
+ * @param {number} limit
+ * @returns {string[]}
+ */
+const cutGraphemes = (text, limit) => {
+  const graphemes = graphemesOf(text);
+  if (graphemes.length <= limit) return graphemes;
+  if (graphemes[limit].trim() === "") return graphemes.slice(0, limit);
+
+  let lastSpace = -1;
+  for (let index = 0; index < limit; index += 1) {
+    if (graphemes[index].trim() === "") lastSpace = index;
+  }
+  return graphemes.slice(0, lastSpace > 0 ? lastSpace : limit);
+};
+
+/**
+ * Article headline of at most 110 graphemes (user-perceived characters).
+ * A fitting seo_title is used whole. Otherwise the title is cut on a grapheme
+ * boundary (the last whitespace inside the limit, or mid-word when there is
+ * no space), with no ellipsis. Emoji and surrogate pairs stay whole. The cut
+ * then drops trailing punctuation, short dangling words, and any phrase that
+ * would leave a parenthesis, bracket, Romanian quote, or English quote unclosed. A period on
+ * an abbreviation such as "nr." stays. When that cleanup would leave the
+ * headline empty, the raw word-boundary cut is kept.
+ * @param {object} frontmatter Post front-matter (`title`, optional `seo_title`).
+ * @returns {string}
+ */
+const articleHeadline = (frontmatter) => {
+  const title = String(frontmatter.title || "").trim();
+  if (graphemesOf(title).length <= HEADLINE_LIMIT) return title;
+  const seoTitle = typeof frontmatter.seo_title === "string" ? frontmatter.seo_title.trim() : "";
+  if (seoTitle && graphemesOf(seoTitle).length <= HEADLINE_LIMIT) return seoTitle;
+  const cut = cutGraphemes(title, HEADLINE_LIMIT);
+  return cleanCutHeadline(cut) || cut.join("").trim();
+};
+
 /**
  * Article used when a post has no JSON-LD of its own.
  * @param {object} frontmatter Post front-matter (title, description, date).
@@ -141,7 +328,7 @@ const defaultArticleDocument = (frontmatter, pageUrl) => {
   const document = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: frontmatter.title,
+    headline: articleHeadline(frontmatter),
     description: frontmatter.description,
     inLanguage: "ro-RO",
     url: pageUrl,

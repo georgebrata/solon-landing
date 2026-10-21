@@ -521,7 +521,7 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   );
   assert.ok(html.includes('<meta name="robots" content="noindex,nofollow">'));
   assert.ok(html.includes('<meta name="referrer" content="no-referrer">'));
-  assert.ok(html.includes('<html lang="ro" style="background:#03170C">'));
+  assert.ok(html.includes('<html lang="ro">'));
   assert.ok(html.includes("<title>SOLON</title>"));
   assert.ok(html.includes('content="0;url=https://example.com/a?b=1"'));
   assert.equal(html.includes("Continuă"), false);
@@ -539,7 +539,8 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   assert.match(body, /<a class="w" href="https:\/\/example\.com\/a\?b=1" aria-label="Mergi la pagina destinație">SOLON<\/a>/);
   assert.equal(body.includes("<noscript>"), false);
   assert.ok(html.includes('<noscript><meta http-equiv="refresh"'));
-  assert.ok(html.includes('style="background:#03170C"'));
+  assert.equal(html.includes('style="background:#03170C"'), false);
+  assert.match(html, /html\{[^}]*background:var\(--primary\)/);
   assert.ok(html.includes("--primary:#03170C"));
   assert.ok(html.includes("--secondary:#3E5C76"));
   assert.ok(html.includes("--tertiary:#F0EBD8"));

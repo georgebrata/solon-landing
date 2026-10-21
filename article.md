@@ -102,6 +102,7 @@ tags: ["[instrument]", "avocați", "productivitate", "[topic1]", "[topic2]"]
 ### Language and tone
 
 - All content in **Romanian**, with correct diacritics (ă, â, î, ș, ț).
+- Write **website**, not **site**. George approved an exception on Oct 21, 2026 for the search keyword, and it applies only to these two `seo_title` values: `creare-site-avocati` (`Creare site pentru avocați: ghid pas cu pas`) and `cat-costa-un-site-de-avocat-in-2026` (`Cât costă un site de avocat în 2026 și de ce depinde`). Their H1 and slug stay unchanged. Do not use **site** in any other field or post.
 - Tone: professional, direct, practical. No marketing fluff.
 - Address the reader as "tu" (informal singular), not "dumneavoastră".
 - Be **correct, precise and specific**: name exact menu paths, keyboard shortcuts, setting names, version-specific features. Avoid vague statements like "you can configure various options".

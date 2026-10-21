@@ -52,7 +52,7 @@
     <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="../assets/css/style.min.css?v=17b7539e8d" rel="stylesheet">
+    <link href="../assets/css/style.min.css?v=7fc698a786" rel="stylesheet">
 
         <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
   <script src="/assets/js/consent.min.js?v=67e1576257"></script>
@@ -60,7 +60,6 @@
 <!-- counter.dev -->
   <script type="text/plain" data-consent-category="analytics" src="https://cdn.counter.dev/script.js" data-id="ff166071-96fa-4244-9aac-e4e84fc8ccf7"
   data-utcoffset="2"></script>
-
 
     <!--metricool-->
     <script type="text/plain" data-consent-category="analytics" src="/assets/js/metricool-init.min.js?v=18ff061002" data-metricool-hash="5eff58c72e852f80d27f8f1735299845"></script>
@@ -78,6 +77,11 @@
     <!-- clarity -->
     <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
     <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
+  <style>
+    #hero canvas {
+      position: absolute !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -117,15 +121,13 @@
 
     </section><!-- End Hero -->
 
-    <main style="display: flex; justify-content:center; margin: 2rem;">
+    <main class="consult-main">
         <!-- Google Calendar Appointment Scheduling begin -->
         <iframe class="calendar"
             title="Programare întâlnire cu SOLON - calendar Google"
-            src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0nT1yiG8eCAvdU3RBJGxy94-fxOxKUwIAPbZe91XWI1wN6wgVSrpC0PGkc1m7pYQCfMqj49ifS?gv=true"
-            style="border: 0" width="80%" height="1250" frameborder="0" style="margin: 0 auto;"></iframe>
+            src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0nT1yiG8eCAvdU3RBJGxy94-fxOxKUwIAPbZe91XWI1wN6wgVSrpC0PGkc1m7pYQCfMqj49ifS?gv=true" height="1250"></iframe>
         <!-- end Google Calendar Appointment Scheduling -->
     </main>
-
 
     <!-- ======= Footer ======= -->
     <footer id="footer">
@@ -163,7 +165,7 @@
                         <h3>SOLON</h3>
                         <p>
                             <!-- <strong>Telefon:</strong>  -->
-<a class="color-primary" href="tel:+40774431127" title="George">0774 431 127</a><br>
+<a class="color-primary" href="tel:+40774431127" title="George">0774&nbsp;431&nbsp;127</a><br>
                             <!-- <strong>Email:</strong>  -->
                             <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
                         </p>
@@ -191,7 +193,7 @@
         <div class="container footer-bottom clearfix">
             <div class="copyright">
                 <!-- &copy; Copyright <strong><span>SOLON</span></strong>. Toate drepturile rezervate. -->
-                <img alt="Logo SOLON, agenția digitală pentru avocați" src="../assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">                
+                <img alt="Logo SOLON, agenția digitală pentru avocați" src="../assets/img/solon-logo.png" class="copyright__logo" height="15">                
         <b>SOLON</b> &copy; <span data-current-year></span>
             </div>
             <div class="credits">
@@ -225,12 +227,7 @@
         const container = document.querySelector('.fireworks')
         const fireworks = new Fireworks.default(container)
         fireworks.start()
-    </script>
-    <style>
-        #hero canvas {
-            position: absolute !important;
-        }
-    </style> -->
+    </script>-->
 </body>
 
 </html>

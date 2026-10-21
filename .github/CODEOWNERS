@@ -1,0 +1,13 @@
+# HTML validation gate.
+# Branch protection must enable "Require review from Code Owners"
+# before these entries request a review.
+/scripts/validate-html.js @georgebrata
+/.htmlvalidate.json @georgebrata
+/data/html-validate-baseline.json @georgebrata
+/.github/workflows/ @georgebrata
+/package.json @georgebrata
+/package-lock.json @georgebrata
+/.github/CODEOWNERS @georgebrata
+/tests/html-validate.test.js @georgebrata
+/scripts/json-ld.js @georgebrata
+/tests/json-ld-injection.test.js @georgebrata

@@ -47,8 +47,8 @@
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=e8c36e8eb7" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="../../assets/css/style.min.css?v=17b7539e8d" rel="stylesheet">
-  <link href="../../assets/css/blog.css?v=ea588ee21e" rel="stylesheet">
+  <link href="../../assets/css/style.min.css?v=7fc698a786" rel="stylesheet">
+  <link href="../../assets/css/blog.css?v=28a02f720e" rel="stylesheet">
 
   <style>
     /* Ensure the header is visible on blog pages */
@@ -262,29 +262,29 @@ Generează un tabel markdown cu 4 coloane:
 <table>
 <thead>
 <tr>
-<th align="left">Clauză / Articol</th>
-<th align="left">Text Versiunea A</th>
-<th align="left">Text Versiunea B</th>
-<th align="left">Impact juridic</th>
+<th>Clauză / Articol</th>
+<th>Text Versiunea A</th>
+<th>Text Versiunea B</th>
+<th>Impact juridic</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><strong>Art. 4.2 - Penalități</strong></td>
-<td align="left">0,05% pe zi de întârziere</td>
-<td align="left">0,1% pe zi de întârziere</td>
-<td align="left">Dublarea sarcinii financiare a debitorului</td>
+<td><strong>Art. 4.2 - Penalități</strong></td>
+<td>0,05% pe zi de întârziere</td>
+<td>0,1% pe zi de întârziere</td>
+<td>Dublarea sarcinii financiare a debitorului</td>
 </tr>
 <tr>
-<td align="left"><strong>Art. 8.1 - Jurisdicție</strong></td>
-<td align="left">Judecătoria Sector 1</td>
-<td align="left">Tribunalul București</td>
-<td align="left">Schimbarea competenței materiale și teritoriale</td>
+<td><strong>Art. 8.1 - Jurisdicție</strong></td>
+<td>Judecătoria Sector 1</td>
+<td>Tribunalul București</td>
+<td>Schimbarea competenței materiale și teritoriale</td>
 </tr>
 <tr>
-<td align="left"><strong>Art. 12 - Reziliere</strong></td>
-<td align="left">Preaviz 30 de zile</td>
-<td align="left">Preaviz 10 zile</td>
-<td align="left">Reducerea intervalului de remediere a culpei</td>
+<td><strong>Art. 12 - Reziliere</strong></td>
+<td>Preaviz 30 de zile</td>
+<td>Preaviz 10 zile</td>
+<td>Reducerea intervalului de remediere a culpei</td>
 </tr>
 </tbody></table>
 <h2>9. Template-uri gata de folosit pentru cereri, întâmpinări și analize</h2>
@@ -323,34 +323,34 @@ Format: Tabel cu Clauza suspectă, Articolul din lege încălcat, Argumentul de 
 <table>
 <thead>
 <tr>
-<th align="left">Regulă de securitate</th>
-<th align="left">Acțiune practică în prompt</th>
+<th>Regulă de securitate</th>
+<th>Acțiune practică în prompt</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><strong>Anonimizarea datelor</strong></td>
-<td align="left">Înlocuiește numele reale, CNP-urile și adresele cu pseudonime (ex. <em>[Reclamant X]</em>, <em>[Societatea Y]</em>) înainte de trimiterea către servicii cloud.</td>
+<td><strong>Anonimizarea datelor</strong></td>
+<td>Înlocuiește numele reale, CNP-urile și adresele cu pseudonime (ex. <em>[Reclamant X]</em>, <em>[Societatea Y]</em>) înainte de trimiterea către servicii cloud.</td>
 </tr>
 <tr>
-<td align="left"><strong>Izolarea locală</strong></td>
-<td align="left">Folosește modele AI locale (Ollama / AnythingLLM) când lucrezi cu documente confidențiale din dosare penale sau comerciale sensibile.</td>
+<td><strong>Izolarea locală</strong></td>
+<td>Folosește modele AI locale (Ollama / AnythingLLM) când lucrezi cu documente confidențiale din dosare penale sau comerciale sensibile.</td>
 </tr>
 <tr>
-<td align="left"><strong>Fără date financiare brute</strong></td>
-<td align="left">Înlocuiește sumele exacte sau conturile bancare cu valori generice dacă nu sunt relevante pentru analiza juridică.</td>
+<td><strong>Fără date financiare brute</strong></td>
+<td>Înlocuiește sumele exacte sau conturile bancare cu valori generice dacă nu sunt relevante pentru analiza juridică.</td>
 </tr>
 </tbody></table>
 <p>Respectarea acestor reguli previne orice scurgere accidentală de informații confidențiale.</p>
 <h2>12. Checklist operațional pentru formularea prompturilor juridice</h2>
 <p>Înainte de a trimite un prompt către asistentul AI, parcurge această listă de verificare rapidă:</p>
 <ol>
-<li><input disabled="" type="checkbox"> <strong>Ai atribuit un rol clar?</strong> (<em>„Ești un avocat specializat în...”</em>)</li>
-<li><input disabled="" type="checkbox"> <strong>Obiectivul este specific și fără ambiguități?</strong></li>
-<li><input disabled="" type="checkbox"> <strong>Ai delimitat clar textul de analizat de instrucțiunile tale?</strong></li>
-<li><input disabled="" type="checkbox"> <strong>Ai adăugat restricția de a nu inventa date din afara textului?</strong></li>
-<li><input disabled="" type="checkbox"> <strong>Ai cerut un format de ieșire structurat (tabel/listă)?</strong></li>
-<li><input disabled="" type="checkbox"> <strong>Ai anonimizat datele cu caracter personal sensibile?</strong></li>
-<li><input disabled="" type="checkbox"> <strong>Ai specificat că dorești răspunsul în limba română cu diacritice?</strong></li>
+<li><input disabled type="checkbox"> <strong>Ai atribuit un rol clar?</strong> (<em>„Ești un avocat specializat în...”</em>)</li>
+<li><input disabled type="checkbox"> <strong>Obiectivul este specific și fără ambiguități?</strong></li>
+<li><input disabled type="checkbox"> <strong>Ai delimitat clar textul de analizat de instrucțiunile tale?</strong></li>
+<li><input disabled type="checkbox"> <strong>Ai adăugat restricția de a nu inventa date din afara textului?</strong></li>
+<li><input disabled type="checkbox"> <strong>Ai cerut un format de ieșire structurat (tabel/listă)?</strong></li>
+<li><input disabled type="checkbox"> <strong>Ai anonimizat datele cu caracter personal sensibile?</strong></li>
+<li><input disabled type="checkbox"> <strong>Ai specificat că dorești răspunsul în limba română cu diacritice?</strong></li>
 </ol>
 <h2>Concluzie</h2>
 <p>Masteratul tehnicilor de prompt engineering transformă inteligența artificială dintr-o curiozitate tehnologică într-un instrument de lucru de bază pentru cabinetul tău. Formularea structurată, utilizarea exemplelor de calitate și aplicarea tehnicilor de raționament secvențial îți permit să obții analize clare și drafturi de calitate în timp record.</p>
@@ -420,7 +420,7 @@ Format: Tabel cu Clauza suspectă, Articolul din lege încălcat, Argumentul de 
 
     <div class="blog-services">
       <div class="section-title text-start">
-        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+        <h2>CE SERVICII DIGITALE OFERĂ SOLON?</h2>
       </div>
       <div class="row gy-4">
         <div class="col-12 col-md-6">
@@ -481,11 +481,11 @@ Format: Tabel cu Clauza suspectă, Articolul din lege încălcat, Argumentul de 
                     <label for="solon-newsletter-email" class="form-label visually-hidden">Adresă de email pentru
                     newsletter</label>
                     <input type="email" class="required email"
-                    value="" autocomplete="email" name="Email" required="required" id="solon-newsletter-email">
+                    value="" autocomplete="email" name="Email" required id="solon-newsletter-email">
                   </div>
                   <p class="solon-form-note">Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
-                  <div class="clear"><input type="submit" id="solon-newsletter-submit"
-                  class="button" value="Subscribe"></div>
+                  <div class="clear"><button type="submit" id="solon-newsletter-submit"
+                  class="button">Subscribe</button></div>
                 </form>
                 <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
               </div>
@@ -536,7 +536,7 @@ Format: Tabel cu Clauza suspectă, Articolul din lege încălcat, Argumentul de 
             <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
             <h3>SOLON</h3>
             <p>
-              <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
+              <a class="color-primary" href="tel:+40774431127">0774&nbsp;431&nbsp;127</a><br>
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
             </p>
           </div>

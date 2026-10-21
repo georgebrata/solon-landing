@@ -1,5 +1,6 @@
 ---
 title: "Google Business Profile pentru avocați: checklist complet în 12 pași"
+seo_title: "Google Business Profile pentru cabinetul tău, în 12 pași"
 date: "2026-10-11"
 slug: "google-business-profile-avocati"
 description: "Cum îți faci profil Google Business ca avocat: checklist în 12 pași, de la categorie și adresă la verificare și recenzii, cu atenție la regulile UNBR."

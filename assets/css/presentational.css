@@ -1,0 +1,50 @@
+/* Values previously set with inline styles.
+   Case-study .ald-* rules live in style.css (including .ald-jump and .ald-plan-silver). */
+
+/* #servicii padding that is not the help band. A class beats section { padding: 60px 0 }. */
+.services-band {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.services-band-top {
+  padding-top: 5rem;
+}
+
+.why-us-photo {
+  background-image: url("../img/why-us.webp");
+}
+
+.buy-btn-min {
+  min-width: 200px;
+}
+
+/* Beats .pricing .row { padding-top: 40px }. The old inline padding: 0 cleared that top.
+   !important keeps the win after the minifier shortens the selector. */
+.pricing .row.pricing-row-flush {
+  padding: 0 !important;
+}
+
+.consult-main {
+  display: flex;
+  justify-content: center;
+  margin: 2rem;
+}
+
+.case-subtitle {
+  min-width: 150px;
+}
+
+/* The list is a direct child of .row.gy-4, so .row > * adds a 1.5rem top margin.
+   The old inline margin-top: 0 cleared that gutter. */
+.case-list-flush {
+  margin-top: 0;
+}
+
+#portfolio-title .client-logo.case-logo-lift {
+  margin-top: -50px !important;
+}
+
+.h4-spacer {
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

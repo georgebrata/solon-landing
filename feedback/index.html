@@ -52,7 +52,7 @@
     <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="../assets/css/style.min.css?v=17b7539e8d" rel="stylesheet">
+    <link href="../assets/css/style.min.css?v=7fc698a786" rel="stylesheet">
 
       <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
   <script src="/assets/js/consent.min.js?v=67e1576257"></script>
@@ -78,6 +78,11 @@
   <!-- clarity -->
     <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
     <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
+  <style>
+    #hero canvas {
+      position: absolute !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -104,7 +109,7 @@
         </div>
     </header><!-- End Header -->
 
-    <main id="main" style="margin-top: 70px;">
+    <main id="main" class="page-main-offset">
         <section id="breadcrumbs" class="breadcrumbs">
             <div class="container">
 
@@ -128,14 +133,13 @@
                     <iframe
                         title="Formular feedback SOLON (Google Forms)"
                         src="https://docs.google.com/forms/d/e/1FAIpQLScGk_sLoxOYV7O2dwqCaxgZ6lqlTe7NZagVa3zjj-Pk5PI9nw/viewform?embedded=true"
-                        width="800" height="7500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                        class="border-0" width="800" height="7500">Loading…</iframe>
                 </div>
             </div>
         </section>
         <!-- End Portfolio Section -->
 
     </main>
-
 
     <!-- ======= Footer ======= -->
     <footer id="footer">
@@ -181,7 +185,7 @@
                         <h3>SOLON</h3>
                         <p>
                             <!-- <strong>Telefon:</strong>  -->
-                            <a class="color-primary" href="tel:+40774431127" title="George">0774 431 127</a><br>
+                            <a class="color-primary" href="tel:+40774431127" title="George">0774&nbsp;431&nbsp;127</a><br>
                             <!-- <strong>Email:</strong>  -->
                             <a class="color-primary" href="mailto:contact@solon.agency"
                                 target="_blank">contact@solon.agency</a><br>
@@ -205,7 +209,7 @@
         <div class="container footer-bottom clearfix">
             <div class="copyright">
                 <!-- &copy; Copyright <strong><span>SOLON</span></strong>. Toate drepturile rezervate. -->
-                <img alt="Logo SOLON, agenția digitală pentru avocați" src="../assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
+                <img alt="Logo SOLON, agenția digitală pentru avocați" src="../assets/img/solon-logo.png" class="copyright__logo" height="15">
                 <b>SOLON</b> &copy; <span data-current-year></span>
             </div>
             <div class="credits">
@@ -239,12 +243,6 @@
         const container = document.querySelector('.fireworks')
         const fireworks = new Fireworks.default(container)
         // fireworks.start()
-    </script>
-    <style>
-        #hero canvas {
-            position: absolute !important;
-        }
-    </style>
-</body>
+    </script></body>
 
 </html>

@@ -1,5 +1,6 @@
 ---
 title: 'Glosar de marketing digital pentru avocați: 30 de termeni explicați simplu'
+seo_title: "Glosar de marketing digital pentru avocați: 30 de termeni"
 date: '2026-10-10'
 slug: glosar-marketing-digital-avocati
 description: 'Glosar pentru avocați: 30 de termeni de marketing digital explicați simplu, de la SEO local, lead și Google Business Profile la schema markup și GEO.'
