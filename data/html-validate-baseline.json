@@ -1,87 +1,77 @@
 {
   "version": 1,
-  "shrink": "node scripts/validate-html.js --shrink lowers a recorded count when the page now has fewer errors. It refuses to add a file or raise a count. The check fails when a scanned page has more errors than this file, or when a page that is not listed here has any error.",
+  "shrink": "node scripts/validate-html.js --shrink drops a recorded occurrence when the page no longer has that finding. It refuses to add an occurrence or raise a count. The check fails when a scanned page has a finding this file does not list, and when a listed finding is gone: a fixed error does not free a slot.",
   "excludedFiles": [
     {
       "file": "studii-de-caz/avocat-dumitrescu-alexandru/index.html",
-      "reason": "PR #94 is editing this case study. The page stays out of the scan until that PR merges, so its error count can change without turning main red. The only edit in this PR is the style.min.css cache-bust query, which the minification check rewrites on every CSS change. Remove this exclusion after #94 merges and fix or baseline whatever is left."
+      "reason": "PR #94 is editing this case study. The page stays out of the scan until that PR merges, so its error count can change without turning main red. The only edit in this PR is the style.min.css cache-bust query, which the minification check rewrites on every CSS change. Remove this exclusion after #94 merges and fix whatever is left."
     }
   ],
   "rules": {
-    "element-permitted-content": "Two case-study service lists nest a ul directly under a ul. Wrapping that list in an li adds a bullet, so the authored structure stays until the page is rewritten.",
-    "empty-heading": "cookies/index.html has an empty h4 between two sections. The heading margin is part of the gap. Filling or removing it is an editorial choice.",
-    "long-title": "These published document titles are longer than 70 characters. Shortening them changes the title shown in search results.",
-    "no-inline-style": "Remaining style attributes are one-off presentation: package colors, case-study spacing, and homepage layout. Repeated patterns (calendar frame, phone-form width, footer logo, hero heights, diagram widths, the blog services heading) now live in CSS.",
+    "long-title": "These published document titles are longer than 70 characters. Shortening them changes the title shown in search results. George's decision on a shorter seo_title is pending, so the eleven entries stay baselined.",
     "prefer-native-element": "Two comparison tables use div.table-wrap with role=region, the scrollable-region pattern this repo requires. A native section would inherit section { padding: 60px 0; overflow: hidden; } and change the layout."
   },
   "files": {
     "blog/avocat-chatgpt-gemini-ai-overviews/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/cat-costa-un-site-de-avocat-in-2026/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/ce-are-voie-avocat-sa-publice-online/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/creare-site-avocati/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/date-structurate-schema-org-pentru-avocati/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/domeniu-email-profesional-cabinet-avocat/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/glosar-marketing-digital-avocati/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/google-business-profile-avocati/index.html": {
-      "long-title": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     },
     "blog/mentenanta-site-avocati/index.html": {
-      "long-title": 1,
-      "prefer-native-element": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ],
+      "prefer-native-element": [
+        "#blog-post > div > div > div > article > div > div\nPrefer to use the native <section> element\nrole=\"region\""
+      ]
     },
     "blog/microsoft-copilot-pentru-avocati/index.html": {
-      "long-title": 1,
-      "prefer-native-element": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ],
+      "prefer-native-element": [
+        "#blog-post > div > div > div > article > div > div\nPrefer to use the native <section> element\nrole=\"region\""
+      ]
     },
     "blog/pagini-arii-de-practica-website-avocat/index.html": {
-      "long-title": 1
-    },
-    "cookies/index.html": {
-      "empty-heading": 1,
-      "no-inline-style": 1
-    },
-    "index.html": {
-      "no-inline-style": 6
-    },
-    "privacy/index.html": {
-      "no-inline-style": 1
-    },
-    "programare-consultanta-gratuita/index.html": {
-      "no-inline-style": 1
-    },
-    "studii-de-caz/avocat-cristian-guritanu/index.html": {
-      "no-inline-style": 7
-    },
-    "studii-de-caz/avocat-sebastian-nagy/index.html": {
-      "element-permitted-content": 1,
-      "no-inline-style": 10
-    },
-    "studii-de-caz/index.html": {
-      "no-inline-style": 1
-    },
-    "studii-de-caz/marinau-si-asociatii/index.html": {
-      "no-inline-style": 10
-    },
-    "studii-de-caz/tslaw/index.html": {
-      "element-permitted-content": 1,
-      "no-inline-style": 15
-    },
-    "terms/index.html": {
-      "no-inline-style": 1
+      "long-title": [
+        "html > head > title\ntitle text cannot be longer than 70 characters\n"
+      ]
     }
   }
 }

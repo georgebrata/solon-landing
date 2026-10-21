@@ -52,7 +52,7 @@
   <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="../assets/css/style.min.css?v=e6ab67fddf" rel="stylesheet">
+  <link href="../assets/css/style.min.css?v=25a7827d8f" rel="stylesheet">
 
     <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
   <script src="/assets/js/consent.min.js?v=67e1576257"></script>
@@ -162,10 +162,11 @@
       <div class="row">
         <div class="col-lg-12 text-center text-lg-start">
           <h3>Vrei să nu te mai contactăm?</h3>
-          <p> Lasa adresa ta de email mai jos și nu te vom mai contacta. </p>
+          <p> Lasă adresa ta de email mai jos și nu te vom mai contacta. </p>
         </div>
         <div class="col-lg-12 cta-btn-container text-center contact-phone">
           <form target="_blank" action="https://formsubmit.co/george@solon.agency" method="POST">
+            <label for="email" class="visually-hidden">Adresă de email</label>
             <input type="email" id="email" placeholder="" name="email-unsubscribe" required>
             <button type="submit">Dezabonare</button>
             <input type="hidden" name="_next" value="https://solon.agency/unsubscribe/success">
@@ -286,6 +287,7 @@
 
     // Fill the input field with the retrieved email value
     document.getElementById('email').value = email;
-  </script></body>
+  </script>
+</body>
 
 </html>
