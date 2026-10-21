@@ -47,8 +47,8 @@
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=e8c36e8eb7" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="../../assets/css/style.min.css?v=190e51bdb0" rel="stylesheet">
-  <link href="../../assets/css/blog.css?v=ea588ee21e" rel="stylesheet">
+  <link href="../../assets/css/style.min.css?v=e6ab67fddf" rel="stylesheet">
+  <link href="../../assets/css/blog.css?v=28a02f720e" rel="stylesheet">
 
   <style>
     /* Ensure the header is visible on blog pages */
@@ -157,29 +157,29 @@
 <table>
 <thead>
 <tr>
-<th align="left">Nivel Semnătură</th>
-<th align="left">Standard Tehnic &amp; Cerințe eIDAS</th>
-<th align="left">Forță Probantă</th>
-<th align="left">Recomandare Utilizare Cabinet</th>
+<th>Nivel Semnătură</th>
+<th>Standard Tehnic &amp; Cerințe eIDAS</th>
+<th>Forță Probantă</th>
+<th>Recomandare Utilizare Cabinet</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><strong>SES</strong> (Simplă)</td>
-<td align="left">Imagine scanată, bifă într-o aplicație web, semnătură pe ecran tactil</td>
-<td align="left">Început de dovadă scrisă. instanța apreciază liber relevanța</td>
-<td align="left">Corespondență preliminară, confirmări de agendă fără miză juridică</td>
+<td><strong>SES</strong> (Simplă)</td>
+<td>Imagine scanată, bifă într-o aplicație web, semnătură pe ecran tactil</td>
+<td>Început de dovadă scrisă. instanța apreciază liber relevanța</td>
+<td>Corespondență preliminară, confirmări de agendă fără miză juridică</td>
 </tr>
 <tr>
-<td align="left"><strong>AES</strong> (Avansată)</td>
-<td align="left">Creată cu date sub controlul exclusiv al semnatarului, identifică semnatarul și detectează modificările ulterioare</td>
-<td align="left">Valoare probantă de înscris sub semnătură privată doar dacă părțile au convenit expres</td>
-<td align="left">NDA-uri interne, informări periodice ale clienților</td>
+<td><strong>AES</strong> (Avansată)</td>
+<td>Creată cu date sub controlul exclusiv al semnatarului, identifică semnatarul și detectează modificările ulterioare</td>
+<td>Valoare probantă de înscris sub semnătură privată doar dacă părțile au convenit expres</td>
+<td>NDA-uri interne, informări periodice ale clienților</td>
 </tr>
 <tr>
-<td align="left"><strong>QES</strong> (Calificată)</td>
-<td align="left">Creată prin dispozitiv calificat (QSCD), bazată pe certificat calificat emis de prestator acreditat (QTSP)</td>
-<td align="left"><strong>Echivalentă legal cu semnătura olografă</strong> (Art. 25 alin. 2 eIDAS)</td>
-<td align="left"><strong>Cererile adresate instanțelor, contracte de asistență, împuterniciri, tranzacții</strong></td>
+<td><strong>QES</strong> (Calificată)</td>
+<td>Creată prin dispozitiv calificat (QSCD), bazată pe certificat calificat emis de prestator acreditat (QTSP)</td>
+<td><strong>Echivalentă legal cu semnătura olografă</strong> (Art. 25 alin. 2 eIDAS)</td>
+<td><strong>Cererile adresate instanțelor, contracte de asistență, împuterniciri, tranzacții</strong></td>
 </tr>
 </tbody></table>
 <p>Diferența de securitate rezidă în mecanismul criptografic asimetric. În timp ce o semnătură electronică simplă poate fi falsificată prin copierea unui fișier grafic de către oricine are acces la document, semnătura electronică calificată garantează non-repudierea: autorul nu poate nega paternitatea actului, iar orice alterare a documentului ulterior semnării invalidează automat verificarea matematică a fișierului PDF.</p>
@@ -239,35 +239,35 @@ Avocatul poate genera împuternicirea avocațială în format digital, aplicând
 <table>
 <thead>
 <tr>
-<th align="left">Criteriu de Evaluare</th>
-<th align="left">Token Criptografic USB (Fizic)</th>
-<th align="left">Semnătură Calificată în Cloud</th>
+<th>Criteriu de Evaluare</th>
+<th>Token Criptografic USB (Fizic)</th>
+<th>Semnătură Calificată în Cloud</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><strong>Mobilitate</strong></td>
-<td align="left">Limitată la laptop/PC cu port USB. necesită adaptoare pe Mac</td>
-<td align="left">Semnezi direct de pe smartphone, tabletă sau orice browser</td>
+<td><strong>Mobilitate</strong></td>
+<td>Limitată la laptop/PC cu port USB. necesită adaptoare pe Mac</td>
+<td>Semnezi direct de pe smartphone, tabletă sau orice browser</td>
 </tr>
 <tr>
-<td align="left"><strong>Instalare Drivere</strong></td>
-<td align="left">Necesită middleware dedicat (SafeNet, CryptoSys, card reader)</td>
-<td align="left">Nu necesită drivere locale. folosește aplicație mobilă sau OTP</td>
+<td><strong>Instalare Drivere</strong></td>
+<td>Necesită middleware dedicat (SafeNet, CryptoSys, card reader)</td>
+<td>Nu necesită drivere locale. folosește aplicație mobilă sau OTP</td>
 </tr>
 <tr>
-<td align="left"><strong>Autentificare</strong></td>
-<td align="left">PIN fizic tastat la fiecare sesiune de semnare</td>
-<td align="left">Notificare push pe telefon mobil sau cod TOTP generat în app</td>
+<td><strong>Autentificare</strong></td>
+<td>PIN fizic tastat la fiecare sesiune de semnare</td>
+<td>Notificare push pe telefon mobil sau cod TOTP generat în app</td>
 </tr>
 <tr>
-<td align="left"><strong>Viteza de semnare în masă</strong></td>
-<td align="left">Excelentă pentru fișiere individuale locale pe disc</td>
-<td align="left">Permite semnarea pe loturi (batch signing) de pe orice dispozitiv</td>
+<td><strong>Viteza de semnare în masă</strong></td>
+<td>Excelentă pentru fișiere individuale locale pe disc</td>
+<td>Permite semnarea pe loturi (batch signing) de pe orice dispozitiv</td>
 </tr>
 <tr>
-<td align="left"><strong>Risc de pierdere</strong></td>
-<td align="left">Risc de defectare mecanică, pierdere sau furt al tokenului</td>
-<td align="left">Imposibil de pierdut fizic. protejat prin mecanisme bancare HSM</td>
+<td><strong>Risc de pierdere</strong></td>
+<td>Risc de defectare mecanică, pierdere sau furt al tokenului</td>
+<td>Imposibil de pierdut fizic. protejat prin mecanisme bancare HSM</td>
 </tr>
 </tbody></table>
 <p>Pentru avocații pledanți care călătoresc frecvent între instanțe, semnătura în cloud reprezintă un salt uriaș de confort. Poți primi o tranzacție judiciară sau un set de note scrise pe telefon în timp ce ești pe holul tribunalului, aplici semnătura QES prin recunoaștere biometrică pe ecran și transmiți fișierul grefierului de ședință în mai puțin de două minute.</p>
@@ -372,19 +372,19 @@ Marca temporală nu preia ora setată pe ceasul intern al computerului tău (car
 <h2>12. Checklist de implementare pe 30 de zile pentru cabinetul tău</h2>
 <p>Pentru a trece eficient de la intenție la execuție, urmează acest plan structurat pe 4 săptămâni:</p>
 <ul>
-<li><input disabled="" type="checkbox"> <strong>Săptămâna 1: Audit și Achiziție</strong></li>
+<li><input disabled type="checkbox"> <strong>Săptămâna 1: Audit și Achiziție</strong></li>
 <li>Stabilește necesarul de certificate pentru fiecare avocat partener și colaborator.</li>
 <li>Alege furnizorul acreditat (eIDAS compliant) și optează pentru soluția în cloud pentru mobilitate sporită.</li>
 <li>Finalizează procedura de identificare la distanță și emite certificatele active.</li>
-<li><input disabled="" type="checkbox"> <strong>Săptămâna 2: Configurare Tehnologică</strong></li>
+<li><input disabled type="checkbox"> <strong>Săptămâna 2: Configurare Tehnologică</strong></li>
 <li>Instalează aplicațiile de semnare pe stațiile de lucru și pe dispozitivele mobile ale echipei.</li>
 <li>Configurează actualizarea automată a certificatelor EUTL în Adobe Reader pe toate computerele din cabinet.</li>
 <li>Creează șabloanele grafice de semnătură care să conțină antetul profesional al cabinetului.</li>
-<li><input disabled="" type="checkbox"> <strong>Săptămâna 3: Standardizarea Procedurilor Interne</strong></li>
+<li><input disabled type="checkbox"> <strong>Săptămâna 3: Standardizarea Procedurilor Interne</strong></li>
 <li>Redactează politica internă privind interdicția absolută a partajării codurilor PIN și a accesului neautorizat.</li>
 <li>Modifică șabloanele contractelor de asistență juridică pentru a include clauza expresă de recunoaștere a comunicării electronice și a semnăturii calificate.</li>
 <li>Testează depunerea de acte prin e-mail și pe portalurile instanțelor din circumscripția ta.</li>
-<li><input disabled="" type="checkbox"> <strong>Săptămâna 4: Tranziția Totală a Relației cu Clienții</strong></li>
+<li><input disabled type="checkbox"> <strong>Săptămâna 4: Tranziția Totală a Relației cu Clienții</strong></li>
 <li>Notifică portofoliul curent de clienți cu privire la noul canal standard de transmitere digitală a documentelor.</li>
 <li>Elimină tipărirea dosarelor administrative și monitorizează săptămânal economia de timp și bani realizată.</li>
 </ul>
@@ -445,7 +445,7 @@ Marca temporală nu preia ora setată pe ceasul intern al computerului tău (car
 
     <div class="blog-services">
       <div class="section-title text-start">
-        <h2 style="font-weight: 500;">CE SERVICII DIGITALE OFERĂ SOLON?</h2>
+        <h2>CE SERVICII DIGITALE OFERĂ SOLON?</h2>
       </div>
       <div class="row gy-4">
         <div class="col-12 col-md-6">
@@ -506,11 +506,11 @@ Marca temporală nu preia ora setată pe ceasul intern al computerului tău (car
                     <label for="solon-newsletter-email" class="form-label visually-hidden">Adresă de email pentru
                     newsletter</label>
                     <input type="email" class="required email"
-                    value="" autocomplete="email" name="Email" required="required" id="solon-newsletter-email">
+                    value="" autocomplete="email" name="Email" required id="solon-newsletter-email">
                   </div>
                   <p class="solon-form-note">Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
-                  <div class="clear"><input type="submit" id="solon-newsletter-submit"
-                  class="button" value="Subscribe"></div>
+                  <div class="clear"><button type="submit" id="solon-newsletter-submit"
+                  class="button">Subscribe</button></div>
                 </form>
                 <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
               </div>
@@ -561,7 +561,7 @@ Marca temporală nu preia ora setată pe ceasul intern al computerului tău (car
             <img alt="SOLON" src="../../assets/img/solon-logo-dark.png" height="70" />
             <h3>SOLON</h3>
             <p>
-              <a class="color-primary" href="tel:+40774431127">0774 431 127</a><br>
+              <a class="color-primary" href="tel:+40774431127">0774&nbsp;431&nbsp;127</a><br>
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>
             </p>
           </div>

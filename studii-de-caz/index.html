@@ -52,7 +52,7 @@
     <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="../assets/css/style.min.css?v=190e51bdb0" rel="stylesheet">
+    <link href="../assets/css/style.min.css?v=e6ab67fddf" rel="stylesheet">
     
       <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
   <script src="/assets/js/consent.min.js?v=67e1576257"></script>
@@ -77,6 +77,11 @@
 <!-- clarity -->
 <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
 <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
+  <style>
+    #hero canvas {
+      position: absolute !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -123,9 +128,9 @@
                             <ul>
                             <li><a href="https://solon.agency/#servicii">Recomandari unelte digitale</a></li>
                             <li><a href="https://solon.agency/#servicii">Digitalizare procese business</a></li>
-                            <li><a href="https://solon.agency/#servicii">Instalare hardware & software</a></li>
+                            <li><a href="https://solon.agency/#servicii">Instalare hardware &amp; software</a></li>
                             <li><a href="https://solon.agency/#servicii">Ședințe de consultanță</a></li>
-                            <li><a href="https://solon.agency/#servicii">Q&A</a></li>
+                            <li><a href="https://solon.agency/#servicii">Q&amp;A</a></li>
                             </ul>
                         </li>
                         </ul>
@@ -143,7 +148,6 @@
     </header><!-- End Header -->
 
     <main>
-
 
         <!-- ======= Portfolio Section ======= -->
         <section id="portofoliu" class="portfolio mt-5">
@@ -271,7 +275,7 @@
       <label for="contact-message">Mesaj *</label>
       <textarea id="contact-message" name="Mesaj" required></textarea>
       </div>
-      <label class="solon-opt-in" for="contact-newsletter-opt-in">
+      <label class="solon-opt-in">
         <input id="contact-newsletter-opt-in" name="NewsletterOptIn" type="checkbox">
         Abonare la newsletter LegalTech. Dacă bifezi abonarea, primești newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email.
       </label>
@@ -296,7 +300,7 @@
                     <div class="col-lg-12 cta-btn-container text-center contact-phone">
                         <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
 
-                        <form data-solon-form="Telefon" class="solon-phone-form" style="width: 100%;">
+                        <form data-solon-form="Telefon" class="solon-phone-form">
       <div class="solon-hp" aria-hidden="true" inert>
         <label for="solon-hp-telefon">Website</label>
         <input id="solon-hp-telefon" name="company_url" type="text" value="" tabindex="-1" autocomplete="off">
@@ -304,9 +308,8 @@
                           <label for="solon-phone" class="form-label visually-hidden">Număr de telefon pentru contact
                           telefonic</label>
                           <input type="tel" value=""
-                          placeholder="07......" autocomplete="tel" id="solon-phone" name="Telefon" required="required">
-                          <input type="submit" id="solon-phone-submit" class="button"
-                          value="Vreau să fiu sunat 📞">
+                          placeholder="07......" autocomplete="tel" id="solon-phone" name="Telefon" required>
+                          <button type="submit" id="solon-phone-submit" class="button">Vreau să fiu sunat 📞</button>
                         </form>
                         <p class="solon-form-note">Folosim numărul tău doar ca să te sunăm în legătură cu solicitarea ta și îl păstrăm (în Google Sheets și Brevo) cel mult 24 de luni de la ultima interacțiune. Nu îți trimitem mesaje de marketing. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
 <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
@@ -317,7 +320,6 @@
         </section>
         <!-- End Phone Call Section -->
     </main>
-
 
     <!-- ======= Footer ======= -->
     <footer id="footer">
@@ -363,7 +365,7 @@
                         <h3>SOLON</h3>
                         <p>
                             <!-- <strong>Telefon:</strong>  -->
-                            <a class="color-primary" href="tel:+40774431127" title="George">0774 431 127</a><br>
+                            <a class="color-primary" href="tel:+40774431127" title="George">0774&nbsp;431&nbsp;127</a><br>
                             <!-- <strong>Email:</strong>  -->
                             <a class="color-primary" href="mailto:contact@solon.agency"
                                 target="_blank">contact@solon.agency</a><br>
@@ -392,7 +394,7 @@
         <div class="container footer-bottom clearfix">
             <div class="copyright">
                 <!-- &copy; Copyright <strong><span>SOLON</span></strong>. Toate drepturile rezervate. -->
-                <img alt="Logo SOLON, agenția digitală pentru avocați" src="../assets/img/solon-logo.png" height="15" style="margin-bottom: 3px;">
+                <img alt="Logo SOLON, agenția digitală pentru avocați" src="../assets/img/solon-logo.png" class="copyright__logo" height="15">
                 <b>SOLON</b> &copy; <span data-current-year></span>
             </div>
             <div class="credits">
@@ -426,13 +428,7 @@
         const container = document.querySelector('.fireworks')
         const fireworks = new Fireworks.default(container)
         // fireworks.start()
-    </script>
-    <style>
-        #hero canvas {
-            position: absolute !important;
-        }
-    </style>
-  <script src="../assets/js/forms.min.js?v=597533e06f"></script>
+    </script><script src="../assets/js/forms.min.js?v=597533e06f"></script>
 </body>
 
 </html>

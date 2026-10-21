@@ -62,7 +62,7 @@
   <noscript><link href="assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet"></noscript>
 
   <!-- Template Main CSS File -->
-  <link href="assets/css/style.min.css?v=190e51bdb0" rel="stylesheet">
+  <link href="assets/css/style.min.css?v=e6ab67fddf" rel="stylesheet">
   <style>
     @media (max-width: 767.98px) {
       #testimonials .testimonial-member {
@@ -299,7 +299,7 @@
             height="250" />
           <span aria-hidden="true">SOLON</span></a></div>
 
-      <nav id="navbar" class="navbar">
+      <nav id="navbar" class="navbar" aria-label="Navigare principală">
         <ul>
           <!-- <li><a class="nav-link scrollto active" href="#hero">Acasă</a></li> -->
           <li class="dropdown"><a href="#servicii"><span>Servicii</span> <i class="bi bi-chevron-down"></i></a>
@@ -335,9 +335,9 @@
                 <ul>
                   <li><a href="#servicii">Recomandari unelte digitale</a></li>
                   <li><a href="#servicii">Digitalizare procese business</a></li>
-                  <li><a href="#servicii">Instalare hardware & software</a></li>
+                  <li><a href="#servicii">Instalare hardware &amp; software</a></li>
                   <li><a href="#servicii">Ședințe de consultanță</a></li>
-                  <li><a href="#servicii">Q&A</a></li>
+                  <li><a href="#servicii">Q&amp;A</a></li>
                 </ul>
               </li>
             </ul>
@@ -1239,7 +1239,7 @@
       <label for="contact-message">Mesaj *</label>
       <textarea id="contact-message" name="Mesaj" required></textarea>
       </div>
-      <label class="solon-opt-in" for="contact-newsletter-opt-in">
+      <label class="solon-opt-in">
         <input id="contact-newsletter-opt-in" name="NewsletterOptIn" type="checkbox">
         Abonare la newsletter LegalTech. Dacă bifezi abonarea, primești newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email.
       </label>
@@ -1264,7 +1264,7 @@
           <div class="col-lg-12 cta-btn-container text-center contact-phone">
             <!-- <a class="cta-btn align-middle" href="#">Vreau să fiu sunat 📞</a> -->
 
-            <form data-solon-form="Telefon" class="solon-phone-form" style="width: 100%;">
+            <form data-solon-form="Telefon" class="solon-phone-form">
       <div class="solon-hp" aria-hidden="true" inert>
         <label for="solon-hp-telefon">Website</label>
         <input id="solon-hp-telefon" name="company_url" type="text" value="" tabindex="-1" autocomplete="off">
@@ -1272,9 +1272,8 @@
               <label for="solon-phone" class="form-label visually-hidden">Număr de telefon pentru contact
               telefonic</label>
               <input type="tel" value="" placeholder="07......"
-              autocomplete="tel" id="solon-phone" name="Telefon" required="required">
-              <input type="submit" id="solon-phone-submit" class="button"
-              value="Vreau să fiu sunat 📞">
+              autocomplete="tel" id="solon-phone" name="Telefon" required>
+              <button type="submit" id="solon-phone-submit" class="button">Vreau să fiu sunat 📞</button>
             </form>
             <p class="solon-form-note">Folosim numărul tău doar ca să te sunăm în legătură cu solicitarea ta și îl păstrăm (în Google Sheets și Brevo) cel mult 24 de luni de la ultima interacțiune. Nu îți trimitem mesaje de marketing. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
             <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
@@ -1325,11 +1324,11 @@
             <!-- BLOG_CAROUSEL_ITEMS_START -->
             <div class="carousel-item active">
               <div class="row">
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100">
                   <div class="box featured">
                     <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/date-structurate-schema-org-pentru-avocati/" target="_blank" rel="noopener noreferrer">Date structurate (schema.org) pentru avocați: cum te înțeleg Google și ChatGPT</a></h3>
                     <p>Date structurate (schema markup) pentru avocat: exemplu JSON-LD și cum îl testezi gratuit.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
                       <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
                       <a href="blog/?tag=date%20structurate" class="badge badge-tag me-1">date structurate</a>
                       <a href="blog/?tag=schema.org" class="badge badge-tag me-1">schema.org</a>
@@ -1338,11 +1337,11 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200">
                   <div class="box featured">
                     <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/domeniu-email-profesional-cabinet-avocat/" target="_blank" rel="noopener noreferrer">Domeniu și email profesional pentru cabinet: al cui e, de fapt?</a></h3>
                     <p>Cum verifici al cui e domeniul cabinetului, cine administrează e-mailul și cum îl muți pe domeniul propriu, pas cu pas.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
                       <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
                       <a href="blog/?tag=domeniu%20.ro" class="badge badge-tag me-1">domeniu .ro</a>
                       <a href="blog/?tag=email%20profesional" class="badge badge-tag me-1">email profesional</a>
@@ -1356,11 +1355,11 @@
             </div>
             <div class="carousel-item">
               <div class="row">
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100">
                   <div class="box featured">
                     <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/pagini-arii-de-practica-website-avocat/" target="_blank" rel="noopener noreferrer">Pagini de arii de practică pe website-ul de avocat: cum le structurezi</a></h3>
                     <p>Cum transformi lista de domenii în pagini clare pe arii de practică: structură, acte, etape, FAQ și un șablon de copiat.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
                       <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
                       <a href="blog/?tag=arii%20de%20practic%C4%83" class="badge badge-tag me-1">arii de practică</a>
                       <a href="blog/?tag=website%20avocat" class="badge badge-tag me-1">website avocat</a>
@@ -1370,11 +1369,11 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200">
                   <div class="box featured">
                     <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/microsoft-copilot-pentru-avocati/" target="_blank" rel="noopener noreferrer">Microsoft Copilot pentru avocați: ce înseamnă pentru cabinetul tău</a></h3>
                     <p>Ce înseamnă Copilot for legal pentru cabinetul tău: Word, Cowork, licența comercială și verificările înainte de un dosar.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
                       <a href="blog/?tag=avoca%C8%9Bi" class="badge badge-tag me-1">avocați</a>
                       <a href="blog/?tag=copilot" class="badge badge-tag me-1">copilot</a>
                       <a href="blog/?tag=legaltech" class="badge badge-tag me-1">legaltech</a>
@@ -1388,11 +1387,11 @@
             </div>
             <div class="carousel-item">
               <div class="row">
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="100">
                   <div class="box featured">
                     <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/ce-are-voie-avocat-sa-publice-online/" target="_blank" rel="noopener noreferrer">Ce are voie un avocat să publice online: ghid de publicitate conform Legii nr. 51/1995 și Statutului profesiei de avocat</a></h3>
                     <p>Ce are voie un avocat să publice online: tabel Permis / Interzis / Zonă gri pe site, Facebook, LinkedIn și Google, cu trimiteri la lege și Statut.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
                       <a href="blog/?tag=publicitate%20avocati" class="badge badge-tag me-1">publicitate avocati</a>
                       <a href="blog/?tag=publicitate%20avocat%20reguli%20unbr" class="badge badge-tag me-1">publicitate avocat reguli UNBR</a>
                       <a href="blog/?tag=ce%20are%20voie%20un%20avocat%20sa%20posteze" class="badge badge-tag me-1">ce are voie un avocat sa posteze</a>
@@ -1401,11 +1400,11 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200" data-aos="zoom-in">
+                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="200">
                   <div class="box featured">
                     <h3 class="blog-carousel-title"><a href="https://solon.agency/blog/creare-site-avocati/" target="_blank" rel="noopener noreferrer">Creare site pentru avocați: ghid pas cu pas, de la domeniu la lansare</a></h3>
                     <p>Cum îți faci un site ca avocat: ghid în 10 pași, de la domeniu și hosting la lansare, plus checklistul paginilor obligatorii și recomandate.</p>
-                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
                       <a href="blog/?tag=creare%20site%20avocat" class="badge badge-tag me-1">creare site avocat</a>
                       <a href="blog/?tag=site%20avocati" class="badge badge-tag me-1">site avocati</a>
                       <a href="blog/?tag=site%20cabinet%20avocatura" class="badge badge-tag me-1">site cabinet avocatura</a>
@@ -1453,11 +1452,11 @@
                     <label for="solon-newsletter-email" class="form-label visually-hidden">Adresă de email pentru
                     newsletter</label>
                     <input type="email" class="required email"
-                    value="" autocomplete="email" name="Email" required="required" id="solon-newsletter-email">
+                    value="" autocomplete="email" name="Email" required id="solon-newsletter-email">
                   </div>
                   <p class="solon-form-note">Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
-                  <div class="clear"><input type="submit" id="solon-newsletter-submit"
-                  class="button" value="Subscribe"></div>
+                  <div class="clear"><button type="submit" id="solon-newsletter-submit"
+                  class="button">Subscribe</button></div>
                 </form>
                 <div class="solon-form-status" data-form-status role="status" aria-live="polite" hidden></div>
               </div>
@@ -1512,7 +1511,7 @@
             <h3>SOLON</h3>
             <p>
               <!-- <strong>Telefon:</strong>  -->
-              <a class="color-primary" href="tel:+40774431127">0774 431 127<span class="visually-hidden">, contact
+              <a class="color-primary" href="tel:+40774431127">0774&nbsp;431&nbsp;127<span class="visually-hidden">,&nbsp;contact
                   George</span></a><br>
               <!-- <strong>Email:</strong>  -->
               <a class="color-primary" href="mailto:contact@solon.agency" target="_blank">contact@solon.agency</a><br>

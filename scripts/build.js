@@ -129,7 +129,12 @@ const generatePostHTML = (post, posts, marked) => {
   const { frontmatter, content } = post;
   const parsed = marked.parse(content)
     // Keep only one document H1 (the template's .entry-title).
-    .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+    .replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '')
+    // marked emits presentational align="left" on every GFM cell. Bootstrap
+    // already inherits start alignment, so dropping the attribute does not
+    // move the text. Boolean attributes are written without a value.
+    .replace(/\salign="left"/g, "")
+    .replace(/\sdisabled=""/g, " disabled");
   const pageUrl = `https://solon.agency/blog/${frontmatter.slug}/`;
   const { htmlContent, headJsonLd } = applyPostJsonLd(parsed, frontmatter, pageUrl);
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
@@ -199,7 +204,7 @@ const generateListHTML = (posts) => {
       .filter(Boolean)
       .join('\n');
     const tagsBlock = tagLinks
-      ? `                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+      ? `                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
 ${tagLinks}
                     </div>`
       : '';

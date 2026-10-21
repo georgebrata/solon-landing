@@ -85,7 +85,7 @@ const renderTagsBlock = (tags) => {
     return "";
   }
 
-  return `                    <div class="blog-tags mt-2 mb-2" aria-label="Taguri articol">
+  return `                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
 ${links}
                     </div>`;
 };
@@ -104,7 +104,7 @@ const renderCard = (post, delay) => {
     .filter(Boolean)
     .join("\n");
 
-  return `                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="${delay}" data-aos="zoom-in">
+  return `                <div class="col-lg-6 text-center mt-4" data-aos="fade-up" data-aos-delay="${delay}">
                   <div class="box featured">
 ${boxInner}
                   </div>

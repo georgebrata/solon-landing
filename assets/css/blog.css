@@ -291,6 +291,10 @@
   color: var(--primary);
 }
 
+.blog-services .section-title h2 {
+  font-weight: 500;
+}
+
 .blog-recent-articles ul {
   margin: 0;
   padding-left: 1.4rem;

@@ -437,6 +437,18 @@ h6 {
   background: var(--primary);
 }
 
+#hero.hero-full {
+  height: 100vh;
+}
+
+#hero.hero-60 {
+  height: 60vh;
+}
+
+#hero.hero-30 {
+  height: 30vh;
+}
+
 #hero .container {
   padding-top: 72px;
 }
@@ -1785,6 +1797,7 @@ img[width][height] {
   border-radius: 50px;
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.06);
   text-align: left;
+  width: 100%;
 }
 
 .contact-phone form input[type=tel] {
@@ -2683,6 +2696,19 @@ a.details-link:focus-visible,
 }
 
 .calendar {
+  width: 80%;
+  border: 0;
+}
+
+.page-main-offset {
+  margin-top: 70px;
+}
+
+.media-w-100 {
+  width: 100%;
+}
+
+.media-w-80 {
   width: 80%;
 }
 
