@@ -1774,6 +1774,62 @@ img[width][height] {
   }
 }
 
+/* Dumitrescu case study: the same values previously set with inline styles. */
+.ald-main {
+  margin-top: 70px;
+}
+
+.ald-title-balance {
+  color: #fff;
+}
+
+.ald-info-strong {
+  font-weight: 700;
+}
+
+.ald-plan-gold {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.ald-services-mark {
+  margin-right: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.ald-services-name {
+  color: #03170c;
+}
+
+.ald-diagram,
+.ald-diagram-flat,
+.ald-diagram-offset {
+  width: 100%;
+  height: auto;
+}
+
+.ald-diagram-flat {
+  margin-top: 0;
+}
+
+.ald-diagram-narrow {
+  width: 90%;
+  height: auto;
+}
+
+.ald-diagram-offset {
+  margin-top: 99px;
+}
+
+.ald-help-band {
+  padding-top: 5rem;
+  margin-bottom: 4rem;
+}
+
+.ald-phone-form {
+  width: 100%;
+}
+
 /* Mobile: show small logo, hide big logo */
 @media (max-width: 768px) {
 
