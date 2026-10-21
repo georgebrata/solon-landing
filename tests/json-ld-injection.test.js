@@ -272,7 +272,7 @@ test("a headline cut strips trailing punctuation and dashes", () => {
 });
 
 test("a headline cut drops short dangling words repeatedly", () => {
-  for (const word of ["și", "și/sau", "si", "de", "la", "în", "pe", "cu", "pentru", "din", "a", "o", "un", "al", "ale", "sau", "or", "ori"]) {
+  for (const word of ["și", "și/sau", "si", "de", "la", "în", "pe", "cu", "pentru", "din", "a", "o", "un", "al", "ale", "sau", "or"]) {
     const tail = ` ${word}`;
     const stem = "Y".repeat(110 - graphemeLength(tail));
     const head = `${stem}${tail}`;
@@ -293,6 +293,10 @@ test("a headline cut drops short dangling words repeatedly", () => {
   assert.equal(headlineFor(`${afterPunctuation} continuare`), "Y".repeat(106));
 
   assert.equal(headlineFor("Publicitate: ce ai voie și"), "Publicitate: ce ai voie și");
+
+  const keptPhrase = `${"Y".repeat(110 - graphemeLength(" de trei ori"))} de trei ori`;
+  assert.equal(graphemeLength(keptPhrase), 110);
+  assert.equal(headlineFor(`${keptPhrase} continuare`), keptPhrase);
 });
 
 test("a headline cut keeps the period on abbreviations", () => {
@@ -324,6 +328,12 @@ test("a headline cut removes an unclosed parenthesis, bracket, or Romanian quote
   const quoteHead = `${quotePrefix}${"z".repeat(110 - graphemeLength(quotePrefix))}`;
   assert.equal(graphemeLength(quoteHead), 110);
   assert.equal(headlineFor(`${quoteHead}\u201D overflow text here`), quoted);
+
+  const quotedWithLeft = "Ghid \u201E2026\u201C";
+  const leftPrefix = `${quotedWithLeft} \u201E`;
+  const leftHead = `${leftPrefix}${"z".repeat(110 - graphemeLength(leftPrefix))}`;
+  assert.equal(graphemeLength(leftHead), 110);
+  assert.equal(headlineFor(`${leftHead}\u201C overflow text here`), quotedWithLeft);
 });
 
 test("a title that starts with an unclosed opener keeps the word-boundary cut", () => {

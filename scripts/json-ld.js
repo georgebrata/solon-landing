@@ -152,7 +152,6 @@ const DANGLING_HEADLINE_WORDS = new Set([
   "sau",
   "si",
   "or",
-  "ori",
 ]);
 const HEADLINE_ABBREVIATIONS = new Set([
   "nr",
@@ -173,6 +172,7 @@ const HEADLINE_CLOSERS = new Map([
   [")", "("],
   ["]", "["],
   ["}", "{"],
+  ["\u201C", "\u201E"],
   ["\u201D", "\u201E"],
 ]);
 
@@ -220,7 +220,7 @@ const endsWithAbbreviation = (parts) => {
 
 /**
  * Index of the earliest `(` `[` `{` `„` that has no matching closer, or -1.
- * `„` closes with `”`.
+ * `„` closes with `”` or `“`.
  * @param {string[]} parts
  * @returns {number}
  */
