@@ -334,6 +334,17 @@ test("a headline cut removes an unclosed parenthesis, bracket, or Romanian quote
   const leftHead = `${leftPrefix}${"z".repeat(110 - graphemeLength(leftPrefix))}`;
   assert.equal(graphemeLength(leftHead), 110);
   assert.equal(headlineFor(`${leftHead}\u201C overflow text here`), quotedWithLeft);
+
+  const english = "Ghid \u201C2026\u201D";
+  const englishPrefix = `${english} \u201C`;
+  const englishHead = `${englishPrefix}${"z".repeat(110 - graphemeLength(englishPrefix))}`;
+  assert.equal(graphemeLength(englishHead), 110);
+  assert.equal(headlineFor(`${englishHead}\u201D overflow text here`), english);
+
+  const loneEnglish = "Titlu clar";
+  const loneHead = `${loneEnglish} \u201C${"z".repeat(110 - loneEnglish.length - 2)}`;
+  assert.equal(graphemeLength(loneHead), 110);
+  assert.equal(headlineFor(`${loneHead}\u201D si inca text`), loneEnglish);
 });
 
 test("a title that starts with an unclosed opener keeps the word-boundary cut", () => {
@@ -346,6 +357,11 @@ test("a title that starts with an unclosed opener keeps the word-boundary cut", 
   const quotedTitle = `${quoted} ${"z".repeat(90)}`;
   assert.ok(graphemeLength(quotedTitle) > 110);
   assert.equal(headlineFor(quotedTitle), quoted);
+
+  const english = `\u201C${"a".repeat(40)}`;
+  const englishTitle = `${english} ${"z".repeat(90)}`;
+  assert.ok(graphemeLength(englishTitle) > 110);
+  assert.equal(headlineFor(englishTitle), english);
 });
 
 test("every built JSON-LD article headline is at most 110 graphemes", () => {

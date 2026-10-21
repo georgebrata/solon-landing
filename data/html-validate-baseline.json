@@ -1,12 +1,7 @@
 {
   "version": 1,
   "shrink": "node scripts/validate-html.js --shrink drops a recorded occurrence when the page no longer has that finding. It refuses to add an occurrence or raise a count. The check fails when a scanned page has a finding this file does not list, and when a listed finding is gone: a fixed error does not free a slot.",
-  "excludedFiles": [
-    {
-      "file": "studii-de-caz/avocat-dumitrescu-alexandru/index.html",
-      "reason": "PR #94 is editing this case study. The page stays out of the scan until that PR merges, so its error count can change without turning main red. The only edit in this PR is the style.min.css cache-bust query, which the minification check rewrites on every CSS change. Remove this exclusion after #94 merges and fix whatever is left."
-    }
-  ],
+  "excludedFiles": [],
   "rules": {
     "prefer-native-element": "Two comparison tables use div.table-wrap with role=region, the scrollable-region pattern this repo requires. A native section would inherit section { padding: 60px 0; overflow: hidden; } and change the layout."
   },

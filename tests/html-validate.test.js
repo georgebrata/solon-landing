@@ -47,7 +47,7 @@ test("served HTML includes pages, posts, case studies, and short links", () => {
   }
   assert.equal(
     files.includes("studii-de-caz/avocat-dumitrescu-alexandru/index.html"),
-    false
+    true
   );
   assert.equal(files.includes("templates/layout.html"), false);
   assert.equal(
@@ -56,14 +56,14 @@ test("served HTML includes pages, posts, case studies, and short links", () => {
   );
 });
 
-test("templates, vendor files, and the held case study are not validated", () => {
+test("templates and vendor files are not validated", () => {
   assert.equal(shouldValidate("templates/layout.html", baseline), false);
   assert.equal(shouldValidate("templates/post.html", baseline), false);
   assert.equal(shouldValidate("node_modules/html-validate/index.html", baseline), false);
   assert.equal(shouldValidate("assets/vendor/example.html", baseline), false);
   assert.equal(
     shouldValidate("studii-de-caz/avocat-dumitrescu-alexandru/index.html", baseline),
-    false
+    true
   );
   assert.equal(shouldValidate("index.html", baseline), true);
   assert.equal(shouldValidate("r/bronze/lunar/index.html", baseline), true);
@@ -98,13 +98,12 @@ test("recommended rules stay at error with their defaults", async () => {
   );
 });
 
-test("an empty exclusion list is valid and the Dumitrescu reason says fix", () => {
+test("an empty exclusion list is valid", () => {
   assert.deepEqual(
     assertBaselineShape({ rules: {}, files: {}, excludedFiles: [] }, ROOT),
     []
   );
-  assert.equal(baseline.excludedFiles[0].reason.includes("fix or baseline"), false);
-  assert.match(baseline.excludedFiles[0].reason, /fix whatever is left/);
+  assert.deepEqual(baseline.excludedFiles, []);
 });
 
 test("baseline fails when a finding is new, and a fixed finding does not free its slot", () => {

@@ -167,14 +167,22 @@ const HEADLINE_ABBREVIATIONS = new Set([
   "cap",
   "sec",
 ]);
-const HEADLINE_OPENERS = new Set(["(", "[", "{", "\u201E"]);
-const HEADLINE_CLOSERS = new Map([
-  [")", "("],
-  ["]", "["],
-  ["}", "{"],
-  ["\u201C", "\u201E"],
-  ["\u201D", "\u201E"],
-]);
+const HEADLINE_OPENERS = new Set(["(", "[", "{", "\u201E", "\u201C"]);
+
+/**
+ * True when `closer` ends the quote or bracket opened by `opener`.
+ * Romanian `„` closes with `”` or `“`. A `“` that does not close `„` is an
+ * English opener and closes with `”`.
+ * @param {string} closer
+ * @param {string} opener
+ * @returns {boolean}
+ */
+const headlineCloserMatches = (closer, opener) =>
+  (closer === ")" && opener === "(")
+  || (closer === "]" && opener === "[")
+  || (closer === "}" && opener === "{")
+  || ((closer === "\u201C" || closer === "\u201D") && opener === "\u201E")
+  || (closer === "\u201D" && opener === "\u201C");
 
 /**
  * Extended grapheme clusters, so an emoji or a combining mark stays one character.
@@ -219,8 +227,8 @@ const endsWithAbbreviation = (parts) => {
 };
 
 /**
- * Index of the earliest `(` `[` `{` `„` that has no matching closer, or -1.
- * `„` closes with `”` or `“`.
+ * Index of the earliest unclosed `(` `[` `{` `„` or English `“`, or -1.
+ * `„` closes with `”` or `“`. A `“` that is not closing `„` is an opener.
  * @param {string[]} parts
  * @returns {number}
  */
@@ -228,11 +236,11 @@ const earliestUnclosedOpener = (parts) => {
   const stack = [];
   for (let index = 0; index < parts.length; index += 1) {
     const grapheme = parts[index];
-    if (HEADLINE_OPENERS.has(grapheme)) {
+    const top = stack.length ? parts[stack[stack.length - 1]] : "";
+    if (top && headlineCloserMatches(grapheme, top)) {
+      stack.pop();
+    } else if (HEADLINE_OPENERS.has(grapheme)) {
       stack.push(index);
-    } else if (HEADLINE_CLOSERS.has(grapheme) && stack.length) {
-      const opener = HEADLINE_CLOSERS.get(grapheme);
-      if (parts[stack[stack.length - 1]] === opener) stack.pop();
     }
   }
   return stack.length ? stack[0] : -1;
@@ -295,7 +303,7 @@ const cutGraphemes = (text, limit) => {
  * boundary (the last whitespace inside the limit, or mid-word when there is
  * no space), with no ellipsis. Emoji and surrogate pairs stay whole. The cut
  * then drops trailing punctuation, short dangling words, and any phrase that
- * would leave a parenthesis, bracket, or Romanian quote unclosed. A period on
+ * would leave a parenthesis, bracket, Romanian quote, or English quote unclosed. A period on
  * an abbreviation such as "nr." stays. When that cleanup would leave the
  * headline empty, the raw word-boundary cut is kept.
  * @param {object} frontmatter Post front-matter (`title`, optional `seo_title`).
