@@ -1,5 +1,6 @@
 ---
 title: "Mentenanță site pentru avocați: ce include, cât de des se face și ce riscuri apar fără ea"
+seo_title: "Mentenanța website-ului tău: include, frecvență, riscuri"
 date: "2026-10-12"
 date_modified: "2026-10-12"
 slug: "mentenanta-site-avocati"

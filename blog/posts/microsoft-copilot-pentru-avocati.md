@@ -1,5 +1,6 @@
 ---
 title: "Microsoft Copilot pentru avocați: ce înseamnă pentru cabinetul tău"
+seo_title: "Ce înseamnă Microsoft Copilot pentru cabinetul tău"
 date: "2026-10-18"
 date_modified: "2026-10-18"
 slug: "microsoft-copilot-pentru-avocati"

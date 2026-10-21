@@ -8,69 +8,17 @@
     }
   ],
   "rules": {
-    "long-title": "These published document titles are longer than 70 characters. Shortening them changes the title shown in search results. George's decision on a shorter seo_title is pending, so the eleven entries stay baselined.",
     "prefer-native-element": "Two comparison tables use div.table-wrap with role=region, the scrollable-region pattern this repo requires. A native section would inherit section { padding: 60px 0; overflow: hidden; } and change the layout."
   },
   "files": {
-    "blog/avocat-chatgpt-gemini-ai-overviews/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/cat-costa-un-site-de-avocat-in-2026/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/ce-are-voie-avocat-sa-publice-online/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/creare-site-avocati/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/date-structurate-schema-org-pentru-avocati/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/domeniu-email-profesional-cabinet-avocat/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/glosar-marketing-digital-avocati/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
-    "blog/google-business-profile-avocati/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ]
-    },
     "blog/mentenanta-site-avocati/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ],
       "prefer-native-element": [
         "#blog-post > div > div > div > article > div > div\nPrefer to use the native <section> element\nrole=\"region\""
       ]
     },
     "blog/microsoft-copilot-pentru-avocati/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
-      ],
       "prefer-native-element": [
         "#blog-post > div > div > div > article > div > div\nPrefer to use the native <section> element\nrole=\"region\""
-      ]
-    },
-    "blog/pagini-arii-de-practica-website-avocat/index.html": {
-      "long-title": [
-        "html > head > title\ntitle text cannot be longer than 70 characters\n"
       ]
     }
   }

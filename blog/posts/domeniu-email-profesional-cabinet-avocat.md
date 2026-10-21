@@ -1,5 +1,6 @@
 ---
 title: "Domeniu și email profesional pentru cabinet: al cui e, de fapt?"
+seo_title: "Al cui e domeniul și emailul cabinetului tău?"
 date: "2026-10-20"
 date_modified: "2026-10-20"
 slug: "domeniu-email-profesional-cabinet-avocat"

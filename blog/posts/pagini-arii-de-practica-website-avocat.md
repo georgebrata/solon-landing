@@ -1,5 +1,6 @@
 ---
 title: "Pagini de arii de practică pe website-ul de avocat: cum le structurezi"
+seo_title: "Arii de practică pe website: cum le structurezi"
 date: "2026-10-19"
 date_modified: "2026-10-19"
 slug: "pagini-arii-de-practica-website-avocat"

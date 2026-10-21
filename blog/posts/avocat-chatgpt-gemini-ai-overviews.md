@@ -1,5 +1,6 @@
 ---
 title: "Cum apare un avocat în răspunsurile ChatGPT, Gemini și Google AI Overviews"
+seo_title: "Cum apari în ChatGPT, Gemini și Google AI Overviews"
 date: "2026-10-13"
 slug: "avocat-chatgpt-gemini-ai-overviews"
 description: "Ce este GEO și cum aleg ChatGPT, Gemini și Google AI Overviews sursele: un studiu de caz SOLON pe piața juridică din România și un checklist în 8 pași."

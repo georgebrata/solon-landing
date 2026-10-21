@@ -21,7 +21,7 @@ const DOCUMENT_TITLE_LIMIT = 70;
 
 /**
  * Warn when the document title would fail the long-title rule. The build still
- * writes the page; published long titles stay baselined until they are shortened.
+ * writes the page. The HTML gate rejects a title over 70 characters.
  * @param {string} slug Post slug.
  * @param {string} documentTitle Frontmatter title, or seo_title when that is set.
  * @returns {void}
