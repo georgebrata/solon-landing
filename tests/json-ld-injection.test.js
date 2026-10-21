@@ -1,6 +1,9 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { execFileSync } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
 const test = require("node:test");
 const {
   applyPostJsonLd,
@@ -8,6 +11,24 @@ const {
   defaultArticleDocument,
   DEFAULT_ARTICLE_IMAGE,
 } = require("../scripts/json-ld");
+
+const GRAPHEME_SEGMENTER = new Intl.Segmenter("ro", { granularity: "grapheme" });
+
+/**
+ * @param {string} text
+ * @returns {number}
+ */
+const graphemeLength = (text) => [...GRAPHEME_SEGMENTER.segment(text)].length;
+
+/**
+ * @param {string} title
+ * @returns {string}
+ */
+const headlineFor = (title) => defaultArticleDocument({
+  title,
+  description: "D",
+  date: "2026-10-15",
+}, PAGE).headline;
 
 const PAGE = "https://solon.agency/blog/example/";
 
@@ -154,4 +175,164 @@ test("a headline over 110 characters uses seo_title, or a word-boundary cut", ()
   assert.equal(cut.headline.endsWith(" "), false);
   assert.ok(cut.headline.length <= 110);
   assert.equal(longTitle.startsWith(cut.headline), true);
+});
+
+test("a headline cut keeps emoji, ZWJ sequences, and combining marks whole", () => {
+  const emoji = "\uD83D\uDE00";
+  const emojiHead = `${"a".repeat(109)}${emoji}`;
+  assert.equal(graphemeLength(emojiHead), 110);
+  assert.equal(emojiHead.length, 111);
+  assert.equal(headlineFor(`${emojiHead} depaseste limita`), emojiHead);
+
+  const family = "\u{1F468}\u200D\u{1F469}\u200D\u{1F467}";
+  const familyHead = `${"b".repeat(109)}${family}`;
+  assert.equal(graphemeLength(familyHead), 110);
+  assert.ok(familyHead.length > 110);
+  assert.equal(headlineFor(`${familyHead} depaseste limita`), familyHead);
+
+  const combining = "a\u0306";
+  assert.equal(graphemeLength(combining), 1);
+  assert.equal(combining.length, 2);
+  const combiningHead = `${"c".repeat(109)}${combining}`;
+  assert.equal(headlineFor(`${combiningHead} depaseste limita`), combiningHead);
+
+  const lone = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+  assert.equal(lone.test(headlineFor(`${emojiHead} depaseste`)), false);
+  assert.equal(lone.test(headlineFor(`${familyHead} depaseste`)), false);
+});
+
+test("a headline cut prefers the last whitespace inside the limit", () => {
+  const head = "Prima propozitie scurta";
+  assert.ok(head.includes(" "));
+  assert.equal(headlineFor(`${head} ${"z".repeat(120)}`), head);
+  assert.equal(headlineFor(`${head}\u00A0${"z".repeat(120)}`), head);
+  assert.equal(headlineFor(`${head}\n${"z".repeat(120)}`), head);
+});
+
+test("a headline with no space is cut mid-word on a character boundary", () => {
+  assert.equal(headlineFor("z".repeat(130)), "z".repeat(110));
+  const emoji = "\uD83D\uDE00";
+  assert.equal(headlineFor(`${"z".repeat(110)}${emoji}${"y".repeat(10)}`), "z".repeat(110));
+});
+
+test("a headline cut strips trailing punctuation and dashes", () => {
+  const fitting = `${"A".repeat(109)}:`;
+  assert.equal(graphemeLength(fitting), 110);
+  assert.equal(headlineFor(fitting), fitting);
+
+  for (const mark of [":", ",", ";", "\u2013", "\u2014", "-", "."]) {
+    const head = `Cuvant ${"x".repeat(102)}${mark}`;
+    assert.equal(graphemeLength(head), 110, mark);
+    assert.equal(headlineFor(`${head} depaseste limita`), head.slice(0, -mark.length));
+  }
+});
+
+test("a headline cut drops short dangling words repeatedly", () => {
+  for (const word of ["și", "și/sau", "de", "la", "în", "pe", "cu", "pentru", "din", "a", "o", "un", "al", "ale", "sau"]) {
+    const tail = ` ${word}`;
+    const stem = "Y".repeat(110 - graphemeLength(tail));
+    const head = `${stem}${tail}`;
+    assert.equal(graphemeLength(head), 110, word);
+    assert.equal(headlineFor(`${head} continuare peste limita`), stem, word);
+  }
+
+  const repeated = `${"Y".repeat(104)} și de`;
+  assert.equal(graphemeLength(repeated), 110);
+  assert.equal(headlineFor(`${repeated} continuare`), "Y".repeat(104));
+
+  const uppercase = `${"Y".repeat(107)} Și`;
+  assert.equal(graphemeLength(uppercase), 110);
+  assert.equal(headlineFor(`${uppercase} continuare`), "Y".repeat(107));
+
+  const afterPunctuation = `${"Y".repeat(106)}: și`;
+  assert.equal(graphemeLength(afterPunctuation), 110);
+  assert.equal(headlineFor(`${afterPunctuation} continuare`), "Y".repeat(106));
+
+  assert.equal(headlineFor("Publicitate: ce ai voie și"), "Publicitate: ce ai voie și");
+});
+
+test("a headline cut removes an unclosed parenthesis or bracket", () => {
+  for (const [open, close] of [["(", ")"], ["[", "]"], ["{", "}"]]) {
+    const stem = "Titlu clar";
+    const head = `${stem} ${open}${"z".repeat(110 - stem.length - 2)}`;
+    assert.equal(graphemeLength(head), 110, open);
+    assert.equal(headlineFor(`${head}${close} si inca text`), stem, open);
+  }
+
+  const balanced = "Ghid (2026)";
+  const prefix = `${balanced} (`;
+  const head = `${prefix}${"z".repeat(110 - graphemeLength(prefix))}`;
+  assert.equal(graphemeLength(head), 110);
+  assert.equal(headlineFor(`${head}) overflow text here`), balanced);
+});
+
+test("every built JSON-LD article headline is at most 110 characters", () => {
+  const root = path.join(__dirname, "..");
+  const listed = execFileSync("git", ["ls-files", "-z", "--", "*.html"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  const files = listed.split("\0").filter(Boolean).filter((rel) => {
+    const parts = rel.split("/");
+    if (parts[0] === "templates" || parts.includes("node_modules")) return false;
+    if (parts[0] === "assets" && parts[1] === "vendor") return false;
+    return true;
+  });
+  const required = [
+    "blog/ce-are-voie-avocat-sa-publice-online/index.html",
+    "blog/mentenanta-site-avocati/index.html",
+    "blog/cat-costa-un-site-de-avocat-in-2026/index.html",
+    "blog/glosar-marketing-digital-avocati/index.html",
+    "blog/creare-site-avocati/index.html",
+    "blog/google-business-profile-avocati/index.html",
+    "blog/date-structurate-schema-org-pentru-avocati/index.html",
+    "blog/microsoft-copilot-pentru-avocati/index.html",
+    "blog/pagini-arii-de-practica-website-avocat/index.html",
+    "blog/avocat-chatgpt-gemini-ai-overviews/index.html",
+    "blog/domeniu-email-profesional-cabinet-avocat/index.html",
+  ];
+  const scriptPattern = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  const isArticleType = (type) => {
+    const types = Array.isArray(type) ? type : [type];
+    return types.some((entry) => typeof entry === "string"
+      && (/Article|BlogPosting/.test(entry) || entry === "Report" || entry.endsWith("Report")));
+  };
+  const seen = new Set();
+  let headlines = 0;
+
+  for (const rel of files) {
+    const html = fs.readFileSync(path.join(root, rel), "utf8");
+    for (const match of html.matchAll(scriptPattern)) {
+      let data = null;
+      try {
+        data = JSON.parse(match[1]);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        assert.fail(`${rel} has invalid JSON-LD: ${message}`);
+      }
+      const walk = (node) => {
+        if (!node || typeof node !== "object") return;
+        if (Array.isArray(node)) {
+          for (const item of node) walk(item);
+          return;
+        }
+        if (isArticleType(node["@type"]) && typeof node.headline === "string") {
+          headlines += 1;
+          seen.add(rel);
+          const length = graphemeLength(node.headline);
+          assert.ok(
+            length <= 110,
+            `${rel} headline has ${length} characters: ${node.headline}`
+          );
+        }
+        for (const value of Object.values(node)) walk(value);
+      };
+      walk(data);
+    }
+  }
+
+  assert.ok(headlines >= required.length, `expected article headlines, found ${headlines}`);
+  for (const rel of required) {
+    assert.ok(seen.has(rel), `missing a JSON-LD headline on ${rel}`);
+  }
 });

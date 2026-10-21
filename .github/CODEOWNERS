@@ -5,3 +5,7 @@
 /.htmlvalidate.json @georgebrata
 /data/html-validate-baseline.json @georgebrata
 /.github/workflows/ @georgebrata
+/package.json @georgebrata
+/package-lock.json @georgebrata
+/.github/CODEOWNERS @georgebrata
+/tests/html-validate.test.js @georgebrata

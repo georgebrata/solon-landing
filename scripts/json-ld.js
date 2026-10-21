@@ -132,22 +132,146 @@ const buildJsonLdTag = (jsonLdValue, pageUrl) => {
 };
 
 const HEADLINE_LIMIT = 110;
+const GRAPHEME_SEGMENTER = new Intl.Segmenter("ro", { granularity: "grapheme" });
+const TRAILING_HEADLINE_PUNCTUATION = new Set([":", ",", ";", ".", "-", "\u2013", "\u2014"]);
+const DANGLING_HEADLINE_WORDS = new Set([
+  "și",
+  "și/sau",
+  "de",
+  "la",
+  "în",
+  "pe",
+  "cu",
+  "pentru",
+  "din",
+  "a",
+  "o",
+  "un",
+  "al",
+  "ale",
+  "sau",
+]);
+const HEADLINE_OPENERS = new Set(["(", "[", "{"]);
+const HEADLINE_CLOSERS = new Map([
+  [")", "("],
+  ["]", "["],
+  ["}", "{"],
+]);
+
+/**
+ * Extended grapheme clusters, so an emoji or a combining mark stays one character.
+ * @param {string} text
+ * @returns {string[]}
+ */
+const graphemesOf = (text) => [...GRAPHEME_SEGMENTER.segment(text)].map((part) => part.segment);
+
+/**
+ * @param {string[]} parts
+ * @returns {string[]}
+ */
+const trimEndGraphemes = (parts) => {
+  let end = parts.length;
+  while (end > 0 && parts[end - 1].trim() === "") end -= 1;
+  return parts.slice(0, end);
+};
+
+/**
+ * @param {string[]} parts
+ * @returns {{ start: number, end: number }}
+ */
+const lastWordRange = (parts) => {
+  let end = parts.length;
+  while (end > 0 && parts[end - 1].trim() === "") end -= 1;
+  let start = end;
+  while (start > 0 && parts[start - 1].trim() !== "") start -= 1;
+  return { start, end };
+};
+
+/**
+ * Index of the earliest `(` `[` `{` that has no matching closer, or -1.
+ * @param {string[]} parts
+ * @returns {number}
+ */
+const earliestUnclosedOpener = (parts) => {
+  const stack = [];
+  for (let index = 0; index < parts.length; index += 1) {
+    const grapheme = parts[index];
+    if (HEADLINE_OPENERS.has(grapheme)) {
+      stack.push(index);
+    } else if (HEADLINE_CLOSERS.has(grapheme) && stack.length) {
+      const opener = HEADLINE_CLOSERS.get(grapheme);
+      if (parts[stack[stack.length - 1]] === opener) stack.pop();
+    }
+  }
+  return stack.length ? stack[0] : -1;
+};
+
+/**
+ * Drop a ragged ending left by the length cut.
+ * @param {string[]} parts Graphemes inside the limit, possibly ending mid-phrase.
+ * @returns {string}
+ */
+const cleanCutHeadline = (parts) => {
+  let kept = parts;
+  for (;;) {
+    let next = trimEndGraphemes(kept);
+    while (next.length && TRAILING_HEADLINE_PUNCTUATION.has(next[next.length - 1])) {
+      next = next.slice(0, -1);
+    }
+    next = trimEndGraphemes(next);
+
+    const range = lastWordRange(next);
+    const word = next.slice(range.start, range.end).join("");
+    if (word && DANGLING_HEADLINE_WORDS.has(word.toLocaleLowerCase("ro"))) {
+      kept = next.slice(0, range.start);
+      continue;
+    }
+
+    const opener = earliestUnclosedOpener(next);
+    if (opener >= 0) {
+      kept = next.slice(0, opener);
+      continue;
+    }
+
+    return next.join("").trim();
+  }
+};
+
+/**
+ * Cut to `limit` graphemes. Prefer the last whitespace inside the limit.
+ * A title with no space is cut mid-word, still on a grapheme boundary.
+ * @param {string} text
+ * @param {number} limit
+ * @returns {string[]}
+ */
+const cutGraphemes = (text, limit) => {
+  const graphemes = graphemesOf(text);
+  if (graphemes.length <= limit) return graphemes;
+  if (graphemes[limit].trim() === "") return graphemes.slice(0, limit);
+
+  let lastSpace = -1;
+  for (let index = 0; index < limit; index += 1) {
+    if (graphemes[index].trim() === "") lastSpace = index;
+  }
+  return graphemes.slice(0, lastSpace > 0 ? lastSpace : limit);
+};
 
 /**
  * Article headline of at most 110 characters.
- * When the visible title is longer, a seo_title that fits is used whole.
- * Otherwise the title is cut on a word boundary, with no ellipsis.
+ * A fitting seo_title is used whole. Otherwise the title is cut on a grapheme
+ * boundary (the last whitespace inside the limit, or mid-word when there is
+ * no space), with no ellipsis. Emoji and surrogate pairs stay whole. The cut
+ * then drops trailing punctuation, short dangling words, and any phrase that
+ * would leave a parenthesis or bracket unclosed.
  * @param {object} frontmatter Post front-matter (`title`, optional `seo_title`).
  * @returns {string}
  */
 const articleHeadline = (frontmatter) => {
   const title = String(frontmatter.title || "").trim();
-  if (title.length <= HEADLINE_LIMIT) return title;
+  if (graphemesOf(title).length <= HEADLINE_LIMIT) return title;
   const seoTitle = typeof frontmatter.seo_title === "string" ? frontmatter.seo_title.trim() : "";
-  if (seoTitle && seoTitle.length <= HEADLINE_LIMIT) return seoTitle;
-  const room = title.slice(0, HEADLINE_LIMIT + 1);
-  const space = room.lastIndexOf(" ");
-  return (space > 0 ? title.slice(0, space) : title.slice(0, HEADLINE_LIMIT)).trim();
+  if (seoTitle && graphemesOf(seoTitle).length <= HEADLINE_LIMIT) return seoTitle;
+  return cleanCutHeadline(cutGraphemes(title, HEADLINE_LIMIT));
 };
 
 /**
