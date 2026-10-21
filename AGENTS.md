@@ -24,8 +24,6 @@ Sitemap lastmod is preserved for a page whose content date is not newer than the
 
 The production workflow runs `node scripts/update-sitemap.js --from-git` after the pricing build and before FTP. Each `<lastmod>` becomes the later of the stored day and the last commit that changed that page's content, still clamped to today in Europe/Bucharest. Cache-bust `?v=` tokens and the generated "Articole recente" / "Articole similare" blocks are not content changes, so a page that did not change keeps its stored value. A working-tree edit since `HEAD` (the pricing build can rewrite the homepage) uses today. The refreshed sitemap is uploaded and is not committed back.
 
-Do not add links to the Dumitrescu case-study page from templates, the hub, the carousel, related posts, or `llms.txt`. That page and its sitemap entry stay until Legal clears them.
-
 ## Blog sheet append (optional)
 
 `scripts/append-blog-google-sheets.js` logs a new article title to a Google Sheet via Apps Script (see the blog post workflow above). **`BLOG_SHEETS_APPEND_URL`** must be the full deployment URL, including any required query parameter. Configure it as a GitHub Actions secret or a local env var before running the script. Without it, sheet logging is skipped (stdout names the variable only; exit 0). Tests: `npm run test:append-sheets`. Never commit the URL or secret value.
