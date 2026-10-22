@@ -1262,6 +1262,11 @@ section {
   text-decoration: underline;
 }
 
+/* In-page anchors sit below the fixed header (73px desktop, 60px mobile). */
+.privacy-policy [id] {
+  scroll-margin-top: 90px;
+}
+
 @media (max-width: 767px) {
   .blog .box {
     max-width: 95%;
