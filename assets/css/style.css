@@ -1250,6 +1250,18 @@ section {
   padding-right: 2rem;
 }
 
+/* Privacy policy body links only. Global gold (#d7c996) is 1.66:1 on white. */
+.privacy-policy a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.privacy-policy a:hover,
+.privacy-policy a:focus-visible {
+  color: var(--secondary);
+  text-decoration: underline;
+}
+
 @media (max-width: 767px) {
   .blog .box {
     max-width: 95%;
