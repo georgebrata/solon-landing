@@ -168,7 +168,7 @@ const generatePostHTML = (post, posts, marked) => {
   const { htmlContent, headJsonLd } = applyPostJsonLd(parsed, frontmatter, pageUrl);
   const recentPostsHtml = generateRecentPostsHTML(posts, frontmatter.slug);
   const relatedPostsHtml = generateRelatedPostsHTML(posts, frontmatter.slug, frontmatter.cluster);
-  const tagsHtml = (frontmatter.tags || []).map(tag => `<li><a href="../?tag=${tag}">${tag}</a></li>`).join('');
+  const tagsHtml = (frontmatter.tags || []).map(tag => `<li><a href="../?tag=${encodeURIComponent(tag)}">${escapeHtml(tag)}</a></li>`).join('');
 
   let postHtml = postTemplate;
   postHtml = replaceToken(postHtml, 'title', frontmatter.title);
