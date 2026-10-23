@@ -48,7 +48,7 @@ json_ld: |-
             "name": "Ce nu are voie un avocat să posteze pe social media?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Sunt interzise: menționarea numelui sau a imaginii clienților (inclusiv în testimoniale), promisiunile de rezultat, procentele de succes, comparațiile cu alți avocați, ofertele de servicii nesolicitate adresate direct potențialilor clienți și orice informație care dezvăluie detalii dintr-un dosar concret (Codul deontologic, art. 20 alin. 6-7; Statut, Anexa XXXIV, pct. 8.3)."
+              "text": "Sunt interzise: menționarea numelui sau a imaginii clienților (inclusiv în testimoniale), promisiunile de rezultat, procentele de succes, comparațiile cu alți avocați, ofertele de servicii nesolicitate adresate direct potențialilor clienți și orice informație care dezvăluie detalii dintr-un dosar concret (Codul deontologic, art. 20 alin. 6-7)."
             }
           },
           {
@@ -64,7 +64,7 @@ json_ld: |-
             "name": "Pot folosi testimonialele clienților pe Instagram?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Preluarea testimonialelor sau a recenziilor clienților în propria publicitate este problematică din punct de vedere deontologic, deoarece poate dezvălui identitatea clientului, relația cu avocatul sau rezultatele obținute, aspecte interzise de Statut, Anexa XXXIV, pct. 3.1 lit. c și de Codul deontologic, art. 20 alin. 6-7. Recenziile spontane pe platforme terțe nu pot fi interzise de avocat, dar răspunsul la ele nu poate conține informații din dosar și nici nu poate confirma că persoana a fost clientul cabinetului. Înainte de orice testimonial publicitar, consultă baroul din care faci parte."
+              "text": "Preluarea testimonialelor sau a recenziilor clienților în propria publicitate este problematică din punct de vedere deontologic, deoarece poate dezvălui identitatea clientului, relația cu avocatul sau rezultatele obținute, aspecte interzise de Codul deontologic, art. 20 alin. 6-7. Recenziile spontane pe platforme terțe nu pot fi interzise de avocat, dar răspunsul la ele nu poate conține informații din dosar și nici nu poate confirma că persoana a fost clientul cabinetului. Înainte de orice testimonial publicitar, consultă baroul din care faci parte."
             }
           },
           {
@@ -161,13 +161,13 @@ Pct. 8 din Anexa XXXIV la Statutul profesiei de avocat precizează că regulile 
 **Interzis pe orice platformă:**
 
 - Promisiuni de rezultat sau procente de succes - inclusiv implicit (ex: „Dosarul a durat doar 3 luni”)
-- Numele, fotografia, onorariile practicate sau orice element care identifică un client, relația de mandat, rezultatele obținute, cifra de afaceri sau numărul de dosare ([Codul deontologic al avocatului român, art. 20 alin. 6](https://unbr.ro/publicam-hotararea-consiliului-unbr-nr-26817-iunie-2017-prin-care-se-aproba-codul-deontologic-al-avocatul-roman-prevazut-in-anexa/))
+- Numele, fotografia, onorariile practicate sau orice element care identifică un client, relația de mandat, rezultatele obținute, cifra de afaceri sau numărul de dosare ([Codul deontologic al avocatului român, art. 20 alin. 6](https://unbr.ro/publicam-hotararea-consiliului-unbr-nr-26817-iunie-2017-prin-care-se-aproba-codul-deontologic-al-avocatului-roman-prevazut-in-anexa/))
 - Folosirea notorietății unui client pentru promovare (Codul deontologic, art. 20 alin. 7)
 - Comparații sau afirmații denigratoare la adresa altor avocați sau firme de avocatură (Statut, art. 243¹ alin. 2)
-- Ofertele de servicii nesolicitate adresate direct potențialilor clienți (Statut, Anexa XXXIV, pct. 3.2 lit. a)
-- Profilurile și postările promoționale trebuie asociate cu denumirea sau inițialele cabinetului; promovarea doar prin termeni generici (de ex. «avocat Cluj») este considerată concurență neloială ([Decizia interpretativă UNBR nr. 125/2024](https://www.unbr.ro/wp-content/uploads/2025/02/2024_Decizie-interpretativa-125-2024_publicitate_motivata_comunicata.pdf))
+- Ofertele de servicii nesolicitate adresate direct potențialilor clienți (Statut, Anexa XXXIV)
+- Profilurile și postările promoționale trebuie asociate cu denumirea sau inițialele cabinetului; promovarea doar prin termeni generici (de ex. „avocat Cluj”) este considerată concurență neloială ([Decizia interpretativă UNBR nr. 125/2024](https://www.unbr.ro/wp-content/uploads/2025/02/2024_Decizie-interpretativa-125-2024_publicitate_motivata_comunicata.pdf))
 
-**Testimonialele și recenziile clienților sunt o zonă deontologic problematică.** Preluarea recenziilor sau a citatelor din mesajele clienților în propria publicitate poate dezvălui identitatea clientului, relația de mandat sau rezultatele obținute - toate aspecte interzise de Statut, Anexa XXXIV, pct. 3.1 lit. c și de Codul deontologic, art. 20 alin. 6-7. Recenziile spontane pe platforme terțe nu pot fi interzise de avocat, dar răspunsul la ele nu poate conține informații din dosar și nici nu poate confirma că persoana a fost clientul cabinetului ([Legea nr. 51/1995, art. 11](https://legislatie.just.ro/Public/DetaliiDocument/265997) privind secretul profesional). Înainte de orice formă de testimonial publicitar, consultă baroul din care faci parte.
+**Testimonialele și recenziile clienților sunt o zonă deontologic problematică.** Preluarea recenziilor sau a citatelor din mesajele clienților în propria publicitate poate dezvălui identitatea clientului, relația de mandat sau rezultatele obținute - toate aspecte interzise de Codul deontologic, art. 20 alin. 6-7. Recenziile spontane pe platforme terțe nu pot fi interzise de avocat, dar răspunsul la ele nu poate conține informații din dosar și nici nu poate confirma că persoana a fost clientul cabinetului ([Legea nr. 51/1995, art. 11](https://legislatie.just.ro/Public/DetaliiDocument/265997) privind secretul profesional). Înainte de orice formă de testimonial publicitar, consultă baroul din care faci parte.
 
 Alte interdicții practice le găsești rezumate în ghidul detaliat [ce are voie un avocat să publice online](../ce-are-voie-avocat-sa-publice-online/).
 
@@ -222,7 +222,7 @@ Da. Pct. 8.3 din Anexa XXXIV la Statutul profesiei de avocat permite publicitate
 
 ### Ce nu are voie un avocat să posteze pe social media?
 
-Sunt interzise: menționarea numelui sau a imaginii clienților (inclusiv în testimoniale), promisiunile de rezultat, procentele de succes, comparațiile cu alți avocați, ofertele de servicii nesolicitate adresate direct potențialilor clienți și orice informație care dezvăluie detalii dintr-un dosar concret (Codul deontologic, art. 20 alin. 6-7; Statut, Anexa XXXIV, pct. 8.3).
+Sunt interzise: menționarea numelui sau a imaginii clienților (inclusiv în testimoniale), promisiunile de rezultat, procentele de succes, comparațiile cu alți avocați, ofertele de servicii nesolicitate adresate direct potențialilor clienți și orice informație care dezvăluie detalii dintr-un dosar concret (Codul deontologic, art. 20 alin. 6-7).
 
 ### Cât de des trebuie să posteze un avocat pe Instagram sau Facebook?
 
@@ -230,7 +230,7 @@ Un ritm sustenabil pentru un cabinet individual sau mic este 2-3 postări pe să
 
 ### Pot folosi testimonialele clienților pe Instagram?
 
-Preluarea testimonialelor sau a recenziilor clienților în propria publicitate este problematică din punct de vedere deontologic, deoarece poate dezvălui identitatea clientului, relația cu avocatul sau rezultatele obținute, aspecte interzise de Statut, Anexa XXXIV, pct. 3.1 lit. c și de Codul deontologic, art. 20 alin. 6-7. Recenziile spontane pe platforme terțe nu pot fi interzise de avocat, dar răspunsul la ele nu poate conține informații din dosar și nici nu poate confirma că persoana a fost clientul cabinetului. Înainte de orice testimonial publicitar, consultă baroul din care faci parte.
+Preluarea testimonialelor sau a recenziilor clienților în propria publicitate este problematică din punct de vedere deontologic, deoarece poate dezvălui identitatea clientului, relația cu avocatul sau rezultatele obținute, aspecte interzise de Codul deontologic, art. 20 alin. 6-7. Recenziile spontane pe platforme terțe nu pot fi interzise de avocat, dar răspunsul la ele nu poate conține informații din dosar și nici nu poate confirma că persoana a fost clientul cabinetului. Înainte de orice testimonial publicitar, consultă baroul din care faci parte.
 
 ### Trebuie să etichetez ca generat de AI conținutul creat cu un instrument de inteligență artificială?
 
@@ -243,9 +243,9 @@ Extrage ideile principale (titlurile H2) și transformă-le în slide-urile unui
 ## Surse
 
 - [Regulamentul (UE) 2024/1689 (AI Act), art. 50](https://eur-lex.europa.eu/legal-content/RO/TXT/?uri=CELEX:32024R1689) - EUR-Lex
-- [Legea nr. 51/1995 pentru organizarea și exercitarea profesiei de avocat, art. 11, art. 47](https://legislatie.just.ro/Public/DetaliiDocument/265997) - legislatie.just.ro
+- [Legea nr. 51/1995 pentru organizarea și exercitarea profesiei de avocat, art. 11](https://legislatie.just.ro/Public/DetaliiDocument/265997) - legislatie.just.ro
 - [Statutul profesiei de avocat (forma consolidată 2024)](https://unbr.ro/wp-content/uploads/2024/09/sintact-statut-din-2011-al-profesiei-de-avocat_2024-09-13.pdf) - UNBR
-- [Codul deontologic al avocatului român, art. 20 (HCU nr. 268/2017)](https://unbr.ro/publicam-hotararea-consiliului-unbr-nr-26817-iunie-2017-prin-care-se-aproba-codul-deontologic-al-avocatul-roman-prevazut-in-anexa/) - UNBR
+- [Codul deontologic al avocatului român, art. 20 (HCU nr. 268/2017)](https://unbr.ro/publicam-hotararea-consiliului-unbr-nr-26817-iunie-2017-prin-care-se-aproba-codul-deontologic-al-avocatului-roman-prevazut-in-anexa/) - UNBR
 - [Decizia interpretativă UNBR nr. 125/2024 privind publicitatea](https://www.unbr.ro/wp-content/uploads/2025/02/2024_Decizie-interpretativa-125-2024_publicitate_motivata_comunicata.pdf) - UNBR
 - [Instagram: carusele - centrul de ajutor](https://help.instagram.com/269314186824048/) - Meta
 - [Instagram: Reels - centrul de ajutor](https://help.instagram.com/1038071743007909) - Meta
