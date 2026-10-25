@@ -73,7 +73,6 @@
       if (!btn) return;
       const params = { plan: btn.dataset.plan, billing: btn.dataset.billing };
       trackPricingEvent("pricing_plan_click", params);
-      trackPricingEvent("checkout_start", params);
     });
 
     if ("IntersectionObserver" in window) {

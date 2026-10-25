@@ -16,8 +16,10 @@ const {
   normalizeFeedbackEmailParam,
   buildFeedbackFormSrc,
   stripFeedbackEmailFromHref,
+  stripEParamPreservingSearch,
+  readRawEmailParamFromSearch,
   applyFeedbackUrlHygiene,
-  isFeedbackPrefillPath,
+  applyFeedbackIframeSrc,
 } = require(sourcePath);
 
 test("feedback page loads prefill script before consent.min.js", () => {
@@ -28,14 +30,35 @@ test("feedback page loads prefill script before consent.min.js", () => {
   assert.ok(prefillIdx < consentIdx, "prefill must load before consent");
 });
 
+test("feedback iframe uses data-src without src in HTML", () => {
+  assert.match(
+    feedbackHtml,
+    /data-src="https:\/\/docs\.google\.com\/forms\/d\/e\/1FAIpQLScGk[^"]+embedded=true"/
+  );
+  const iframeTags = feedbackHtml.match(/<iframe[^>]*Formular feedback SOLON[^>]*>/g);
+  assert.ok(iframeTags);
+  const mainFrame = iframeTags[0];
+  assert.ok(!/\ssrc="/u.test(mainFrame), "main iframe must not have src in HTML");
+});
+
+test("feedback page sets strict-origin-when-cross-origin referrer", () => {
+  assert.match(
+    feedbackHtml,
+    /<meta name="referrer" content="strict-origin-when-cross-origin">/
+  );
+});
+
 test("buildFeedbackFormSrc encodes plus in email for Google Forms entry", () => {
   const built = buildFeedbackFormSrc("a+b@x.ro");
   assert.ok(built);
+  assert.match(built, /entry\.1640447617=a%2Bb%40x\.ro/u);
   const url = new URL(built);
   assert.equal(url.searchParams.get("entry.1640447617"), "a+b@x.ro");
-  assert.equal(url.searchParams.get("usp"), "pp_url");
-  assert.equal(url.searchParams.get("embedded"), "true");
-  assert.ok(built.startsWith(FEEDBACK_FORM_BASE_SRC.split("?")[0]));
+});
+
+test("readRawEmailParamFromSearch keeps plus sign from query string", () => {
+  assert.equal(readRawEmailParamFromSearch("?e=a+b@x.ro"), "a+b@x.ro");
+  assert.equal(readRawEmailParamFromSearch("?E=a+b@x.ro"), "a+b@x.ro");
 });
 
 test("invalid or injection-like email is ignored for form URL", () => {
@@ -43,6 +66,9 @@ test("invalid or injection-like email is ignored for form URL", () => {
   assert.equal(buildFeedbackFormSrc("not-an-email"), null);
   assert.equal(buildFeedbackFormSrc("a@b"), null);
   assert.equal(normalizeFeedbackEmailParam('evil"@test.com'), null);
+  assert.equal(normalizeFeedbackEmailParam("a..b@x.ro"), null);
+  assert.equal(normalizeFeedbackEmailParam("a@x.c"), null);
+  assert.equal(normalizeFeedbackEmailParam(`${"a".repeat(65)}@x.ro`), null);
 });
 
 test("email longer than 254 characters is rejected without truncation", () => {
@@ -52,32 +78,27 @@ test("email longer than 254 characters is rejected without truncation", () => {
   assert.equal(buildFeedbackFormSrc(tooLong), null);
 });
 
-test("isFeedbackPrefillPath matches /feedback/ and /feedback/index.html", () => {
-  assert.equal(isFeedbackPrefillPath("/feedback/"), true);
-  assert.equal(isFeedbackPrefillPath("/feedback"), true);
-  assert.equal(isFeedbackPrefillPath("/feedback/index.html"), true);
-  assert.equal(isFeedbackPrefillPath("/feedback-extra/"), false);
+test("stripEParamPreservingSearch removes e/E and preserves other params byte-for-byte", () => {
+  const search = "?foo=bar%26baz&E=user%40example.com&x=1";
+  const result = stripEParamPreservingSearch(search);
+  assert.equal(result.stripped, true);
+  assert.equal(result.search, "?foo=bar%26baz&x=1");
+  assert.equal(result.rawEmail, "user@example.com");
 });
 
-test("missing or empty param leaves buildFeedbackFormSrc null", () => {
-  assert.equal(buildFeedbackFormSrc(""), null);
-  assert.equal(buildFeedbackFormSrc(null), null);
-  assert.equal(normalizeFeedbackEmailParam(), null);
-});
-
-test("stripFeedbackEmailFromHref removes e and keeps other params and hash", () => {
-  const href = "https://solon.agency/feedback/?foo=1&e=user%40example.com&bar=2#section";
+test("stripFeedbackEmailFromHref on /feedback/index.html keeps other params and hash", () => {
+  const href = "https://solon.agency/feedback/index.html?foo=1&e=user%40example.com&bar=2#section";
   const result = stripFeedbackEmailFromHref(href);
   assert.equal(result.stripped, true);
-  assert.equal(result.pathAndQuery, "/feedback/?foo=1&bar=2#section");
+  assert.equal(result.pathAndQuery, "/feedback/index.html?foo=1&bar=2#section");
 });
 
-test("applyFeedbackUrlHygiene strips e from location via replaceState", () => {
+test("applyFeedbackUrlHygiene strips e from /feedback/index.html via replaceState", () => {
   const replaceCalls = [];
   const win = {
     location: {
-      href: "https://solon.agency/feedback/?utm=1&e=client%40solon.agency#top",
-      pathname: "/feedback/",
+      href: "https://solon.agency/feedback/index.html?utm=1&e=client%40solon.agency#top",
+      pathname: "/feedback/index.html",
     },
     history: {
       replaceState(_state, _title, url) {
@@ -88,25 +109,64 @@ test("applyFeedbackUrlHygiene strips e from location via replaceState", () => {
   };
   const email = applyFeedbackUrlHygiene(win);
   assert.equal(email, "client@solon.agency");
-  assert.deepEqual(replaceCalls, ["/feedback/?utm=1#top"]);
-  assert.equal(win.location.href, "https://solon.agency/feedback/?utm=1#top");
+  assert.deepEqual(replaceCalls, ["/feedback/index.html?utm=1#top"]);
+});
+
+test("applyFeedbackIframeSrc sets src once and skips base when e is valid", () => {
+  const assignments = [];
+  const iframe = {
+    title: "Formular feedback SOLON (Google Forms)",
+    _src: "",
+    getAttribute(name) {
+      if (name === "data-src") {
+        return FEEDBACK_FORM_BASE_SRC;
+      }
+      return null;
+    },
+    set src(value) {
+      assignments.push(value);
+      this._src = value;
+    },
+    get src() {
+      return this._src;
+    },
+  };
+  const document = {
+    querySelector() {
+      return iframe;
+    },
+  };
+  applyFeedbackIframeSrc(document, "a+b@x.ro");
+  assert.equal(assignments.length, 1);
+  assert.notEqual(assignments[0], FEEDBACK_FORM_BASE_SRC);
+  assert.match(assignments[0], /entry\.1640447617=a%2Bb%40x\.ro/u);
 });
 
 test("boot does not push email into dataLayer", () => {
   const dataLayer = [];
   const replaceCalls = [];
+  const assignments = [];
   const iframe = {
     title: "Formular feedback SOLON (Google Forms)",
-    src: FEEDBACK_FORM_BASE_SRC,
+    _src: "",
+    getAttribute(name) {
+      if (name === "data-src") {
+        return FEEDBACK_FORM_BASE_SRC;
+      }
+      return null;
+    },
+    set src(value) {
+      assignments.push(value);
+      this._src = value;
+    },
+    get src() {
+      return this._src;
+    },
   };
   const document = {
     readyState: "complete",
-    location: undefined,
-    querySelector(selector) {
-      if (String(selector).includes("Formular feedback")) {
-        return iframe;
-      }
-      return null;
+    querySelector() {
+      return iframe;
     },
     addEventListener() {
       /* DOMContentLoaded not used when readyState is complete */
@@ -131,40 +191,49 @@ test("boot does not push email into dataLayer", () => {
   vm.runInNewContext(source, win, { filename: "feedback-form-prefill.js" });
 
   assert.ok(replaceCalls.length > 0);
-  assert.match(iframe.src, /entry\.1640447617=/);
+  assert.equal(assignments.length, 1);
+  assert.match(assignments[0], /entry\.1640447617=/);
   const serialized = JSON.stringify(dataLayer);
   assert.ok(!serialized.includes("hidden@example.com"));
-  assert.ok(!serialized.includes("hidden%40"));
 });
 
-test("boot runs on /feedback/index.html pathname", () => {
-  const replaceCalls = [];
+test("boot waits for DOMContentLoaded before setting iframe src", () => {
+  const assignments = [];
+  const listeners = {};
   const iframe = {
     title: "Formular feedback SOLON (Google Forms)",
-    src: FEEDBACK_FORM_BASE_SRC,
-  };
-  const document = {
-    readyState: "complete",
-    querySelector(selector) {
-      if (String(selector).includes("Formular feedback")) {
-        return iframe;
+    _src: "",
+    getAttribute(name) {
+      if (name === "data-src") {
+        return FEEDBACK_FORM_BASE_SRC;
       }
       return null;
     },
-    addEventListener() {
-      /* DOMContentLoaded not used when readyState is complete */
+    set src(value) {
+      assignments.push(value);
+      this._src = value;
+    },
+    get src() {
+      return this._src;
+    },
+  };
+  const document = {
+    readyState: "loading",
+    querySelector() {
+      return iframe;
+    },
+    addEventListener(type, fn) {
+      listeners[type] = fn;
     },
   };
   const win = {
     URL,
     location: {
-      href: "https://solon.agency/feedback/index.html?e=idx%40example.com",
-      pathname: "/feedback/index.html",
+      href: "https://solon.agency/feedback/?e=wait%40example.com",
+      pathname: "/feedback/",
     },
     history: {
-      replaceState(_state, _title, url) {
-        replaceCalls.push(url);
-      },
+      replaceState() {},
     },
     document,
     module: { exports: {} },
@@ -172,6 +241,9 @@ test("boot runs on /feedback/index.html pathname", () => {
   win.window = win;
   vm.runInNewContext(source, win, { filename: "feedback-form-prefill.js" });
 
-  assert.ok(replaceCalls.length > 0);
-  assert.match(iframe.src, /entry\.1640447617=idx%40example\.com/);
+  assert.equal(assignments.length, 0);
+  assert.equal(typeof listeners.DOMContentLoaded, "function");
+  listeners.DOMContentLoaded();
+  assert.equal(assignments.length, 1);
+  assert.match(assignments[0], /entry\.1640447617=wait%40example\.com/u);
 });

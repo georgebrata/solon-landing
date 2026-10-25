@@ -30,7 +30,11 @@
   })(window, document, "script", FBE_SRC);
 
   if (typeof fbq === "function") {
+    fbq("set", "autoConfig", false, PIXEL_ID);
     fbq("init", PIXEL_ID);
     fbq("track", "PageView");
+  }
+  if (typeof document !== "undefined" && typeof document.dispatchEvent === "function") {
+    document.dispatchEvent(new CustomEvent("solon:pixel-ready"));
   }
 })();

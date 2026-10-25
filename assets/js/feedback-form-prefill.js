@@ -10,6 +10,7 @@
   const EMAIL_ENTRY_ID = "1640447617";
   const EMAIL_QUERY_PARAM = "e";
   const EMAIL_MAX_LENGTH = 254;
+  const LOCAL_PART_MAX_LENGTH = 64;
   const IFRAME_TITLE = "Formular feedback SOLON (Google Forms)";
 
   let win = globalThis;
@@ -19,6 +20,88 @@
   let doc = null;
   if (typeof document !== "undefined") {
     doc = document;
+  }
+
+  /**
+   * Decodes a query value without treating "+" as space (unlike URLSearchParams).
+   * @param {string} encoded
+   * @returns {string}
+   */
+  function decodeEmailQueryValue(encoded) {
+    if (!encoded) {
+      return "";
+    }
+    return decodeURIComponent(encoded.replace(/\+/g, "%2B"));
+  }
+
+  /**
+   * @param {string} search
+   * @returns {string|null}
+   */
+  function readRawEmailParamFromSearch(search) {
+    const qs = search.startsWith("?") ? search.slice(1) : search;
+    if (!qs) {
+      return null;
+    }
+    const parts = qs.split("&");
+    for (let i = 0; i < parts.length; i += 1) {
+      const part = parts[i];
+      if (!part) {
+        continue;
+      }
+      const eq = part.indexOf("=");
+      const key = eq === -1 ? part : part.slice(0, eq);
+      if (key.toLowerCase() !== EMAIL_QUERY_PARAM) {
+        continue;
+      }
+      const value = eq === -1 ? "" : part.slice(eq + 1);
+      return decodeEmailQueryValue(value);
+    }
+    return null;
+  }
+
+  /**
+   * Removes e/E from the query string without re-encoding other parameters.
+   * @param {string} search
+   * @returns {{ search: string, rawEmail: string|null, stripped: boolean }}
+   */
+  function stripEParamPreservingSearch(search) {
+    if (!search) {
+      return { search: "", rawEmail: null, stripped: false };
+    }
+    const qs = search.startsWith("?") ? search.slice(1) : search;
+    if (!qs) {
+      return { search, rawEmail: null, stripped: false };
+    }
+    const parts = qs.split("&");
+    const kept = [];
+    let rawEmail = null;
+    let stripped = false;
+    for (let i = 0; i < parts.length; i += 1) {
+      const part = parts[i];
+      if (part === "") {
+        kept.push(part);
+        continue;
+      }
+      const eq = part.indexOf("=");
+      const key = eq === -1 ? part : part.slice(0, eq);
+      if (key.toLowerCase() === EMAIL_QUERY_PARAM) {
+        stripped = true;
+        if (rawEmail === null) {
+          const value = eq === -1 ? "" : part.slice(eq + 1);
+          rawEmail = decodeEmailQueryValue(value);
+        }
+        continue;
+      }
+      kept.push(part);
+    }
+    if (!stripped) {
+      return { search, rawEmail: null, stripped: false };
+    }
+    if (kept.length === 0) {
+      return { search: "", rawEmail, stripped: true };
+    }
+    return { search: `?${kept.join("&")}`, rawEmail, stripped: true };
   }
 
   /**
@@ -53,13 +136,27 @@
     if (/[\s<>"']/u.test(value)) {
       return false;
     }
+    if (/[\u0000-\u001F\u007F]/u.test(value)) {
+      return false;
+    }
     const at = value.indexOf("@");
     if (at <= 0 || at !== value.lastIndexOf("@")) {
       return false;
     }
     const local = value.slice(0, at);
     const domain = value.slice(at + 1);
-    return Boolean(local && domain && domain.includes("."));
+    if (!local || local.length > LOCAL_PART_MAX_LENGTH) {
+      return false;
+    }
+    if (!domain || local.includes("..") || domain.includes("..")) {
+      return false;
+    }
+    const lastDot = domain.lastIndexOf(".");
+    if (lastDot <= 0 || lastDot >= domain.length - 1) {
+      return false;
+    }
+    const tld = domain.slice(lastDot + 1);
+    return tld.length >= 2;
   }
 
   /**
@@ -69,13 +166,9 @@
   function stripFeedbackEmailFromHref(href) {
     try {
       const url = new URL(href);
-      const stripped = url.searchParams.has(EMAIL_QUERY_PARAM);
-      const rawEmail = url.searchParams.get(EMAIL_QUERY_PARAM);
-      if (stripped) {
-        url.searchParams.delete(EMAIL_QUERY_PARAM);
-      }
+      const { search, rawEmail, stripped } = stripEParamPreservingSearch(url.search);
       return {
-        pathAndQuery: url.pathname + url.search + url.hash,
+        pathAndQuery: url.pathname + search + url.hash,
         rawEmail,
         stripped,
       };
@@ -116,30 +209,42 @@
   }
 
   /**
+   * @param {Element|null} frame
+   * @returns {string}
+   */
+  function resolveFeedbackFormBaseSrc(frame) {
+    if (frame && typeof frame.getAttribute === "function") {
+      const fromData = frame.getAttribute("data-src");
+      if (fromData) {
+        return fromData;
+      }
+    }
+    return FEEDBACK_FORM_BASE_SRC;
+  }
+
+  /**
    * @param {Document} targetDoc
    * @param {string|null} email
    * @returns {void}
    */
-  function applyFeedbackIframePrefill(targetDoc, email) {
-    if (!email) {
-      return;
-    }
-    const src = buildFeedbackFormSrc(email);
-    if (!src) {
-      return;
-    }
+  function applyFeedbackIframeSrc(targetDoc, email) {
     const frame = targetDoc.querySelector(`iframe[title="${IFRAME_TITLE}"]`);
-    if (frame && typeof frame.src === "string") {
-      frame.src = src;
+    if (!frame) {
+      return;
     }
-  }
-
-  /**
-   * @param {string} path
-   * @returns {boolean}
-   */
-  function isFeedbackPrefillPath(path) {
-    return /\/feedback(\/(index\.html)?)?$/iu.test(path || "");
+    const base = resolveFeedbackFormBaseSrc(frame);
+    let src = base;
+    if (email) {
+      const prefilled = buildFeedbackFormSrc(email);
+      if (prefilled) {
+        src = prefilled;
+      }
+    }
+    if (typeof frame.src === "string") {
+      frame.src = src;
+      return;
+    }
+    frame.setAttribute("src", src);
   }
 
   /**
@@ -149,16 +254,12 @@
     if (!doc || !win.location) {
       return;
     }
-    const path = win.location.pathname || "";
-    if (!isFeedbackPrefillPath(path)) {
-      return;
-    }
     const email = applyFeedbackUrlHygiene(win);
     /**
      * @returns {void}
      */
     function onReady() {
-      applyFeedbackIframePrefill(doc, email);
+      applyFeedbackIframeSrc(doc, email);
     }
     if (doc.readyState === "loading") {
       doc.addEventListener("DOMContentLoaded", onReady);
@@ -171,13 +272,17 @@
     FEEDBACK_FORM_BASE_SRC,
     EMAIL_ENTRY_ID,
     EMAIL_QUERY_PARAM,
+    LOCAL_PART_MAX_LENGTH,
+    decodeEmailQueryValue,
+    readRawEmailParamFromSearch,
+    stripEParamPreservingSearch,
     normalizeFeedbackEmailParam,
     isConservativeFeedbackEmail,
     stripFeedbackEmailFromHref,
     buildFeedbackFormSrc,
     applyFeedbackUrlHygiene,
-    applyFeedbackIframePrefill,
-    isFeedbackPrefillPath,
+    resolveFeedbackFormBaseSrc,
+    applyFeedbackIframeSrc,
     bootFeedbackFormPrefill,
   };
 

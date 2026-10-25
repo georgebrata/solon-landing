@@ -20,26 +20,11 @@
  */
 (function () {
 
-  const CONSENT_VERSION = 1;
+  const CONSENT_VERSION = 2;
   const STORAGE_KEY = "solon_cookie_consent";
   const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
   const MAX_AGE_MS = COOKIE_MAX_AGE * 1000;
   const CATEGORIES = ["necessary", "analytics", "marketing"];
-  const TRACKER_COOKIE_PREFIXES = [
-    "_ga",
-    "_gid",
-    "_gat",
-    "_gcl",
-    "_clck",
-    "_clsk",
-    "_fbp",
-    "_fbc",
-    "CLID",
-    "ANONCHK",
-    "SM",
-    "MUID",
-    "sib_",
-  ];
   const SKIP_SCRIPT_ATTRS = {
     type: true,
     "data-consent-category": true,
@@ -125,6 +110,93 @@
   }
 
   let current = deniedConsent();
+
+  /**
+   * Strips feedback prefill ?e= / ?E= while preserving other query bytes (see feedback-form-prefill.js).
+   * @param {string} href
+   * @returns {{ pathAndQuery: string, stripped: boolean }}
+   */
+  function stripSensitiveEQueryFromHref(href) {
+    try {
+      const url = new URL(href);
+      const search = url.search;
+      if (!search) {
+        return { pathAndQuery: url.pathname + url.hash, stripped: false };
+      }
+      const qs = search.slice(1);
+      const parts = qs.split("&");
+      const kept = [];
+      let stripped = false;
+      for (let i = 0; i < parts.length; i += 1) {
+        const part = parts[i];
+        if (part === "") {
+          kept.push(part);
+          continue;
+        }
+        const eq = part.indexOf("=");
+        const key = eq === -1 ? part : part.slice(0, eq);
+        if (key.toLowerCase() === "e") {
+          stripped = true;
+          continue;
+        }
+        kept.push(part);
+      }
+      if (!stripped) {
+        return { pathAndQuery: url.pathname + search + url.hash, stripped: false };
+      }
+      const nextSearch = kept.length ? `?${kept.join("&")}` : "";
+      return { pathAndQuery: url.pathname + nextSearch + url.hash, stripped: true };
+    } catch {
+      return { pathAndQuery: "", stripped: false };
+    }
+  }
+
+  /**
+   * @param {string} href
+   * @returns {{ pathAndQuery: string, email: string|null, stripped: boolean }}
+   */
+  function stripEmailQueryFromHref(href) {
+    try {
+      const url = new URL(href);
+      const email = url.searchParams.get("email");
+      let stripped = false;
+      if (url.searchParams.has("email")) {
+        url.searchParams.delete("email");
+        stripped = true;
+      }
+      return {
+        pathAndQuery: url.pathname + url.search + url.hash,
+        email: email || null,
+        stripped,
+      };
+    } catch {
+      return { pathAndQuery: "", email: null, stripped: false };
+    }
+  }
+
+  /**
+   * Removes email from the visible URL before trackers or other scripts read location.
+   * @returns {void}
+   */
+  function applySensitiveUrlHygiene() {
+    if (!win.location || typeof win.history?.replaceState !== "function") {
+      return;
+    }
+    const path = win.location.pathname || "";
+    const eStrip = stripSensitiveEQueryFromHref(win.location.href);
+    let hrefForEmail = win.location.href;
+    if (eStrip.stripped) {
+      hrefForEmail = `${win.location.origin}${eStrip.pathAndQuery}`;
+    }
+    const { pathAndQuery, email, stripped: emailStripped } = stripEmailQueryFromHref(hrefForEmail);
+    if (/\/unsubscribe\/?$/iu.test(path) && email) {
+      win.__solonUnsubscribeEmail = email;
+    }
+    const finalPath = emailStripped ? pathAndQuery : eStrip.pathAndQuery;
+    if (eStrip.stripped || emailStripped) {
+      win.history.replaceState(null, "", finalPath);
+    }
+  }
 
   /** Installs a dataLayer-backed gtag stub before any vendor tag runs.
    * @returns {void}
@@ -394,45 +466,6 @@
   }
 
   /**
-   * @param {string} name
-   * @returns {boolean}
-   */
-  function isTrackerCookie(name) {
-    if (!name || name === STORAGE_KEY) {
-      return false;
-    }
-    for (const prefix of TRACKER_COOKIE_PREFIXES) {
-      if (name === prefix || name.startsWith(prefix)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /** Clears known first-party tracker cookies after withdrawal.
-   * @returns {void}
-   */
-  function expireTrackerCookies() {
-    if (!doc?.cookie) {
-      return;
-    }
-    const host = win.location?.hostname || "";
-    const parts = String(doc.cookie).split(";");
-    for (const part of parts) {
-      const name = part.split("=")[0].trim();
-      if (isTrackerCookie(name)) {
-        doc.cookie = `${name}=; Path=/; Max-Age=0`;
-        if (host) {
-          doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=${host}`;
-          if (host.includes(".")) {
-            doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=.${host}`;
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * @param {Function} fn
    * @returns {boolean}
    */
@@ -445,29 +478,75 @@
     }
   }
 
-  /** Asks already-loaded tags to stop tracking after a category is withdrawn.
+  const ANALYTICS_COOKIE_PREFIXES = ["_ga", "_gid", "_gat", "_gcl", "_clck", "_clsk", "CLID", "ANONCHK", "SM", "MUID"];
+  const MARKETING_COOKIE_PREFIXES = ["_fbp", "_fbc", "sib_"];
+
+  /**
+   * @param {string[]} prefixes
    * @returns {void}
    */
-  function disableLoadedTags() {
-    /** Revokes Clarity tracking if the tag already ran.
-     * @returns {void}
-     */
-    function revokeClarity() {
-      if (typeof win.clarity === "function") {
+  function expireCookiesForPrefixes(prefixes) {
+    if (!doc?.cookie) {
+      return;
+    }
+    const host = win.location?.hostname || "";
+    const parts = String(doc.cookie).split(";");
+    for (const part of parts) {
+      const name = part.split("=")[0].trim();
+      if (!name || name === STORAGE_KEY) {
+        continue;
+      }
+      let matches = false;
+      for (const prefix of prefixes) {
+        if (name === prefix || name.startsWith(prefix)) {
+          matches = true;
+          break;
+        }
+      }
+      if (!matches) {
+        continue;
+      }
+      doc.cookie = `${name}=; Path=/; Max-Age=0`;
+      if (host) {
+        doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=${host}`;
+        if (host.includes(".")) {
+          doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=.${host}`;
+        }
+      }
+    }
+  }
+
+  /** Revokes analytics tags and clears analytics cookies only.
+   * @returns {void}
+   */
+  function disableAnalyticsTags() {
+    if (typeof win.clarity === "function") {
+      tryCall(() => {
         win.clarity("consent", false);
-      }
+      });
     }
-    /** Revokes Meta Pixel tracking if the tag already ran.
-     * @returns {void}
-     */
-    function revokeFbq() {
-      if (typeof win.fbq === "function") {
+    expireCookiesForPrefixes(ANALYTICS_COOKIE_PREFIXES);
+  }
+
+  /** Revokes Meta Pixel and clears marketing cookies only.
+   * @returns {void}
+   */
+  function disableMarketingTags() {
+    if (typeof win.fbq === "function") {
+      tryCall(() => {
         win.fbq("consent", "revoke");
-      }
+      });
     }
-    tryCall(revokeClarity);
-    tryCall(revokeFbq);
-    expireTrackerCookies();
+    expireCookiesForPrefixes(MARKETING_COOKIE_PREFIXES);
+  }
+
+  /** Grants Meta Pixel consent when marketing is allowed.
+   * @returns {void}
+   */
+  function grantMarketingFbq() {
+    if (typeof win.fbq === "function") {
+      win.fbq("consent", "grant");
+    }
   }
 
   /** Starts or stops Brevo when marketing consent changes.
@@ -514,8 +593,26 @@
       activateInertScripts(next);
     }
     syncBrevo(next);
-    if (!next.analytics || !next.marketing) {
-      disableLoadedTags();
+    if (isGrantedFlag(next.marketing)) {
+      tryCall(grantMarketingFbq);
+    }
+    if (!isGrantedFlag(next.analytics)) {
+      disableAnalyticsTags();
+    }
+    if (!isGrantedFlag(next.marketing)) {
+      disableMarketingTags();
+    }
+    if (doc && typeof doc.dispatchEvent === "function") {
+      tryCall(() => {
+        doc.dispatchEvent(
+          new CustomEvent("solon:consent-granted", {
+            detail: {
+              analytics: isGrantedFlag(next.analytics),
+              marketing: isGrantedFlag(next.marketing),
+            },
+          }),
+        );
+      });
     }
     return next;
   }
@@ -774,13 +871,15 @@
           createCategory({
             id: "solon-consent-analytics",
             label: "Analiză",
-            hint: "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare.",
+            hint:
+              "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare, inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor.",
             input: analyticsInput,
           }),
           createCategory({
             id: "solon-consent-marketing",
             label: "Marketing",
-            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale pe website de adresa ta. Pot implica publicitate măsurată.",
+            hint:
+              "Meta Pixel, pe toate paginile publice, pentru măsurarea conversiilor și a campaniilor; Brevo (identificarea ta când te abonezi la newsletter); widget-ul ANPC (mny.ro), pe paginile unde apare.",
             input: marketingInput,
           }),
         ]),
@@ -1126,12 +1225,17 @@
     parseConsent,
     setConsentModeDefault,
     boot,
+    stripEmailQueryFromHref,
+    stripSensitiveEQueryFromHref,
+    applySensitiveUrlHygiene,
   };
 
   win.SolonConsent = api;
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;
   }
+
+  applySensitiveUrlHygiene();
 
   if (doc) {
     boot();

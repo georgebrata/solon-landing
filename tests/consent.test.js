@@ -66,7 +66,9 @@ const loadConsent = function loadConsent(options = {}) {
     readyState: "loading",
     cookie: "",
     body: {
+      _children: [],
       appendChild(node) {
+        this._children.push(node);
         return node;
       },
     },
@@ -87,14 +89,21 @@ const loadConsent = function loadConsent(options = {}) {
       }
       return [];
     },
+    createTextNode(text) {
+      return { nodeType: 3, textContent: String(text) };
+    },
     createElement(tag) {
       const el = {
         tagName: String(tag).toUpperCase(),
         attributes: [],
+        _children: [],
         text: "",
         setAttribute(name, value) {
           this.attributes.push({ name, value });
           this[name] = value;
+          if (name === "class") {
+            this.className = value;
+          }
         },
         getAttribute(name) {
           const found = this.attributes.find((item) => item.name === name);
@@ -102,6 +111,16 @@ const loadConsent = function loadConsent(options = {}) {
             return null;
           }
           return found.value;
+        },
+        appendChild(child) {
+          this._children.push(child);
+          return child;
+        },
+        addEventListener() {
+          return undefined;
+        },
+        getBoundingClientRect() {
+          return { height: 48 };
         },
       };
       created.push(el);
@@ -135,6 +154,12 @@ const loadConsent = function loadConsent(options = {}) {
     Number,
     String,
     Error,
+    addEventListener() {
+      return undefined;
+    },
+    requestAnimationFrame(fn) {
+      fn();
+    },
     document,
     localStorage: {
       getItem(key) {
@@ -199,6 +224,31 @@ test("rejection expires sib_ cookies even when the tracker never started", () =>
   assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
 });
 
+test("rejection expires Meta _fbp and _fbc cookies", () => {
+  const { api, context } = loadConsent({
+    cookie: "_fbp=fb.1.123; _fbc=fb.2.456; visitor=keep",
+  });
+  api.rejectAll();
+  const jar = context.document.cookie;
+  assert.match(jar, /_fbp=; Path=\/; Max-Age=0/);
+  assert.match(jar, /_fbc=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
+});
+
+test("meta-pixel script stays inert until marketing consent", () => {
+  const pixel = createInertScript("marketing", {
+    src: "/assets/js/meta-pixel.min.js",
+  });
+  const { api, created } = loadConsent({ inertScripts: [pixel] });
+  assert.equal(created.length, 0);
+  api.saveCustom({ analytics: true, marketing: false });
+  assert.equal(created.length, 0);
+  api.acceptAll();
+  const activated = created.filter((el) => String(el.src || "").includes("meta-pixel.min.js"));
+  assert.equal(activated.length, 1);
+  assert.equal(pixel.activated, "true");
+});
+
 test("reject all persists denied optional categories", () => {
   const { api, store } = loadConsent();
   api.acceptAll();
@@ -242,16 +292,84 @@ test("custom mix persists and rehydrates", () => {
   assert.equal(second.api.getConsent().version, first.api.CONSENT_VERSION);
 });
 
+test("applyChoice marketing-only grants Meta without revoking it afterward", () => {
+  const fbqCalls = [];
+  const { api, context } = loadConsent({ cookie: "_ga=GA1.1; _fbp=fb.1; visitor=keep" });
+  context.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  api.applyChoice(
+    { necessary: true, analytics: false, marketing: true },
+    { persist: false },
+  );
+  assert.deepEqual(fbqCalls[fbqCalls.length - 1], ["consent", "grant"]);
+  const jar = context.document.cookie;
+  assert.match(jar, /_ga=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("_fbp=; Path=/; Max-Age=0"), false);
+  assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
+});
+
+test("applyChoice analytics-only revokes Meta but keeps GA cookies", () => {
+  const fbqCalls = [];
+  const { api, context } = loadConsent({ cookie: "_ga=GA1.1; _fbp=fb.1; visitor=keep" });
+  context.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  api.applyChoice(
+    { necessary: true, analytics: true, marketing: false },
+    { persist: false },
+  );
+  assert.ok(fbqCalls.some((call) => call[0] === "consent" && call[1] === "revoke"));
+  const jar = context.document.cookie;
+  assert.match(jar, /_fbp=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("_ga=; Path=/; Max-Age=0"), false);
+});
+
 test("version bump invalidates stored choice", () => {
   const { api } = loadConsent();
   const stale = JSON.stringify({
-    version: 0,
+    version: 1,
     timestamp: new Date().toISOString(),
     necessary: true,
     analytics: true,
     marketing: true,
   });
   assert.equal(api.parseConsent(stale), null);
+});
+
+test("stored consent v1 re-prompts and denies trackers until a v2 choice", () => {
+  const key = "solon_cookie_consent";
+  const { api, listeners, context } = loadConsent({
+    store: {
+      [key]: JSON.stringify({
+        version: 1,
+        timestamp: new Date().toISOString(),
+        necessary: true,
+        analytics: true,
+        marketing: true,
+      }),
+    },
+  });
+  assert.equal(api.readStored(), null);
+  assert.equal(api.hasConsent("analytics"), false);
+  assert.equal(api.hasConsent("marketing"), false);
+  if (listeners.DOMContentLoaded) {
+    listeners.DOMContentLoaded();
+  }
+  const findBanner = (node) => {
+    if (!node || typeof node !== "object") return null;
+    const cls = node.className || "";
+    if (String(cls).includes("solon-consent__banner")) return node;
+    for (const child of node._children || []) {
+      const found = findBanner(child);
+      if (found) return found;
+    }
+    return null;
+  };
+  const roots = context.document.body._children || [];
+  const banner = roots.map(findBanner).find(Boolean);
+  assert.ok(banner, "banner should mount when stored consent is invalid");
+  assert.equal(banner.hidden, false);
 });
 
 test("expired timestamp invalidates stored choice", () => {
@@ -307,6 +425,17 @@ test("accept all activates analytics and marketing inert tags", () => {
   assert.equal(last[1], "update");
   assert.equal(last[2].analytics_storage, "granted");
   assert.equal(last[2].ad_storage, "granted");
+});
+
+test("accept all grants Meta Pixel consent when fbq is present", () => {
+  const fbqCalls = [];
+  const { api, context } = loadConsent();
+  context.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  api.acceptAll();
+  const grants = fbqCalls.filter((args) => args[0] === "consent" && args[1] === "grant");
+  assert.equal(grants.length, 1);
 });
 
 /**
@@ -505,21 +634,28 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
   assert.equal(html.includes("Nu desfășurăm activități de tip publicitate personalizată"), false);
   assert.ok(
     html.includes(
-      "și trackerul Brevo (vizitele tale și identificarea când te abonezi prin formularul de newsletter), pe paginile website-ului."
+      "trackerul Brevo (vizitele tale și identificarea când te abonezi prin formularul de newsletter); widget-ul ANPC, pe paginile unde este afișat."
     ),
     "Marketing Brevo copy must describe newsletter form only"
   );
   assert.equal(html.includes("trimiți un formular cu email"), false);
 });
 
-test("consent marketing category describes Brevo visit linking via newsletter only", () => {
+test("consent analytics hint documents conversion events without form content", () => {
   assert.ok(
     source.includes(
-      "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale pe website de adresa ta. Pot implica publicitate măsurată."
-    )
+      "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare, inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor.",
+    ),
   );
-  assert.equal(source.includes("Dacă trimiți un formular cu emailul tău, Brevo poate lega"), false);
-  assert.equal(source.includes("vizitele tale de pe site de adresa ta"), false);
+});
+
+test("consent marketing hint matches Legal C4 copy", () => {
+  assert.ok(
+    source.includes(
+      "Meta Pixel, pe toate paginile publice, pentru măsurarea conversiilor și a campaniilor; Brevo (identificarea ta când te abonezi la newsletter); widget-ul ANPC (mny.ro), pe paginile unde apare.",
+    ),
+  );
+  assert.equal(source.includes("emailul tău"), false);
 });
 
 test("privacy policy limits Brevo visit linking to newsletter subscription", () => {
