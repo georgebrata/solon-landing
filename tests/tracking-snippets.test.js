@@ -60,6 +60,7 @@ test("shouldSkipPublicTrackerSync skips r/, templates/, error pages, unsubscribe
   assert.equal(shouldSkipPublicTrackerSync("unsubscribe/success/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("feedback/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("feedback"), true);
+  assert.equal(shouldSkipPublicTrackerSync("client-nou/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("404.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("blog/index.html"), false);
   assert.equal(shouldSkipPublicTrackerSync("index.html"), false);

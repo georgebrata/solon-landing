@@ -84,6 +84,112 @@ test("invalid or injection-like email is ignored for form URL", () => {
   assert.equal(normalizeFeedbackEmailParam(), null);
 });
 
+test("rejects .a@x.ro (leading dot in local part)", () => {
+  assert.equal(normalizeFeedbackEmailParam(".a@x.ro"), null);
+});
+
+test("rejects a.@x.ro (trailing dot in local part)", () => {
+  assert.equal(normalizeFeedbackEmailParam("a.@x.ro"), null);
+});
+
+test("rejects a@-x.ro (domain label starts with hyphen)", () => {
+  assert.equal(normalizeFeedbackEmailParam("a@-x.ro"), null);
+});
+
+test("rejects a@x_y.ro (underscore in domain)", () => {
+  assert.equal(normalizeFeedbackEmailParam("a@x_y.ro"), null);
+});
+
+test("rejects ștefan@x.ro (non-ASCII in local part)", () => {
+  assert.equal(normalizeFeedbackEmailParam("ștefan@x.ro"), null);
+});
+
+test("rejects a@x.roș (non-ASCII in domain)", () => {
+  assert.equal(normalizeFeedbackEmailParam("a@x.roș"), null);
+});
+
+test("feedback index inline hygiene runs before prefill bundle", () => {
+  const prefillIdx = feedbackHtml.indexOf("feedback-form-prefill.min.js");
+  const inlineIdx = feedbackHtml.indexOf("stripEFromSegments");
+  assert.ok(inlineIdx > -1 && inlineIdx < prefillIdx);
+});
+
+test("inline head hygiene strips hash and query e= via replaceState", () => {
+  const inline = feedbackHtml.match(/<script>\s*\(function \(\) \{[\s\S]*?stripEFromSegments[\s\S]*?<\/script>/u);
+  assert.ok(inline, "expected inline strip script in feedback head");
+  const replaceCalls = [];
+  const win = {
+    history: {
+      replaceState(_state, _title, url) {
+        replaceCalls.push(url);
+      },
+    },
+    location: {
+      href: "https://solon.agency/feedback/?foo=1&e=q%40x.ro#section&e=h%40x.ro",
+    },
+  };
+  const context = { URL, window: win };
+  context.window = win;
+  const code = inline[0].replace(/<\/?script>/giu, "");
+  vm.runInNewContext(code, context, { filename: "feedback-inline-hygiene.js" });
+  assert.equal(replaceCalls.length, 1);
+  assert.equal(replaceCalls[0], "/feedback/?foo=1#section");
+});
+
+test("feedback prefill script has onerror iframe fallback and timeout guard", () => {
+  assert.match(
+    feedbackHtml,
+    /feedback-form-prefill\.min\.js[^>]+onerror="window\.__solonFeedbackIframeFallback/
+  );
+  assert.match(feedbackHtml, /__solonFeedbackIframeFallback/);
+  assert.match(feedbackHtml, /__solonFeedbackPrefillBooted/);
+});
+
+test("feedback iframe fallback sets base data-src when prefill bundle fails", () => {
+  const fallbackMatch = feedbackHtml.match(
+    /<script>\s*\(function \(\) \{[\s\S]*?__solonFeedbackIframeFallback[\s\S]*?<\/script>/u
+  );
+  assert.ok(fallbackMatch);
+  const assignments = [];
+  const iframe = {
+    title: "Formular feedback SOLON (Google Forms)",
+    getAttribute(name) {
+      if (name === "data-src") {
+        return FEEDBACK_FORM_BASE_SRC;
+      }
+      return null;
+    },
+    setAttribute(name, value) {
+      if (name === "src") {
+        assignments.push(value);
+      }
+    },
+  };
+  const document = {
+    readyState: "complete",
+    querySelector: () => iframe,
+    addEventListener() {
+      /* stub */
+    },
+  };
+  const context = {
+    document,
+    setTimeout() {
+      /* not exercised in this test */
+    },
+    window: { document },
+  };
+  context.window = context;
+  const code = fallbackMatch[0].replace(/<\/?script>/giu, "");
+  vm.runInNewContext(code, context, { filename: "feedback-iframe-fallback.js" });
+  context.__solonFeedbackIframeFallback();
+  assert.deepEqual(assignments, [FEEDBACK_FORM_BASE_SRC]);
+});
+
+test("feedback page does not load unused fireworks-js CDN script", () => {
+  assert.equal(/fireworks-js/i.test(feedbackHtml), false);
+});
+
 test("malformed percent-encoding in e= does not throw", () => {
   assert.equal(readRawEmailFromHash("#e=%"), "");
 });

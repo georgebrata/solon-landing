@@ -213,8 +213,41 @@
    * @param {string} value
    * @returns {boolean}
    */
+  /**
+   * @param {string} value
+   * @returns {boolean}
+   */
+  function isAsciiOnlyEmailString(value) {
+    for (let i = 0; i < value.length; i += 1) {
+      if (value.charCodeAt(i) > 0x7f) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * @param {string} label
+   * @returns {boolean}
+   */
+  function isValidDomainLabel(label) {
+    if (!label || label.length > 63) {
+      return false;
+    }
+    if (label.startsWith("-") || label.endsWith("-")) {
+      return false;
+    }
+    if (!/^[a-zA-Z0-9-]+$/u.test(label)) {
+      return false;
+    }
+    return true;
+  }
+
   function isConservativeFeedbackEmail(value) {
     if (!value || value.length > EMAIL_MAX_LENGTH) {
+      return false;
+    }
+    if (!isAsciiOnlyEmailString(value)) {
       return false;
     }
     if (/[\s<>"']/u.test(value)) {
@@ -232,15 +265,26 @@
     if (!local || local.length > LOCAL_PART_MAX_LENGTH) {
       return false;
     }
+    if (local.startsWith(".") || local.endsWith(".")) {
+      return false;
+    }
     if (!domain || local.includes("..") || domain.includes("..")) {
       return false;
     }
-    const lastDot = domain.lastIndexOf(".");
-    if (lastDot <= 0 || lastDot >= domain.length - 1) {
+    if (domain.includes("_")) {
       return false;
     }
-    const tld = domain.slice(lastDot + 1);
-    return tld.length >= 2;
+    const labels = domain.split(".");
+    if (labels.length < 2) {
+      return false;
+    }
+    for (let i = 0; i < labels.length; i += 1) {
+      if (!isValidDomainLabel(labels[i])) {
+        return false;
+      }
+    }
+    const tld = labels[labels.length - 1];
+    return tld.length >= 2 && /^[a-zA-Z]+$/u.test(tld);
   }
 
   /**
@@ -339,6 +383,7 @@
     if (!doc || !win.location) {
       return;
     }
+    win.__solonFeedbackPrefillBooted = true;
     const email = applyFeedbackUrlHygiene(win);
     /**
      * @returns {void}

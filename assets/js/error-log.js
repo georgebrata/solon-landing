@@ -12,6 +12,45 @@
   const REPORT_TIMEOUT_MS = 4000;
   const RETRY_DELAYS_MS = [0, 400, 1200];
 
+  /**
+   * Drop hash and sensitive query params (e, E, email) from a location href for logging.
+   * @param {string} href
+   * @returns {string}
+   */
+  const redactLocationHref = (href) => {
+    if (typeof href !== "string" || !href) {
+      return "";
+    }
+    try {
+      const url = new URL(href);
+      const qs = url.search.startsWith("?") ? url.search.slice(1) : url.search;
+      if (qs) {
+        const parts = qs.split("&");
+        const kept = [];
+        for (let i = 0; i < parts.length; i += 1) {
+          const part = parts[i];
+          if (part === "") {
+            kept.push(part);
+            continue;
+          }
+          const eq = part.indexOf("=");
+          const key = eq === -1 ? part : part.slice(0, eq);
+          const keyLower = key.toLowerCase();
+          if (keyLower === "e" || keyLower === "email") {
+            continue;
+          }
+          kept.push(part);
+        }
+        const encoded = kept.join("&");
+        url.search = encoded ? `?${encoded}` : "";
+      }
+      url.hash = "";
+      return `${url.origin}${url.pathname}${url.search}`;
+    } catch {
+      return "";
+    }
+  };
+
   /** Redact emails, IPs, and phone numbers from a log string. */
   const sanitize = (value) => {
     if (value == null) return "";
@@ -106,7 +145,7 @@
     const toPayload = (level, event) => {
       const source = event && typeof event === "object" ? event : { message: event };
       const href = typeof root?.location?.href === "string"
-        ? sanitize(root.location.href.split("?")[0])
+        ? sanitize(redactLocationHref(root.location.href))
         : "";
       return {
         ts: now(),
@@ -268,6 +307,7 @@
     module.exports = {
       createLogger,
       sanitize,
+      redactLocationHref,
       parseSentryDsn,
     };
   }
