@@ -50,7 +50,7 @@ test("consent.js, gtag-config.js, and sync tracker block reference the canonical
   assert.ok(gtagConfigSource.includes(GA_MEASUREMENT_ID));
   const block = trackerHeadBlock();
   assert.ok(block.includes(gtagLoaderUrl));
-  assert.ok(block.includes(`gtag-config.min.js`));
+  assert.ok(block.includes("gtag-config.min.js"));
 });
 
 test("public HTML pages use the canonical GA measurement id in gtag loader URLs", () => {
