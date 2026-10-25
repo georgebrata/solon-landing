@@ -484,6 +484,89 @@ const simulateGaUnloadHit = (win) => {
   return 0;
 };
 
+/**
+ * @param {string} cookieStr
+ * @returns {void}
+ */
+const assertNoActiveGaCookies = (cookieStr) => {
+  const active = {};
+  const parts = String(cookieStr || "")
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  for (const part of parts) {
+    const eq = part.indexOf("=");
+    if (eq < 0) {
+      continue;
+    }
+    const name = part.slice(0, eq).trim();
+    if (!name.startsWith("_ga")) {
+      continue;
+    }
+    const value = part.slice(eq + 1).split(";")[0].trim();
+    if (part.includes("Max-Age=0") || value === "") {
+      active[name] = "";
+      continue;
+    }
+    active[name] = value;
+  }
+  for (const [name, value] of Object.entries(active)) {
+    if (value) {
+      assert.fail(`expected no active ${name} cookie, got value ${value}`);
+    }
+  }
+};
+
+/**
+ * QB-style model: engagement accrues only while analytics_storage is granted and ga-disable is off.
+ * @param {object} win
+ * @returns {{ accrue: (ms: number) => void, delayedEngagementMsec: () => number }}
+ */
+const createEngagementAccrualModel = (win) => {
+  let analyticsStorage = "denied";
+  let engagementMs = 0;
+  let frozenAtWithdrawal = null;
+
+  const syncFromDataLayer = () => {
+    const layer = win.dataLayer || [];
+    for (const entry of layer) {
+      if (entry[0] !== "consent") {
+        continue;
+      }
+      const mode = entry[1];
+      if (mode !== "default" && mode !== "update") {
+        continue;
+      }
+      const storage = entry[2]?.analytics_storage;
+      if (storage !== "granted" && storage !== "denied") {
+        continue;
+      }
+      const wasGranted = analyticsStorage === "granted";
+      analyticsStorage = storage;
+      if (storage === "denied" && wasGranted && frozenAtWithdrawal === null) {
+        frozenAtWithdrawal = engagementMs;
+      }
+    }
+  };
+
+  return {
+    accrue(ms) {
+      syncFromDataLayer();
+      if (win[GA_DISABLE_KEY] === true || analyticsStorage !== "granted") {
+        return;
+      }
+      engagementMs += ms;
+    },
+    delayedEngagementMsec() {
+      syncFromDataLayer();
+      if (win[GA_DISABLE_KEY] === true) {
+        return frozenAtWithdrawal ?? engagementMs;
+      }
+      return engagementMs;
+    },
+  };
+};
+
 test("analytics withdrawal sets ga-disable before consent update and cookie clearing", () => {
   const order = [];
   const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
@@ -533,9 +616,54 @@ test("analytics withdrawal sets ga-disable before consent update and cookie clea
   assert.ok(cookieIdx >= 0);
   assert.ok(disableIdx < updateIdx);
   assert.ok(updateIdx < cookieIdx);
-  const updatePayload = order[updateIdx].payload;
-  assert.equal(updatePayload.analytics_storage, "denied");
-  assert.equal(updatePayload.ad_storage, "granted");
+  const firstUpdatePayload = order[updateIdx].payload;
+  assert.equal(firstUpdatePayload.analytics_storage, "denied");
+  const fullUpdate = order.find(
+    (entry) => entry.step === "consent-update" && entry.payload.ad_storage === "granted",
+  );
+  assert.ok(fullUpdate);
+  assert.equal(fullUpdate.payload.analytics_storage, "denied");
+});
+
+test("analytics withdrawal denies analytics_storage in same tick as ga-disable to freeze engagement", () => {
+  const order = [];
+  const { api, context } = loadConsent();
+  api.acceptAll();
+  const gaDisableState = { value: context[GA_DISABLE_KEY] };
+  delete context[GA_DISABLE_KEY];
+  Object.defineProperty(context, GA_DISABLE_KEY, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return gaDisableState.value;
+    },
+    set(value) {
+      order.push({ step: "ga-disable", value });
+      gaDisableState.value = value;
+    },
+  });
+  const originalGtag = context.gtag;
+  const trackingGtag = function (...args) {
+    if (args[0] === "consent" && args[1] === "update") {
+      order.push({ step: "consent-update", payload: args[2] });
+    }
+    return originalGtag(...args);
+  };
+  trackingGtag.__solonArgumentsStub = true;
+  context.gtag = trackingGtag;
+
+  const engagement = createEngagementAccrualModel(context);
+  engagement.accrue(40);
+  order.length = 0;
+  api.saveCustom({ analytics: false, marketing: true });
+  engagement.accrue(400);
+  assert.equal(engagement.delayedEngagementMsec(), 40);
+  const disableIdx = order.findIndex((entry) => entry.step === "ga-disable" && entry.value === true);
+  const firstUpdateIdx = order.findIndex((entry) => entry.step === "consent-update");
+  assert.ok(disableIdx >= 0);
+  assert.ok(firstUpdateIdx >= 0);
+  assert.ok(disableIdx <= firstUpdateIdx);
+  assert.equal(order[firstUpdateIdx].payload.analytics_storage, "denied");
 });
 
 test("withdraw-then-unload sends zero GA hits when ga-disable is set", () => {
@@ -646,6 +774,7 @@ test("storage event from another tab withdraws analytics on this tab", () => {
   const tabA = loadConsent({ store, cookie: "_ga=GA1.1; _ga_H41D7KCWHX=1" });
   tabA.api.acceptAll();
   assert.equal(tabA.context[tabA.api.GA_DISABLE_PROPERTY], false);
+  assert.equal(simulateGaUnloadHit(tabA.context), 1);
   const tabB = loadConsent({ store });
   tabB.api.saveCustom({ analytics: false, marketing: true });
   tabA.api.onConsentStorageEvent({
@@ -654,6 +783,8 @@ test("storage event from another tab withdraws analytics on this tab", () => {
     newValue: store[tabA.api.STORAGE_KEY],
   });
   assert.equal(tabA.context[tabA.api.GA_DISABLE_PROPERTY], true);
+  assert.equal(simulateGaUnloadHit(tabA.context), 0);
+  assertNoActiveGaCookies(tabA.context.document.cookie);
   assert.match(tabA.context.document.cookie, /_ga=; Path=\/; Max-Age=0/);
 });
 

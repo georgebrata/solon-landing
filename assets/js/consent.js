@@ -178,6 +178,17 @@
     win.gtag = gtag;
   }
 
+  /** Stops gtag.js from accruing new engagement time on already-loaded tags (same tick as ga-disable).
+   * @returns {void}
+   */
+  function denyAnalyticsStorageSameTick() {
+    setupGtagStub();
+    if (typeof win.gtag !== "function") {
+      return;
+    }
+    win.gtag("consent", "update", { analytics_storage: "denied" });
+  }
+
   /**
    * @param {object|null} consent
    * @returns {void}
@@ -188,6 +199,7 @@
       return;
     }
     win[GA_DISABLE_PROPERTY] = true;
+    denyAnalyticsStorageSameTick();
   }
 
   /**
