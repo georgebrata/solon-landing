@@ -61,6 +61,7 @@ const jsFiles = [
   "testimonials.js",
   "support-chat.js",
   "error-pages.js",
+  "feedback-form-prefill.js",
 ];
 
 /**
