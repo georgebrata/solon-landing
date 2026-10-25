@@ -22,6 +22,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
       - name: Run minification
@@ -49,6 +51,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
       - name: Validate feature flags (dry-run)
@@ -69,6 +73,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
       - name: Fetch main for the baseline ratchet
@@ -118,6 +124,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
       - name: Run blog build

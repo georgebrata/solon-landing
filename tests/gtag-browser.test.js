@@ -21,6 +21,15 @@ const engagementEtFromCollectUrl = (url) => {
 };
 
 /**
+ * @param {import("puppeteer").Page} page
+ * @param {number} [timeout]
+ * @returns {Promise<void>}
+ */
+const waitForFirstCollect = async (page, timeout = 60000) => {
+  await page.waitForRequest((req) => COLLECT_RE.test(req.url()), { timeout });
+};
+
+/**
  * @returns {Promise<boolean>}
  */
 const canReachGoogleTagManager = async () => {
@@ -39,6 +48,24 @@ const canReachGoogleTagManager = async () => {
   } catch {
     return false;
   }
+};
+
+/**
+ * @returns {Promise<string | false>}
+ */
+const resolveSuiteSkip = async () => {
+  if (process.env.SKIP_GTAG_BROWSER === "1") {
+    return "SKIP_GTAG_BROWSER=1";
+  }
+  if (!(await canReachGoogleTagManager())) {
+    return "googletagmanager.com unreachable";
+  }
+  try {
+    require.resolve("puppeteer");
+  } catch {
+    return "puppeteer is not installed";
+  }
+  return false;
 };
 
 /**
@@ -70,9 +97,9 @@ const startStaticServer = () =>
     server.listen(0, "127.0.0.1", () => resolve(server));
   });
 
-describe("real gtag.js collect after analytics withdrawal", { skip: false }, () => {
-  /** @type {boolean} */
-  let gtmOnline = false;
+describe("real gtag.js collect after analytics withdrawal", () => {
+  /** @type {string | false} */
+  let suiteSkip = false;
   /** @type {import("puppeteer").Browser | null} */
   let browser = null;
   /** @type {import("http").Server | null} */
@@ -81,17 +108,11 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
   let baseUrl = "";
 
   before(async () => {
-    gtmOnline = await canReachGoogleTagManager();
-    if (!gtmOnline) {
+    suiteSkip = await resolveSuiteSkip();
+    if (suiteSkip) {
       return;
     }
-    let puppeteer = null;
-    try {
-      puppeteer = require("puppeteer");
-    } catch {
-      gtmOnline = false;
-      return;
-    }
+    const puppeteer = require("puppeteer");
     server = await startStaticServer();
     const addr = server.address();
     const port = typeof addr === "object" && addr ? addr.port : 0;
@@ -111,17 +132,9 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     }
   });
 
-  it("skips gracefully when googletagmanager.com is unreachable", (t) => {
-    if (gtmOnline) {
-      t.skip("GTM is reachable; browser assertions run in the next tests.");
-      return;
-    }
-    assert.equal(process.env.SKIP_GTAG_BROWSER === "1" || !gtmOnline, true);
-  });
-
   it("sends no new /g/collect after withdrawal (single tab)", async (t) => {
-    if (!gtmOnline || !browser) {
-      t.skip("Offline or puppeteer unavailable — set SKIP_GTAG_BROWSER=1 to skip explicitly.");
+    if (suiteSkip) {
+      t.skip(suiteSkip);
       return;
     }
     const page = await browser.newPage();
@@ -137,15 +150,16 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     await page.evaluate(() => {
       window.SolonConsent.acceptAll();
     });
-    await page.waitForFunction(
-      () => window.dataLayer?.some((e) => e[0] === "config"),
-      { timeout: 30000 },
-    );
+    await waitForFirstCollect(page);
     await new Promise((r) => setTimeout(r, 2500));
     page.off("request", onCollectBefore);
     await page.evaluate(() => {
       window.SolonConsent.saveCustom({ analytics: false, marketing: true });
     });
+    await page.waitForFunction(
+      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
+      { timeout: 15000 },
+    );
     const afterWithdraw = [];
     const onCollect = (req) => {
       if (COLLECT_RE.test(req.url())) {
@@ -167,38 +181,38 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
         `post-withdraw _et=${et} exceeds pre-withdraw max ${maxEtBeforeWithdraw}`,
       );
     }
+    const gaCookiesAfter = await page.evaluate(() =>
+      document.cookie.split(";").map((part) => part.trim()).filter((part) => part.startsWith("_ga")),
+    );
+    assert.equal(gaCookiesAfter.length, 0, `expected no _ga cookies after withdrawal, got ${gaCookiesAfter.join(", ")}`);
     await page.close();
   });
 
   it("sends no new /g/collect on tab A after tab B withdraws (cross-tab)", async (t) => {
-    if (!gtmOnline || !browser) {
-      t.skip("Offline or puppeteer unavailable — set SKIP_GTAG_BROWSER=1 to skip explicitly.");
+    if (suiteSkip) {
+      t.skip(suiteSkip);
       return;
     }
     const context = await browser.createBrowserContext();
     const pageA = await context.newPage();
     const pageB = await context.newPage();
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     await pageA.evaluate(() => window.SolonConsent.acceptAll());
-    await pageA.waitForFunction(
-      () => window.dataLayer?.some((e) => e[0] === "config"),
-      { timeout: 30000 },
+    await waitForFirstCollect(pageA);
+    await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
+    await pageB.waitForFunction(
+      () => window.SolonConsent?.hasConsent("analytics") === true,
+      { timeout: 15000 },
     );
-    await new Promise((r) => setTimeout(r, 2000));
     await pageB.waitForFunction(() => window.SolonConsent?.saveCustom, { timeout: 15000 });
     await pageB.evaluate(() => {
       window.SolonConsent.saveCustom({ analytics: false, marketing: true });
     });
-    await pageA.evaluate(() => {
-      const key = window.SolonConsent.STORAGE_KEY;
-      window.SolonConsent.onConsentStorageEvent({
-        key,
-        newValue: window.localStorage.getItem(key),
-        storageArea: window.localStorage,
-      });
-    });
+    await pageA.waitForFunction(
+      () => !window.SolonConsent.hasConsent("analytics"),
+      { timeout: 15000 },
+    );
     await pageA.waitForFunction(
       () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
       { timeout: 15000 },
@@ -215,6 +229,10 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     await new Promise((r) => setTimeout(r, 3000));
     pageA.off("request", onCollect);
     assert.equal(afterWithdraw.length, 0, `tab A expected 0 collects after tab B withdrew, got ${afterWithdraw.length}`);
+    const gaCookiesOnA = await pageA.evaluate(() =>
+      document.cookie.split(";").map((part) => part.trim()).filter((part) => part.startsWith("_ga")),
+    );
+    assert.equal(gaCookiesOnA.length, 0, `tab A expected no _ga cookies after tab B withdrew, got ${gaCookiesOnA.join(", ")}`);
     await pageA.close();
     await pageB.close();
     await context.close();

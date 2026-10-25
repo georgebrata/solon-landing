@@ -8,15 +8,33 @@ const test = require("node:test");
 
 const root = path.join(__dirname, "..");
 const trackingSource = fs.readFileSync(path.join(root, "assets/js/tracking.js"), "utf8");
+const { GA_MEASUREMENT_ID } = require("../scripts/lib/ga-measurement");
+const GA_DISABLE_PROPERTY = `ga-disable-${GA_MEASUREMENT_ID}`;
+
+/**
+ * @param {Record<string, unknown> | undefined} consent
+ * @returns {Record<string, unknown> | undefined}
+ */
+const withGaDisableConsent = (consent) => {
+  if (!consent) {
+    return consent;
+  }
+  return {
+    GA_DISABLE_PROPERTY,
+    ...consent,
+  };
+};
 
 const loadTracking = (overrides = {}) => {
   const gtagCalls = [];
   const fbqCalls = [];
+  const consent = withGaDisableConsent(overrides.consent);
   const context = {
     console,
     window: {
       crypto: overrides.crypto,
-      SolonConsent: overrides.consent,
+      SolonConsent: consent,
+      [GA_DISABLE_PROPERTY]: overrides.gaDisabled === true,
       gtag: (...args) => {
         gtagCalls.push(args);
       },
@@ -167,11 +185,13 @@ const bootTrackingWithConsentFlow = (options = {}) => {
     console,
     window: {
       SolonConsent: {
+        GA_DISABLE_PROPERTY,
         hasConsent: (category) => {
           if (!consentGranted) return false;
           return category === "analytics" || category === "marketing";
         },
       },
+      [GA_DISABLE_PROPERTY]: false,
       gtag: (...args) => {
         gtagCalls.push(args);
       },
@@ -383,8 +403,10 @@ test("checkout on external pay link uses beacon transport and delays navigation"
   const priorLocation = globalThis.location;
   const priorSetTimeout = globalThis.setTimeout;
   globalThis.SolonConsent = {
+    GA_DISABLE_PROPERTY,
     hasConsent: (category) => category === "analytics" || category === "marketing",
   };
+  globalThis[GA_DISABLE_PROPERTY] = false;
   globalThis.fbq = () => undefined;
   globalThis.gtag = (...args) => {
     gtagCalls.push(args);
@@ -428,8 +450,10 @@ test("newsletter sign_up fires at most once per session (form and confirm page)"
     console,
     window: {
       SolonConsent: {
+        GA_DISABLE_PROPERTY,
         hasConsent: (category) => category === "analytics" || category === "marketing",
       },
+      [GA_DISABLE_PROPERTY]: false,
       gtag: (...args) => {
         gtagCalls.push(args);
       },
