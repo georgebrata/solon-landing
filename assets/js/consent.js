@@ -112,71 +112,41 @@
   let current = deniedConsent();
 
   /**
-   * @param {string} segmentsSource
-   * @returns {{ encoded: string, stripped: boolean }}
-   */
-  // skipcq: JS-0036 -- segment strip mirrors feedback-form-prefill.js (no email capture here)
-  function stripSensitiveEParamSegments(segmentsSource) {
-    if (!segmentsSource) {
-      return { encoded: "", stripped: false };
-    }
-    const parts = segmentsSource.split("&");
-    const kept = [];
-    let stripped = false;
-    for (let i = 0; i < parts.length; i += 1) {
-      const part = parts[i];
-      if (part === "") {
-        kept.push(part);
-        continue;
-      }
-      const eq = part.indexOf("=");
-      const key = eq === -1 ? part : part.slice(0, eq);
-      if (key.toLowerCase() === "e") {
-        stripped = true;
-        continue;
-      }
-      kept.push(part);
-    }
-    if (!stripped) {
-      return { encoded: segmentsSource, stripped: false };
-    }
-    return { encoded: kept.join("&"), stripped: true };
-  }
-
-  /**
-   * @param {{ stripped: boolean, encoded: string }} stripResult
-   * @param {string} prefix
-   * @param {string} original
-   * @returns {string}
-   */
-  function composeStrippedUrlPart(stripResult, prefix, original) {
-    if (!stripResult.stripped) {
-      return original;
-    }
-    if (!stripResult.encoded) {
-      return "";
-    }
-    return `${prefix}${stripResult.encoded}`;
-  }
-
-  /**
-   * Strips feedback prefill ?e= / #e= (case-insensitive) while preserving other bytes (see feedback-form-prefill.js).
+   * Strips feedback prefill ?e= / ?E= from the query while preserving other bytes.
+   * Hash #e= is stripped on /feedback/ by feedback-form-prefill.js before this script loads.
    * @param {string} href
    * @returns {{ pathAndQuery: string, stripped: boolean }}
    */
   function stripSensitiveEQueryFromHref(href) {
     try {
       const url = new URL(href);
-      const hashInner = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
-      const hashStrip = stripSensitiveEParamSegments(hashInner);
-      const searchInner = url.search.startsWith("?") ? url.search.slice(1) : url.search;
-      const searchStrip = stripSensitiveEParamSegments(searchInner);
-      if (!hashStrip.stripped && !searchStrip.stripped) {
-        return { pathAndQuery: url.pathname + url.search + url.hash, stripped: false };
+      const search = url.search;
+      if (!search) {
+        return { pathAndQuery: url.pathname + url.hash, stripped: false };
       }
-      const nextSearch = composeStrippedUrlPart(searchStrip, "?", url.search);
-      const nextHash = composeStrippedUrlPart(hashStrip, "#", url.hash);
-      return { pathAndQuery: url.pathname + nextSearch + nextHash, stripped: true };
+      const qs = search.slice(1);
+      const parts = qs.split("&");
+      const kept = [];
+      let stripped = false;
+      for (let i = 0; i < parts.length; i += 1) {
+        const part = parts[i];
+        if (part === "") {
+          kept.push(part);
+          continue;
+        }
+        const eq = part.indexOf("=");
+        const key = eq === -1 ? part : part.slice(0, eq);
+        if (key.toLowerCase() === "e") {
+          stripped = true;
+          continue;
+        }
+        kept.push(part);
+      }
+      if (!stripped) {
+        return { pathAndQuery: url.pathname + search + url.hash, stripped: false };
+      }
+      const nextSearch = kept.length ? `?${kept.join("&")}` : "";
+      return { pathAndQuery: url.pathname + nextSearch + url.hash, stripped: true };
     } catch {
       return { pathAndQuery: "", stripped: false };
     }

@@ -86,7 +86,6 @@
    * @param {string} segmentsSource
    * @returns {{ encoded: string, rawEmail: string|null, stripped: boolean }}
    */
-  // skipcq: JS-0036 -- segment strip shared with consent.js stripSensitiveEParamSegments
   function stripEParamFromSegments(segmentsSource) {
     if (!segmentsSource) {
       return { encoded: "", rawEmail: null, stripped: false };
