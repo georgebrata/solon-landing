@@ -59,7 +59,7 @@ test("gtag-config stub pushes Arguments objects for js and config", () => {
   consumeLikeGtagJs(dataLayer);
 });
 
-test("foreign gtag on window is upgraded to Arguments-pushing stub in gtag-config", () => {
+test("foreign gtag on window is replaced by Arguments-pushing stub in gtag-config", () => {
   const dataLayer = [];
   const foreignCalls = [];
   const context = {
@@ -77,7 +77,7 @@ test("foreign gtag on window is upgraded to Arguments-pushing stub in gtag-confi
   context.globalThis = context.window;
   vm.runInNewContext(gtagConfigSource, context, { filename: "gtag-config.js" });
   assert.equal(context.window.gtag.__solonArgumentsStub, true);
-  assert.ok(foreignCalls.length >= 2);
+  assert.equal(foreignCalls.length, 0);
   for (const entry of dataLayer) {
     assertIsArgumentsObject(entry);
   }

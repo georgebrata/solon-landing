@@ -75,6 +75,7 @@ const loadConsent = function loadConsent(options = {}) {
 
   const document = {
     readyState: "loading",
+    visibilityState: "visible",
     cookie: "",
     body: {
       _children: [],
@@ -486,7 +487,8 @@ const simulateGaUnloadHit = (win) => {
 test("analytics withdrawal sets ga-disable before consent update and cookie clearing", () => {
   const order = [];
   const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
-  const gaDisableState = { value: undefined };
+  const gaDisableState = { value: context[GA_DISABLE_KEY] };
+  delete context[GA_DISABLE_KEY];
   Object.defineProperty(context, GA_DISABLE_KEY, {
     configurable: true,
     enumerable: true,
@@ -499,12 +501,14 @@ test("analytics withdrawal sets ga-disable before consent update and cookie clea
     },
   });
   const originalGtag = context.gtag;
-  context.gtag = function (...args) {
+  const trackingGtag = function (...args) {
     if (args[0] === "consent" && args[1] === "update") {
       order.push({ step: "consent-update", payload: args[2] });
     }
     return originalGtag(...args);
   };
+  trackingGtag.__solonArgumentsStub = true;
+  context.gtag = trackingGtag;
   const cookieDescriptor = Object.getOwnPropertyDescriptor(context.document, "cookie");
   Object.defineProperty(context.document, "cookie", {
     configurable: true,
@@ -549,26 +553,29 @@ test("analytics re-grant clears ga-disable before consent update and resumes hit
   const order = [];
   const { api, context } = loadConsent();
   api.acceptAll();
-  api.saveCustom({ analytics: false, marketing: true });
-  let gaDisableStored = context[GA_DISABLE_KEY];
+  const gaDisableState = { value: context[GA_DISABLE_KEY] };
+  delete context[GA_DISABLE_KEY];
   Object.defineProperty(context, GA_DISABLE_KEY, {
     configurable: true,
     enumerable: true,
     get() {
-      return gaDisableStored;
+      return gaDisableState.value;
     },
     set(value) {
       order.push({ step: "ga-disable", value });
-      gaDisableStored = value;
+      gaDisableState.value = value;
     },
   });
   const originalGtag = context.gtag;
-  context.gtag = function (...args) {
+  const trackingGtag = function (...args) {
     if (args[0] === "consent" && args[1] === "update") {
       order.push({ step: "consent-update", payload: args[2] });
     }
     return originalGtag(...args);
   };
+  trackingGtag.__solonArgumentsStub = true;
+  context.gtag = trackingGtag;
+  api.saveCustom({ analytics: false, marketing: true });
   order.length = 0;
   api.saveCustom({ analytics: true, marketing: true });
   const disableIdx = order.findIndex((entry) => entry.step === "ga-disable" && entry.value === false);
@@ -580,7 +587,7 @@ test("analytics re-grant clears ga-disable before consent update and resumes hit
   assert.equal(simulateGaUnloadHit(context), 1);
 });
 
-test("foreign gtag is wrapped so dataLayer still receives Arguments objects", () => {
+test("foreign gtag is replaced without forwarding commands", () => {
   const dataLayer = [];
   const foreignCalls = [];
   const { context } = loadConsent({
@@ -590,12 +597,67 @@ test("foreign gtag is wrapped so dataLayer still receives Arguments objects", ()
     },
   });
   assert.equal(context.gtag.__solonArgumentsStub, true);
+  assert.equal(foreignCalls.length, 0);
   context.gtag("event", "probe", { ok: true });
-  const probeCall = foreignCalls.find((call) => call[0] === "event" && call[1] === "probe");
-  assert.deepEqual(probeCall, ["event", "probe", { ok: true }]);
+  assert.equal(foreignCalls.length, 0);
   const pushed = dataLayer[dataLayer.length - 1];
   assertIsArgumentsObject(pushed);
   assert.equal(pushed[0], "event");
+});
+
+test("boot with no stored consent sets ga-disable", () => {
+  const { api, context } = loadConsent();
+  assert.equal(context[api.GA_DISABLE_PROPERTY], true);
+});
+
+test("boot with stored analytics denial sets ga-disable", () => {
+  const store = {};
+  const timestamp = new Date().toISOString();
+  store.solon_cookie_consent = JSON.stringify({
+    version: 2,
+    timestamp,
+    necessary: true,
+    analytics: false,
+    marketing: false,
+  });
+  const { api, context } = loadConsent({ store });
+  assert.equal(context[api.GA_DISABLE_PROPERTY], true);
+});
+
+test("storage event from another tab withdraws analytics on this tab", () => {
+  const store = {};
+  const tabA = loadConsent({ store, cookie: "_ga=GA1.1; _ga_H41D7KCWHX=1" });
+  tabA.api.acceptAll();
+  assert.equal(tabA.context[tabA.api.GA_DISABLE_PROPERTY], false);
+  const tabB = loadConsent({ store });
+  tabB.api.saveCustom({ analytics: false, marketing: true });
+  tabA.api.onConsentStorageEvent({
+    key: tabA.api.STORAGE_KEY,
+    storageArea: tabA.context.localStorage,
+    newValue: store[tabA.api.STORAGE_KEY],
+  });
+  assert.equal(tabA.context[tabA.api.GA_DISABLE_PROPERTY], true);
+  assert.match(tabA.context.document.cookie, /_ga=; Path=\/; Max-Age=0/);
+});
+
+test("visibilitychange with missing consent cookie sets ga-disable and clears analytics", () => {
+  const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
+  api.acceptAll();
+  const cookieBacking = { value: context.document.cookie };
+  Object.defineProperty(context.document, "cookie", {
+    configurable: true,
+    get() {
+      return cookieBacking.value;
+    },
+    set(value) {
+      cookieBacking.value = String(value);
+    },
+  });
+  cookieBacking.value = "";
+  context.document.visibilityState = "visible";
+  api.onVisibilityCookieRefresh();
+  assert.equal(context[api.GA_DISABLE_PROPERTY], true);
+  assert.equal(api.hasConsent("analytics"), false);
 });
 
 test("consent gtag stub output is accepted by a gtag.js-like Arguments-only consumer", () => {

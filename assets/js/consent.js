@@ -165,20 +165,25 @@
     if (typeof existing === "function" && existing.__solonArgumentsStub === true) {
       return;
     }
-    const previous = typeof existing === "function" ? existing : null;
     /** @returns {void} */
     function gtag() {
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
       win.dataLayer.push(arguments);
-      if (previous) {
-        tryCall(() => {
-          // skipcq: JS-0244 -- forward legacy gtag calls without array-shaped dataLayer entries
-          previous.apply(win, arguments);
-        });
-      }
     }
     gtag.__solonArgumentsStub = true;
     win.gtag = gtag;
+  }
+
+  /**
+   * @param {object|null} consent
+   * @returns {void}
+   */
+  function syncAnalyticsDisableFlag(consent) {
+    if (consent && isGrantedFlag(consent.analytics)) {
+      win[GA_DISABLE_PROPERTY] = false;
+      return;
+    }
+    win[GA_DISABLE_PROPERTY] = true;
   }
 
   /**
@@ -342,6 +347,28 @@
     return parseConsent(storageGet());
   }
 
+  /** Cookie-only read for visibility fallback when localStorage may be stale.
+   * @returns {object|null}
+   */
+  function readStoredFromCookie() {
+    return parseConsent(readCookie(STORAGE_KEY));
+  }
+
+  /**
+   * @param {object} left
+   * @param {object} right
+   * @returns {boolean}
+   */
+  function consentEquals(left, right) {
+    if (!left || !right) {
+      return false;
+    }
+    return (
+      isGrantedFlag(left.analytics) === isGrantedFlag(right.analytics) &&
+      isGrantedFlag(left.marketing) === isGrantedFlag(right.marketing)
+    );
+  }
+
   /**
    * @param {object} consent
    * @returns {object}
@@ -437,6 +464,7 @@
       fn();
       return true;
     } catch {
+      // Vendor callbacks may throw; consent withdrawal must still finish.
       return false;
     }
   }
@@ -551,11 +579,7 @@
     } else {
       current = next;
     }
-    if (isGrantedFlag(next.analytics)) {
-      win[GA_DISABLE_PROPERTY] = false;
-    } else {
-      win[GA_DISABLE_PROPERTY] = true;
-    }
+    syncAnalyticsDisableFlag(next);
     updateConsentMode(next);
     if (next.analytics || next.marketing) {
       activateInertScripts(next);
@@ -1141,6 +1165,80 @@
     doc.addEventListener("click", onFooterConsentClick);
   }
 
+  /** Applies consent from another tab or cookie refresh without writing storage.
+   * @param {object|null} consent
+   * @returns {object}
+   */
+  function applyRemoteChoice(consent) {
+    const next = consent ? cloneConsent(consent) : deniedConsent();
+    return applyChoice(next, { persist: false });
+  }
+
+  /**
+   * @param {StorageEvent} event
+   * @returns {void}
+   */
+  function onConsentStorageEvent(event) {
+    if (event.key !== STORAGE_KEY) {
+      return;
+    }
+    if (event.storageArea !== win.localStorage) {
+      return;
+    }
+    const next = parseConsent(event.newValue || "");
+    if (!next) {
+      applyRemoteChoice(null);
+      showBanner();
+      return;
+    }
+    applyRemoteChoice(next);
+    if (isGrantedFlag(next.analytics) || isGrantedFlag(next.marketing)) {
+      hideBanner();
+    } else {
+      showBanner();
+    }
+  }
+
+  /** Re-sync when the tab becomes visible and the consent cookie is the source of truth.
+   * @returns {void}
+   */
+  function onVisibilityCookieRefresh() {
+    if (!doc || doc.visibilityState !== "visible") {
+      return;
+    }
+    const cookieChoice = readStoredFromCookie();
+    if (!cookieChoice) {
+      syncAnalyticsDisableFlag(null);
+      if (!consentEquals(current, deniedConsent())) {
+        applyRemoteChoice(null);
+        showBanner();
+      } else if (!isGrantedFlag(current.analytics)) {
+        disableAnalyticsTags();
+      }
+      return;
+    }
+    if (!consentEquals(cookieChoice, current)) {
+      applyRemoteChoice(cookieChoice);
+      if (isGrantedFlag(cookieChoice.analytics) || isGrantedFlag(cookieChoice.marketing)) {
+        hideBanner();
+      } else {
+        showBanner();
+      }
+    }
+  }
+
+  /** Cross-tab storage sync and cookie refresh when the tab is visible again.
+   * @returns {void}
+   */
+  function bindConsentSyncListeners() {
+    if (typeof win.addEventListener === "function") {
+      win.addEventListener("storage", onConsentStorageEvent);
+    }
+    if (doc && typeof doc.addEventListener === "function") {
+      doc.addEventListener("visibilitychange", onVisibilityCookieRefresh);
+    }
+  }
+
   /** Mounts UI after DOM is ready and applies a stored choice if present.
    * @returns {void}
    */
@@ -1164,8 +1262,12 @@
     const stored = readStored();
     if (stored) {
       current = stored;
+      syncAnalyticsDisableFlag(stored);
       updateConsentMode(stored);
+    } else {
+      syncAnalyticsDisableFlag(null);
     }
+    bindConsentSyncListeners();
     if (!doc) {
       return;
     }
@@ -1179,6 +1281,8 @@
   const api = {
     CONSENT_VERSION,
     STORAGE_KEY,
+    GA_MEASUREMENT_ID,
+    GA_DISABLE_PROPERTY,
     CATEGORIES,
     deniedConsent,
     readStored,
@@ -1188,6 +1292,10 @@
     rejectAll,
     saveCustom,
     applyChoice,
+    applyRemoteChoice,
+    onConsentStorageEvent,
+    onVisibilityCookieRefresh,
+    syncAnalyticsDisableFlag,
     activateInertScripts,
     openPreferences,
     parseConsent,

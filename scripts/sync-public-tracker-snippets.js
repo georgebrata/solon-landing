@@ -9,6 +9,7 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
+const { GA_MEASUREMENT_ID, gtagLoaderUrl } = require("./lib/ga-measurement");
 
 /**
  * @param {string} relFromRoot Repo-relative path with forward slashes.
@@ -81,7 +82,7 @@ const trackerHeadBlock = () => {
   <!-- End Meta Pixel Code -->
 
   <!-- Google tag (gtag.js) -->
-  <script type="text/plain" data-consent-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"></script>
+  <script type="text/plain" data-consent-category="analytics" async src="${gtagLoaderUrl}"></script>
   <script type="text/plain" data-consent-category="analytics" src="/assets/js/gtag-config.min.js?v=${gtagConfigHash}"></script>
 `;
 };
@@ -185,6 +186,7 @@ module.exports = {
   ensureTrackingScript,
   trackerHeadBlock,
   assetContentHash,
+  GA_MEASUREMENT_ID,
   shouldSkipPublicTrackerSync,
   listHtmlFiles,
   normalizeTrackerHeadPaths,

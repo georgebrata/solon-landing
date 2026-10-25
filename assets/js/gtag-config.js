@@ -5,17 +5,10 @@
  */
 (function () {
 
-  /**
-   * @param {() => void} fn
-   * @returns {void}
-   */
-  const tryCall = (fn) => {
-    try {
-      fn();
-    } catch {
-      return;
-    }
-  };
+  const measurementId =
+    typeof window.SolonConsent?.GA_MEASUREMENT_ID === "string"
+      ? window.SolonConsent.GA_MEASUREMENT_ID
+      : "G-H41D7KCWHX";
 
   if (!window.dataLayer) {
     window.dataLayer = [];
@@ -23,17 +16,10 @@
 
   const existing = window.gtag;
   if (!(typeof existing === "function" && existing.__solonArgumentsStub === true)) {
-    const previous = typeof existing === "function" ? existing : null;
     /** @returns {void} */
     function gtag() {
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
       window.dataLayer.push(arguments);
-      if (previous) {
-        tryCall(() => {
-          // skipcq: JS-0244 -- forward legacy gtag calls without array-shaped dataLayer entries
-          previous.apply(window, arguments);
-        });
-      }
     }
     gtag.__solonArgumentsStub = true;
     window.gtag = gtag;
@@ -55,7 +41,7 @@
   };
 
   window.gtag("js", new Date());
-  window.gtag("config", "G-H41D7KCWHX", {
+  window.gtag("config", measurementId, {
     currency: "RON",
     page_location: safePageLocation(),
   });
