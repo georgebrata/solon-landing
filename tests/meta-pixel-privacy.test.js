@@ -10,6 +10,8 @@ const root = path.join(__dirname, "..");
 const pixelSource = fs.readFileSync(path.join(root, "assets/js/meta-pixel.js"), "utf8");
 const trackingSource = fs.readFileSync(path.join(root, "assets/js/tracking.js"), "utf8");
 const { GA4_CUSTOM_EVENTS } = require("../assets/js/tracking.js");
+const { GA_MEASUREMENT_ID } = require("../scripts/lib/ga-measurement");
+const GA_DISABLE_PROPERTY = `ga-disable-${GA_MEASUREMENT_ID}`;
 
 test("meta-pixel disables autoConfig before init without Advanced Matching", () => {
   const autoIdx = pixelSource.indexOf('fbq("set", "autoConfig", false');
@@ -50,7 +52,11 @@ test("solonTrack only emits allowlisted GA4 custom events and blocks purchase", 
   const gtagCalls = [];
   const context = {
     window: {
-      SolonConsent: { hasConsent: (c) => c === "analytics" || c === "marketing" },
+      SolonConsent: {
+        GA_DISABLE_PROPERTY,
+        hasConsent: (c) => c === "analytics" || c === "marketing",
+      },
+      [GA_DISABLE_PROPERTY]: false,
       gtag: (...args) => {
         gtagCalls.push(args);
       },
