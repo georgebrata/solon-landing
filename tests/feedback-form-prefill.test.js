@@ -64,6 +64,7 @@ test("Legal C1: email prefill is optional and never marks the field required", (
   assert.equal(buildFeedbackFormSrc("not-an-email"), null);
 
   const withoutEmail = [];
+  let requiredAttributeSet = false;
   const iframe = {
     title: "Formular feedback SOLON (Google Forms)",
     _src: "",
@@ -81,15 +82,17 @@ test("Legal C1: email prefill is optional and never marks the field required", (
       return this._src;
     },
     setAttribute(name, value) {
+      if (name === "required") {
+        requiredAttributeSet = true;
+        return;
+      }
       if (name === "src") {
         this.src = value;
-      }
-      if (name === "required") {
-        throw new Error("prefill must not set required on iframe");
       }
     },
   };
   applyFeedbackIframeSrc({ querySelector: () => iframe }, null);
+  assert.equal(requiredAttributeSet, false);
   assert.equal(withoutEmail.length, 1);
   assert.equal(withoutEmail[0], FEEDBACK_FORM_BASE_SRC);
   assert.doesNotMatch(withoutEmail[0], /entry\.1640447617=/u);
