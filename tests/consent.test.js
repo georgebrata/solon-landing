@@ -276,7 +276,7 @@ const loadConsent = function loadConsent(options = {}) {
   if (typeof options.fetch === "function") {
     context.fetch = options.fetch;
   } else {
-    context.fetch = async () => new context.Response();
+    context.fetch = () => Promise.resolve(new context.Response());
   }
   if (options.preGtag) {
     context.gtag = options.preGtag;
@@ -782,8 +782,8 @@ test("ga-disable drops GA transport for URL objects, fetch, XHR, and image beaco
   img.src = collect;
   assert.equal(beacons.length, 0);
   assert.equal(fetches.length, 0);
-  assert.equal(xhr.__solonTransportSent, undefined);
-  assert.equal(img.__solonImageSrcSet, undefined);
+  assert.ok(xhr.__solonTransportSent === undefined);
+  assert.ok(img.__solonImageSrcSet === undefined);
   context[api.GA_DISABLE_PROPERTY] = false;
   context.navigator.sendBeacon(collect);
   assert.equal(beacons.length, 1);
