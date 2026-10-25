@@ -163,7 +163,7 @@
       return;
     }
     /** @returns {void} */
-    // skipcq: JS-0086 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
+    // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
     function gtag() {
       win.dataLayer.push(arguments);
     }
