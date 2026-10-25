@@ -32,6 +32,7 @@
     try {
       return decodeURIComponent(encoded.replace(/\+/g, "%2B"));
     } catch {
+      /* ignore malformed percent-encoding in e= */
       return "";
     }
   }
@@ -237,7 +238,10 @@
       const url = new URL(href);
       const hashPart = stripEFromHash(url.hash);
       const queryPart = stripEParamPreservingSearch(url.search);
-      const rawEmail = readRawEmailFromHash(url.hash) ?? readRawEmailParamFromSearch(url.search);
+      let rawEmail = readRawEmailFromHash(url.hash);
+      if (rawEmail === null) {
+        rawEmail = readRawEmailParamFromSearch(url.search);
+      }
       return {
         pathAndQuery: url.pathname + queryPart.search + hashPart.hash,
         rawEmail,

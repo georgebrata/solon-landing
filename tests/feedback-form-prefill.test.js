@@ -37,7 +37,7 @@ test("feedback iframe uses data-src, referrerpolicy, and noscript fallback", () 
     feedbackHtml,
     /data-src="https:\/\/docs\.google\.com\/forms\/d\/e\/1FAIpQLScGk[^"]+embedded=true"/
   );
-  assert.match(feedbackHtml, /referrerpolicy="no-referrer"/g);
+  assert.match(feedbackHtml, /referrerpolicy="no-referrer"/);
   const iframeTags = feedbackHtml.match(/<iframe[^>]*Formular feedback SOLON[^>]*>/g);
   assert.ok(iframeTags && iframeTags.length >= 2);
   assert.ok(!/\ssrc="/u.test(iframeTags[0]), "main iframe must not have src in HTML");
