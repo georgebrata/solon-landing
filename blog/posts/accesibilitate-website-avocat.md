@@ -120,7 +120,7 @@ Legea nr. 232/2022 privind cerințele de accesibilitate aplicabile produselor ș
 
 Legea nu se aplică tuturor website-urilor. Art. 2 alin. (3) enumeră serviciile furnizate consumatorilor după 28 iunie 2025: servicii de comunicații electronice, servicii care oferă acces la servicii mass-media audiovizuale, servicii bancare destinate consumatorilor, cărți electronice și software dedicat și servicii de comerț electronic. Pentru transportul aerian, feroviar, maritim și cu autobuzul pentru pasageri, art. 2 alin. (4) vizează separat, printre altele, website-urile și aplicațiile mobile ale operatorilor.
 
-Serviciile de comerț electronic sunt definite la art. 3 pct. 22 ca servicii furnizate la distanță, prin website-uri și prin servicii integrate pe dispozitive mobile, prin mijloace electronice, la solicitarea individuală a unui consumator, pentru încheierii unui contract de consum.
+<p>Serviciile de comerț electronic sunt definite la art. 3 pct. 22 ca servicii furnizate la distanță, prin website-uri și prin servicii integrate pe dispozitive mobile, prin mijloace electronice, la solicitarea individuală a unui consumator, în vederea încheierii unui contract de consum.</p>
 
 Supravegherea serviciilor de comerț electronic revine Autorității pentru Digitalizarea României (art. 19 alin. (1) lit. d).
 
