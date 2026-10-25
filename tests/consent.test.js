@@ -590,7 +590,7 @@ test("analytics re-grant clears ga-disable before consent update and resumes hit
 test("foreign gtag is replaced without forwarding commands", () => {
   const dataLayer = [];
   const foreignCalls = [];
-  const { context } = loadConsent({
+  const { api, context } = loadConsent({
     dataLayer,
     preGtag(...args) {
       foreignCalls.push([...args]);
@@ -598,6 +598,7 @@ test("foreign gtag is replaced without forwarding commands", () => {
   });
   assert.equal(context.gtag.__solonArgumentsStub, true);
   assert.equal(foreignCalls.length, 0);
+  context[api.GA_DISABLE_PROPERTY] = false;
   context.gtag("event", "probe", { ok: true });
   assert.equal(foreignCalls.length, 0);
   const pushed = dataLayer[dataLayer.length - 1];
@@ -622,6 +623,22 @@ test("boot with stored analytics denial sets ga-disable", () => {
   });
   const { api, context } = loadConsent({ store });
   assert.equal(context[api.GA_DISABLE_PROPERTY], true);
+});
+
+test("gtag stub drops new event commands when ga-disable is true", () => {
+  const { api, context } = loadConsent();
+  api.acceptAll();
+  const before = context.dataLayer.length;
+  context[api.GA_DISABLE_PROPERTY] = true;
+  context.gtag("event", "contact", { method: "phone" });
+  assert.equal(context.dataLayer.length, before);
+  context.gtag("consent", "update", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: "denied",
+  });
+  assert.ok(context.dataLayer.length > before);
 });
 
 test("storage event from another tab withdraws analytics on this tab", () => {
@@ -661,7 +678,8 @@ test("visibilitychange with missing consent cookie sets ga-disable and clears an
 });
 
 test("consent gtag stub output is accepted by a gtag.js-like Arguments-only consumer", () => {
-  const { context } = loadConsent();
+  const { api, context } = loadConsent();
+  api.acceptAll();
   const accepted = [];
   for (const entry of context.dataLayer) {
     if (Object.prototype.toString.call(entry) !== "[object Arguments]") {

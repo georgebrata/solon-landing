@@ -76,6 +76,22 @@
     return null;
   };
 
+  /** @returns {boolean} */
+  const canSendGa4Event = () => {
+    const consent = consentApi();
+    if (!consent?.hasConsent("analytics") || typeof global.gtag !== "function") {
+      return false;
+    }
+    const disableKey =
+      typeof consent.GA_DISABLE_PROPERTY === "string"
+        ? consent.GA_DISABLE_PROPERTY
+        : `ga-disable-${typeof consent.GA_MEASUREMENT_ID === "string" ? consent.GA_MEASUREMENT_ID : "G-H41D7KCWHX"}`;
+    if (global[disableKey] === true) {
+      return false;
+    }
+    return true;
+  };
+
   /**
    * @param {string} metaEvent
    * @param {Record<string, unknown>} safe
@@ -182,14 +198,9 @@
       return eventId;
     }
     const safe = sanitizeParams(params);
-    const consent = consentApi();
     let metaSent = false;
 
-    if (
-      consent?.hasConsent("analytics") &&
-      GA4_CUSTOM_EVENTS.has(ga4Event) &&
-      typeof global.gtag === "function"
-    ) {
+    if (canSendGa4Event() && GA4_CUSTOM_EVENTS.has(ga4Event)) {
       const gaPayload = { ...safe, event_id: eventId };
       if (opts.transportType) {
         gaPayload.transport_type = opts.transportType;
@@ -454,10 +465,7 @@
       return;
     }
     const consent = consentApi();
-    const canGa =
-      !pageViewGaSent &&
-      consent?.hasConsent("analytics") &&
-      typeof global.gtag === "function";
+    const canGa = !pageViewGaSent && canSendGa4Event();
     const canMeta =
       !pageViewMetaSent &&
       consent?.hasConsent("marketing") &&
@@ -499,7 +507,7 @@
     const safe = sanitizeParams(params);
     let sent = false;
 
-    if (consent?.hasConsent("analytics") && typeof global.gtag === "function") {
+    if (canSendGa4Event()) {
       global.gtag("event", "sign_up", { ...safe, event_id: eventId });
       sent = true;
     }
@@ -616,6 +624,7 @@
       buildViewItemParams,
       flushPendingMetaPageEvents,
       trySendPageViewContent,
+      canSendGa4Event,
       sendMetaTrack,
       CURRENCY,
       GA4_CUSTOM_EVENTS,

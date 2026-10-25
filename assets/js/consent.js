@@ -167,6 +167,10 @@
     }
     /** @returns {void} */
     function gtag() {
+      const command = arguments[0];
+      if (command === "event" && win[GA_DISABLE_PROPERTY] === true) {
+        return;
+      }
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
       win.dataLayer.push(arguments);
     }

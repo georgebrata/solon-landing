@@ -212,6 +212,53 @@ test("grant on landing page sends exactly one view_item and ViewContent after co
   assert.equal(fbqCalls.filter((call) => call[0] === "track" && call[1] === "ViewContent").length, 1);
 });
 
+test("after analytics withdrawal, tel and pricing clicks send no new GA events", () => {
+  const gtagCalls = [];
+  const GA_DISABLE = "ga-disable-G-H41D7KCWHX";
+  let analyticsGranted = true;
+  const context = {
+    console,
+    window: {
+      SolonConsent: {
+        GA_MEASUREMENT_ID: "G-H41D7KCWHX",
+        GA_DISABLE_PROPERTY: GA_DISABLE,
+        hasConsent: (category) => category === "analytics" && analyticsGranted,
+      },
+      [GA_DISABLE]: false,
+      gtag: (...args) => {
+        gtagCalls.push(args);
+      },
+      fbq: () => undefined,
+      location: { pathname: "/", href: "https://solon.agency/" },
+      document: {
+        readyState: "loading",
+        addEventListener() {
+          return undefined;
+        },
+        querySelector() {
+          return null;
+        },
+      },
+    },
+  };
+  context.globalThis = context.window;
+  vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
+  context.window.solonTrack("Contact", "contact", { method: "phone" });
+  context.window.solonTrack("InitiateCheckout", "begin_checkout", {
+    content_name: "gold",
+    currency: "RON",
+  });
+  assert.equal(gtagCalls.filter((call) => call[0] === "event").length, 2);
+  analyticsGranted = false;
+  context.window[GA_DISABLE] = true;
+  context.window.solonTrack("Contact", "contact", { method: "phone" });
+  context.window.solonTrack("InitiateCheckout", "begin_checkout", {
+    content_name: "gold",
+    currency: "RON",
+  });
+  assert.equal(gtagCalls.filter((call) => call[0] === "event").length, 2);
+});
+
 test("pre-consent click events are not sent after consent is granted", () => {
   const { gtagCalls, fbqCalls, grantConsent, context } = bootTrackingWithConsentFlow();
   context.window.solonTrack("Lead", "generate_lead", { content_name: "Contact" });
