@@ -191,10 +191,8 @@ const loadConsent = function loadConsent(options = {}) {
     ProgressEvent:
       typeof ProgressEvent !== "undefined"
         ? ProgressEvent
-        : class ProgressEvent extends Event {
-            constructor(type) {
-              super(type);
-            }
+        : function ProgressEventPolyfill(type) {
+            return new Event(type);
           },
     addEventListener() {
       return undefined;
@@ -289,8 +287,9 @@ const loadConsent = function loadConsent(options = {}) {
   }
   if (!context.Element) {
     class Element {
-      setAttribute() {
-        return undefined;
+      setAttribute(name, value) {
+        this.__attrs = this.__attrs || {};
+        this.__attrs[String(name)] = value;
       }
     }
     context.Element = Element;

@@ -51,9 +51,9 @@ const canReachGoogleTagManager = async () => {
 };
 
 /**
- * @returns {Promise<string | false>}
+ * @returns {string | false}
  */
-const resolveSuiteSkip = async () => {
+const resolveSuiteSkip = () => {
   if (process.env.SKIP_GTAG_BROWSER === "1") {
     return "SKIP_GTAG_BROWSER=1";
   }

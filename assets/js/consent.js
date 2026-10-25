@@ -252,13 +252,10 @@
       if (!hostname) {
         return false;
       }
-      if (isGoogleAnalyticsCollectHost(hostname) && win[GA_DISABLE_PROPERTY] === true) {
-        return true;
-      }
-      if (isClarityCollectHost(hostname) && clarityTransportBlocked()) {
-        return true;
-      }
-      return false;
+      return (
+        (isGoogleAnalyticsCollectHost(hostname) && win[GA_DISABLE_PROPERTY] === true) ||
+        (isClarityCollectHost(hostname) && clarityTransportBlocked())
+      );
     };
     /**
      * @param {XMLHttpRequest} xhr
@@ -273,6 +270,10 @@
         fn();
       }
     };
+    /**
+     * @param {XMLHttpRequest} xhr
+     * @returns {void}
+     */
     const finishBlockedXhr = (xhr) => {
       scheduleMicrotask(() => {
         const EventCtor = win.Event || (typeof Event !== "undefined" ? Event : null);
@@ -387,7 +388,7 @@
           finishBlockedImage(this);
           return;
         }
-        return nativeSetAttribute.call(this, name, value);
+        nativeSetAttribute.call(this, name, value);
       };
     }
   }
