@@ -126,9 +126,7 @@ Supravegherea serviciilor de comerț electronic revine Autorității pentru Digi
 
 ## 3. Se aplică legea website-ului cabinetului tău?
 
-Un website de prezentare al unui cabinet nu se află, în principiu, printre serviciile enumerate de Legea 232/2022. Dacă însă pe website un consumator poate încheia online un contract (de exemplu, cumpără și plătește o consultație), activitatea se poate apropia de «serviciile de comerț electronic» din lege.
-
-Microîntreprinderile care oferă servicii (sub 10 angajați și cifră de afaceri anuală sau bilanț de cel mult echivalentul a 2 milioane de euro) sunt scutite de cerințele de accesibilitate. Dacă nu ești sigur în ce categorie intri, verifică textul legii sau cere o opinie.
+<p>Un website de prezentare al unui cabinet nu se află, în principiu, printre serviciile enumerate de Legea 232/2022. Dacă însă pe website un consumator poate încheia online un contract (de exemplu, cumpără și plătește o consultație), activitatea se poate apropia de «serviciile de comerț electronic» din lege. Microîntreprinderile care oferă servicii (sub 10 angajați și cifră de afaceri anuală sau bilanț de cel mult echivalentul a 2 milioane de euro) sunt scutite de cerințele de accesibilitate. Dacă nu ești sigur în ce categorie intri, verifică textul legii sau cere o opinie.</p>
 
 Scutirea pentru microîntreprinderi este prevăzută la art. 4 alin. (5), iar definiția microîntreprinderii se află la art. 3 pct. 12.
 
