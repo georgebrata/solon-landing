@@ -47,7 +47,7 @@ test("invalid or injection-like email is ignored for form URL", () => {
 test("missing or empty param leaves buildFeedbackFormSrc null", () => {
   assert.equal(buildFeedbackFormSrc(""), null);
   assert.equal(buildFeedbackFormSrc(null), null);
-  assert.equal(normalizeFeedbackEmailParam(undefined), null);
+  assert.equal(normalizeFeedbackEmailParam(), null);
 });
 
 test("stripFeedbackEmailFromHref removes e and keeps other params and hash", () => {
