@@ -115,7 +115,7 @@ test("normalizeTrackingScriptLine puts tracking.min.js on its own line", () => {
   const html =
     '<script src="x.js"></script>  <script src="/assets/js/tracking.min.js" defer></script>';
   const next = normalizeTrackingScriptLine(html);
-  assert.match(next, /<\/script>\n  <script src="\/assets\/js\/tracking\.min\.js"/);
+  assert.match(next, /<\/script>\n {2}<script src="\/assets\/js\/tracking\.min\.js"/);
 });
 
 test("public HTML includes each tracker script at most once", () => {

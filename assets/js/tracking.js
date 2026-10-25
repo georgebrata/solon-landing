@@ -326,6 +326,7 @@
     }
     event.preventDefault();
     let navigated = false;
+    /** @returns {void} */
     const navigate = () => {
       if (navigated) return;
       navigated = true;
@@ -469,7 +470,7 @@
     const io = new global.IntersectionObserver(
       (entries) => {
         if (!entries.some((en) => en.isIntersecting)) return;
-        solonTrack("ViewContent", "view_item", buildViewItemParams("servicii", "serviciu", undefined), {
+        solonTrack("ViewContent", "view_item", buildViewItemParams("servicii", "serviciu"), {
           pageMetaKey: "home-servicii",
         });
         io.disconnect();

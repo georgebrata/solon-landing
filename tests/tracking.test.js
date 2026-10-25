@@ -26,7 +26,9 @@ const loadTracking = (overrides = {}) => {
       location: overrides.location || { pathname: "/", href: "https://solon.agency/" },
       document: overrides.document || {
         readyState: "complete",
-        addEventListener() {},
+        addEventListener() {
+          void 0;
+        },
         querySelector() {
           return null;
         },
@@ -81,12 +83,11 @@ test("solonTrack strips personal-data keys from params", () => {
     phone: "+40770000000",
   });
   assert.equal(gtagCalls[0][2].method, "email");
-  assert.equal(gtagCalls[0][2].email, undefined);
-  assert.equal(gtagCalls[0][2].phone, undefined);
+  assert.equal("email" in gtagCalls[0][2], false);
+  assert.equal("phone" in gtagCalls[0][2], false);
 });
 
 const {
-  sanitizeParams,
   parseRonAmount,
   viewContentContextForPath,
   packageFromCheckoutHref,
@@ -145,7 +146,7 @@ test("page ViewContent fires on solon:pixel-ready when fbq loads after DOMConten
   const gtagCalls = [];
   const fbqCalls = [];
   const pixelReadyListeners = [];
-  let domReady;
+  let domReady = null;
   const doc = {
     readyState: "loading",
     addEventListener(type, fn) {
@@ -236,7 +237,9 @@ test("tracking.js binds click handlers only once when evaluated twice", () => {
 test("view_item on abonament includes value and items when prices are in the DOM", () => {
   const doc = {
     readyState: "complete",
-    addEventListener() {},
+    addEventListener() {
+      void 0;
+    },
     querySelector(sel) {
       if (sel === ".price-annual") {
         return { textContent: "1.099 lei/an" };
@@ -343,7 +346,9 @@ test("newsletter sign_up fires at most once per session (form and confirm page)"
       },
       document: {
         readyState: "complete",
-        addEventListener() {},
+        addEventListener() {
+          void 0;
+        },
         querySelector() {
           return null;
         },

@@ -293,11 +293,9 @@
   /**
    * Consent-gated conversion events after a confirmed save (no PII in params).
    * @param {"Contact"|"Telefon"|"Newsletter"} type
-   * @param {HTMLFormElement} form
-   * @param {boolean} newsletterAlsoSaved
    * @returns {void}
    */
-  const trackFormConversion = (type, form, newsletterAlsoSaved) => {
+  const trackFormConversion = (type) => {
     try {
       if (type === "Contact" || type === "Telefon") {
         const track = globalThis.solonTrack;
@@ -488,7 +486,7 @@
         }
       }
 
-      trackFormConversion(type, form, newsletterAlsoSaved);
+      trackFormConversion(type);
       form.reset();
       showStatus(form, MESSAGES[type], false);
       logEvent("info", { type: "form_submit_ok", form: type });

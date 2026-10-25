@@ -53,8 +53,18 @@ test("solonTrack only emits allowlisted GA4 custom events and blocks purchase", 
       gtag: (...args) => {
         gtagCalls.push(args);
       },
-      fbq() {},
-      document: { readyState: "complete", addEventListener() {}, querySelector() { return null; } },
+      fbq() {
+        void 0;
+      },
+      document: {
+        readyState: "complete",
+        addEventListener() {
+          void 0;
+        },
+        querySelector() {
+          return null;
+        },
+      },
       location: { pathname: "/" },
     },
   };
@@ -65,5 +75,5 @@ test("solonTrack only emits allowlisted GA4 custom events and blocks purchase", 
   context.window.solonTrack("Lead", "generate_lead", { content_name: "Contact", email: "x@y.z" });
   assert.equal(gtagCalls.length, 1);
   assert.equal(gtagCalls[0][1], "generate_lead");
-  assert.equal(gtagCalls[0][2].email, undefined);
+  assert.equal("email" in gtagCalls[0][2], false);
 });

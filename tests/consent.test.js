@@ -116,7 +116,9 @@ const loadConsent = function loadConsent(options = {}) {
           this._children.push(child);
           return child;
         },
-        addEventListener() {},
+        addEventListener() {
+          void 0;
+        },
         getBoundingClientRect() {
           return { height: 48 };
         },
@@ -152,7 +154,9 @@ const loadConsent = function loadConsent(options = {}) {
     Number,
     String,
     Error,
-    addEventListener() {},
+    addEventListener() {
+      void 0;
+    },
     requestAnimationFrame(fn) {
       fn();
     },
