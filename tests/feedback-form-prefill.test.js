@@ -164,12 +164,18 @@ test("boot does not push email into dataLayer", () => {
   const document = {
     readyState: "complete",
     querySelector: () => iframe,
-    addEventListener() {},
+    addEventListener() {
+      /* DOMContentLoaded not used when readyState is complete */
+    },
   };
   const win = {
     URL,
     location: { href: "https://solon.agency/feedback/#e=hidden%40example.com", pathname: "/feedback/" },
-    history: { replaceState() {} },
+    history: {
+      replaceState() {
+        /* stub */
+      },
+    },
     dataLayer,
     document,
     module: { exports: {} },
@@ -207,7 +213,11 @@ test("boot waits for DOMContentLoaded before setting iframe src", () => {
   const win = {
     URL,
     location: { href: "https://solon.agency/feedback/#e=wait%40example.com", pathname: "/feedback/" },
-    history: { replaceState() {} },
+    history: {
+      replaceState() {
+        /* stub */
+      },
+    },
     document,
     module: { exports: {} },
   };

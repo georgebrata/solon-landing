@@ -138,6 +138,17 @@
 
   /**
    * @param {string} hash
+   * @returns {string}
+   */
+  function hashWithLeadingOctothorpe(hash) {
+    if (!hash) {
+      return "";
+    }
+    return hash.startsWith("#") ? hash : `#${hash}`;
+  }
+
+  /**
+   * @param {string} hash
    * @returns {{ hash: string, rawEmail: string|null, stripped: boolean }}
    */
   function stripEFromHash(hash) {
@@ -146,11 +157,11 @@
     }
     const inner = hash.startsWith("#") ? hash.slice(1) : hash;
     if (!inner) {
-      return { hash: hash.startsWith("#") ? hash : `#${hash}`, rawEmail: null, stripped: false };
+      return { hash: hashWithLeadingOctothorpe(hash), rawEmail: null, stripped: false };
     }
     const { encoded, rawEmail, stripped } = stripEParamFromSegments(inner);
     if (!stripped) {
-      return { hash: hash.startsWith("#") ? hash : `#${hash}`, rawEmail: null, stripped: false };
+      return { hash: hashWithLeadingOctothorpe(hash), rawEmail: null, stripped: false };
     }
     if (!encoded) {
       return { hash: "", rawEmail, stripped: true };

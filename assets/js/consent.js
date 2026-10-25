@@ -143,6 +143,22 @@
   }
 
   /**
+   * @param {{ stripped: boolean, encoded: string }} stripResult
+   * @param {string} prefix
+   * @param {string} original
+   * @returns {string}
+   */
+  function composeStrippedUrlPart(stripResult, prefix, original) {
+    if (!stripResult.stripped) {
+      return original;
+    }
+    if (!stripResult.encoded) {
+      return "";
+    }
+    return `${prefix}${stripResult.encoded}`;
+  }
+
+  /**
    * Strips feedback prefill ?e= / #e= (case-insensitive) while preserving other bytes (see feedback-form-prefill.js).
    * @param {string} href
    * @returns {{ pathAndQuery: string, stripped: boolean }}
@@ -157,16 +173,8 @@
       if (!hashStrip.stripped && !searchStrip.stripped) {
         return { pathAndQuery: url.pathname + url.search + url.hash, stripped: false };
       }
-      const nextSearch = searchStrip.stripped
-        ? searchStrip.encoded
-          ? `?${searchStrip.encoded}`
-          : ""
-        : url.search;
-      const nextHash = hashStrip.stripped
-        ? hashStrip.encoded
-          ? `#${hashStrip.encoded}`
-          : ""
-        : url.hash;
+      const nextSearch = composeStrippedUrlPart(searchStrip, "?", url.search);
+      const nextHash = composeStrippedUrlPart(hashStrip, "#", url.hash);
       return { pathAndQuery: url.pathname + nextSearch + nextHash, stripped: true };
     } catch {
       return { pathAndQuery: "", stripped: false };
