@@ -193,7 +193,10 @@
     solonTrack("Contact", "contact", { method });
   }
 
-  /** Fire ViewContent once for package / offer landing pages. */
+  /**
+   * Fire ViewContent once for package / offer landing pages.
+   * @returns {void}
+   */
   function trackViewContentForPage() {
     const path = global.location?.pathname || "";
     const ctx = viewContentContextForPath(path);
@@ -205,14 +208,20 @@
     });
   }
 
-  /** Fire sign_up on newsletter confirmation landing. */
+  /**
+   * Fire sign_up on newsletter confirmation landing.
+   * @returns {void}
+   */
   function trackNewsletterConfirmationPage() {
     const path = global.location?.pathname || "";
     if (!/\/confirmare-abonare\/?$/i.test(path)) return;
     solonTrack("CompleteRegistration", "sign_up", { content_name: "newsletter" });
   }
 
-  /** ViewContent when the homepage #servicii block is seen. */
+  /**
+   * ViewContent when the homepage #servicii block is seen.
+   * @returns {void}
+   */
   function observeHomeServices() {
     const section = global.document?.querySelector("#servicii");
     if (!section || typeof global.IntersectionObserver !== "function") return;
@@ -231,6 +240,10 @@
     io.observe(section);
   }
 
+  /**
+   * Delegated click handlers for contact and checkout links.
+   * @returns {void}
+   */
   function bindDocumentTracking() {
     const doc = global.document;
     if (!doc || typeof doc.addEventListener !== "function") return;
@@ -247,6 +260,10 @@
     );
   }
 
+  /**
+   * Page-level tracking bootstrap.
+   * @returns {void}
+   */
   function initTracking() {
     trackViewContentForPage();
     trackNewsletterConfirmationPage();
