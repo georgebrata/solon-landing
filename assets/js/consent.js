@@ -470,6 +470,15 @@
     expireTrackerCookies();
   }
 
+  /** Grants Meta Pixel consent when marketing is allowed.
+   * @returns {void}
+   */
+  function grantMarketingFbq() {
+    if (typeof win.fbq === "function") {
+      win.fbq("consent", "grant");
+    }
+  }
+
   /** Starts or stops Brevo when marketing consent changes.
    * The tracker tag stays inert until marketing is granted. This also covers
    * withdrawal, and a later grant on the same page after the tag already ran.
@@ -514,6 +523,9 @@
       activateInertScripts(next);
     }
     syncBrevo(next);
+    if (isGrantedFlag(next.marketing)) {
+      tryCall(grantMarketingFbq);
+    }
     if (!next.analytics || !next.marketing) {
       disableLoadedTags();
     }

@@ -309,6 +309,17 @@ test("accept all activates analytics and marketing inert tags", () => {
   assert.equal(last[2].ad_storage, "granted");
 });
 
+test("accept all grants Meta Pixel consent when fbq is present", () => {
+  const fbqCalls = [];
+  const { api, context } = loadConsent();
+  context.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  api.acceptAll();
+  const grants = fbqCalls.filter((args) => args[0] === "consent" && args[1] === "grant");
+  assert.equal(grants.length, 1);
+});
+
 /**
  * @returns {string[]}
  */

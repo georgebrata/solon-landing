@@ -189,7 +189,7 @@ const generatePostHTML = (post, posts, marked) => {
   page = replaceToken(page, 'slugWithTrailingSlash', `${frontmatter.slug}/`);
   page = replaceToken(page, 'json_ld', headJsonLd);
   page = replaceToken(page, 'body', postHtml);
-  page = replaceToken(page, 'scripts', '<script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
+  page = replaceToken(page, 'scripts', '<script src="/assets/js/tracking.min.js" defer></script>\n  <script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
   return page;
 };
 
@@ -277,7 +277,7 @@ ${tagsBlock}
   page = replaceToken(page, 'slugWithTrailingSlash', '');
   page = replaceToken(page, 'json_ld', '');
   page = replaceToken(page, 'body', listBody);
-  page = replaceToken(page, 'scripts', '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
+  page = replaceToken(page, 'scripts', '<script src="/assets/js/tracking.min.js" defer></script>\n  <script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
   return page;
 };
 

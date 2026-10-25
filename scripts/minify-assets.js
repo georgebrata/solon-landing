@@ -47,6 +47,7 @@ const jsFiles = [
   "meta-pixel.js",
   "consent.js",
   "gtag-config.js",
+  "tracking.js",
   "clarity-init.js",
   "metricool-init.js",
   "brevo-tracker.js",

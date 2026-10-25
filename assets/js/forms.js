@@ -290,6 +290,22 @@
     return "";
   };
 
+  /** Consent-gated conversion events after a confirmed save (no PII in params). */
+  const trackFormConversion = (type, form, newsletterAlsoSaved) => {
+    try {
+      const track = globalThis.solonTrack;
+      if (typeof track !== "function") return;
+      if (type === "Contact" || type === "Telefon") {
+        track("Lead", "generate_lead", { content_name: type });
+      }
+      if (type === "Newsletter" || newsletterAlsoSaved) {
+        track("CompleteRegistration", "sign_up", { content_name: "newsletter" });
+      }
+    } catch {
+      return;
+    }
+  };
+
   /** Tell Brevo who subscribed, only after a confirmed standalone newsletter save.
    * Contact never identifies, including the follow-up Newsletter save sent when
    * NewsletterOptIn is checked. Telefon never identifies.
@@ -443,9 +459,11 @@
       const values = valuesFor(form, type, ip, date);
       await postForm(type, values, form);
 
+      let newsletterAlsoSaved = false;
       if (type === "Contact" && form.elements.namedItem("NewsletterOptIn")?.checked) {
         try {
           await postForm("Newsletter", { Data: date, Email: values.Email, IP: ip }, form);
+          newsletterAlsoSaved = true;
         } catch (newsletterError) {
           logEvent("error", {
             type: "form_submit_error",
@@ -466,6 +484,7 @@
         }
       }
 
+      trackFormConversion(type, form, newsletterAlsoSaved);
       form.reset();
       showStatus(form, MESSAGES[type], false);
       logEvent("info", { type: "form_submit_ok", form: type });

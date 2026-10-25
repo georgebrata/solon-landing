@@ -176,6 +176,7 @@ const harness = (types, options = {}) => {
               return true;
             },
           },
+    solonTrack: options.solonTrack,
   };
   context.window = context;
   context.globalThis = context;
@@ -423,6 +424,33 @@ test("logs submit failures without emails, IPs, or field values", async () => {
   assert.doesNotMatch(serialized, /203\.0\.113\.7/);
   assert.doesNotMatch(serialized, /Ada Lovelace/);
   assert.doesNotMatch(serialized, /Hello/);
+});
+
+test("fires solonTrack Lead only after a confirmed Contact save", async () => {
+  const trackCalls = [];
+  const { forms } = harness(["Contact"], {
+    solonTrack(meta, ga4, params) {
+      trackCalls.push({ meta, ga4, params });
+      return "evt-contact";
+    },
+  });
+  await forms[0].dispatch();
+  assert.equal(trackCalls.length, 1);
+  assert.equal(trackCalls[0].meta, "Lead");
+  assert.equal(trackCalls[0].ga4, "generate_lead");
+  assert.equal(trackCalls[0].params.content_name, "Contact");
+});
+
+test("does not fire solonTrack when the honeypot trips", async () => {
+  const trackCalls = [];
+  const { forms } = harness(["Contact"], {
+    honeypot: "https://spam.example",
+    solonTrack() {
+      trackCalls.push(true);
+    },
+  });
+  await forms[0].dispatch();
+  assert.equal(trackCalls.length, 0);
 });
 
 test("logs successful submissions with the form type only", async () => {
