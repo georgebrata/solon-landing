@@ -23,8 +23,15 @@
   ]);
   const BLOCKED_META_EVENTS = new Set(["Purchase"]);
   const NEWSLETTER_SIGNUP_STORAGE_KEY = "solon_newsletter_sign_up_event_id";
+  const NEWSLETTER_SIGNUP_TTL_MS = 24 * 60 * 60 * 1000;
   const PIXEL_READY_EVENT = "solon:pixel-ready";
+  const CONSENT_GRANTED_EVENT = "solon:consent-granted";
   const CHECKOUT_NAV_DELAY_MS = 120;
+
+  let pageViewPathKey = "";
+  let pageViewEventId = "";
+  let pageViewGaSent = false;
+  let pageViewMetaSent = false;
 
   /** @type {Map<string, { metaEvent: string, safe: Record<string, unknown>, eventId: string }>} */
   const pendingMetaPageEvents = new Map();
@@ -89,9 +96,20 @@
    */
   const readNewsletterSignUpEventId = () => {
     try {
-      const storage = global.sessionStorage;
+      const storage = global.localStorage;
       if (!storage) return "";
-      return String(storage.getItem(NEWSLETTER_SIGNUP_STORAGE_KEY) || "");
+      const raw = storage.getItem(NEWSLETTER_SIGNUP_STORAGE_KEY);
+      if (!raw) return "";
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.eventId !== "string" || typeof parsed.at !== "number") {
+        storage.removeItem(NEWSLETTER_SIGNUP_STORAGE_KEY);
+        return "";
+      }
+      if (Date.now() - parsed.at > NEWSLETTER_SIGNUP_TTL_MS) {
+        storage.removeItem(NEWSLETTER_SIGNUP_STORAGE_KEY);
+        return "";
+      }
+      return parsed.eventId;
     } catch {
       return "";
     }
@@ -103,7 +121,10 @@
    */
   const storeNewsletterSignUpEventId = (eventId) => {
     try {
-      global.sessionStorage?.setItem(NEWSLETTER_SIGNUP_STORAGE_KEY, eventId);
+      global.localStorage?.setItem(
+        NEWSLETTER_SIGNUP_STORAGE_KEY,
+        JSON.stringify({ eventId, at: Date.now() }),
+      );
     } catch {
       return;
     }
@@ -406,15 +427,57 @@
   };
 
   /**
-   * Fire ViewContent once for package / offer landing pages.
+   * Resets per-path page-view flags when the pathname changes.
    * @returns {void}
    */
-  const trackViewContentForPage = () => {
+  const syncPageViewPathState = () => {
+    const path = global.location?.pathname || "";
+    if (path === pageViewPathKey) {
+      return;
+    }
+    pageViewPathKey = path;
+    pageViewEventId = "";
+    pageViewGaSent = false;
+    pageViewMetaSent = false;
+  };
+
+  /**
+   * Sends one view_item + ViewContent for the current page after consent, with a shared event_id.
+   * Never queues or replays pre-consent attempts.
+   * @returns {void}
+   */
+  const trySendPageViewContent = () => {
+    syncPageViewPathState();
     const path = global.location?.pathname || "";
     const ctx = viewContentContextForPath(path);
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
+    const consent = consentApi();
+    const canGa =
+      !pageViewGaSent &&
+      consent?.hasConsent("analytics") &&
+      typeof global.gtag === "function";
+    const canMeta =
+      !pageViewMetaSent &&
+      consent?.hasConsent("marketing") &&
+      typeof global.fbq === "function";
+    if (!canGa && !canMeta) {
+      return;
+    }
+    if (!pageViewEventId) {
+      pageViewEventId = generateEventId();
+    }
     const params = buildViewItemParams(ctx.content_name, ctx.content_category, ctx.value);
-    solonTrack("ViewContent", "view_item", params, { pageMetaKey: "page-view-content" });
+    const safe = sanitizeParams(params);
+    if (canGa) {
+      global.gtag("event", "view_item", { ...safe, event_id: pageViewEventId });
+      pageViewGaSent = true;
+    }
+    if (canMeta) {
+      global.fbq("track", "ViewContent", safe, { eventID: pageViewEventId });
+      pageViewMetaSent = true;
+    }
   };
 
   /**
@@ -503,14 +566,18 @@
   /**
    * @returns {void}
    */
-  const bindPixelReadyListener = () => {
+  const bindConsentTrackingListeners = () => {
     const doc = global.document;
     if (!doc || typeof doc.addEventListener !== "function") return;
     doc.addEventListener(PIXEL_READY_EVENT, () => {
       flushPendingMetaPageEvents();
+      trySendPageViewContent();
       if (!newsletterSignUpAlreadySent()) {
         trackNewsletterSignUp();
       }
+    });
+    doc.addEventListener(CONSENT_GRANTED_EVENT, () => {
+      trySendPageViewContent();
     });
   };
 
@@ -519,8 +586,8 @@
    * @returns {void}
    */
   const initTracking = () => {
-    bindPixelReadyListener();
-    trackViewContentForPage();
+    bindConsentTrackingListeners();
+    trySendPageViewContent();
     trackNewsletterConfirmationPage();
     if ((global.location?.pathname || "/") === "/" || (global.location?.pathname || "").endsWith("/index.html")) {
       observeHomeServices();
@@ -548,6 +615,7 @@
       trackContactClick,
       buildViewItemParams,
       flushPendingMetaPageEvents,
+      trySendPageViewContent,
       sendMetaTrack,
       CURRENCY,
       GA4_CUSTOM_EVENTS,

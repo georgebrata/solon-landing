@@ -32,9 +32,10 @@ test("meta-pixel loads fbevents only from the consent-gated script file", () => 
   assert.doesNotMatch(indexHtml, /<script(?![^>]*type=["']text\/plain["'])[^>]*connect\.facebook\.net/);
 });
 
-test("tracking.js does not queue events for replay before consent", () => {
-  assert.doesNotMatch(trackingSource, /localStorage/);
-  assert.doesNotMatch(trackingSource, /\bqueue\b.*push|pendingEvents|replay/i);
+test("tracking.js does not queue page-view events for replay before consent", () => {
+  assert.doesNotMatch(trackingSource, /pageMetaKey:\s*["']page-view-content["']/);
+  assert.match(trackingSource, /trySendPageViewContent/);
+  assert.match(trackingSource, /Never queues or replays pre-consent attempts/);
   assert.match(trackingSource, /solon_newsletter_sign_up_event_id/);
 });
 

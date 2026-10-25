@@ -644,7 +644,7 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
 test("consent analytics hint documents conversion events without form content", () => {
   assert.ok(
     source.includes(
-      "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare., inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor",
+      "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare, inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor.",
     ),
   );
 });

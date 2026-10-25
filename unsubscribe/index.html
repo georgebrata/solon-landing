@@ -55,7 +55,7 @@
   <link href="../assets/css/style.min.css?v=a56d9fa608" rel="stylesheet">
 
     <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
-  <script src="/assets/js/consent.min.js?v=8eaaa69069"></script>
+  <script src="/assets/js/consent.min.js?v=6dc2993da8"></script>
 
   <style>
     #hero canvas {
@@ -248,17 +248,25 @@
   <script src="../assets/js/main.min.js?v=a0a2a53b4b"></script>
   <script src="../assets/js/dynamic-year.min.js?v=7b00e57578"></script>
 
+  <script>
+    (function () {
+      const emailField = document.getElementById("email");
+      if (emailField) {
+        emailField.value = window.__solonUnsubscribeEmail || "";
+      }
+      try {
+        delete window.__solonUnsubscribeEmail;
+      } catch (_err) {
+        window.__solonUnsubscribeEmail = undefined;
+      }
+    })();
+  </script>
   <!-- FIREWORKS.js -->
   <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
   <script>
     const container = document.querySelector('.fireworks')
     const fireworks = new Fireworks.default(container)
     // fireworks.start()
-
-    const emailField = document.getElementById('email');
-    if (emailField) {
-      emailField.value = window.__solonUnsubscribeEmail || '';
-    }
   </script>
 </body>
 

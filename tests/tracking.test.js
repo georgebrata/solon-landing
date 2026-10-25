@@ -142,16 +142,22 @@ test("solonTrack never forwards @ or email= in gtag or fbq payloads", () => {
   }
 });
 
-test("page ViewContent fires on solon:pixel-ready when fbq loads after DOMContentLoaded", () => {
+const bootTrackingWithConsentFlow = (options = {}) => {
   const gtagCalls = [];
   const fbqCalls = [];
-  const pixelReadyListeners = [];
-  let domReady = null;
+  const listeners = { DOMContentLoaded: null, "solon:pixel-ready": [], "solon:consent-granted": [] };
+  let consentGranted = options.consentGranted ?? false;
+  const location = options.location || {
+    pathname: "/abonament/gold/",
+    href: "https://solon.agency/abonament/gold/",
+  };
   const doc = {
     readyState: "loading",
     addEventListener(type, fn) {
-      if (type === "DOMContentLoaded") domReady = fn;
-      if (type === "solon:pixel-ready") pixelReadyListeners.push(fn);
+      if (type === "DOMContentLoaded") listeners.DOMContentLoaded = fn;
+      if (type === "solon:pixel-ready" || type === "solon:consent-granted") {
+        listeners[type].push(fn);
+      }
     },
     querySelector() {
       return null;
@@ -161,27 +167,71 @@ test("page ViewContent fires on solon:pixel-ready when fbq loads after DOMConten
     console,
     window: {
       SolonConsent: {
-        hasConsent: (category) => category === "analytics" || category === "marketing",
+        hasConsent: (category) => {
+          if (!consentGranted) return false;
+          return category === "analytics" || category === "marketing";
+        },
       },
       gtag: (...args) => {
         gtagCalls.push(args);
       },
-      location: { pathname: "/abonament/gold/", href: "https://solon.agency/abonament/gold/" },
+      fbq: (...args) => {
+        fbqCalls.push(args);
+      },
+      location,
       document: doc,
     },
   };
   context.globalThis = context.window;
   vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
-  domReady?.();
-  assert.equal(gtagCalls.some((call) => call[1] === "view_item"), true);
-  assert.equal(fbqCalls.length, 0);
-  context.window.fbq = (...args) => {
-    fbqCalls.push(args);
+  listeners.DOMContentLoaded?.();
+  const grantConsent = () => {
+    consentGranted = true;
+    for (const listener of listeners["solon:consent-granted"]) {
+      listener();
+    }
+    for (const listener of listeners["solon:pixel-ready"]) {
+      listener();
+    }
   };
-  for (const listener of pixelReadyListeners) {
-    listener();
-  }
+  return { gtagCalls, fbqCalls, grantConsent, context, location };
+};
+
+test("grant on landing page sends exactly one view_item and ViewContent after consent", () => {
+  const { gtagCalls, fbqCalls, grantConsent } = bootTrackingWithConsentFlow();
+  assert.equal(gtagCalls.length, 0);
+  assert.equal(fbqCalls.length, 0);
+  grantConsent();
+  const viewItems = gtagCalls.filter((call) => call[1] === "view_item");
+  const viewContents = fbqCalls.filter((call) => call[0] === "track" && call[1] === "ViewContent");
+  assert.equal(viewItems.length, 1);
+  assert.equal(viewContents.length, 1);
+  assert.equal(viewItems[0][2].event_id, viewContents[0][3].eventID);
+  grantConsent();
+  assert.equal(gtagCalls.filter((call) => call[1] === "view_item").length, 1);
   assert.equal(fbqCalls.filter((call) => call[0] === "track" && call[1] === "ViewContent").length, 1);
+});
+
+test("pre-consent click events are not sent after consent is granted", () => {
+  const { gtagCalls, fbqCalls, grantConsent, context } = bootTrackingWithConsentFlow();
+  context.window.solonTrack("Lead", "generate_lead", { content_name: "Contact" });
+  assert.equal(gtagCalls.length, 0);
+  grantConsent();
+  assert.equal(gtagCalls.filter((call) => call[1] === "generate_lead").length, 0);
+  assert.equal(fbqCalls.filter((call) => call[1] === "Lead").length, 0);
+});
+
+test("grant after navigation sends page view only for the current page", () => {
+  const { gtagCalls, grantConsent, location } = bootTrackingWithConsentFlow({
+    location: { pathname: "/oferta/", href: "https://solon.agency/oferta/" },
+  });
+  location.pathname = "/abonament/gold/";
+  location.href = "https://solon.agency/abonament/gold/";
+  grantConsent();
+  const viewItems = gtagCalls.filter((call) => call[1] === "view_item");
+  assert.equal(viewItems.length, 1);
+  assert.equal(viewItems[0][2].content_name, "gold");
+  assert.equal(viewItems[0][2].content_category, "pachet");
 });
 
 test("newsletter sign_up only on confirmare-abonare, not on other pages", () => {
@@ -340,12 +390,15 @@ test("newsletter sign_up fires at most once per session (form and confirm page)"
         fbqCalls.push(args);
       },
       location: { pathname: "/confirmare-abonare/", href: "https://solon.agency/confirmare-abonare/" },
-      sessionStorage: {
+      localStorage: {
         getItem(key) {
           return Object.prototype.hasOwnProperty.call(session, key) ? session[key] : null;
         },
         setItem(key, value) {
           session[key] = String(value);
+        },
+        removeItem(key) {
+          delete session[key];
         },
       },
       document: {

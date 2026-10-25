@@ -556,6 +556,18 @@
     if (!isGrantedFlag(next.marketing)) {
       disableMarketingTags();
     }
+    if (doc && typeof doc.dispatchEvent === "function") {
+      tryCall(() => {
+        doc.dispatchEvent(
+          new CustomEvent("solon:consent-granted", {
+            detail: {
+              analytics: isGrantedFlag(next.analytics),
+              marketing: isGrantedFlag(next.marketing),
+            },
+          }),
+        );
+      });
+    }
     return next;
   }
 
@@ -814,7 +826,7 @@
             id: "solon-consent-analytics",
             label: "Analiză",
             hint:
-              "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare., inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor",
+              "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare, inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor.",
             input: analyticsInput,
           }),
           createCategory({

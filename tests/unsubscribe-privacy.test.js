@@ -98,13 +98,17 @@ test("consent strips email query via replaceState before boot on unsubscribe", (
   assert.equal(win.location.search, "?email=test@example.com");
 });
 
-test("unsubscribe index does not read email from location.search in inline script", () => {
+test("unsubscribe index prefills email before fireworks and clears the global", () => {
   const html = fs.readFileSync(path.join(root, "unsubscribe/index.html"), "utf8");
-  const inline = html.match(/<script>\s*const container[\s\S]*?<\/script>/i);
-  assert.ok(inline, "expected fireworks inline script block");
-  assert.equal(inline[0].includes("URLSearchParams"), false);
-  assert.equal(inline[0].includes("location.search"), false);
-  assert.ok(inline[0].includes("__solonUnsubscribeEmail"));
+  const prefill = html.match(/<script>\s*\(function \(\) \{[\s\S]*?__solonUnsubscribeEmail[\s\S]*?<\/script>/i);
+  assert.ok(prefill, "expected email prefill script block");
+  assert.ok(prefill[0].includes('delete window.__solonUnsubscribeEmail'));
+  const fireworksCdn = html.indexOf("cdn.jsdelivr.net/npm/fireworks-js");
+  const prefillIndex = html.indexOf(prefill[0]);
+  assert.ok(prefillIndex < fireworksCdn, "prefill script must appear before fireworks CDN");
+  const fireworksInline = html.match(/<script>\s*const container[\s\S]*?<\/script>/i);
+  assert.ok(fireworksInline, "expected fireworks inline script block");
+  assert.equal(fireworksInline[0].includes("__solonUnsubscribeEmail"), false);
 });
 
 test("gtag config omits email query from page_location", () => {
