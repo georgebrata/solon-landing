@@ -62,7 +62,7 @@ json_ld: |-
             "name": "De ce contează ce răspunde ChatGPT despre mine?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Tot mai mulți oameni pun întrebări direct asistenților AI. Acestea își iau informațiile din surse publice, iar dacă datele de pe website și din profilurile tale sunt incomplete sau contradictorii, răspunsul poate fi greșit. Nu poți controla ce răspunde un asistent AI, dar poți publica informații corecte și coerente despre tine."
+              "text": "Unii potențiali clienți pun întrebări direct asistenților AI. Acestea își iau informațiile din surse publice, iar dacă datele de pe website și din profilurile tale sunt incomplete sau contradictorii, răspunsul poate fi greșit. Nu poți controla ce răspunde un asistent AI, dar poți publica informații corecte și coerente despre tine."
             }
           },
           {
@@ -111,11 +111,11 @@ Corectează întâi sursele pe care le controlezi: website-ul și profilul Googl
 
 **Cum verifici:** întreabă ChatGPT, Gemini sau alt asistent: „Cine este avocatul [numele tău] din [oraș] și cu ce se ocupă?”. Notează ce răspunde: datele sunt corecte, incomplete sau confundate cu altcineva? Răspunsurile diferă de la o zi la alta și de la un asistent la altul, așa că repetă întrebarea de două-trei ori.
 
-**Ce faci dacă pică:** asistenții AI își iau informațiile din surse publice, în primul rând de pe website-ul tău și din profilurile oficiale. O pagină „Despre” clară, cu numele complet, baroul, orașul și ariile de practică, plus [datele structurate](../date-structurate-schema-org-pentru-avocati/) pe website, îi ajută să te descrie corect. Detaliile despre cum funcționează acest tip de vizibilitate le găsești în ghidul [cum apari în ChatGPT, Gemini și Google AI Overviews](../avocat-chatgpt-gemini-ai-overviews/). Nimeni nu poate garanta ce răspunde un asistent AI; poți doar să-i oferi informații corecte și coerente.
+**Ce faci dacă pică:** asistenții AI își iau informațiile din surse publice, printre altele, de pe website-ul tău și din profilurile oficiale. O pagină „Despre” clară, cu numele complet, baroul, orașul și ariile de practică, plus [datele structurate](../date-structurate-schema-org-pentru-avocati/) pe website, îi ajută să te descrie corect. Detaliile despre cum funcționează acest tip de vizibilitate le găsești în ghidul [cum apari în ChatGPT, Gemini și Google AI Overviews](../avocat-chatgpt-gemini-ai-overviews/). Nimeni nu poate garanta ce răspunde un asistent AI; poți doar să-i oferi informații corecte și coerente.
 
 ## 3. Cât de repede se încarcă website-ul pe mobil
 
-**Cum verifici:** deschide [PageSpeed Insights](https://pagespeed.web.dev/), introdu adresa website-ului și uită-te la rezultatele pentru mobil. Google recomandă trei praguri pentru o experiență bună ([Web Vitals](https://web.dev/articles/vitals)):
+**Cum verifici:** deschide [PageSpeed Insights](https://pagespeed.web.dev/), introdu adresa website-ului și uită-te la rezultatele pentru mobil. Google recomandă trei praguri pentru o experiență bună, măsurate la percentila 75 a vizitelor reale (datele din teren din PageSpeed) ([Web Vitals](https://web.dev/articles/vitals)):
 
 <div class="table-wrap">
 
@@ -223,7 +223,7 @@ O dată la trei luni este un ritm rezonabil, plus după orice schimbare importan
 
 ### De ce contează ce răspunde ChatGPT despre mine?
 
-Tot mai mulți oameni pun întrebări direct asistenților AI. Acestea își iau informațiile din surse publice, iar dacă datele de pe website și din profilurile tale sunt incomplete sau contradictorii, răspunsul poate fi greșit. Nu poți controla ce răspunde un asistent AI, dar poți publica informații corecte și coerente despre tine.
+Unii potențiali clienți pun întrebări direct asistenților AI. Acestea își iau informațiile din surse publice, iar dacă datele de pe website și din profilurile tale sunt incomplete sau contradictorii, răspunsul poate fi greșit. Nu poți controla ce răspunde un asistent AI, dar poți publica informații corecte și coerente despre tine.
 
 ### Ce verific primul dacă am puțin timp?
 
