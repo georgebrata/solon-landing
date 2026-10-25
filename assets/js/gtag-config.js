@@ -5,6 +5,18 @@
  */
 (function () {
 
+  /**
+   * @param {() => void} fn
+   * @returns {void}
+   */
+  const tryCall = (fn) => {
+    try {
+      fn();
+    } catch {
+      return;
+    }
+  };
+
   if (!window.dataLayer) {
     window.dataLayer = [];
   }
@@ -17,11 +29,9 @@
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
       window.dataLayer.push(arguments);
       if (previous) {
-        try {
+        tryCall(() => {
           previous.apply(window, arguments);
-        } catch {
-          return;
-        }
+        });
       }
     }
     gtag.__solonArgumentsStub = true;

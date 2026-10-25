@@ -499,12 +499,11 @@ test("analytics withdrawal sets ga-disable before consent update and cookie clea
     },
   });
   const originalGtag = context.gtag;
-  context.gtag = function gtag() {
-    const args = [...arguments];
+  context.gtag = function (...args) {
     if (args[0] === "consent" && args[1] === "update") {
       order.push({ step: "consent-update", payload: args[2] });
     }
-    return originalGtag.apply(context, arguments);
+    return originalGtag(...args);
   };
   const cookieDescriptor = Object.getOwnPropertyDescriptor(context.document, "cookie");
   Object.defineProperty(context.document, "cookie", {
@@ -564,12 +563,11 @@ test("analytics re-grant clears ga-disable before consent update and resumes hit
     },
   });
   const originalGtag = context.gtag;
-  context.gtag = function gtag() {
-    const args = [...arguments];
+  context.gtag = function (...args) {
     if (args[0] === "consent" && args[1] === "update") {
       order.push({ step: "consent-update", payload: args[2] });
     }
-    return originalGtag.apply(context, arguments);
+    return originalGtag(...args);
   };
   order.length = 0;
   api.saveCustom({ analytics: true, marketing: true });
