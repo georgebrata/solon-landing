@@ -58,6 +58,56 @@ test("buildFeedbackFormSrc encodes plus in email for Google Forms entry", () => 
   assert.match(built, /entry\.1640447617=a%2Bb%40x\.ro/u);
 });
 
+test("Legal C1: email prefill is optional and never marks the field required", () => {
+  assert.equal(buildFeedbackFormSrc(null), null);
+  assert.equal(buildFeedbackFormSrc(""), null);
+  assert.equal(buildFeedbackFormSrc("not-an-email"), null);
+
+  const withoutEmail = [];
+  const iframe = {
+    title: "Formular feedback SOLON (Google Forms)",
+    _src: "",
+    getAttribute(name) {
+      if (name === "data-src") {
+        return FEEDBACK_FORM_BASE_SRC;
+      }
+      return null;
+    },
+    set src(value) {
+      withoutEmail.push(value);
+      this._src = value;
+    },
+    get src() {
+      return this._src;
+    },
+    setAttribute(name, value) {
+      if (name === "src") {
+        this.src = value;
+      }
+      if (name === "required") {
+        throw new Error("prefill must not set required on iframe");
+      }
+    },
+  };
+  applyFeedbackIframeSrc({ querySelector: () => iframe }, null);
+  assert.equal(withoutEmail.length, 1);
+  assert.equal(withoutEmail[0], FEEDBACK_FORM_BASE_SRC);
+  assert.doesNotMatch(withoutEmail[0], /entry\.1640447617=/u);
+
+  const prefilled = buildFeedbackFormSrc("optional.test@solon.agency");
+  assert.ok(prefilled);
+  assert.match(prefilled, /entry\.1640447617=/u);
+  assert.doesNotMatch(prefilled, /required/iu);
+
+  const barePage = runFeedbackInlineThenPrefill("https://solon.agency/feedback/");
+  assert.equal(barePage.iframeSrc, FEEDBACK_FORM_BASE_SRC);
+  assert.doesNotMatch(barePage.iframeSrc, /entry\.1640447617=/u);
+
+  assert.doesNotMatch(source, /setAttribute\(\s*["']required["']/u);
+  assert.doesNotMatch(source, /\.required\s*=/u);
+  assert.doesNotMatch(feedbackHtml, /<input[^>]*\brequired\b[^>]*>/iu);
+});
+
 test("hash e= is primary; query e= is fallback", () => {
   assert.equal(readRawEmailFromHash("#e=a%2Bb%40x.ro"), "a+b@x.ro");
   assert.equal(readRawEmailFromHash("#e=a+b@x.ro"), "a+b@x.ro");
