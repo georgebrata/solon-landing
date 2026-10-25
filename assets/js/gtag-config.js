@@ -8,14 +8,26 @@
   if (!window.dataLayer) {
     window.dataLayer = [];
   }
-  /** @returns {void} */
-  function gtag() {
-    // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
-    window.dataLayer.push(arguments);
-  }
-  if (typeof window.gtag !== "function") {
+
+  const existing = window.gtag;
+  if (!(typeof existing === "function" && existing.__solonArgumentsStub === true)) {
+    const previous = typeof existing === "function" ? existing : null;
+    /** @returns {void} */
+    function gtag() {
+      // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
+      window.dataLayer.push(arguments);
+      if (previous) {
+        try {
+          previous.apply(window, arguments);
+        } catch {
+          return;
+        }
+      }
+    }
+    gtag.__solonArgumentsStub = true;
     window.gtag = gtag;
   }
+
   /**
    * @returns {string}
    */

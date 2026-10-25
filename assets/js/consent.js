@@ -25,6 +25,8 @@
   const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
   const MAX_AGE_MS = COOKIE_MAX_AGE * 1000;
   const CATEGORIES = ["necessary", "analytics", "marketing"];
+  const GA_MEASUREMENT_ID = "G-H41D7KCWHX";
+  const GA_DISABLE_PROPERTY = `ga-disable-${GA_MEASUREMENT_ID}`;
   const SKIP_SCRIPT_ATTRS = {
     type: true,
     "data-consent-category": true,
@@ -159,14 +161,22 @@
     if (!win.dataLayer) {
       win.dataLayer = [];
     }
-    if (typeof win.gtag === "function") {
+    const existing = win.gtag;
+    if (typeof existing === "function" && existing.__solonArgumentsStub === true) {
       return;
     }
+    const previous = typeof existing === "function" ? existing : null;
     /** @returns {void} */
     function gtag() {
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
       win.dataLayer.push(arguments);
+      if (previous) {
+        tryCall(() => {
+          previous.apply(win, arguments);
+        });
+      }
     }
+    gtag.__solonArgumentsStub = true;
     win.gtag = gtag;
   }
 
@@ -468,7 +478,7 @@
     }
   }
 
-  /** Revokes analytics tags and clears analytics cookies only.
+  /** Stops hits from an already-loaded gtag.js instance after analytics withdrawal.
    * @returns {void}
    */
   function disableAnalyticsTags() {
@@ -539,6 +549,11 @@
       next = persist(next);
     } else {
       current = next;
+    }
+    if (isGrantedFlag(next.analytics)) {
+      win[GA_DISABLE_PROPERTY] = false;
+    } else {
+      win[GA_DISABLE_PROPERTY] = true;
     }
     updateConsentMode(next);
     if (next.analytics || next.marketing) {

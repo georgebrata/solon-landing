@@ -67,6 +67,7 @@ const createInertScript = function createInertScript(category, attrs) {
  */
 const loadConsent = function loadConsent(options = {}) {
   const store = options.store || {};
+  const sessionStore = options.sessionStore || {};
   const inertScripts = options.inertScripts || [];
   const created = [];
   let cookieStr = options.cookie || "";
@@ -185,6 +186,20 @@ const loadConsent = function loadConsent(options = {}) {
         delete store[key];
       },
     },
+    sessionStorage: {
+      getItem(key) {
+        if (Object.prototype.hasOwnProperty.call(sessionStore, key)) {
+          return sessionStore[key];
+        }
+        return null;
+      },
+      setItem(key, value) {
+        sessionStore[key] = String(value);
+      },
+      removeItem(key) {
+        delete sessionStore[key];
+      },
+    },
     location: {
       pathname: "/",
       protocol: "https:",
@@ -192,11 +207,17 @@ const loadConsent = function loadConsent(options = {}) {
       href: "https://solon.agency/",
     },
   };
+  if (options.preGtag) {
+    context.gtag = options.preGtag;
+  }
+  if (options.dataLayer) {
+    context.dataLayer = options.dataLayer;
+  }
   context.window = context;
   context.globalThis = context;
   vm.createContext(context);
   vm.runInContext(source, context);
-  return { api: context.SolonConsent, context, store, created, inertScripts, listeners };
+  return { api: context.SolonConsent, context, store, sessionStore, created, inertScripts, listeners };
 };
 
 test("default state denies analytics and marketing", () => {
@@ -442,6 +463,141 @@ test("before analytics consent gtag.js and gtag-config stay type text/plain", ()
     false,
     "gtag-config must not run before analytics consent",
   );
+});
+
+const GA_DISABLE_KEY = "ga-disable-G-H41D7KCWHX";
+
+/**
+ * Simulates gtag.js honoring the ga-disable property on unload-style hits.
+ * @param {object} win
+ * @returns {number}
+ */
+const simulateGaUnloadHit = (win) => {
+  if (win[GA_DISABLE_KEY] === true) {
+    return 0;
+  }
+  if (typeof win.gtag === "function") {
+    win.gtag("event", "user_engagement", { engagement_time_msec: 1 });
+    return 1;
+  }
+  return 0;
+};
+
+test("analytics withdrawal sets ga-disable before consent update and cookie clearing", () => {
+  const order = [];
+  const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
+  let gaDisableStored;
+  Object.defineProperty(context, GA_DISABLE_KEY, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return gaDisableStored;
+    },
+    set(value) {
+      order.push({ step: "ga-disable", value });
+      gaDisableStored = value;
+    },
+  });
+  const originalGtag = context.gtag;
+  context.gtag = function gtag() {
+    const args = [...arguments];
+    if (args[0] === "consent" && args[1] === "update") {
+      order.push({ step: "consent-update", payload: args[2] });
+    }
+    return originalGtag.apply(context, arguments);
+  };
+  const cookieDescriptor = Object.getOwnPropertyDescriptor(context.document, "cookie");
+  Object.defineProperty(context.document, "cookie", {
+    configurable: true,
+    get() {
+      return cookieDescriptor.get.call(context.document);
+    },
+    set(value) {
+      if (String(value).includes("Max-Age=0")) {
+        order.push({ step: "cookie-expire", value: String(value) });
+      }
+      return cookieDescriptor.set.call(context.document, value);
+    },
+  });
+  api.acceptAll();
+  order.length = 0;
+  api.saveCustom({ analytics: false, marketing: true });
+  const disableIdx = order.findIndex((entry) => entry.step === "ga-disable" && entry.value === true);
+  const updateIdx = order.findIndex((entry) => entry.step === "consent-update");
+  const cookieIdx = order.findIndex((entry) => entry.step === "cookie-expire");
+  assert.ok(disableIdx >= 0);
+  assert.ok(updateIdx >= 0);
+  assert.ok(cookieIdx >= 0);
+  assert.ok(disableIdx < updateIdx);
+  assert.ok(updateIdx < cookieIdx);
+  const updatePayload = order[updateIdx].payload;
+  assert.equal(updatePayload.analytics_storage, "denied");
+  assert.equal(updatePayload.ad_storage, "granted");
+});
+
+test("withdraw-then-unload sends zero GA hits when ga-disable is set", () => {
+  const { api, context } = loadConsent();
+  api.acceptAll();
+  const beforeWithdraw = simulateGaUnloadHit(context);
+  assert.equal(beforeWithdraw, 1);
+  api.saveCustom({ analytics: false, marketing: true });
+  assert.equal(context[GA_DISABLE_KEY], true);
+  const afterWithdraw = simulateGaUnloadHit(context);
+  assert.equal(afterWithdraw, 0);
+});
+
+test("analytics re-grant clears ga-disable before consent update and resumes hits", () => {
+  const order = [];
+  const { api, context } = loadConsent();
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  let gaDisableStored = context[GA_DISABLE_KEY];
+  Object.defineProperty(context, GA_DISABLE_KEY, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return gaDisableStored;
+    },
+    set(value) {
+      order.push({ step: "ga-disable", value });
+      gaDisableStored = value;
+    },
+  });
+  const originalGtag = context.gtag;
+  context.gtag = function gtag() {
+    const args = [...arguments];
+    if (args[0] === "consent" && args[1] === "update") {
+      order.push({ step: "consent-update", payload: args[2] });
+    }
+    return originalGtag.apply(context, arguments);
+  };
+  order.length = 0;
+  api.saveCustom({ analytics: true, marketing: true });
+  const disableIdx = order.findIndex((entry) => entry.step === "ga-disable" && entry.value === false);
+  const updateIdx = order.findIndex((entry) => entry.step === "consent-update");
+  assert.ok(disableIdx >= 0);
+  assert.ok(updateIdx >= 0);
+  assert.ok(disableIdx < updateIdx);
+  assert.equal(order[updateIdx].payload.analytics_storage, "granted");
+  assert.equal(simulateGaUnloadHit(context), 1);
+});
+
+test("foreign gtag is wrapped so dataLayer still receives Arguments objects", () => {
+  const dataLayer = [];
+  const foreignCalls = [];
+  const { context } = loadConsent({
+    dataLayer,
+    preGtag(...args) {
+      foreignCalls.push([...args]);
+    },
+  });
+  assert.equal(context.gtag.__solonArgumentsStub, true);
+  context.gtag("event", "probe", { ok: true });
+  const probeCall = foreignCalls.find((call) => call[0] === "event" && call[1] === "probe");
+  assert.deepEqual(probeCall, ["event", "probe", { ok: true }]);
+  const pushed = dataLayer[dataLayer.length - 1];
+  assertIsArgumentsObject(pushed);
+  assert.equal(pushed[0], "event");
 });
 
 test("reject all never activates GA gtag inert scripts", () => {
