@@ -34,7 +34,7 @@
       return null;
     }
     if (value.length > EMAIL_MAX_LENGTH) {
-      value = value.slice(0, EMAIL_MAX_LENGTH);
+      return null;
     }
     if (!isConservativeFeedbackEmail(value)) {
       return null;
@@ -135,6 +135,14 @@
   }
 
   /**
+   * @param {string} path
+   * @returns {boolean}
+   */
+  function isFeedbackPrefillPath(path) {
+    return /\/feedback(\/(index\.html)?)?$/iu.test(path || "");
+  }
+
+  /**
    * @returns {void}
    */
   function bootFeedbackFormPrefill() {
@@ -142,7 +150,7 @@
       return;
     }
     const path = win.location.pathname || "";
-    if (!/\/feedback\/?$/iu.test(path)) {
+    if (!isFeedbackPrefillPath(path)) {
       return;
     }
     const email = applyFeedbackUrlHygiene(win);
@@ -169,6 +177,7 @@
     buildFeedbackFormSrc,
     applyFeedbackUrlHygiene,
     applyFeedbackIframePrefill,
+    isFeedbackPrefillPath,
     bootFeedbackFormPrefill,
   };
 

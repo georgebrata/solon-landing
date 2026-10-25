@@ -17,6 +17,7 @@ const {
   buildFeedbackFormSrc,
   stripFeedbackEmailFromHref,
   applyFeedbackUrlHygiene,
+  isFeedbackPrefillPath,
 } = require(sourcePath);
 
 test("feedback page loads prefill script before consent.min.js", () => {
@@ -42,6 +43,20 @@ test("invalid or injection-like email is ignored for form URL", () => {
   assert.equal(buildFeedbackFormSrc("not-an-email"), null);
   assert.equal(buildFeedbackFormSrc("a@b"), null);
   assert.equal(normalizeFeedbackEmailParam('evil"@test.com'), null);
+});
+
+test("email longer than 254 characters is rejected without truncation", () => {
+  const tooLong = `${"a".repeat(250)}@x.ro`;
+  assert.equal(tooLong.length, 255);
+  assert.equal(normalizeFeedbackEmailParam(tooLong), null);
+  assert.equal(buildFeedbackFormSrc(tooLong), null);
+});
+
+test("isFeedbackPrefillPath matches /feedback/ and /feedback/index.html", () => {
+  assert.equal(isFeedbackPrefillPath("/feedback/"), true);
+  assert.equal(isFeedbackPrefillPath("/feedback"), true);
+  assert.equal(isFeedbackPrefillPath("/feedback/index.html"), true);
+  assert.equal(isFeedbackPrefillPath("/feedback-extra/"), false);
 });
 
 test("missing or empty param leaves buildFeedbackFormSrc null", () => {
@@ -120,4 +135,43 @@ test("boot does not push email into dataLayer", () => {
   const serialized = JSON.stringify(dataLayer);
   assert.ok(!serialized.includes("hidden@example.com"));
   assert.ok(!serialized.includes("hidden%40"));
+});
+
+test("boot runs on /feedback/index.html pathname", () => {
+  const replaceCalls = [];
+  const iframe = {
+    title: "Formular feedback SOLON (Google Forms)",
+    src: FEEDBACK_FORM_BASE_SRC,
+  };
+  const document = {
+    readyState: "complete",
+    querySelector(selector) {
+      if (String(selector).includes("Formular feedback")) {
+        return iframe;
+      }
+      return null;
+    },
+    addEventListener() {
+      /* DOMContentLoaded not used when readyState is complete */
+    },
+  };
+  const win = {
+    URL,
+    location: {
+      href: "https://solon.agency/feedback/index.html?e=idx%40example.com",
+      pathname: "/feedback/index.html",
+    },
+    history: {
+      replaceState(_state, _title, url) {
+        replaceCalls.push(url);
+      },
+    },
+    document,
+    module: { exports: {} },
+  };
+  win.window = win;
+  vm.runInNewContext(source, win, { filename: "feedback-form-prefill.js" });
+
+  assert.ok(replaceCalls.length > 0);
+  assert.match(iframe.src, /entry\.1640447617=idx%40example\.com/);
 });
