@@ -1,8 +1,7 @@
 "use strict";
 
 /**
- * /feedback/?e=<email> — prefill Google Form email field and strip `e` from the URL
- * before consent-gated trackers read location.href.
+ * /feedback/#e=<email> (primary) or ?e= — prefill Google Form email and strip before trackers.
  */
 (function () {
   const FEEDBACK_FORM_BASE_SRC =
@@ -23,7 +22,6 @@
   }
 
   /**
-   * Decodes a query value without treating "+" as space (unlike URLSearchParams).
    * @param {string} encoded
    * @returns {string}
    */
@@ -35,15 +33,14 @@
   }
 
   /**
-   * @param {string} search
+   * @param {string} segmentsSource
    * @returns {string|null}
    */
-  function readRawEmailParamFromSearch(search) {
-    const qs = search.startsWith("?") ? search.slice(1) : search;
-    if (!qs) {
+  function readRawEmailFromParamSegments(segmentsSource) {
+    if (!segmentsSource) {
       return null;
     }
-    const parts = qs.split("&");
+    const parts = segmentsSource.split("&");
     for (let i = 0; i < parts.length; i += 1) {
       const part = parts[i];
       if (!part) {
@@ -61,19 +58,35 @@
   }
 
   /**
-   * Removes e/E from the query string without re-encoding other parameters.
    * @param {string} search
-   * @returns {{ search: string, rawEmail: string|null, stripped: boolean }}
+   * @returns {string|null}
    */
-  function stripEParamPreservingSearch(search) {
-    if (!search) {
-      return { search: "", rawEmail: null, stripped: false };
-    }
+  function readRawEmailParamFromSearch(search) {
     const qs = search.startsWith("?") ? search.slice(1) : search;
-    if (!qs) {
-      return { search, rawEmail: null, stripped: false };
+    return readRawEmailFromParamSegments(qs);
+  }
+
+  /**
+   * @param {string} hash
+   * @returns {string|null}
+   */
+  function readRawEmailFromHash(hash) {
+    if (!hash) {
+      return null;
     }
-    const parts = qs.split("&");
+    const inner = hash.startsWith("#") ? hash.slice(1) : hash;
+    return readRawEmailFromParamSegments(inner);
+  }
+
+  /**
+   * @param {string} segmentsSource
+   * @returns {{ encoded: string, rawEmail: string|null, stripped: boolean }}
+   */
+  function stripEParamFromSegments(segmentsSource) {
+    if (!segmentsSource) {
+      return { encoded: "", rawEmail: null, stripped: false };
+    }
+    const parts = segmentsSource.split("&");
     const kept = [];
     let rawEmail = null;
     let stripped = false;
@@ -96,12 +109,53 @@
       kept.push(part);
     }
     if (!stripped) {
+      return { encoded: segmentsSource, rawEmail: null, stripped: false };
+    }
+    return { encoded: kept.join("&"), rawEmail, stripped: true };
+  }
+
+  /**
+   * @param {string} search
+   * @returns {{ search: string, rawEmail: string|null, stripped: boolean }}
+   */
+  function stripEParamPreservingSearch(search) {
+    if (!search) {
+      return { search: "", rawEmail: null, stripped: false };
+    }
+    const qs = search.startsWith("?") ? search.slice(1) : search;
+    if (!qs) {
       return { search, rawEmail: null, stripped: false };
     }
-    if (kept.length === 0) {
+    const { encoded, rawEmail, stripped } = stripEParamFromSegments(qs);
+    if (!stripped) {
+      return { search, rawEmail: null, stripped: false };
+    }
+    if (!encoded) {
       return { search: "", rawEmail, stripped: true };
     }
-    return { search: `?${kept.join("&")}`, rawEmail, stripped: true };
+    return { search: `?${encoded}`, rawEmail, stripped: true };
+  }
+
+  /**
+   * @param {string} hash
+   * @returns {{ hash: string, rawEmail: string|null, stripped: boolean }}
+   */
+  function stripEFromHash(hash) {
+    if (!hash) {
+      return { hash: "", rawEmail: null, stripped: false };
+    }
+    const inner = hash.startsWith("#") ? hash.slice(1) : hash;
+    if (!inner) {
+      return { hash: hash.startsWith("#") ? hash : `#${hash}`, rawEmail: null, stripped: false };
+    }
+    const { encoded, rawEmail, stripped } = stripEParamFromSegments(inner);
+    if (!stripped) {
+      return { hash: hash.startsWith("#") ? hash : `#${hash}`, rawEmail: null, stripped: false };
+    }
+    if (!encoded) {
+      return { hash: "", rawEmail, stripped: true };
+    }
+    return { hash: `#${encoded}`, rawEmail, stripped: true };
   }
 
   /**
@@ -166,11 +220,13 @@
   function stripFeedbackEmailFromHref(href) {
     try {
       const url = new URL(href);
-      const { search, rawEmail, stripped } = stripEParamPreservingSearch(url.search);
+      const hashPart = stripEFromHash(url.hash);
+      const queryPart = stripEParamPreservingSearch(url.search);
+      const rawEmail = readRawEmailFromHash(url.hash) ?? readRawEmailParamFromSearch(url.search);
       return {
-        pathAndQuery: url.pathname + search + url.hash,
+        pathAndQuery: url.pathname + queryPart.search + hashPart.hash,
         rawEmail,
-        stripped,
+        stripped: hashPart.stripped || queryPart.stripped,
       };
     } catch {
       return { pathAndQuery: "", rawEmail: null, stripped: false };
@@ -275,7 +331,9 @@
     LOCAL_PART_MAX_LENGTH,
     decodeEmailQueryValue,
     readRawEmailParamFromSearch,
+    readRawEmailFromHash,
     stripEParamPreservingSearch,
+    stripEFromHash,
     normalizeFeedbackEmailParam,
     isConservativeFeedbackEmail,
     stripFeedbackEmailFromHref,

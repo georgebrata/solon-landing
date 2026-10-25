@@ -112,40 +112,62 @@
   let current = deniedConsent();
 
   /**
-   * Strips feedback prefill ?e= / ?E= while preserving other query bytes (see feedback-form-prefill.js).
+   * @param {string} segmentsSource
+   * @returns {{ encoded: string, stripped: boolean }}
+   */
+  function stripSensitiveEParamSegments(segmentsSource) {
+    if (!segmentsSource) {
+      return { encoded: "", stripped: false };
+    }
+    const parts = segmentsSource.split("&");
+    const kept = [];
+    let stripped = false;
+    for (let i = 0; i < parts.length; i += 1) {
+      const part = parts[i];
+      if (part === "") {
+        kept.push(part);
+        continue;
+      }
+      const eq = part.indexOf("=");
+      const key = eq === -1 ? part : part.slice(0, eq);
+      if (key.toLowerCase() === "e") {
+        stripped = true;
+        continue;
+      }
+      kept.push(part);
+    }
+    if (!stripped) {
+      return { encoded: segmentsSource, stripped: false };
+    }
+    return { encoded: kept.join("&"), stripped: true };
+  }
+
+  /**
+   * Strips feedback prefill ?e= / #e= (case-insensitive) while preserving other bytes (see feedback-form-prefill.js).
    * @param {string} href
    * @returns {{ pathAndQuery: string, stripped: boolean }}
    */
   function stripSensitiveEQueryFromHref(href) {
     try {
       const url = new URL(href);
-      const search = url.search;
-      if (!search) {
-        return { pathAndQuery: url.pathname + url.hash, stripped: false };
+      const hashInner = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
+      const hashStrip = stripSensitiveEParamSegments(hashInner);
+      const searchInner = url.search.startsWith("?") ? url.search.slice(1) : url.search;
+      const searchStrip = stripSensitiveEParamSegments(searchInner);
+      if (!hashStrip.stripped && !searchStrip.stripped) {
+        return { pathAndQuery: url.pathname + url.search + url.hash, stripped: false };
       }
-      const qs = search.slice(1);
-      const parts = qs.split("&");
-      const kept = [];
-      let stripped = false;
-      for (let i = 0; i < parts.length; i += 1) {
-        const part = parts[i];
-        if (part === "") {
-          kept.push(part);
-          continue;
-        }
-        const eq = part.indexOf("=");
-        const key = eq === -1 ? part : part.slice(0, eq);
-        if (key.toLowerCase() === "e") {
-          stripped = true;
-          continue;
-        }
-        kept.push(part);
-      }
-      if (!stripped) {
-        return { pathAndQuery: url.pathname + search + url.hash, stripped: false };
-      }
-      const nextSearch = kept.length ? `?${kept.join("&")}` : "";
-      return { pathAndQuery: url.pathname + nextSearch + url.hash, stripped: true };
+      const nextSearch = searchStrip.stripped
+        ? searchStrip.encoded
+          ? `?${searchStrip.encoded}`
+          : ""
+        : url.search;
+      const nextHash = hashStrip.stripped
+        ? hashStrip.encoded
+          ? `#${hashStrip.encoded}`
+          : ""
+        : url.hash;
+      return { pathAndQuery: url.pathname + nextSearch + nextHash, stripped: true };
     } catch {
       return { pathAndQuery: "", stripped: false };
     }

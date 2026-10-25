@@ -189,6 +189,7 @@ test("every content page gates the tracker and error pages omit it", () => {
     path.join(root, "500.html"),
     path.join(root, "unsubscribe/index.html"),
     path.join(root, "unsubscribe/success/index.html"),
+    path.join(root, "feedback/index.html"),
   ]);
   const missing = [];
   const live = [];

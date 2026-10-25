@@ -25,6 +25,8 @@ const shouldSkipPublicTrackerSync = (relPath) => {
     rel.startsWith("node_modules/") ||
     rel === "unsubscribe" ||
     rel.startsWith("unsubscribe/") ||
+    rel === "feedback" ||
+    rel.startsWith("feedback/") ||
     rel === "client-nou/index.html"
   );
 };
