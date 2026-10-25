@@ -65,6 +65,27 @@ const createInertScript = function createInertScript(category, attrs) {
  * @param {{store?: object, inertScripts?: object[], cookie?: string}} [options]
  * @returns {{api: object, context: object, store: object, created: object[], inertScripts: object[], listeners: object}}
  */
+/**
+ * @param {object} node
+ * @returns {object|null}
+ */
+const findConsentBanner = (node) => {
+  if (!node || typeof node !== "object") {
+    return null;
+  }
+  const cls = node.className || "";
+  if (String(cls).includes("solon-consent__banner")) {
+    return node;
+  }
+  for (const child of node._children || []) {
+    const found = findConsentBanner(child);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
+};
+
 const loadConsent = function loadConsent(options = {}) {
   const store = options.store || {};
   const sessionStore = options.sessionStore || {};
@@ -212,7 +233,51 @@ const loadConsent = function loadConsent(options = {}) {
         return true;
       },
     },
+    URL,
+    Response: options.Response || class Response {
+      constructor() {
+        this.status = 204;
+      }
+    },
+    XMLHttpRequest: options.XMLHttpRequest,
+    HTMLImageElement: options.HTMLImageElement,
   };
+  if (!context.XMLHttpRequest) {
+    function XMLHttpRequest() {
+      return undefined;
+    }
+    XMLHttpRequest.prototype.open = function (method, url) {
+      this.__solonGaOpenUrl = url;
+    };
+    XMLHttpRequest.prototype.send = function () {
+      this.__solonTransportSent = this.__solonGaOpenUrl;
+    };
+    context.XMLHttpRequest = XMLHttpRequest;
+  }
+  if (!context.HTMLImageElement) {
+    const imageProto = {};
+    Object.defineProperty(imageProto, "src", {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return this.__src || "";
+      },
+      set(value) {
+        this.__src = value;
+        this.__solonImageSrcSet = value;
+      },
+    });
+    function HTMLImageElement() {
+      return undefined;
+    }
+    HTMLImageElement.prototype = imageProto;
+    context.HTMLImageElement = HTMLImageElement;
+  }
+  if (typeof options.fetch === "function") {
+    context.fetch = options.fetch;
+  } else {
+    context.fetch = () => Promise.resolve(new context.Response());
+  }
   if (options.preGtag) {
     context.gtag = options.preGtag;
   }
@@ -690,6 +755,40 @@ test("ga-disable drops new google-analytics sendBeacon transport", () => {
   assert.equal(beacons.length, 1);
 });
 
+test("ga-disable drops GA transport for URL objects, fetch, XHR, and image beacons", () => {
+  const beacons = [];
+  const fetches = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(url);
+        return true;
+      },
+    },
+    fetch(input) {
+      fetches.push(input);
+      return Promise.resolve(new context.Response());
+    },
+  });
+  const collect = "https://www.google-analytics.com/g/collect?v=2";
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon(new URL(collect));
+  context.fetch(new URL(collect));
+  const xhr = new context.XMLHttpRequest();
+  xhr.open("GET", new URL(collect));
+  xhr.send();
+  const img = new context.HTMLImageElement();
+  img.src = collect;
+  assert.equal(beacons.length, 0);
+  assert.equal(fetches.length, 0);
+  assert.ok(xhr.__solonTransportSent === undefined);
+  assert.ok(img.__solonImageSrcSet === undefined);
+  context[api.GA_DISABLE_PROPERTY] = false;
+  context.navigator.sendBeacon(collect);
+  assert.equal(beacons.length, 1);
+});
+
 test("withdraw-then-unload sends zero GA hits when ga-disable is set", () => {
   const { api, context } = loadConsent();
   api.acceptAll();
@@ -814,6 +913,44 @@ test("gtag stub drops new event commands when ga-disable is true", () => {
     analytics_storage: "denied",
   });
   assert.ok(context.dataLayer.length > before);
+});
+
+test("two-tab reject-all keeps the banner hidden on the passive tab", () => {
+  const store = {};
+  const tabA = loadConsent({ store });
+  if (tabA.listeners.DOMContentLoaded) {
+    tabA.listeners.DOMContentLoaded();
+  }
+  tabA.api.acceptAll();
+  const tabB = loadConsent({ store });
+  tabB.api.rejectAll();
+  tabA.api.onConsentStorageEvent({
+    key: tabA.api.STORAGE_KEY,
+    storageArea: tabA.context.localStorage,
+    newValue: store[tabA.api.STORAGE_KEY],
+  });
+  assert.equal(tabA.api.hasConsent("analytics"), false);
+  const banner = (tabA.context.document.body._children || []).map(findConsentBanner).find(Boolean);
+  assert.ok(banner);
+  assert.equal(banner.hidden, true);
+});
+
+test("two-tab storage deletion shows the banner on the passive tab", () => {
+  const store = {};
+  const tabA = loadConsent({ store });
+  if (tabA.listeners.DOMContentLoaded) {
+    tabA.listeners.DOMContentLoaded();
+  }
+  tabA.api.acceptAll();
+  delete store[tabA.api.STORAGE_KEY];
+  tabA.api.onConsentStorageEvent({
+    key: tabA.api.STORAGE_KEY,
+    storageArea: tabA.context.localStorage,
+    newValue: null,
+  });
+  const banner = (tabA.context.document.body._children || []).map(findConsentBanner).find(Boolean);
+  assert.ok(banner);
+  assert.equal(banner.hidden, false);
 });
 
 test("two-tab storage sync withdraws analytics on the passive tab", () => {

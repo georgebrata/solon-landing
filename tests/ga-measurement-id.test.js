@@ -12,6 +12,7 @@ const { shouldSkipPublicTrackerSync } = require("../scripts/sync-public-tracker-
 
 const consentSource = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
 const gtagConfigSource = fs.readFileSync(path.join(root, "assets/js/gtag-config.js"), "utf8");
+const trackingSource = fs.readFileSync(path.join(root, "assets/js/tracking.js"), "utf8");
 
 const SKIP_SCAN_DIRS = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs", "r", "templates"]);
 
@@ -43,6 +44,11 @@ const publicHtmlFiles = () => {
 test("data/ga-measurement.json is the canonical GA4 measurement id", () => {
   assert.equal(GA_MEASUREMENT_ID, "G-H41D7KCWHX");
   assert.match(gtagLoaderUrl, new RegExp(`id=${GA_MEASUREMENT_ID}`));
+});
+
+test("tracking.js uses SolonConsent GA_DISABLE_PROPERTY without a hardcoded measurement id fallback", () => {
+  assert.ok(trackingSource.includes("consent.GA_DISABLE_PROPERTY"));
+  assert.equal(trackingSource.includes("G-H41D7KCWHX"), false);
 });
 
 test("consent.js, gtag-config.js, and sync tracker block reference the canonical id", () => {

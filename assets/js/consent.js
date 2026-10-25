@@ -185,13 +185,32 @@
     }
     win.__solonAnalyticsTransportGuard = true;
     /**
-     * @param {string} url
+     * @param {unknown} input
+     * @returns {string}
+     */
+    const gaUrlFromTransportInput = (input) => {
+      if (typeof input === "string") {
+        return input;
+      }
+      if (typeof URL !== "undefined" && input instanceof URL) {
+        return input.href;
+      }
+      if (input && typeof input === "object" && typeof input.url === "string") {
+        return input.url;
+      }
+      return "";
+    };
+    /**
+     * @param {unknown} input
      * @returns {boolean}
      */
-    const shouldDropGaTransport = (url) =>
-      win[GA_DISABLE_PROPERTY] === true &&
-      typeof url === "string" &&
-      /google-analytics\.com/u.test(url);
+    const shouldDropGaTransport = (input) => {
+      if (win[GA_DISABLE_PROPERTY] !== true) {
+        return false;
+      }
+      const url = gaUrlFromTransportInput(input);
+      return url !== "" && /google-analytics\.com/u.test(url);
+    };
     const nativeBeacon = win.navigator.sendBeacon?.bind(win.navigator);
     if (nativeBeacon) {
       win.navigator.sendBeacon = (url, data) => {
@@ -204,12 +223,41 @@
     if (typeof win.fetch === "function") {
       const nativeFetch = win.fetch.bind(win);
       win.fetch = (input, init) => {
-        const url = typeof input === "string" ? input : input?.url || "";
-        if (shouldDropGaTransport(url)) {
+        if (shouldDropGaTransport(input)) {
           return Promise.resolve(new Response(null, { status: 204 }));
         }
         return nativeFetch(input, init);
       };
+    }
+    const NativeXHR = win.XMLHttpRequest;
+    if (NativeXHR?.prototype?.open && NativeXHR.prototype.send) {
+      const nativeOpen = NativeXHR.prototype.open;
+      const nativeSend = NativeXHR.prototype.send;
+      NativeXHR.prototype.open = function (method, url, ...rest) {
+        this.__solonGaOpenUrl = gaUrlFromTransportInput(url);
+        return nativeOpen.call(this, method, url, ...rest);
+      };
+      NativeXHR.prototype.send = function (...args) {
+        if (shouldDropGaTransport(this.__solonGaOpenUrl || "")) {
+          return undefined;
+        }
+        return nativeSend.apply(this, args);
+      };
+    }
+    const imageProto = win.HTMLImageElement?.prototype;
+    const imageSrcDescriptor = imageProto && Object.getOwnPropertyDescriptor(imageProto, "src");
+    if (imageSrcDescriptor?.set) {
+      Object.defineProperty(imageProto, "src", {
+        configurable: true,
+        enumerable: imageSrcDescriptor.enumerable,
+        get: imageSrcDescriptor.get,
+        set(value) {
+          if (shouldDropGaTransport(value)) {
+            return;
+          }
+          imageSrcDescriptor.set.call(this, value);
+        },
+      });
     }
   }
 
@@ -1267,11 +1315,7 @@
       return;
     }
     applyRemoteChoice(next);
-    if (isGrantedFlag(next.analytics) || isGrantedFlag(next.marketing)) {
-      hideBanner();
-    } else {
-      showBanner();
-    }
+    hideBanner();
   }
 
   /** Re-sync when the tab becomes visible (cookie + localStorage re-read).
@@ -1297,11 +1341,7 @@
       storageChoice && !consentEquals(storageChoice, cookieChoice) ? storageChoice : cookieChoice;
     if (!consentEquals(next, current)) {
       applyRemoteChoice(next);
-      if (isGrantedFlag(next.analytics) || isGrantedFlag(next.marketing)) {
-        hideBanner();
-      } else {
-        showBanner();
-      }
+      hideBanner();
     }
   }
 

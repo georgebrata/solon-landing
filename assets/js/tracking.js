@@ -82,11 +82,10 @@
     if (!consent?.hasConsent("analytics") || typeof global.gtag !== "function") {
       return false;
     }
-    const disableKey =
-      typeof consent.GA_DISABLE_PROPERTY === "string"
-        ? consent.GA_DISABLE_PROPERTY
-        : `ga-disable-${typeof consent.GA_MEASUREMENT_ID === "string" ? consent.GA_MEASUREMENT_ID : "G-H41D7KCWHX"}`;
-    return global[disableKey] !== true;
+    if (typeof consent.GA_DISABLE_PROPERTY !== "string") {
+      return false;
+    }
+    return global[consent.GA_DISABLE_PROPERTY] !== true;
   };
 
   /**
