@@ -182,7 +182,7 @@
     if (raw === null || typeof raw !== "string") {
       return null;
     }
-    let value = raw.trim();
+    const value = raw.trim();
     if (!value) {
       return null;
     }
@@ -199,6 +199,20 @@
    * @param {string} value
    * @returns {boolean}
    */
+  /**
+   * @param {string} value
+   * @returns {boolean}
+   */
+  function containsAsciiControlChar(value) {
+    for (let i = 0; i < value.length; i += 1) {
+      const code = value.charCodeAt(i);
+      if (code <= 0x1f || code === 0x7f) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function isConservativeFeedbackEmail(value) {
     if (!value || value.length > EMAIL_MAX_LENGTH) {
       return false;
@@ -206,7 +220,7 @@
     if (/[\s<>"']/u.test(value)) {
       return false;
     }
-    if (/[\u0000-\u001F\u007F]/u.test(value)) {
+    if (containsAsciiControlChar(value)) {
       return false;
     }
     const at = value.indexOf("@");
