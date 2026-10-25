@@ -72,6 +72,9 @@ function ensureHeadSnippets(html, prefix) {
  * @returns {string}
  */
 function ensureTrackingScript(html) {
+  if (!html.includes("consent.min.js")) {
+    return html;
+  }
   if (html.includes("tracking.min.js")) {
     return html;
   }
