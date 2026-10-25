@@ -199,10 +199,6 @@
    * @param {string} value
    * @returns {boolean}
    */
-  /**
-   * @param {string} value
-   * @returns {boolean}
-   */
   function containsAsciiControlChar(value) {
     for (let i = 0; i < value.length; i += 1) {
       const code = value.charCodeAt(i);
@@ -213,6 +209,10 @@
     return false;
   }
 
+  /**
+   * @param {string} value
+   * @returns {boolean}
+   */
   function isConservativeFeedbackEmail(value) {
     if (!value || value.length > EMAIL_MAX_LENGTH) {
       return false;
