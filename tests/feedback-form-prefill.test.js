@@ -47,7 +47,7 @@ test("invalid or injection-like email is ignored for form URL", () => {
 test("missing or empty param leaves buildFeedbackFormSrc null", () => {
   assert.equal(buildFeedbackFormSrc(""), null);
   assert.equal(buildFeedbackFormSrc(null), null);
-  assert.equal(buildFeedbackFormSrc(undefined), null);
+  assert.equal(normalizeFeedbackEmailParam(undefined), null);
 });
 
 test("stripFeedbackEmailFromHref removes e and keeps other params and hash", () => {
@@ -93,7 +93,9 @@ test("boot does not push email into dataLayer", () => {
       }
       return null;
     },
-    addEventListener() {},
+    addEventListener() {
+      /* DOMContentLoaded not used when readyState is complete */
+    },
   };
   const win = {
     URL,

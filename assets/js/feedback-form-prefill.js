@@ -59,10 +59,7 @@
     }
     const local = value.slice(0, at);
     const domain = value.slice(at + 1);
-    if (!local || !domain || !domain.includes(".")) {
-      return false;
-    }
-    return true;
+    return Boolean(local && domain && domain.includes("."));
   }
 
   /**
