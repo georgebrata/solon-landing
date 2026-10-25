@@ -9,6 +9,16 @@ const test = require("node:test");
 
 const root = path.join(__dirname, "..");
 const source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
+const gtagConfigSource = fs.readFileSync(path.join(root, "assets/js/gtag-config.js"), "utf8");
+
+/**
+ * @param {unknown} value
+ * @returns {void}
+ */
+const assertIsArgumentsObject = (value) => {
+  assert.equal(Object.prototype.toString.call(value), "[object Arguments]");
+  assert.equal(Array.isArray(value), false);
+};
 
 /**
  * @param {string} category
@@ -195,12 +205,33 @@ test("default state denies analytics and marketing", () => {
   assert.equal(api.hasConsent("analytics"), false);
   assert.equal(api.hasConsent("marketing"), false);
   const defaults = context.dataLayer[0];
+  assertIsArgumentsObject(defaults);
   assert.equal(defaults[0], "consent");
   assert.equal(defaults[1], "default");
   assert.equal(defaults[2].analytics_storage, "denied");
   assert.equal(defaults[2].ad_storage, "denied");
   assert.equal(defaults[2].ad_user_data, "denied");
   assert.equal(defaults[2].ad_personalization, "denied");
+  for (const entry of context.dataLayer) {
+    assertIsArgumentsObject(entry);
+  }
+});
+
+test("consent default is queued before gtag config with Arguments on dataLayer", () => {
+  const { context } = loadConsent();
+  for (const entry of context.dataLayer) {
+    assertIsArgumentsObject(entry);
+  }
+  vm.runInNewContext(gtagConfigSource, context, { filename: "gtag-config.js" });
+  const dataLayer = context.dataLayer;
+  const defaultIdx = dataLayer.findIndex((entry) => entry[0] === "consent" && entry[1] === "default");
+  const configIdx = dataLayer.findIndex((entry) => entry[0] === "config");
+  assert.ok(defaultIdx >= 0);
+  assert.ok(configIdx >= 0);
+  assert.ok(defaultIdx < configIdx, "consent default must precede config");
+  for (const entry of dataLayer) {
+    assertIsArgumentsObject(entry);
+  }
 });
 
 test("accept all persists version, timestamp, and both categories", () => {
@@ -384,6 +415,56 @@ test("expired timestamp invalidates stored choice", () => {
   assert.equal(api.parseConsent(stale), null);
 });
 
+test("before analytics consent gtag.js and gtag-config stay type text/plain", () => {
+  const gtagJs = createInertScript("analytics", {
+    src: "https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX",
+  });
+  const gtagConfig = createInertScript("analytics", {
+    src: "/assets/js/gtag-config.min.js",
+  });
+  const { api, context, created } = loadConsent({
+    inertScripts: [gtagJs, gtagConfig],
+  });
+  api.activateInertScripts(api.getConsent());
+  assert.equal(created.length, 0);
+  assert.equal(gtagJs.getAttribute("type"), "text/plain");
+  assert.equal(gtagConfig.getAttribute("type"), "text/plain");
+  assert.equal(typeof gtagJs.activated, "undefined");
+  assert.equal(typeof gtagConfig.activated, "undefined");
+  const dataLayer = context.dataLayer;
+  assert.ok(dataLayer.length >= 1);
+  assertIsArgumentsObject(dataLayer[0]);
+  assert.equal(dataLayer[0][0], "consent");
+  assert.equal(dataLayer[0][1], "default");
+  assert.equal(dataLayer[0][2].analytics_storage, "denied");
+  assert.equal(
+    dataLayer.some((entry) => entry[0] === "js" || entry[0] === "config"),
+    false,
+    "gtag-config must not run before analytics consent",
+  );
+});
+
+test("reject all never activates GA gtag inert scripts", () => {
+  const gtagJs = createInertScript("analytics", {
+    src: "https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX",
+  });
+  const gtagConfig = createInertScript("analytics", {
+    src: "/assets/js/gtag-config.min.js",
+  });
+  const { api, created } = loadConsent({
+    inertScripts: [gtagJs, gtagConfig],
+  });
+  api.rejectAll();
+  const activatedGa = created.filter(
+    (el) =>
+      String(el.src || "").includes("googletagmanager.com/gtag/js") ||
+      String(el.src || "").includes("gtag-config"),
+  );
+  assert.equal(activatedGa.length, 0);
+  assert.equal(gtagJs.getAttribute("type"), "text/plain");
+  assert.equal(gtagConfig.getAttribute("type"), "text/plain");
+});
+
 test("inert analytics scripts stay inert until analytics consent", () => {
   const analytics = createInertScript("analytics", {
     src: "https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX",
@@ -421,6 +502,7 @@ test("accept all activates analytics and marketing inert tags", () => {
   assert.ok(srcs.includes("https://analytics.ahrefs.com/analytics.js"));
   assert.ok(srcs.includes("https://cdn.brevo.com/js/sdk-loader.js"));
   const last = context.dataLayer[context.dataLayer.length - 1];
+  assertIsArgumentsObject(last);
   assert.equal(last[0], "consent");
   assert.equal(last[1], "update");
   assert.equal(last[2].analytics_storage, "granted");

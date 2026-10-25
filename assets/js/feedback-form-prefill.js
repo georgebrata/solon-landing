@@ -315,10 +315,6 @@
         src = prefilled;
       }
     }
-    if (typeof frame.src === "string") {
-      frame.src = src;
-      return;
-    }
     frame.setAttribute("src", src);
   }
 

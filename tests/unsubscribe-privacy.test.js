@@ -126,6 +126,11 @@ test("gtag config omits email query from page_location", () => {
   vm.runInNewContext(gtagConfigSource, context, { filename: "gtag-config.js" });
   const configCall = dataLayer.find((entry) => entry[0] === "config");
   assert.ok(configCall);
+  assert.equal(Object.prototype.toString.call(configCall), "[object Arguments]");
+  assert.equal(Array.isArray(configCall), false);
+  for (const entry of dataLayer) {
+    assert.equal(Object.prototype.toString.call(entry), "[object Arguments]");
+  }
   const pageLocation = configCall[2].page_location;
   assert.equal(typeof pageLocation, "string");
   assert.equal(pageLocation.includes("@"), false);

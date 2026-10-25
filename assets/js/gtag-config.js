@@ -8,13 +8,11 @@
   if (!window.dataLayer) {
     window.dataLayer = [];
   }
-  /**
-   * @param {...unknown} gtagArgs
-   * @returns {void}
-   */
-  const gtag = (...gtagArgs) => {
-    window.dataLayer.push(gtagArgs);
-  };
+  /** @returns {void} */
+  function gtag() {
+    // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
+    window.dataLayer.push(arguments);
+  }
   if (typeof window.gtag !== "function") {
     window.gtag = gtag;
   }

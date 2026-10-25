@@ -112,47 +112,6 @@
   let current = deniedConsent();
 
   /**
-   * Strips feedback prefill ?e= / ?E= from the query while preserving other bytes.
-   * Hash #e= is stripped on /feedback/ by feedback-form-prefill.js before this script loads.
-   * @param {string} href
-   * @returns {{ pathAndQuery: string, stripped: boolean }}
-   */
-  function stripSensitiveEQueryFromHref(href) {
-    try {
-      const url = new URL(href);
-      const search = url.search;
-      if (!search) {
-        return { pathAndQuery: url.pathname + url.hash, stripped: false };
-      }
-      const qs = search.slice(1);
-      const parts = qs.split("&");
-      const kept = [];
-      let stripped = false;
-      for (let i = 0; i < parts.length; i += 1) {
-        const part = parts[i];
-        if (part === "") {
-          kept.push(part);
-          continue;
-        }
-        const eq = part.indexOf("=");
-        const key = eq === -1 ? part : part.slice(0, eq);
-        if (key.toLowerCase() === "e") {
-          stripped = true;
-          continue;
-        }
-        kept.push(part);
-      }
-      if (!stripped) {
-        return { pathAndQuery: url.pathname + search + url.hash, stripped: false };
-      }
-      const nextSearch = kept.length ? `?${kept.join("&")}` : "";
-      return { pathAndQuery: url.pathname + nextSearch + url.hash, stripped: true };
-    } catch {
-      return { pathAndQuery: "", stripped: false };
-    }
-  }
-
-  /**
    * @param {string} href
    * @returns {{ pathAndQuery: string, email: string|null, stripped: boolean }}
    */
@@ -184,18 +143,12 @@
       return;
     }
     const path = win.location.pathname || "";
-    const eStrip = stripSensitiveEQueryFromHref(win.location.href);
-    let hrefForEmail = win.location.href;
-    if (eStrip.stripped) {
-      hrefForEmail = `${win.location.origin}${eStrip.pathAndQuery}`;
-    }
-    const { pathAndQuery, email, stripped: emailStripped } = stripEmailQueryFromHref(hrefForEmail);
+    const { pathAndQuery, email, stripped: emailStripped } = stripEmailQueryFromHref(win.location.href);
     if (/\/unsubscribe\/?$/iu.test(path) && email) {
       win.__solonUnsubscribeEmail = email;
     }
-    const finalPath = emailStripped ? pathAndQuery : eStrip.pathAndQuery;
-    if (eStrip.stripped || emailStripped) {
-      win.history.replaceState(null, "", finalPath);
+    if (emailStripped) {
+      win.history.replaceState(null, "", pathAndQuery);
     }
   }
 
@@ -209,12 +162,10 @@
     if (typeof win.gtag === "function") {
       return;
     }
-    /**
-     * @param {...unknown} gtagArgs
-     * @returns {void}
-     */
-    function gtag(...gtagArgs) {
-      win.dataLayer.push(gtagArgs);
+    /** @returns {void} */
+    function gtag() {
+      // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
+      win.dataLayer.push(arguments);
     }
     win.gtag = gtag;
   }
@@ -1227,7 +1178,6 @@
     setConsentModeDefault,
     boot,
     stripEmailQueryFromHref,
-    stripSensitiveEQueryFromHref,
     applySensitiveUrlHygiene,
   };
 

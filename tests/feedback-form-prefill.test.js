@@ -142,6 +142,11 @@ test("applyFeedbackIframeSrc sets src once and skips base when e is valid", () =
     get src() {
       return this._src;
     },
+    setAttribute(name, value) {
+      if (name === "src") {
+        this.src = value;
+      }
+    },
   };
   applyFeedbackIframeSrc({ querySelector: () => iframe }, "a+b@x.ro");
   assert.equal(assignments.length, 1);
@@ -164,6 +169,11 @@ test("boot does not push email into dataLayer", () => {
     },
     get src() {
       return this._src;
+    },
+    setAttribute(name, value) {
+      if (name === "src") {
+        this.src = value;
+      }
     },
   };
   const document = {
@@ -206,6 +216,11 @@ test("boot waits for DOMContentLoaded before setting iframe src", () => {
     },
     get src() {
       return this._src;
+    },
+    setAttribute(name, value) {
+      if (name === "src") {
+        this.src = value;
+      }
     },
   };
   const document = {
