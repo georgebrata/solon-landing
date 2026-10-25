@@ -505,7 +505,7 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
   assert.equal(html.includes("Nu desfășurăm activități de tip publicitate personalizată"), false);
   assert.ok(
     html.includes(
-      "și trackerul Brevo (vizitele tale și identificarea când te abonezi prin formularul de newsletter), pe paginile website-ului."
+      "trackerul Brevo (vizitele tale și identificarea când te abonezi prin formularul de newsletter); widget-ul ANPC, pe paginile unde este afișat."
     ),
     "Marketing Brevo copy must describe newsletter form only"
   );
