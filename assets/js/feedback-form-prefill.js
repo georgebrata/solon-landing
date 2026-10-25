@@ -237,12 +237,13 @@
     if (label.startsWith("-") || label.endsWith("-")) {
       return false;
     }
-    if (!/^[a-zA-Z0-9-]+$/u.test(label)) {
-      return false;
-    }
-    return true;
+    return /^[a-zA-Z0-9-]+$/u.test(label);
   }
 
+  /**
+   * @param {string} value
+   * @returns {boolean}
+   */
   function isConservativeFeedbackEmail(value) {
     if (!value || value.length > EMAIL_MAX_LENGTH) {
       return false;
