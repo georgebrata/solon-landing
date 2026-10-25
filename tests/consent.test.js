@@ -187,6 +187,15 @@ const loadConsent = function loadConsent(options = {}) {
     Number,
     String,
     Error,
+    Event,
+    ProgressEvent:
+      typeof ProgressEvent !== "undefined"
+        ? ProgressEvent
+        : class ProgressEvent extends Event {
+            constructor(type) {
+              super(type);
+            }
+          },
     addEventListener() {
       return undefined;
     },
@@ -252,6 +261,11 @@ const loadConsent = function loadConsent(options = {}) {
     XMLHttpRequest.prototype.send = function () {
       this.__solonTransportSent = this.__solonGaOpenUrl;
     };
+    XMLHttpRequest.prototype.dispatchEvent = function (event) {
+      this.__solonDispatched = this.__solonDispatched || [];
+      this.__solonDispatched.push(event.type);
+      return true;
+    };
     context.XMLHttpRequest = XMLHttpRequest;
   }
   if (!context.HTMLImageElement) {
@@ -272,6 +286,25 @@ const loadConsent = function loadConsent(options = {}) {
     }
     HTMLImageElement.prototype = imageProto;
     context.HTMLImageElement = HTMLImageElement;
+  }
+  if (!context.Element) {
+    class Element {
+      setAttribute() {
+        return undefined;
+      }
+    }
+    context.Element = Element;
+  }
+  if (context.HTMLImageElement && context.Element) {
+    Object.setPrototypeOf(context.HTMLImageElement.prototype, context.Element.prototype);
+  }
+  if (!context.setTimeout) {
+    context.setTimeout = setTimeout;
+  }
+  if (options.queueMicrotask) {
+    context.queueMicrotask = options.queueMicrotask;
+  } else if (!context.queueMicrotask) {
+    context.queueMicrotask = queueMicrotask;
   }
   if (typeof options.fetch === "function") {
     context.fetch = options.fetch;
@@ -787,6 +820,109 @@ test("ga-disable drops GA transport for URL objects, fetch, XHR, and image beaco
   context[api.GA_DISABLE_PROPERTY] = false;
   context.navigator.sendBeacon(collect);
   assert.equal(beacons.length, 1);
+});
+
+test("ga-disable blocks analytics.google.com and hostname substring false positives", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://region1.analytics.google.com/g/collect?v=2");
+  assert.equal(beacons.length, 0);
+  context.navigator.sendBeacon("https://evil-google-analytics.com.example/g/collect?v=2");
+  assert.equal(beacons.length, 1);
+  context[api.GA_DISABLE_PROPERTY] = false;
+  context.navigator.sendBeacon("https://region1.analytics.google.com/g/collect?v=2");
+  assert.equal(beacons.length, 2);
+});
+
+test("blocked XHR send dispatches error and loadend", () => {
+  const { api, context } = loadConsent({
+    queueMicrotask: (fn) => {
+      fn();
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const xhr = new context.XMLHttpRequest();
+  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+  const events = [];
+  xhr.dispatchEvent = (event) => {
+    events.push(event.type);
+    return true;
+  };
+  xhr.send();
+  assert.ok(xhr.__solonTransportSent === undefined);
+  assert.deepEqual(events, ["error", "loadend"]);
+});
+
+test("blocked image setAttribute src does not load and signals error", () => {
+  const { api, context } = loadConsent({
+    queueMicrotask: (fn) => {
+      fn();
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const img = Object.create(context.HTMLImageElement.prototype);
+  const errors = [];
+  img.onerror = () => {
+    errors.push("error");
+  };
+  img.setAttribute("src", "https://www.google-analytics.com/g/collect?v=2");
+  assert.ok(img.__solonImageSrcSet === undefined);
+  assert.deepEqual(errors, ["error"]);
+});
+
+test("analytics withdrawal blocks clarity.ms collect transport", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://h.clarity.ms/collect");
+  assert.equal(beacons.length, 0);
+  api.saveCustom({ analytics: true, marketing: true });
+  context.navigator.sendBeacon("https://h.clarity.ms/collect");
+  assert.equal(beacons.length, 1);
+});
+
+test("visibilitychange shows banner when storage cleared after reject-all in same tab", () => {
+  const store = {};
+  const { api, context } = loadConsent({ store });
+  if (api.rejectAll) {
+    api.rejectAll();
+  }
+  delete store[api.STORAGE_KEY];
+  const cookieBacking = { value: context.document.cookie };
+  Object.defineProperty(context.document, "cookie", {
+    configurable: true,
+    get() {
+      return cookieBacking.value;
+    },
+    set(value) {
+      cookieBacking.value = String(value);
+    },
+  });
+  cookieBacking.value = "";
+  context.document.visibilityState = "visible";
+  api.onVisibilityCookieRefresh();
+  const banner = (context.document.body._children || []).map(findConsentBanner).find(Boolean);
+  assert.ok(banner);
+  assert.equal(banner.hidden, false);
 });
 
 test("withdraw-then-unload sends zero GA hits when ga-disable is set", () => {

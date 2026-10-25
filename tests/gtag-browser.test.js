@@ -57,9 +57,6 @@ const resolveSuiteSkip = async () => {
   if (process.env.SKIP_GTAG_BROWSER === "1") {
     return "SKIP_GTAG_BROWSER=1";
   }
-  if (!(await canReachGoogleTagManager())) {
-    return "googletagmanager.com unreachable";
-  }
   try {
     require.resolve("puppeteer");
   } catch {
@@ -112,6 +109,11 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     if (suiteSkip) {
       return;
     }
+    if (!(await canReachGoogleTagManager())) {
+      throw new Error(
+        "googletagmanager.com unreachable: real gtag browser regression tests did not run",
+      );
+    }
     const puppeteer = require("puppeteer");
     server = await startStaticServer();
     const addr = server.address();
@@ -147,10 +149,11 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     page.on("request", onCollectBefore);
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(page);
     await page.evaluate(() => {
       window.SolonConsent.acceptAll();
     });
-    await waitForFirstCollect(page);
+    await firstCollect;
     await new Promise((r) => setTimeout(r, 2500));
     page.off("request", onCollectBefore);
     await page.evaluate(() => {
@@ -198,8 +201,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     const pageB = await context.newPage();
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(pageA);
     await pageA.evaluate(() => window.SolonConsent.acceptAll());
-    await waitForFirstCollect(pageA);
+    await firstCollect;
     await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageB.waitForFunction(
       () => window.SolonConsent?.hasConsent("analytics") === true,

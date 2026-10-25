@@ -178,7 +178,7 @@
     win.gtag = gtag;
   }
 
-  /** Drops new GA transport while ga-disable is set (does not cancel in-flight requests). */
+  /** Drops new GA / Clarity transport when analytics is withdrawn (does not cancel in-flight requests). */
   function installAnalyticsTransportGuard() {
     if (win.__solonAnalyticsTransportGuard || !win.navigator) {
       return;
@@ -188,7 +188,7 @@
      * @param {unknown} input
      * @returns {string}
      */
-    const gaUrlFromTransportInput = (input) => {
+    const transportUrlFromInput = (input) => {
       if (typeof input === "string") {
         return input;
       }
@@ -202,19 +202,117 @@
     };
     /**
      * @param {unknown} input
+     * @returns {string}
+     */
+    const transportHostname = (input) => {
+      const raw = transportUrlFromInput(input);
+      if (!raw) {
+        return "";
+      }
+      try {
+        const base = win.location?.href || "https://solon.agency/";
+        return new URL(raw, base).hostname.toLowerCase();
+      } catch {
+        return "";
+      }
+    };
+    /**
+     * @param {string} hostname
+     * @param {string} apex
      * @returns {boolean}
      */
-    const shouldDropGaTransport = (input) => {
-      if (win[GA_DISABLE_PROPERTY] !== true) {
+    const hostnameMatchesApex = (hostname, apex) =>
+      hostname === apex || hostname.endsWith(`.${apex}`);
+    /**
+     * @param {string} hostname
+     * @returns {boolean}
+     */
+    const isGoogleAnalyticsCollectHost = (hostname) =>
+      hostnameMatchesApex(hostname, "google-analytics.com") ||
+      hostnameMatchesApex(hostname, "analytics.google.com");
+    /**
+     * @param {string} hostname
+     * @returns {boolean}
+     */
+    const isClarityCollectHost = (hostname) => hostnameMatchesApex(hostname, "clarity.ms");
+    /** @returns {boolean} */
+    const clarityTransportBlocked = () => {
+      const consent = win.SolonConsent;
+      if (consent && typeof consent.hasConsent === "function") {
+        return !consent.hasConsent("analytics");
+      }
+      return win[GA_DISABLE_PROPERTY] === true;
+    };
+    /**
+     * @param {unknown} input
+     * @returns {boolean}
+     */
+    const shouldDropAnalyticsTransport = (input) => {
+      const hostname = transportHostname(input);
+      if (!hostname) {
         return false;
       }
-      const url = gaUrlFromTransportInput(input);
-      return url !== "" && /google-analytics\.com/u.test(url);
+      if (isGoogleAnalyticsCollectHost(hostname) && win[GA_DISABLE_PROPERTY] === true) {
+        return true;
+      }
+      if (isClarityCollectHost(hostname) && clarityTransportBlocked()) {
+        return true;
+      }
+      return false;
+    };
+    /**
+     * @param {XMLHttpRequest} xhr
+     * @returns {void}
+     */
+    const scheduleMicrotask = (fn) => {
+      if (typeof win.queueMicrotask === "function") {
+        win.queueMicrotask(fn);
+      } else if (typeof win.setTimeout === "function") {
+        win.setTimeout(fn, 0);
+      } else {
+        fn();
+      }
+    };
+    const finishBlockedXhr = (xhr) => {
+      scheduleMicrotask(() => {
+        const EventCtor = win.Event || (typeof Event !== "undefined" ? Event : null);
+        const ProgressEventCtor =
+          win.ProgressEvent || (typeof ProgressEvent !== "undefined" ? ProgressEvent : EventCtor);
+        if (!ProgressEventCtor) {
+          return;
+        }
+        const errorEvent = new ProgressEventCtor("error");
+        const loadEndEvent = new ProgressEventCtor("loadend");
+        if (typeof xhr.onerror === "function") {
+          xhr.onerror(errorEvent);
+        }
+        if (typeof xhr.onloadend === "function") {
+          xhr.onloadend(loadEndEvent);
+        }
+        if (typeof xhr.dispatchEvent === "function") {
+          xhr.dispatchEvent(errorEvent);
+          xhr.dispatchEvent(loadEndEvent);
+        }
+      });
+    };
+    /**
+     * @param {HTMLImageElement} img
+     * @returns {void}
+     */
+    const finishBlockedImage = (img) => {
+      scheduleMicrotask(() => {
+        if (typeof img.onerror === "function") {
+          img.onerror(new Event("error"));
+        }
+        if (typeof img.dispatchEvent === "function") {
+          img.dispatchEvent(new Event("error"));
+        }
+      });
     };
     const nativeBeacon = win.navigator.sendBeacon?.bind(win.navigator);
     if (nativeBeacon) {
       win.navigator.sendBeacon = (url, data) => {
-        if (shouldDropGaTransport(url)) {
+        if (shouldDropAnalyticsTransport(url)) {
           return true;
         }
         return nativeBeacon(url, data);
@@ -223,7 +321,7 @@
     if (typeof win.fetch === "function") {
       const nativeFetch = win.fetch.bind(win);
       win.fetch = (input, init) => {
-        if (shouldDropGaTransport(input)) {
+        if (shouldDropAnalyticsTransport(input)) {
           return Promise.resolve(new Response(null, { status: 204 }));
         }
         return nativeFetch(input, init);
@@ -234,11 +332,12 @@
       const nativeOpen = NativeXHR.prototype.open;
       const nativeSend = NativeXHR.prototype.send;
       NativeXHR.prototype.open = function (method, url, ...rest) {
-        this.__solonGaOpenUrl = gaUrlFromTransportInput(url);
+        this.__solonGaOpenUrl = transportUrlFromInput(url);
         return nativeOpen.call(this, method, url, ...rest);
       };
       NativeXHR.prototype.send = function (...args) {
-        if (shouldDropGaTransport(this.__solonGaOpenUrl || "")) {
+        if (shouldDropAnalyticsTransport(this.__solonGaOpenUrl || "")) {
+          finishBlockedXhr(this);
           return undefined;
         }
         return nativeSend.apply(this, args);
@@ -252,12 +351,44 @@
         enumerable: imageSrcDescriptor.enumerable,
         get: imageSrcDescriptor.get,
         set(value) {
-          if (shouldDropGaTransport(value)) {
+          if (shouldDropAnalyticsTransport(value)) {
+            finishBlockedImage(this);
             return;
           }
           imageSrcDescriptor.set.call(this, value);
         },
       });
+    }
+    const imageSrcsetDescriptor = imageProto && Object.getOwnPropertyDescriptor(imageProto, "srcset");
+    if (imageSrcsetDescriptor?.set) {
+      Object.defineProperty(imageProto, "srcset", {
+        configurable: true,
+        enumerable: imageSrcsetDescriptor.enumerable,
+        get: imageSrcsetDescriptor.get,
+        set(value) {
+          if (shouldDropAnalyticsTransport(value)) {
+            finishBlockedImage(this);
+            return;
+          }
+          imageSrcsetDescriptor.set.call(this, value);
+        },
+      });
+    }
+    const ElementCtor = win.Element;
+    if (doc && ElementCtor?.prototype?.setAttribute) {
+      const nativeSetAttribute = ElementCtor.prototype.setAttribute;
+      ElementCtor.prototype.setAttribute = function (name, value) {
+        const attr = String(name).toLowerCase();
+        if (
+          this instanceof win.HTMLImageElement &&
+          (attr === "src" || attr === "srcset") &&
+          shouldDropAnalyticsTransport(value)
+        ) {
+          finishBlockedImage(this);
+          return;
+        }
+        return nativeSetAttribute.call(this, name, value);
+      };
     }
   }
 
@@ -1329,6 +1460,11 @@
     const storageChoice = parseConsent(readLocalStorage());
     if (!cookieChoice) {
       syncAnalyticsDisableFlag(null);
+      if (!storageChoice) {
+        applyRemoteChoice(null);
+        showBanner();
+        return;
+      }
       if (!consentEquals(current, deniedConsent())) {
         applyRemoteChoice(null);
         showBanner();
