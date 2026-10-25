@@ -290,6 +290,24 @@
     return "";
   };
 
+  /**
+   * Consent-gated conversion events after a confirmed save (no PII in params).
+   * @param {"Contact"|"Telefon"|"Newsletter"} type
+   * @returns {void}
+   */
+  const trackFormConversion = (type) => {
+    try {
+      if (type === "Contact" || type === "Telefon") {
+        const track = globalThis.solonTrack;
+        if (typeof track === "function") {
+          track("Lead", "generate_lead", { content_name: type });
+        }
+      }
+    } catch {
+      return;
+    }
+  };
+
   /** Tell Brevo who subscribed, only after a confirmed standalone newsletter save.
    * Contact never identifies, including the follow-up Newsletter save sent when
    * NewsletterOptIn is checked. Telefon never identifies.
@@ -466,6 +484,7 @@
         }
       }
 
+      trackFormConversion(type);
       form.reset();
       showStatus(form, MESSAGES[type], false);
       logEvent("info", { type: "form_submit_ok", form: type });
