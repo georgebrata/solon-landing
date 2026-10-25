@@ -81,8 +81,12 @@ test("consent strips email query via replaceState before boot on unsubscribe", (
       getItem() {
         return null;
       },
-      setItem() {},
-      removeItem() {},
+      setItem() {
+        return undefined;
+      },
+      removeItem() {
+        return undefined;
+      },
     },
   };
   win.window = win;

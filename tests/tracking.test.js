@@ -292,16 +292,18 @@ test("checkout on external pay link uses beacon transport and delays navigation"
   globalThis.gtag = (...args) => {
     gtagCalls.push(args);
   };
-  globalThis.location = {
-    pathname: "/",
-    href: "https://solon.agency/",
-    set href(value) {
-      navigatedTo = value;
-    },
-    get href() {
+  const locationObj = { pathname: "/" };
+  Object.defineProperty(locationObj, "href", {
+    enumerable: true,
+    configurable: true,
+    get() {
       return navigatedTo || "https://solon.agency/";
     },
-  };
+    set(value) {
+      navigatedTo = value;
+    },
+  });
+  globalThis.location = locationObj;
   globalThis.setTimeout = (fn, ms) => {
     timeouts.push(ms);
     fn();
