@@ -27,7 +27,7 @@ const loadTracking = (overrides = {}) => {
       document: overrides.document || {
         readyState: "complete",
         addEventListener() {
-          void 0;
+          return undefined;
         },
         querySelector() {
           return null;
@@ -238,7 +238,7 @@ test("view_item on abonament includes value and items when prices are in the DOM
   const doc = {
     readyState: "complete",
     addEventListener() {
-      void 0;
+      return undefined;
     },
     querySelector(sel) {
       if (sel === ".price-annual") {
@@ -277,7 +277,9 @@ test("checkout on external pay link uses beacon transport and delays navigation"
   };
   const event = {
     target: link,
-    preventDefault() {},
+    preventDefault() {
+      return undefined;
+    },
   };
   const priorGtag = globalThis.gtag;
   const priorConsent = globalThis.SolonConsent;
@@ -286,7 +288,7 @@ test("checkout on external pay link uses beacon transport and delays navigation"
   globalThis.SolonConsent = {
     hasConsent: (category) => category === "analytics" || category === "marketing",
   };
-  globalThis.fbq = () => {};
+  globalThis.fbq = () => undefined;
   globalThis.gtag = (...args) => {
     gtagCalls.push(args);
   };
@@ -347,7 +349,7 @@ test("newsletter sign_up fires at most once per session (form and confirm page)"
       document: {
         readyState: "complete",
         addEventListener() {
-          void 0;
+          return undefined;
         },
         querySelector() {
           return null;

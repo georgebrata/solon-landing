@@ -461,11 +461,9 @@
       const values = valuesFor(form, type, ip, date);
       await postForm(type, values, form);
 
-      let newsletterAlsoSaved = false;
       if (type === "Contact" && form.elements.namedItem("NewsletterOptIn")?.checked) {
         try {
           await postForm("Newsletter", { Data: date, Email: values.Email, IP: ip }, form);
-          newsletterAlsoSaved = true;
         } catch (newsletterError) {
           logEvent("error", {
             type: "form_submit_error",

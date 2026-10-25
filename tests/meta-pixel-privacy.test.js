@@ -54,12 +54,12 @@ test("solonTrack only emits allowlisted GA4 custom events and blocks purchase", 
         gtagCalls.push(args);
       },
       fbq() {
-        void 0;
+        return undefined;
       },
       document: {
         readyState: "complete",
         addEventListener() {
-          void 0;
+          return undefined;
         },
         querySelector() {
           return null;
