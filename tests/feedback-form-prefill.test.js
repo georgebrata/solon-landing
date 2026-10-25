@@ -81,6 +81,11 @@ test("invalid or injection-like email is ignored for form URL", () => {
   assert.equal(buildFeedbackFormSrc('<script>@x.ro'), null);
   assert.equal(normalizeFeedbackEmailParam("a..b@x.ro"), null);
   assert.equal(normalizeFeedbackEmailParam(`${"a".repeat(65)}@x.ro`), null);
+  assert.equal(normalizeFeedbackEmailParam(), null);
+});
+
+test("malformed percent-encoding in e= does not throw", () => {
+  assert.equal(readRawEmailFromHash("#e=%"), "");
 });
 
 test("email longer than 254 characters is rejected without truncation", () => {

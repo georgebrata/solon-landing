@@ -29,7 +29,11 @@
     if (!encoded) {
       return "";
     }
-    return decodeURIComponent(encoded.replace(/\+/g, "%2B"));
+    try {
+      return decodeURIComponent(encoded.replace(/\+/g, "%2B"));
+    } catch {
+      return "";
+    }
   }
 
   /**
@@ -82,6 +86,7 @@
    * @param {string} segmentsSource
    * @returns {{ encoded: string, rawEmail: string|null, stripped: boolean }}
    */
+  // skipcq: JS-0036 -- segment strip shared with consent.js stripSensitiveEParamSegments
   function stripEParamFromSegments(segmentsSource) {
     if (!segmentsSource) {
       return { encoded: "", rawEmail: null, stripped: false };
@@ -174,10 +179,10 @@
    * @returns {string|null}
    */
   function normalizeFeedbackEmailParam(raw) {
-    if (raw === null || raw === undefined) {
+    if (raw === null || typeof raw !== "string") {
       return null;
     }
-    let value = String(raw).trim();
+    let value = raw.trim();
     if (!value) {
       return null;
     }
