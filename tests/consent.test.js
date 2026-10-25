@@ -486,7 +486,7 @@ const simulateGaUnloadHit = (win) => {
 test("analytics withdrawal sets ga-disable before consent update and cookie clearing", () => {
   const order = [];
   const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
-  let gaDisableStored = undefined;
+  let gaDisableStored;
   Object.defineProperty(context, GA_DISABLE_KEY, {
     configurable: true,
     enumerable: true,
