@@ -91,7 +91,7 @@ json_ld: |-
 
 # Accesibilitatea website-ului de avocat: ce înseamnă și de unde începi
 
-Un client care vede mai greu, care folosește doar tastatura sau un cititor de ecran ajunge pe website-ul cabinetului tău și nu poate citi textul gri pe fundal alb, nu găsește butonul de contact sau nu poate trimite formularul. Pleacă, de cele mai multe ori fără să-ți spună de ce. Accesibilitatea înseamnă să elimini aceste bariere, iar de la 28 iunie 2025 subiectul a devenit, pentru anumite servicii, și unul juridic, prin Legea nr. 232/2022. Mai jos găsești ce spune legea, cât de probabil este să te privească și o listă de 10 verificări pe care le poți face chiar tu.
+Un client care vede mai greu, care folosește doar tastatura sau un cititor de ecran ajunge pe website-ul cabinetului tău și nu poate citi textul gri pe fundal alb, nu găsește butonul de contact sau nu poate trimite formularul. Poate pleca fără să-ți spună de ce. Accesibilitatea înseamnă să elimini aceste bariere, iar de la 28 iunie 2025 subiectul a devenit, pentru anumite servicii, și unul juridic, prin Legea nr. 232/2022. Mai jos găsești ce spune legea, cât de probabil este să te privească și o listă de 10 verificări pe care le poți face chiar tu.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-8">
@@ -126,7 +126,7 @@ Supravegherea serviciilor de comerț electronic revine Autorității pentru Digi
 
 ## 3. Se aplică legea website-ului cabinetului tău?
 
-<p>Un website de prezentare al unui cabinet nu se află, în principiu, printre serviciile enumerate de Legea 232/2022. Dacă însă pe website un consumator poate încheia online un contract (de exemplu, cumpără și plătește o consultație), activitatea se poate apropia de «serviciile de comerț electronic» din lege. Microîntreprinderile care oferă servicii (sub 10 angajați și cifră de afaceri anuală sau bilanț de cel mult echivalentul a 2 milioane de euro) sunt scutite de cerințele de accesibilitate. Dacă nu ești sigur în ce categorie intri, verifică textul legii sau cere o opinie.</p>
+<p>Un website de prezentare al unui cabinet nu se află, în principiu, printre serviciile enumerate de Legea 232/2022. Dacă însă pe website un consumator poate încheia online un contract (de exemplu, cumpără și plătește o consultație), activitatea se poate apropia de „serviciile de comerț electronic” din lege. Microîntreprinderile care oferă servicii (sub 10 angajați și cifră de afaceri anuală sau bilanț de cel mult echivalentul a 2 milioane de euro) sunt scutite de cerințele de accesibilitate. Dacă nu ești sigur în ce categorie intri, verifică textul legii sau cere o opinie.</p>
 
 Scutirea pentru microîntreprinderi este prevăzută la art. 4 alin. (5), iar definiția microîntreprinderii se află la art. 3 pct. 12.
 
@@ -146,7 +146,7 @@ Dincolo de lege, accesibilitatea ține de relația cu clienții. Persoanele în 
 
 ## 6. Checklist: 10 verificări pe care le poți face în 30 de minute
 
-1. **Contrastul textului.** Textul normal ar trebui să aibă un raport de contrast de cel puțin 4,5:1 față de fundal, iar textul mare de cel puțin 3:1 (textul mare înseamnă cel puțin 18 puncte sau 14 puncte îngroșat) (WCAG 2.2, criteriul 1.4.3). Verifică culorile principale cu un instrument gratuit de contrast, cum este WebAIM Contrast Checker.
+1. **Contrastul textului.** Textul normal ar trebui să aibă un raport de contrast de cel puțin 4,5:1 față de fundal, iar textul mare de cel puțin 3:1 (textul mare înseamnă cel puțin 18 puncte sau 14 puncte îngroșat) (WCAG 2.2, criteriul 1.4.3). Elementele de interfață și graficele care transmit informație, cum sunt marginile butoanelor și ale câmpurilor sau iconițele, au nevoie de un contrast de cel puțin 3:1 (criteriul 1.4.11). Verifică culorile principale cu un instrument gratuit de contrast, cum este WebAIM Contrast Checker.
 2. **Text alternativ la imagini.** Fiecare imagine care transmite informație (fotografia echipei, o infografică) are un atribut alt descriptiv. Imaginile pur decorative pot avea alt gol.
 3. **Navigare doar cu tastatura.** Pune mouse-ul deoparte și apasă Tab. Poți ajunge la meniu, la butonul de programare și la formularul de contact? Vezi mereu unde se află focusul?
 4. **Formulare cu etichete clare.** Fiecare câmp are o etichetă vizibilă („Nume”, „Telefon”), nu doar un text gri în interiorul câmpului care dispare când începi să scrii.
