@@ -175,15 +175,14 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
       t.skip("Offline or puppeteer unavailable — set SKIP_GTAG_BROWSER=1 to skip explicitly.");
       return;
     }
-    const context = await browser.createBrowserContext();
-    const pageA = await context.newPage();
-    const pageB = await context.newPage();
+    const pageA = await browser.newPage();
+    const pageB = await browser.newPage();
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     await pageA.evaluate(() => window.SolonConsent.acceptAll());
     await pageA.waitForFunction(
       () => window.dataLayer?.some((e) => e[0] === "config"),
-      { timeout: 60000 },
+      { timeout: 30000 },
     );
     await new Promise((r) => setTimeout(r, 2000));
     await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
@@ -217,6 +216,5 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     assert.equal(afterWithdraw.length, 0, `tab A expected 0 collects after tab B withdrew, got ${afterWithdraw.length}`);
     await pageA.close();
     await pageB.close();
-    await context.close();
   });
 });
