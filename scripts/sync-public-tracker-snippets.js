@@ -9,8 +9,28 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 
-const SKIP_PATH_RE =
-  /(?:^|\/)(?:r\/|templates\/)(?:\/|$)|^(?:403|404|500)\.html$/;
+const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates"]);
+
+/**
+ * @param {string} relPath Repo-relative path using forward slashes.
+ * @returns {boolean}
+ */
+function shouldSkipPublicTrackerSync(relPath) {
+  const rel = String(relPath).replace(/\\/g, "/");
+  if (/^(?:403|404|500)\.html$/.test(rel)) {
+    return true;
+  }
+  if (rel === "r" || rel.startsWith("r/")) {
+    return true;
+  }
+  if (rel.startsWith("templates/")) {
+    return true;
+  }
+  if (rel.startsWith("node_modules/")) {
+    return true;
+  }
+  return false;
+}
 
 /**
  * @param {string} filePath
@@ -90,11 +110,17 @@ function ensureTrackingScript(html) {
   return html;
 }
 
+/**
+ * @returns {string[]}
+ */
 function listHtmlFiles() {
   const out = [];
+  /**
+   * @param {string} dir
+   */
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.isDirectory() && entry.name === "r") {
+      if (entry.isDirectory() && SKIP_DIR_NAMES.has(entry.name)) {
         continue;
       }
       const full = path.join(dir, entry.name);
@@ -113,7 +139,9 @@ function main() {
   let changed = 0;
   for (const file of listHtmlFiles()) {
     const rel = path.relative(root, file).replace(/\\/g, "/");
-    if (SKIP_PATH_RE.test(rel)) continue;
+    if (shouldSkipPublicTrackerSync(rel)) {
+      continue;
+    }
 
     const prefix = relativeAssetPrefix(file);
     let html = fs.readFileSync(file, "utf8");
@@ -130,4 +158,10 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { ensureHeadSnippets, ensureTrackingScript, trackerHeadBlock };
+module.exports = {
+  ensureHeadSnippets,
+  ensureTrackingScript,
+  trackerHeadBlock,
+  shouldSkipPublicTrackerSync,
+  listHtmlFiles,
+};
