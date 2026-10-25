@@ -486,16 +486,16 @@ const simulateGaUnloadHit = (win) => {
 test("analytics withdrawal sets ga-disable before consent update and cookie clearing", () => {
   const order = [];
   const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
-  let gaDisableStored;
+  const gaDisableState = { value: undefined };
   Object.defineProperty(context, GA_DISABLE_KEY, {
     configurable: true,
     enumerable: true,
     get() {
-      return gaDisableStored;
+      return gaDisableState.value;
     },
     set(value) {
       order.push({ step: "ga-disable", value });
-      gaDisableStored = value;
+      gaDisableState.value = value;
     },
   });
   const originalGtag = context.gtag;
