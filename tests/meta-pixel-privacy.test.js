@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const test = require("node:test");
+const vm = require("node:vm");
 
 const root = path.join(__dirname, "..");
 const pixelSource = fs.readFileSync(path.join(root, "assets/js/meta-pixel.js"), "utf8");
@@ -32,8 +33,9 @@ test("meta-pixel loads fbevents only from the consent-gated script file", () => 
 });
 
 test("tracking.js does not queue events for replay before consent", () => {
-  assert.doesNotMatch(trackingSource, /localStorage|sessionStorage/);
+  assert.doesNotMatch(trackingSource, /localStorage/);
   assert.doesNotMatch(trackingSource, /\bqueue\b.*push|pendingEvents|replay/i);
+  assert.match(trackingSource, /solon_newsletter_sign_up_event_id/);
 });
 
 test("solonTrack only emits allowlisted GA4 custom events and blocks purchase", () => {
@@ -44,7 +46,6 @@ test("solonTrack only emits allowlisted GA4 custom events and blocks purchase", 
     "sign_up",
     "view_item",
   ]);
-  const vm = require("node:vm");
   const gtagCalls = [];
   const context = {
     window: {

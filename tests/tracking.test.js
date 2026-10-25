@@ -114,3 +114,48 @@ test("parseRonAmount reads Romanian-formatted prices", () => {
   assert.equal(parseRonAmount("1.099 lei/an"), 1099);
   assert.equal(parseRonAmount("99 lei/lună"), 99);
 });
+
+test("newsletter sign_up fires at most once per session (form and confirm page)", () => {
+  const session = {};
+  const gtagCalls = [];
+  const fbqCalls = [];
+  const context = {
+    console,
+    window: {
+      SolonConsent: {
+        hasConsent: (category) => category === "analytics" || category === "marketing",
+      },
+      gtag: (...args) => {
+        gtagCalls.push(args);
+      },
+      fbq: (...args) => {
+        fbqCalls.push(args);
+      },
+      location: { pathname: "/confirmare-abonare/", href: "https://solon.agency/confirmare-abonare/" },
+      sessionStorage: {
+        getItem(key) {
+          return Object.prototype.hasOwnProperty.call(session, key) ? session[key] : null;
+        },
+        setItem(key, value) {
+          session[key] = String(value);
+        },
+      },
+      document: {
+        readyState: "complete",
+        addEventListener() {},
+        querySelector() {
+          return null;
+        },
+      },
+    },
+  };
+  context.globalThis = context.window;
+  vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
+  assert.equal(gtagCalls.length, 1);
+  assert.equal(fbqCalls.length, 1);
+  const firstEventId = gtagCalls[0][2].event_id;
+  context.window.solonTrackNewsletterSignUp();
+  assert.equal(gtagCalls.length, 1);
+  assert.equal(fbqCalls.length, 1);
+  assert.equal(fbqCalls[0][3].eventID, firstEventId);
+});

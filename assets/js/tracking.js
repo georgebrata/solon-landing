@@ -17,6 +17,7 @@
     "begin_checkout",
   ]);
   const BLOCKED_META_EVENTS = new Set(["Purchase"]);
+  const NEWSLETTER_SIGNUP_STORAGE_KEY = "solon_newsletter_sign_up_event_id";
 
   /**
    * @returns {string}
@@ -226,13 +227,52 @@
   }
 
   /**
-   * Fire sign_up on newsletter confirmation landing.
+   * @returns {string}
+   */
+  function readNewsletterSignUpEventId() {
+    try {
+      const storage = global.sessionStorage;
+      if (!storage) return "";
+      return String(storage.getItem(NEWSLETTER_SIGNUP_STORAGE_KEY) || "");
+    } catch {
+      return "";
+    }
+  }
+
+  /**
+   * @param {string} eventId
+   * @returns {void}
+   */
+  function storeNewsletterSignUpEventId(eventId) {
+    try {
+      global.sessionStorage?.setItem(NEWSLETTER_SIGNUP_STORAGE_KEY, eventId);
+    } catch {
+      return;
+    }
+  }
+
+  /**
+   * CompleteRegistration/sign_up at most once per browser session (form or confirm page).
+   * @returns {string}
+   */
+  function trackNewsletterSignUp() {
+    const existing = readNewsletterSignUpEventId();
+    if (existing) {
+      return existing;
+    }
+    const eventId = solonTrack("CompleteRegistration", "sign_up", { content_name: "newsletter" });
+    storeNewsletterSignUpEventId(eventId);
+    return eventId;
+  }
+
+  /**
+   * Fire sign_up on newsletter confirmation landing when not already tracked.
    * @returns {void}
    */
   function trackNewsletterConfirmationPage() {
     const path = global.location?.pathname || "";
     if (!/\/confirmare-abonare\/?$/i.test(path)) return;
-    solonTrack("CompleteRegistration", "sign_up", { content_name: "newsletter" });
+    trackNewsletterSignUp();
   }
 
   /**
@@ -291,10 +331,14 @@
   }
 
   global.solonTrack = solonTrack;
+  global.solonTrackNewsletterSignUp = trackNewsletterSignUp;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = {
       solonTrack,
+      trackNewsletterSignUp,
+      readNewsletterSignUpEventId,
+      storeNewsletterSignUpEventId,
       generateEventId,
       sanitizeParams,
       parseRonAmount,

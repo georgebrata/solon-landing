@@ -290,16 +290,26 @@
     return "";
   };
 
-  /** Consent-gated conversion events after a confirmed save (no PII in params). */
+  /**
+   * Consent-gated conversion events after a confirmed save (no PII in params).
+   * @param {"Contact"|"Telefon"|"Newsletter"} type
+   * @param {HTMLFormElement} form
+   * @param {boolean} newsletterAlsoSaved
+   * @returns {void}
+   */
   const trackFormConversion = (type, form, newsletterAlsoSaved) => {
     try {
-      const track = globalThis.solonTrack;
-      if (typeof track !== "function") return;
       if (type === "Contact" || type === "Telefon") {
-        track("Lead", "generate_lead", { content_name: type });
+        const track = globalThis.solonTrack;
+        if (typeof track === "function") {
+          track("Lead", "generate_lead", { content_name: type });
+        }
       }
       if (type === "Newsletter" || newsletterAlsoSaved) {
-        track("CompleteRegistration", "sign_up", { content_name: "newsletter" });
+        const trackNewsletter = globalThis.solonTrackNewsletterSignUp;
+        if (typeof trackNewsletter === "function") {
+          trackNewsletter();
+        }
       }
     } catch {
       return;

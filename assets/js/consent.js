@@ -20,7 +20,7 @@
  */
 (function () {
 
-  const CONSENT_VERSION = 1;
+  const CONSENT_VERSION = 2;
   const STORAGE_KEY = "solon_cookie_consent";
   const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
   const MAX_AGE_MS = COOKIE_MAX_AGE * 1000;

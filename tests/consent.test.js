@@ -66,7 +66,9 @@ const loadConsent = function loadConsent(options = {}) {
     readyState: "loading",
     cookie: "",
     body: {
+      _children: [],
       appendChild(node) {
+        this._children.push(node);
         return node;
       },
     },
@@ -87,14 +89,21 @@ const loadConsent = function loadConsent(options = {}) {
       }
       return [];
     },
+    createTextNode(text) {
+      return { nodeType: 3, textContent: String(text) };
+    },
     createElement(tag) {
       const el = {
         tagName: String(tag).toUpperCase(),
         attributes: [],
+        _children: [],
         text: "",
         setAttribute(name, value) {
           this.attributes.push({ name, value });
           this[name] = value;
+          if (name === "class") {
+            this.className = value;
+          }
         },
         getAttribute(name) {
           const found = this.attributes.find((item) => item.name === name);
@@ -102,6 +111,14 @@ const loadConsent = function loadConsent(options = {}) {
             return null;
           }
           return found.value;
+        },
+        appendChild(child) {
+          this._children.push(child);
+          return child;
+        },
+        addEventListener() {},
+        getBoundingClientRect() {
+          return { height: 48 };
         },
       };
       created.push(el);
@@ -135,6 +152,10 @@ const loadConsent = function loadConsent(options = {}) {
     Number,
     String,
     Error,
+    addEventListener() {},
+    requestAnimationFrame(fn) {
+      fn();
+    },
     document,
     localStorage: {
       getItem(key) {
@@ -270,13 +291,48 @@ test("custom mix persists and rehydrates", () => {
 test("version bump invalidates stored choice", () => {
   const { api } = loadConsent();
   const stale = JSON.stringify({
-    version: 0,
+    version: 1,
     timestamp: new Date().toISOString(),
     necessary: true,
     analytics: true,
     marketing: true,
   });
   assert.equal(api.parseConsent(stale), null);
+});
+
+test("stored consent v1 re-prompts and denies trackers until a v2 choice", () => {
+  const key = "solon_cookie_consent";
+  const { api, listeners, context } = loadConsent({
+    store: {
+      [key]: JSON.stringify({
+        version: 1,
+        timestamp: new Date().toISOString(),
+        necessary: true,
+        analytics: true,
+        marketing: true,
+      }),
+    },
+  });
+  assert.equal(api.readStored(), null);
+  assert.equal(api.hasConsent("analytics"), false);
+  assert.equal(api.hasConsent("marketing"), false);
+  if (listeners.DOMContentLoaded) {
+    listeners.DOMContentLoaded();
+  }
+  const findBanner = (node) => {
+    if (!node || typeof node !== "object") return null;
+    const cls = node.className || "";
+    if (String(cls).includes("solon-consent__banner")) return node;
+    for (const child of node._children || []) {
+      const found = findBanner(child);
+      if (found) return found;
+    }
+    return null;
+  };
+  const roots = context.document.body._children || [];
+  const banner = roots.map(findBanner).find(Boolean);
+  assert.ok(banner, "banner should mount when stored consent is invalid");
+  assert.equal(banner.hidden, false);
 });
 
 test("expired timestamp invalidates stored choice", () => {
