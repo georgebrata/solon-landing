@@ -174,7 +174,7 @@
    * @returns {string|null}
    */
   function normalizeFeedbackEmailParam(raw) {
-    if (raw == null) {
+    if (raw === null || raw === undefined) {
       return null;
     }
     let value = String(raw).trim();

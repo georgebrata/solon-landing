@@ -115,6 +115,7 @@
    * @param {string} segmentsSource
    * @returns {{ encoded: string, stripped: boolean }}
    */
+  // skipcq: JS-0036 -- segment strip mirrors feedback-form-prefill.js (no email capture here)
   function stripSensitiveEParamSegments(segmentsSource) {
     if (!segmentsSource) {
       return { encoded: "", stripped: false };
