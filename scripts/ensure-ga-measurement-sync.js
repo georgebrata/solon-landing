@@ -13,8 +13,7 @@ const pattern = /const GA_MEASUREMENT_ID = "([^"]+)"; \/\/ @sync data\/ga-measur
 const source = fs.readFileSync(consentPath, "utf8");
 const match = source.match(pattern);
 if (!match) {
-  console.error(`::error::consent.js must declare GA_MEASUREMENT_ID with ${marker}`);
-  process.exit(1);
+  throw new Error(`consent.js must declare GA_MEASUREMENT_ID with ${marker}`);
 }
 if (match[1] !== GA_MEASUREMENT_ID) {
   const next = source.replace(pattern, `const GA_MEASUREMENT_ID = "${GA_MEASUREMENT_ID}"; ${marker}`);

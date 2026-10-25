@@ -45,7 +45,7 @@ const canReachGoogleTagManager = async () => {
  * @returns {Promise<import("http").Server>}
  */
 const startStaticServer = () =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     const server = http.createServer((req, res) => {
       let urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
       if (urlPath.endsWith("/")) {
@@ -85,7 +85,7 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     if (!gtmOnline) {
       return;
     }
-    let puppeteer;
+    let puppeteer = null;
     try {
       puppeteer = require("puppeteer");
     } catch {
@@ -111,7 +111,7 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     }
   });
 
-  it("skips gracefully when googletagmanager.com is unreachable", async (t) => {
+  it("skips gracefully when googletagmanager.com is unreachable", (t) => {
     if (gtmOnline) {
       t.skip("GTM is reachable; browser assertions run in the next tests.");
       return;

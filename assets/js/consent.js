@@ -166,6 +166,7 @@
     }
     /** @returns {void} */
     function gtag() {
+      // skipcq: JS-0244 -- gtag command must be read from the Arguments object
       const command = arguments[0];
       if (command === "event" && win[GA_DISABLE_PROPERTY] === true) {
         return;

@@ -744,8 +744,9 @@ test("standard inline gtag stub is replaced without doubling dataLayer pushes", 
   const foreignPushes = [];
   const { api, context } = loadConsent({
     dataLayer,
-    preGtag() {
-      foreignPushes.push(arguments.length);
+    preGtag(...args) {
+      foreignPushes.push(args.length);
+      // skipcq: JS-0244 -- simulate inline stub pushing Arguments onto dataLayer
       dataLayer.push(arguments);
     },
   });

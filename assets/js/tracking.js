@@ -86,10 +86,7 @@
       typeof consent.GA_DISABLE_PROPERTY === "string"
         ? consent.GA_DISABLE_PROPERTY
         : `ga-disable-${typeof consent.GA_MEASUREMENT_ID === "string" ? consent.GA_MEASUREMENT_ID : "G-H41D7KCWHX"}`;
-    if (global[disableKey] === true) {
-      return false;
-    }
-    return true;
+    return global[disableKey] !== true;
   };
 
   /**
