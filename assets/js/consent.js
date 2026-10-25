@@ -162,12 +162,10 @@
     if (typeof win.gtag === "function") {
       return;
     }
-    /**
-     * @param {...unknown} gtagArgs
-     * @returns {void}
-     */
-    function gtag(...gtagArgs) {
-      win.dataLayer.push(gtagArgs);
+    /** @returns {void} */
+    // skipcq: JS-0086 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
+    function gtag() {
+      win.dataLayer.push(arguments);
     }
     win.gtag = gtag;
   }
