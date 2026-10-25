@@ -58,11 +58,17 @@ test("buildFeedbackFormSrc encodes plus in email for Google Forms entry", () => 
   assert.match(built, /entry\.1640447617=a%2Bb%40x\.ro/u);
 });
 
-test("Legal C1: email prefill is optional and never marks the field required", () => {
+test("Legal C1: prefill skips invalid email and never adds required flags to form URL", () => {
   assert.equal(buildFeedbackFormSrc(null), null);
   assert.equal(buildFeedbackFormSrc(""), null);
   assert.equal(buildFeedbackFormSrc("not-an-email"), null);
+  const prefilled = buildFeedbackFormSrc("optional.test@solon.agency");
+  assert.ok(prefilled);
+  assert.match(prefilled, /entry\.1640447617=/u);
+  assert.doesNotMatch(prefilled, /required/iu);
+});
 
+test("Legal C1: without email the iframe keeps the base embedded form src", () => {
   const withoutEmail = [];
   let requiredAttributeSet = false;
   const iframe = {
@@ -81,13 +87,13 @@ test("Legal C1: email prefill is optional and never marks the field required", (
     get src() {
       return this._src;
     },
-    setAttribute(name, value) {
+    setAttribute(name, _value) {
       if (name === "required") {
         requiredAttributeSet = true;
         return;
       }
       if (name === "src") {
-        this.src = value;
+        this.src = _value;
       }
     },
   };
@@ -96,16 +102,9 @@ test("Legal C1: email prefill is optional and never marks the field required", (
   assert.equal(withoutEmail.length, 1);
   assert.equal(withoutEmail[0], FEEDBACK_FORM_BASE_SRC);
   assert.doesNotMatch(withoutEmail[0], /entry\.1640447617=/u);
+});
 
-  const prefilled = buildFeedbackFormSrc("optional.test@solon.agency");
-  assert.ok(prefilled);
-  assert.match(prefilled, /entry\.1640447617=/u);
-  assert.doesNotMatch(prefilled, /required/iu);
-
-  const barePage = runFeedbackInlineThenPrefill("https://solon.agency/feedback/");
-  assert.equal(barePage.iframeSrc, FEEDBACK_FORM_BASE_SRC);
-  assert.doesNotMatch(barePage.iframeSrc, /entry\.1640447617=/u);
-
+test("Legal C1: prefill script does not mark any on-page field required", () => {
   assert.doesNotMatch(source, /setAttribute\(\s*["']required["']/u);
   assert.doesNotMatch(source, /\.required\s*=/u);
   assert.doesNotMatch(feedbackHtml, /<input[^>]*\brequired\b[^>]*>/iu);
@@ -260,6 +259,12 @@ test("inline capture plus prefill handles /feedback/index.html?e=", () => {
   assert.equal(result.replaceCalls[0], "/feedback/index.html?foo=1");
   assert.doesNotMatch(result.locationHref, /[?#&]e=/i);
   assert.match(result.iframeSrc, /entry\.1640447617=index\.user%40solon\.agency/u);
+});
+
+test("Legal C1: visit without e= loads base Google Form (submit without email still possible)", () => {
+  const barePage = runFeedbackInlineThenPrefill("https://solon.agency/feedback/");
+  assert.equal(barePage.iframeSrc, FEEDBACK_FORM_BASE_SRC);
+  assert.doesNotMatch(barePage.iframeSrc, /entry\.1640447617=/u);
 });
 
 test("inline head hygiene strips hash and query e= via replaceState", () => {
