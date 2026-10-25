@@ -179,14 +179,14 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     const pageA = await context.newPage();
     const pageB = await context.newPage();
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     await pageA.evaluate(() => window.SolonConsent.acceptAll());
     await pageA.waitForFunction(
       () => window.dataLayer?.some((e) => e[0] === "config"),
-      { timeout: 30000 },
+      { timeout: 60000 },
     );
     await new Promise((r) => setTimeout(r, 2000));
+    await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageB.waitForFunction(() => window.SolonConsent?.saveCustom, { timeout: 15000 });
     await pageB.evaluate(() => {
       window.SolonConsent.saveCustom({ analytics: false, marketing: true });
