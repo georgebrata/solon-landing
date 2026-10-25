@@ -11,6 +11,7 @@
   const EMAIL_MAX_LENGTH = 254;
   const LOCAL_PART_MAX_LENGTH = 64;
   const IFRAME_TITLE = "Formular feedback SOLON (Google Forms)";
+  const FEEDBACK_EMAIL_TAKE_KEY = "__solonFeedbackEmailTake";
 
   let win = globalThis;
   if (typeof window !== "undefined") {
@@ -213,10 +214,6 @@
    * @param {string} value
    * @returns {boolean}
    */
-  /**
-   * @param {string} value
-   * @returns {boolean}
-   */
   function isAsciiOnlyEmailString(value) {
     for (let i = 0; i < value.length; i += 1) {
       if (value.charCodeAt(i) > 0x7f) {
@@ -327,6 +324,18 @@
   }
 
   /**
+   * @returns {string|null}
+   */
+  function takeInlineCapturedEmail() {
+    const take = win[FEEDBACK_EMAIL_TAKE_KEY];
+    if (typeof take !== "function") {
+      return null;
+    }
+    const raw = take();
+    return normalizeFeedbackEmailParam(raw);
+  }
+
+  /**
    * @param {Window} targetWin
    * @returns {string|null} validated email captured before strip
    */
@@ -385,7 +394,10 @@
       return;
     }
     win.__solonFeedbackPrefillBooted = true;
-    const email = applyFeedbackUrlHygiene(win);
+    const email =
+      typeof win[FEEDBACK_EMAIL_TAKE_KEY] === "function"
+        ? takeInlineCapturedEmail()
+        : applyFeedbackUrlHygiene(win);
     /**
      * @returns {void}
      */
@@ -414,6 +426,8 @@
     stripFeedbackEmailFromHref,
     buildFeedbackFormSrc,
     applyFeedbackUrlHygiene,
+    takeInlineCapturedEmail,
+    FEEDBACK_EMAIL_TAKE_KEY,
     resolveFeedbackFormBaseSrc,
     applyFeedbackIframeSrc,
     bootFeedbackFormPrefill,

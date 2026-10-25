@@ -193,8 +193,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    const pageA = await browser.newPage();
-    const pageB = await browser.newPage();
+    const context = await browser.createBrowserContext();
+    const pageA = await context.newPage();
+    const pageB = await context.newPage();
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     await pageA.evaluate(() => window.SolonConsent.acceptAll());
@@ -234,5 +235,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     assert.equal(gaCookiesOnA.length, 0, `tab A expected no _ga cookies after tab B withdrew, got ${gaCookiesOnA.join(", ")}`);
     await pageA.close();
     await pageB.close();
+    await context.close();
   });
 });

@@ -2,9 +2,9 @@
 <html lang="ro">
 
 <head>
+    <meta name="referrer" content="no-referrer">
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
 
     <!-- Primary Meta Tags -->
     <title>Formular feedback SOLON | consultanță pentru avocați</title>
@@ -39,28 +39,42 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-      <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-
-    <!-- Vendor CSS Files -->
-    <link href="../assets/vendor/aos/aos.min.css?v=1271739290" rel="stylesheet">
-    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css?v=f6d642a5c9" rel="stylesheet">
-    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=e8c36e8eb7" rel="stylesheet">
-    <link href="../assets/vendor/glightbox/css/glightbox.min.css?v=6d3f62d4d1" rel="stylesheet">
-    <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
-    <link href="../assets/css/style.min.css?v=a56d9fa608" rel="stylesheet">
-
-      <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
   <script>
     (function () {
       "use strict";
       if (!window.history || typeof window.history.replaceState !== "function" || !window.location) {
         return;
+      }
+      function decodeEValue(encoded) {
+        if (!encoded) {
+          return "";
+        }
+        try {
+          return decodeURIComponent(String(encoded).replace(/\+/g, "%2B"));
+        } catch (err) {
+          void err;
+          return "";
+        }
+      }
+      function readEFromSegments(segments) {
+        if (!segments) {
+          return null;
+        }
+        var parts = segments.split("&");
+        for (var i = 0; i < parts.length; i += 1) {
+          var part = parts[i];
+          if (!part) {
+            continue;
+          }
+          var eq = part.indexOf("=");
+          var key = eq === -1 ? part : part.slice(0, eq);
+          if (key.toLowerCase() !== "e") {
+            continue;
+          }
+          var value = eq === -1 ? "" : part.slice(eq + 1);
+          return decodeEValue(value);
+        }
+        return null;
       }
       function stripEFromSegments(segments) {
         if (!segments) {
@@ -88,20 +102,35 @@
         }
         return { encoded: kept.join("&"), stripped: true };
       }
+      var capturedEmail = null;
       try {
         var url = new URL(window.location.href);
         var qs = url.search.startsWith("?") ? url.search.slice(1) : url.search;
         var hashInner = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
+        capturedEmail = readEFromSegments(hashInner);
+        if (capturedEmail === null) {
+          capturedEmail = readEFromSegments(qs);
+        }
         var qStrip = stripEFromSegments(qs);
         var hStrip = stripEFromSegments(hashInner);
-        if (!qStrip.stripped && !hStrip.stripped) {
-          return;
+        if (qStrip.stripped || hStrip.stripped) {
+          var nextSearch = qStrip.stripped ? (qStrip.encoded ? "?" + qStrip.encoded : "") : url.search;
+          var nextHash = hStrip.stripped ? (hStrip.encoded ? "#" + hStrip.encoded : "") : url.hash;
+          window.history.replaceState(null, "", url.pathname + nextSearch + nextHash);
         }
-        var nextSearch = qStrip.stripped ? (qStrip.encoded ? "?" + qStrip.encoded : "") : url.search;
-        var nextHash = hStrip.stripped ? (hStrip.encoded ? "#" + hStrip.encoded : "") : url.hash;
-        window.history.replaceState(null, "", url.pathname + nextSearch + nextHash);
       } catch (err) {
         void err;
+      }
+      if (capturedEmail !== null && capturedEmail !== "") {
+        var snapshot = capturedEmail;
+        Object.defineProperty(window, "__solonFeedbackEmailTake", {
+          value: function () {
+            delete window.__solonFeedbackEmailTake;
+            return snapshot;
+          },
+          enumerable: false,
+          configurable: true,
+        });
       }
     })();
   </script>
@@ -132,8 +161,26 @@
       }, 3000);
     })();
   </script>
-  <script src="/assets/js/feedback-form-prefill.min.js?v=5d51edbf1b" onerror="window.__solonFeedbackIframeFallback&amp;&amp;window.__solonFeedbackIframeFallback()"></script>
+  <script src="/assets/js/feedback-form-prefill.min.js?v=4d19461b69" onerror="window.__solonFeedbackIframeFallback&amp;&amp;window.__solonFeedbackIframeFallback()"></script>
   <script src="/assets/js/consent.min.js?v=4df0d79273"></script>
+
+      <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="../assets/vendor/aos/aos.min.css?v=1271739290" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css?v=f6d642a5c9" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=e8c36e8eb7" rel="stylesheet">
+    <link href="../assets/vendor/glightbox/css/glightbox.min.css?v=6d3f62d4d1" rel="stylesheet">
+    <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="../assets/css/style.min.css?v=a56d9fa608" rel="stylesheet">
+
+      <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
 
   <style>
     #hero canvas {
@@ -296,7 +343,7 @@
     <script src="../assets/vendor/php-email-form/validate.min.js?v=ac28aadb8c"></script>
 
     <!-- Template Main JS File -->
-    <script src="../assets/js/error-log.min.js?v=7578ac6990"></script>
+    <script src="../assets/js/error-log.min.js?v=618121d080"></script>
     <script src="../assets/js/main.min.js?v=a0a2a53b4b"></script>
     <script src="../assets/js/dynamic-year.min.js?v=7b00e57578"></script>
 

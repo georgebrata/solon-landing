@@ -13,7 +13,7 @@
   const RETRY_DELAYS_MS = [0, 400, 1200];
 
   /**
-   * Drop hash and sensitive query params (e, E, email) from a location href for logging.
+   * Drop query string and hash from a location href for logging (no email-bearing URL parts).
    * @param {string} href
    * @returns {string}
    */
@@ -23,29 +23,9 @@
     }
     try {
       const url = new URL(href);
-      const qs = url.search.startsWith("?") ? url.search.slice(1) : url.search;
-      if (qs) {
-        const parts = qs.split("&");
-        const kept = [];
-        for (let i = 0; i < parts.length; i += 1) {
-          const part = parts[i];
-          if (part === "") {
-            kept.push(part);
-            continue;
-          }
-          const eq = part.indexOf("=");
-          const key = eq === -1 ? part : part.slice(0, eq);
-          const keyLower = key.toLowerCase();
-          if (keyLower === "e" || keyLower === "email") {
-            continue;
-          }
-          kept.push(part);
-        }
-        const encoded = kept.join("&");
-        url.search = encoded ? `?${encoded}` : "";
-      }
+      url.search = "";
       url.hash = "";
-      return `${url.origin}${url.pathname}${url.search}`;
+      return `${url.origin}${url.pathname}`;
     } catch {
       return "";
     }

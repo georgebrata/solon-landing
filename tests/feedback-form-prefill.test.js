@@ -43,11 +43,13 @@ test("feedback iframe uses data-src, referrerpolicy, and noscript fallback", () 
   assert.ok(!/\ssrc="/u.test(iframeTags[0]), "main iframe must not have src in HTML");
 });
 
-test("feedback page sets strict-origin-when-cross-origin referrer meta", () => {
-  assert.match(
-    feedbackHtml,
-    /<meta name="referrer" content="strict-origin-when-cross-origin">/
-  );
+test("feedback page sets no-referrer meta before any stylesheet", () => {
+  const head = feedbackHtml.match(/<head>[\s\S]*?<\/head>/u)?.[0] ?? "";
+  const referrerIdx = head.indexOf('content="no-referrer"');
+  const firstStylesheetIdx = head.search(/<link[^>]+rel=["']stylesheet["']/iu);
+  assert.ok(referrerIdx > -1, "missing no-referrer meta");
+  assert.ok(firstStylesheetIdx > -1, "expected a stylesheet link");
+  assert.ok(referrerIdx < firstStylesheetIdx, "referrer meta must precede stylesheets");
 });
 
 test("buildFeedbackFormSrc encodes plus in email for Google Forms entry", () => {
@@ -110,8 +112,101 @@ test("rejects a@x.roș (non-ASCII in domain)", () => {
 
 test("feedback index inline hygiene runs before prefill bundle", () => {
   const prefillIdx = feedbackHtml.indexOf("feedback-form-prefill.min.js");
-  const inlineIdx = feedbackHtml.indexOf("stripEFromSegments");
+  const inlineIdx = feedbackHtml.indexOf("__solonFeedbackEmailTake");
   assert.ok(inlineIdx > -1 && inlineIdx < prefillIdx);
+});
+
+/**
+ * @param {string} initialHref
+ * @returns {{ replaceCalls: string[], iframeSrc: string, locationHref: string }}
+ */
+const runFeedbackInlineThenPrefill = (initialHref) => {
+  const inline = feedbackHtml.match(
+    /<script>\s*\(function \(\) \{[\s\S]*?__solonFeedbackEmailTake[\s\S]*?<\/script>/u,
+  );
+  assert.ok(inline, "expected inline capture/strip script");
+  const replaceCalls = [];
+  const assignments = [];
+  const iframe = {
+    title: "Formular feedback SOLON (Google Forms)",
+    _src: "",
+    getAttribute(name) {
+      if (name === "data-src") {
+        return FEEDBACK_FORM_BASE_SRC;
+      }
+      return null;
+    },
+    set src(value) {
+      assignments.push(value);
+      this._src = value;
+    },
+    get src() {
+      return this._src;
+    },
+    setAttribute(name, value) {
+      if (name === "src") {
+        this.src = value;
+      }
+    },
+  };
+  const document = {
+    readyState: "complete",
+    querySelector: () => iframe,
+    addEventListener() {
+      /* stub */
+    },
+  };
+  const win = {
+    URL,
+    history: {
+      replaceState(_state, _title, url) {
+        replaceCalls.push(url);
+        win.location.href = new URL(url, initialHref).href;
+      },
+    },
+    location: { href: initialHref },
+    document,
+    module: { exports: {} },
+  };
+  win.window = win;
+  const inlineCode = inline[0].replace(/<\/?script>/giu, "");
+  vm.runInNewContext(inlineCode, win, { filename: "feedback-inline-capture.js" });
+  vm.runInNewContext(source, win, { filename: "feedback-form-prefill.js" });
+  return {
+    replaceCalls,
+    iframeSrc: iframe._src,
+    locationHref: win.location.href,
+  };
+};
+
+test("inline capture plus prefill sets iframe entry and strips query e=", () => {
+  const email = "query.user@solon.agency";
+  const href = `https://solon.agency/feedback/?e=${encodeURIComponent(email)}`;
+  const result = runFeedbackInlineThenPrefill(href);
+  assert.equal(result.replaceCalls.length, 1);
+  assert.equal(result.replaceCalls[0], "/feedback/");
+  assert.doesNotMatch(result.locationHref, /[?#]e=/i);
+  assert.match(result.iframeSrc, /entry\.1640447617=query\.user%40solon\.agency/u);
+});
+
+test("inline capture plus prefill sets iframe entry and strips hash e=", () => {
+  const email = "hash.user@solon.agency";
+  const href = `https://solon.agency/feedback/#e=${encodeURIComponent(email)}`;
+  const result = runFeedbackInlineThenPrefill(href);
+  assert.equal(result.replaceCalls.length, 1);
+  assert.equal(result.replaceCalls[0], "/feedback/");
+  assert.doesNotMatch(result.locationHref, /[?#]e=/i);
+  assert.match(result.iframeSrc, /entry\.1640447617=hash\.user%40solon\.agency/u);
+});
+
+test("inline capture plus prefill handles /feedback/index.html?e=", () => {
+  const email = "index.user@solon.agency";
+  const href = `https://solon.agency/feedback/index.html?foo=1&e=${encodeURIComponent(email)}`;
+  const result = runFeedbackInlineThenPrefill(href);
+  assert.equal(result.replaceCalls.length, 1);
+  assert.equal(result.replaceCalls[0], "/feedback/index.html?foo=1");
+  assert.doesNotMatch(result.locationHref, /[?#&]e=/i);
+  assert.match(result.iframeSrc, /entry\.1640447617=index\.user%40solon\.agency/u);
 });
 
 test("inline head hygiene strips hash and query e= via replaceState", () => {

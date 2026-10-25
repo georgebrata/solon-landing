@@ -13,11 +13,11 @@ const noop = () => undefined;
 const silentConsole = { info: noop, warn: noop, error: noop };
 const noSleep = () => Promise.resolve();
 
-test("redactLocationHref drops hash and e/email query params", () => {
+test("redactLocationHref drops entire query string and hash", () => {
   const href =
     "https://solon.agency/feedback/?foo=1&e=secret%40x.ro&email=other%40x.ro#e=hash%40x.ro";
   const redacted = redactLocationHref(href);
-  assert.equal(redacted, "https://solon.agency/feedback/?foo=1");
+  assert.equal(redacted, "https://solon.agency/feedback/");
 });
 
 test("error log payload href omits hash and sensitive query params", async () => {
