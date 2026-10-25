@@ -288,6 +288,39 @@ test("custom mix persists and rehydrates", () => {
   assert.equal(second.api.getConsent().version, first.api.CONSENT_VERSION);
 });
 
+test("applyChoice marketing-only grants Meta without revoking it afterward", () => {
+  const fbqCalls = [];
+  const { api, context } = loadConsent({ cookie: "_ga=GA1.1; _fbp=fb.1; visitor=keep" });
+  context.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  api.applyChoice(
+    { necessary: true, analytics: false, marketing: true },
+    { persist: false },
+  );
+  assert.deepEqual(fbqCalls[fbqCalls.length - 1], ["consent", "grant"]);
+  const jar = context.document.cookie;
+  assert.match(jar, /_ga=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("_fbp=; Path=/; Max-Age=0"), false);
+  assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
+});
+
+test("applyChoice analytics-only revokes Meta but keeps GA cookies", () => {
+  const fbqCalls = [];
+  const { api, context } = loadConsent({ cookie: "_ga=GA1.1; _fbp=fb.1; visitor=keep" });
+  context.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  api.applyChoice(
+    { necessary: true, analytics: true, marketing: false },
+    { persist: false },
+  );
+  assert.ok(fbqCalls.some((call) => call[0] === "consent" && call[1] === "revoke"));
+  const jar = context.document.cookie;
+  assert.match(jar, /_fbp=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("_ga=; Path=/; Max-Age=0"), false);
+});
+
 test("version bump invalidates stored choice", () => {
   const { api } = loadConsent();
   const stale = JSON.stringify({

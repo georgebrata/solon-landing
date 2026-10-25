@@ -34,4 +34,7 @@
     fbq("init", PIXEL_ID);
     fbq("track", "PageView");
   }
+  if (typeof document !== "undefined" && typeof document.dispatchEvent === "function") {
+    document.dispatchEvent(new CustomEvent("solon:pixel-ready"));
+  }
 })();

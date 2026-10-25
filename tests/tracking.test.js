@@ -141,6 +141,181 @@ test("solonTrack never forwards @ or email= in gtag or fbq payloads", () => {
   }
 });
 
+test("page ViewContent fires on solon:pixel-ready when fbq loads after DOMContentLoaded", () => {
+  const gtagCalls = [];
+  const fbqCalls = [];
+  const pixelReadyListeners = [];
+  let domReady;
+  const doc = {
+    readyState: "loading",
+    addEventListener(type, fn) {
+      if (type === "DOMContentLoaded") domReady = fn;
+      if (type === "solon:pixel-ready") pixelReadyListeners.push(fn);
+    },
+    querySelector() {
+      return null;
+    },
+  };
+  const context = {
+    console,
+    window: {
+      SolonConsent: {
+        hasConsent: (category) => category === "analytics" || category === "marketing",
+      },
+      gtag: (...args) => {
+        gtagCalls.push(args);
+      },
+      location: { pathname: "/abonament/gold/", href: "https://solon.agency/abonament/gold/" },
+      document: doc,
+    },
+  };
+  context.globalThis = context.window;
+  vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
+  domReady?.();
+  assert.equal(gtagCalls.some((call) => call[1] === "view_item"), true);
+  assert.equal(fbqCalls.length, 0);
+  context.window.fbq = (...args) => {
+    fbqCalls.push(args);
+  };
+  for (const listener of pixelReadyListeners) {
+    listener();
+  }
+  assert.equal(fbqCalls.filter((call) => call[0] === "track" && call[1] === "ViewContent").length, 1);
+});
+
+test("newsletter sign_up only on confirmare-abonare, not on other pages", () => {
+  const home = loadTracking({
+    consent: {
+      hasConsent: (category) => category === "analytics" || category === "marketing",
+    },
+    location: { pathname: "/", href: "https://solon.agency/" },
+  });
+  assert.equal(home.gtagCalls.some((call) => call[1] === "sign_up"), false);
+
+  const confirm = loadTracking({
+    consent: {
+      hasConsent: (category) => category === "analytics" || category === "marketing",
+    },
+    location: {
+      pathname: "/confirmare-abonare/",
+      href: "https://solon.agency/confirmare-abonare/",
+    },
+  });
+  assert.equal(confirm.gtagCalls.filter((call) => call[1] === "sign_up").length, 1);
+  assert.equal(
+    confirm.fbqCalls.filter((call) => call[0] === "track" && call[1] === "CompleteRegistration").length,
+    1,
+  );
+});
+
+test("tracking.js binds click handlers only once when evaluated twice", () => {
+  let captureClickHandlers = 0;
+  const doc = {
+    readyState: "complete",
+    addEventListener(type, _fn, capture) {
+      if (type === "click" && capture) captureClickHandlers += 1;
+    },
+    querySelector() {
+      return null;
+    },
+  };
+  const context = {
+    console,
+    window: {
+      SolonConsent: { hasConsent: () => false },
+      location: { pathname: "/", href: "https://solon.agency/" },
+      document: doc,
+    },
+  };
+  context.globalThis = context.window;
+  vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
+  vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
+  assert.equal(captureClickHandlers, 1);
+});
+
+test("view_item on abonament includes value and items when prices are in the DOM", () => {
+  const doc = {
+    readyState: "complete",
+    addEventListener() {},
+    querySelector(sel) {
+      if (sel === ".price-annual") {
+        return { textContent: "1.099 lei/an" };
+      }
+      return null;
+    },
+  };
+  const { gtagCalls } = loadTracking({
+    consent: { hasConsent: (c) => c === "analytics" },
+    location: { pathname: "/abonament/gold/", href: "https://solon.agency/abonament/gold/" },
+    document: doc,
+  });
+  const viewCall = gtagCalls.find((call) => call[1] === "view_item");
+  assert.ok(viewCall);
+  assert.equal(viewCall[2].value, 1099);
+  assert.equal(viewCall[2].currency, "RON");
+  assert.equal(viewCall[2].items[0].price, 1099);
+});
+
+test("checkout on external pay link uses beacon transport and delays navigation", () => {
+  const gtagCalls = [];
+  const timeouts = [];
+  let navigatedTo = "";
+  const link = {
+    tagName: "A",
+    classList: { contains: () => false },
+    getAttribute(name) {
+      if (name === "href") return "https://pay.netopia.ro/start";
+      if (name === "data-plan") return "gold";
+      return null;
+    },
+    closest() {
+      return link;
+    },
+  };
+  const event = {
+    target: link,
+    preventDefault() {},
+  };
+  const priorGtag = globalThis.gtag;
+  const priorConsent = globalThis.SolonConsent;
+  const priorLocation = globalThis.location;
+  const priorSetTimeout = globalThis.setTimeout;
+  globalThis.SolonConsent = {
+    hasConsent: (category) => category === "analytics" || category === "marketing",
+  };
+  globalThis.fbq = () => {};
+  globalThis.gtag = (...args) => {
+    gtagCalls.push(args);
+  };
+  globalThis.location = {
+    pathname: "/",
+    href: "https://solon.agency/",
+    set href(value) {
+      navigatedTo = value;
+    },
+    get href() {
+      return navigatedTo || "https://solon.agency/";
+    },
+  };
+  globalThis.setTimeout = (fn, ms) => {
+    timeouts.push(ms);
+    fn();
+  };
+  const { trackCheckoutClick } = require("../assets/js/tracking.js");
+  trackCheckoutClick(link, event);
+  if (priorGtag !== undefined) globalThis.gtag = priorGtag;
+  else delete globalThis.gtag;
+  if (priorConsent !== undefined) globalThis.SolonConsent = priorConsent;
+  else delete globalThis.SolonConsent;
+  globalThis.location = priorLocation;
+  globalThis.setTimeout = priorSetTimeout;
+  const checkoutCall = gtagCalls.find((call) => call[1] === "begin_checkout");
+  assert.ok(checkoutCall);
+  assert.equal(checkoutCall[2].transport_type, "beacon");
+  assert.equal(navigatedTo, "https://pay.netopia.ro/start");
+  assert.ok(timeouts.includes(120));
+});
+
 test("newsletter sign_up fires at most once per session (form and confirm page)", () => {
   const session = {};
   const gtagCalls = [];

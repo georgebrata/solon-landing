@@ -25,21 +25,6 @@
   const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
   const MAX_AGE_MS = COOKIE_MAX_AGE * 1000;
   const CATEGORIES = ["necessary", "analytics", "marketing"];
-  const TRACKER_COOKIE_PREFIXES = [
-    "_ga",
-    "_gid",
-    "_gat",
-    "_gcl",
-    "_clck",
-    "_clsk",
-    "_fbp",
-    "_fbc",
-    "CLID",
-    "ANONCHK",
-    "SM",
-    "MUID",
-    "sib_",
-  ];
   const SKIP_SCRIPT_ATTRS = {
     type: true,
     "data-consent-category": true,
@@ -435,45 +420,6 @@
   }
 
   /**
-   * @param {string} name
-   * @returns {boolean}
-   */
-  function isTrackerCookie(name) {
-    if (!name || name === STORAGE_KEY) {
-      return false;
-    }
-    for (const prefix of TRACKER_COOKIE_PREFIXES) {
-      if (name === prefix || name.startsWith(prefix)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /** Clears known first-party tracker cookies after withdrawal.
-   * @returns {void}
-   */
-  function expireTrackerCookies() {
-    if (!doc?.cookie) {
-      return;
-    }
-    const host = win.location?.hostname || "";
-    const parts = String(doc.cookie).split(";");
-    for (const part of parts) {
-      const name = part.split("=")[0].trim();
-      if (isTrackerCookie(name)) {
-        doc.cookie = `${name}=; Path=/; Max-Age=0`;
-        if (host) {
-          doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=${host}`;
-          if (host.includes(".")) {
-            doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=.${host}`;
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * @param {Function} fn
    * @returns {boolean}
    */
@@ -486,29 +432,66 @@
     }
   }
 
-  /** Asks already-loaded tags to stop tracking after a category is withdrawn.
+  const ANALYTICS_COOKIE_PREFIXES = ["_ga", "_gid", "_gat", "_gcl", "_clck", "_clsk", "CLID", "ANONCHK", "SM", "MUID"];
+  const MARKETING_COOKIE_PREFIXES = ["_fbp", "_fbc", "sib_"];
+
+  /**
+   * @param {string[]} prefixes
    * @returns {void}
    */
-  function disableLoadedTags() {
-    /** Revokes Clarity tracking if the tag already ran.
-     * @returns {void}
-     */
-    function revokeClarity() {
-      if (typeof win.clarity === "function") {
+  function expireCookiesForPrefixes(prefixes) {
+    if (!doc?.cookie) {
+      return;
+    }
+    const host = win.location?.hostname || "";
+    const parts = String(doc.cookie).split(";");
+    for (const part of parts) {
+      const name = part.split("=")[0].trim();
+      if (!name || name === STORAGE_KEY) {
+        continue;
+      }
+      let matches = false;
+      for (const prefix of prefixes) {
+        if (name === prefix || name.startsWith(prefix)) {
+          matches = true;
+          break;
+        }
+      }
+      if (!matches) {
+        continue;
+      }
+      doc.cookie = `${name}=; Path=/; Max-Age=0`;
+      if (host) {
+        doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=${host}`;
+        if (host.includes(".")) {
+          doc.cookie = `${name}=; Path=/; Max-Age=0; Domain=.${host}`;
+        }
+      }
+    }
+  }
+
+  /** Revokes analytics tags and clears analytics cookies only.
+   * @returns {void}
+   */
+  function disableAnalyticsTags() {
+    if (typeof win.clarity === "function") {
+      tryCall(() => {
         win.clarity("consent", false);
-      }
+      });
     }
-    /** Revokes Meta Pixel tracking if the tag already ran.
-     * @returns {void}
-     */
-    function revokeFbq() {
-      if (typeof win.fbq === "function") {
+    expireCookiesForPrefixes(ANALYTICS_COOKIE_PREFIXES);
+  }
+
+  /** Revokes Meta Pixel and clears marketing cookies only.
+   * @returns {void}
+   */
+  function disableMarketingTags() {
+    if (typeof win.fbq === "function") {
+      tryCall(() => {
         win.fbq("consent", "revoke");
-      }
+      });
     }
-    tryCall(revokeClarity);
-    tryCall(revokeFbq);
-    expireTrackerCookies();
+    expireCookiesForPrefixes(MARKETING_COOKIE_PREFIXES);
   }
 
   /** Grants Meta Pixel consent when marketing is allowed.
@@ -567,8 +550,11 @@
     if (isGrantedFlag(next.marketing)) {
       tryCall(grantMarketingFbq);
     }
-    if (!next.analytics || !next.marketing) {
-      disableLoadedTags();
+    if (!isGrantedFlag(next.analytics)) {
+      disableAnalyticsTags();
+    }
+    if (!isGrantedFlag(next.marketing)) {
+      disableMarketingTags();
     }
     return next;
   }

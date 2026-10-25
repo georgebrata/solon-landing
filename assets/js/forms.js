@@ -305,12 +305,6 @@
           track("Lead", "generate_lead", { content_name: type });
         }
       }
-      if (type === "Newsletter" || newsletterAlsoSaved) {
-        const trackNewsletter = globalThis.solonTrackNewsletterSignUp;
-        if (typeof trackNewsletter === "function") {
-          trackNewsletter();
-        }
-      }
     } catch {
       return;
     }

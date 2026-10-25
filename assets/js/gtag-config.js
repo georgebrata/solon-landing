@@ -12,9 +12,9 @@
    * @param {...unknown} gtagArgs
    * @returns {void}
    */
-  function gtag(...gtagArgs) {
+  const gtag = (...gtagArgs) => {
     window.dataLayer.push(gtagArgs);
-  }
+  };
   if (typeof window.gtag !== "function") {
     window.gtag = gtag;
   }
