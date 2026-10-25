@@ -48,7 +48,7 @@ json_ld: |-
             "name": "Ce se întâmplă dacă pe website clienții pot plăti sau rezerva online o consultație?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "În acest caz, activitatea se poate apropia de serviciile de comerț electronic definite la art. 3 pct. 22 din Legea 232/2022, adică servicii furnizate la distanță, prin mijloace electronice, la solicitarea individuală a unui consumator, în vederea încheierii unui contract de consum. Microîntreprinderile care oferă servicii sunt scutite de cerințele de accesibilitate, potrivit art. 4 alin. (5). Pentru încadrarea exactă a cabinetului tău, cere o opinie."
+              "text": "În acest caz, activitatea se poate apropia de serviciile de comerț electronic definite la art. 3 pct. 22 din Legea 232/2022, adică servicii furnizate la distanță, prin mijloace electronice, la solicitarea individuală a unui consumator, în vederea încheierii unui contract de consum. Directiva (UE) 2019/882 scutește microîntreprinderile care oferă servicii de cerințele de accesibilitate. Legea 232/2022 preia scutirea la art. 4 alin. (5), dar cu o trimitere la alin. (3) care trebuie clarificată. Pentru încadrarea exactă a cabinetului tău, confirmă cu ADR sau cere o opinie unui avocat."
             }
           },
           {
@@ -126,9 +126,9 @@ Supravegherea serviciilor de comerț electronic revine Autorității pentru Digi
 
 ## 3. Se aplică legea website-ului cabinetului tău?
 
-<p>Un website de prezentare al unui cabinet nu se află, în principiu, printre serviciile enumerate de Legea 232/2022. Dacă însă pe website un consumator poate încheia online un contract (de exemplu, cumpără și plătește o consultație), activitatea se poate apropia de „serviciile de comerț electronic” din lege. Microîntreprinderile care oferă servicii (sub 10 angajați și cifră de afaceri anuală sau bilanț de cel mult echivalentul a 2 milioane de euro) sunt scutite de cerințele de accesibilitate. Dacă nu ești sigur în ce categorie intri, verifică textul legii sau cere o opinie.</p>
+<p>Un website de prezentare al unui cabinet nu se află, în principiu, printre serviciile enumerate de Legea 232/2022. Dacă însă pe website un consumator poate încheia online un contract (de exemplu, cumpără și plătește o consultație), activitatea se poate apropia de „serviciile de comerț electronic” din lege. Directiva (UE) 2019/882, la art. 4 alin. (5), scutește microîntreprinderile care oferă servicii de cerințele de accesibilitate. Microîntreprinderea are sub 10 persoane, inclusiv asociații care lucrează efectiv în cabinet, și o cifră de afaceri anuală sau un bilanț de cel mult 2 milioane de euro. Un cabinet individual sau o societate mică de avocatură se încadrează, de regulă, în aceste praguri. Dacă nu ești sigur, cere o opinie.</p>
 
-Scutirea pentru microîntreprinderi este prevăzută la art. 4 alin. (5), iar definiția microîntreprinderii se află la art. 3 pct. 12.
+<p>În Legea nr. 232/2022, scutirea apare la art. 4 alin. (5), dar textul trimite la cerințele „prevăzute la alin. (3)”, care în legea română privesc serviciile de transport urban, suburban și regional. Interpretarea conformă cu directiva susține o scutire generală, însă confirmă încadrarea cu ADR sau cu un avocat. Definiția microîntreprinderii se află la art. 3 pct. 12.</p>
 
 ## 4. Amenzi și termene
 
@@ -177,7 +177,7 @@ Un website de prezentare al unui cabinet nu se află, în principiu, printre ser
 
 ### Ce se întâmplă dacă pe website clienții pot plăti sau rezerva online o consultație?
 
-În acest caz, activitatea se poate apropia de serviciile de comerț electronic definite la art. 3 pct. 22 din Legea 232/2022, adică servicii furnizate la distanță, prin mijloace electronice, la solicitarea individuală a unui consumator, în vederea încheierii unui contract de consum. Microîntreprinderile care oferă servicii sunt scutite de cerințele de accesibilitate, potrivit art. 4 alin. (5). Pentru încadrarea exactă a cabinetului tău, cere o opinie.
+În acest caz, activitatea se poate apropia de serviciile de comerț electronic definite la art. 3 pct. 22 din Legea 232/2022, adică servicii furnizate la distanță, prin mijloace electronice, la solicitarea individuală a unui consumator, în vederea încheierii unui contract de consum. Directiva (UE) 2019/882 scutește microîntreprinderile care oferă servicii de cerințele de accesibilitate. Legea 232/2022 preia scutirea la art. 4 alin. (5), dar cu o trimitere la alin. (3) care trebuie clarificată. Pentru încadrarea exactă a cabinetului tău, confirmă cu ADR sau cere o opinie unui avocat.
 
 ### Ce amenzi prevede Legea 232/2022?
 
