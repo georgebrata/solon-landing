@@ -43,6 +43,7 @@
     for (const [key, value] of Object.entries(source)) {
       if (PII_KEYS.test(key)) continue;
       if (value === undefined || value === null) continue;
+      if (typeof value === "string" && (value.includes("@") || /email=/iu.test(value))) continue;
       out[key] = value;
     }
     return out;

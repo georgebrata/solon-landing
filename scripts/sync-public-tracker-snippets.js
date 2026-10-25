@@ -22,7 +22,9 @@ const shouldSkipPublicTrackerSync = (relPath) => {
     rel === "r" ||
     rel.startsWith("r/") ||
     rel.startsWith("templates/") ||
-    rel.startsWith("node_modules/")
+    rel.startsWith("node_modules/") ||
+    rel === "unsubscribe" ||
+    rel.startsWith("unsubscribe/")
   );
 };
 

@@ -126,6 +126,47 @@
 
   let current = deniedConsent();
 
+  /**
+   * @param {string} href
+   * @returns {{ pathAndQuery: string, email: string|null, stripped: boolean }}
+   */
+  function stripEmailQueryFromHref(href) {
+    try {
+      const url = new URL(href);
+      const email = url.searchParams.get("email");
+      let stripped = false;
+      if (url.searchParams.has("email")) {
+        url.searchParams.delete("email");
+        stripped = true;
+      }
+      return {
+        pathAndQuery: url.pathname + url.search + url.hash,
+        email: email || null,
+        stripped,
+      };
+    } catch {
+      return { pathAndQuery: "", email: null, stripped: false };
+    }
+  }
+
+  /**
+   * Removes email from the visible URL before trackers or other scripts read location.
+   * @returns {void}
+   */
+  function applySensitiveUrlHygiene() {
+    if (!win.location || typeof win.history?.replaceState !== "function") {
+      return;
+    }
+    const path = win.location.pathname || "";
+    const { pathAndQuery, email, stripped } = stripEmailQueryFromHref(win.location.href);
+    if (/\/unsubscribe\/?$/iu.test(path) && email) {
+      win.__solonUnsubscribeEmail = email;
+    }
+    if (stripped) {
+      win.history.replaceState(null, "", pathAndQuery);
+    }
+  }
+
   /** Installs a dataLayer-backed gtag stub before any vendor tag runs.
    * @returns {void}
    */
@@ -786,13 +827,15 @@
           createCategory({
             id: "solon-consent-analytics",
             label: "Analiză",
-            hint: "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare.",
+            hint:
+              "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare., inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor",
             input: analyticsInput,
           }),
           createCategory({
             id: "solon-consent-marketing",
             label: "Marketing",
-            hint: "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale pe website de adresa ta. Pot implica publicitate măsurată.",
+            hint:
+              "Meta Pixel, pe toate paginile publice, pentru măsurarea conversiilor și a campaniilor; Brevo (identificarea ta când te abonezi la newsletter); widget-ul ANPC (mny.ro), pe paginile unde apare.",
             input: marketingInput,
           }),
         ]),
@@ -1138,12 +1181,16 @@
     parseConsent,
     setConsentModeDefault,
     boot,
+    stripEmailQueryFromHref,
+    applySensitiveUrlHygiene,
   };
 
   win.SolonConsent = api;
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;
   }
+
+  applySensitiveUrlHygiene();
 
   if (doc) {
     boot();

@@ -604,14 +604,21 @@ test("cookies policy describes the banner, categories, and all trackers", () => 
   assert.equal(html.includes("trimiți un formular cu email"), false);
 });
 
-test("consent marketing category describes Brevo visit linking via newsletter only", () => {
+test("consent analytics hint documents conversion events without form content", () => {
   assert.ok(
     source.includes(
-      "Meta Pixel, Brevo și widget-ul ANPC (mny.ro) — măsurarea campaniilor. Dacă te abonezi la newsletter cu emailul tău, Brevo poate lega vizitele tale pe website de adresa ta. Pot implica publicitate măsurată."
-    )
+      "Google Analytics 4, Microsoft Clarity, Ahrefs Analytics, Metricool și counter.dev — statistici de utilizare., inclusiv evenimente de conversie (de exemplu, trimiterea unui formular), fără conținutul formularelor",
+    ),
   );
-  assert.equal(source.includes("Dacă trimiți un formular cu emailul tău, Brevo poate lega"), false);
-  assert.equal(source.includes("vizitele tale de pe site de adresa ta"), false);
+});
+
+test("consent marketing hint matches Legal C4 copy", () => {
+  assert.ok(
+    source.includes(
+      "Meta Pixel, pe toate paginile publice, pentru măsurarea conversiilor și a campaniilor; Brevo (identificarea ta când te abonezi la newsletter); widget-ul ANPC (mny.ro), pe paginile unde apare.",
+    ),
+  );
+  assert.equal(source.includes("emailul tău"), false);
 });
 
 test("privacy policy limits Brevo visit linking to newsletter subscription", () => {

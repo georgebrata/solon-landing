@@ -115,6 +115,32 @@ test("parseRonAmount reads Romanian-formatted prices", () => {
   assert.equal(parseRonAmount("99 lei/lună"), 99);
 });
 
+const assertNoEmailLeakInPayload = (payload) => {
+  const serialized = JSON.stringify(payload);
+  assert.equal(serialized.includes("@"), false, `unexpected @ in ${serialized}`);
+  assert.equal(/email=/iu.test(serialized), false, `unexpected email= in ${serialized}`);
+};
+
+test("solonTrack never forwards @ or email= in gtag or fbq payloads", () => {
+  const { solonTrack, gtagCalls, fbqCalls } = loadTracking({
+    consent: {
+      hasConsent: (category) => category === "analytics" || category === "marketing",
+    },
+    location: { pathname: "/", href: "https://solon.agency/?email=leak@example.com" },
+  });
+  solonTrack("Lead", "generate_lead", {
+    content_name: "Contact",
+    email: "leak@example.com",
+    page_url: "https://solon.agency/?email=leak@example.com",
+  });
+  for (const call of gtagCalls) {
+    assertNoEmailLeakInPayload(call);
+  }
+  for (const call of fbqCalls) {
+    assertNoEmailLeakInPayload(call);
+  }
+});
+
 test("newsletter sign_up fires at most once per session (form and confirm page)", () => {
   const session = {};
   const gtagCalls = [];
