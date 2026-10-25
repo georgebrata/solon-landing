@@ -7,7 +7,16 @@
 (function (global) {
   const CURRENCY = "RON";
   const PACKAGE_SLUGS = ["bronze", "silver", "gold", "platinum"];
-  const PII_KEYS = /^(email|e-mail|phone|telefon|tel|name|nume|firstname|first_name|lastname|last_name|ip)$/i;
+  const PII_KEYS =
+    /^(email|e-mail|phone|telefon|tel|name|nume|firstname|first_name|lastname|last_name|mesaj|message|ip)$/i;
+  const GA4_CUSTOM_EVENTS = new Set([
+    "view_item",
+    "generate_lead",
+    "sign_up",
+    "contact",
+    "begin_checkout",
+  ]);
+  const BLOCKED_META_EVENTS = new Set(["Purchase"]);
 
   /**
    * @returns {string}
@@ -56,10 +65,18 @@
    */
   function solonTrack(metaEvent, ga4Event, params) {
     const eventId = generateEventId();
+    if (BLOCKED_META_EVENTS.has(metaEvent) || ga4Event === "purchase") {
+      return eventId;
+    }
     const safe = sanitizeParams(params);
     const consent = consentApi();
 
-    if (consent && consent.hasConsent("analytics") && typeof global.gtag === "function") {
+    if (
+      consent &&
+      consent.hasConsent("analytics") &&
+      GA4_CUSTOM_EVENTS.has(ga4Event) &&
+      typeof global.gtag === "function"
+    ) {
       global.gtag("event", ga4Event, { ...safe, event_id: eventId });
     }
 
@@ -287,6 +304,8 @@
       trackCheckoutClick,
       trackContactClick,
       CURRENCY,
+      GA4_CUSTOM_EVENTS,
+      BLOCKED_META_EVENTS,
     };
   }
 

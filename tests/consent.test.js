@@ -199,6 +199,31 @@ test("rejection expires sib_ cookies even when the tracker never started", () =>
   assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
 });
 
+test("rejection expires Meta _fbp and _fbc cookies", () => {
+  const { api, context } = loadConsent({
+    cookie: "_fbp=fb.1.123; _fbc=fb.2.456; visitor=keep",
+  });
+  api.rejectAll();
+  const jar = context.document.cookie;
+  assert.match(jar, /_fbp=; Path=\/; Max-Age=0/);
+  assert.match(jar, /_fbc=; Path=\/; Max-Age=0/);
+  assert.equal(jar.includes("visitor=; Path=/; Max-Age=0"), false);
+});
+
+test("meta-pixel script stays inert until marketing consent", () => {
+  const pixel = createInertScript("marketing", {
+    src: "/assets/js/meta-pixel.min.js",
+  });
+  const { api, created } = loadConsent({ inertScripts: [pixel] });
+  assert.equal(created.length, 0);
+  api.saveCustom({ analytics: true, marketing: false });
+  assert.equal(created.length, 0);
+  api.acceptAll();
+  const activated = created.filter((el) => String(el.src || "").includes("meta-pixel.min.js"));
+  assert.equal(activated.length, 1);
+  assert.equal(pixel.activated, "true");
+});
+
 test("reject all persists denied optional categories", () => {
   const { api, store } = loadConsent();
   api.acceptAll();
