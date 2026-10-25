@@ -10,6 +10,8 @@ const {
   shouldSkipPublicTrackerSync,
   ensureHeadSnippets,
   ensureTrackingScript,
+  trackerHeadBlock,
+  assetContentHash,
   normalizeTrackerHeadPaths,
   normalizeTrackingScriptLine,
 } = require("../scripts/sync-public-tracker-snippets");
@@ -102,6 +104,16 @@ test("sync helpers do not inject snippets into skipped r/ redirect stubs", () =>
     assert.equal(countMatches(html, /gtag-config(?:\.min)?\.js/i), 0);
     assert.equal(countMatches(html, /tracking(?:\.min)?\.js/i), 0);
   }
+});
+
+test("trackerHeadBlock stamps first-party tracker scripts with content hashes", () => {
+  const block = trackerHeadBlock();
+  const gtagHash = assetContentHash("assets/js/gtag-config.min.js");
+  const pixelHash = assetContentHash("assets/js/meta-pixel.min.js");
+  const metricoolHash = assetContentHash("assets/js/metricool-init.min.js");
+  assert.match(block, new RegExp(`/assets/js/gtag-config\\.min\\.js\\?v=${gtagHash}`));
+  assert.match(block, new RegExp(`/assets/js/meta-pixel\\.min\\.js\\?v=${pixelHash}`));
+  assert.match(block, new RegExp(`/assets/js/metricool-init\\.min\\.js\\?v=${metricoolHash}`));
 });
 
 test("normalizeTrackerHeadPaths uses root-absolute /assets/js tracker sources", () => {

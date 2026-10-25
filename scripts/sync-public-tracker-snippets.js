@@ -4,10 +4,23 @@
  * Ensures public HTML pages include consent-gated Meta Pixel + GA4 snippets
  * and tracking.min.js. Skips r/, error pages, and templates/.
  */
+const nodeCrypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
+const { GA_MEASUREMENT_ID, gtagLoaderUrl } = require("./lib/ga-measurement");
+
+/**
+ * @param {string} relFromRoot Repo-relative path with forward slashes.
+ * @returns {string}
+ */
+const assetContentHash = (relFromRoot) =>
+  nodeCrypto
+    .createHash("sha256")
+    .update(fs.readFileSync(path.join(root, relFromRoot)))
+    .digest("hex")
+    .slice(0, 10);
 
 const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates"]);
 
@@ -54,22 +67,27 @@ const normalizeTrackingScriptLine = (html) =>
 /**
  * @returns {string}
  */
-const trackerHeadBlock = () => `
+const trackerHeadBlock = () => {
+  const metricoolHash = assetContentHash("assets/js/metricool-init.min.js");
+  const metaPixelHash = assetContentHash("assets/js/meta-pixel.min.js");
+  const gtagConfigHash = assetContentHash("assets/js/gtag-config.min.js");
+  return `
 <!-- counter.dev -->
   <script type="text/plain" data-consent-category="analytics" src="https://cdn.counter.dev/script.js" data-id="03bd5925-48e2-4d33-ae59-d66aaf6acba0"
     data-utcoffset="2" defer></script>
 
   <!--metricool-->
-  <script type="text/plain" data-consent-category="analytics" src="/assets/js/metricool-init.min.js" data-metricool-hash="5eff58c72e852f80d27f8f1735299845"></script>
+  <script type="text/plain" data-consent-category="analytics" src="/assets/js/metricool-init.min.js?v=${metricoolHash}" data-metricool-hash="5eff58c72e852f80d27f8f1735299845"></script>
 
   <!-- Meta Pixel Code -->
-  <script type="text/plain" data-consent-category="marketing" src="/assets/js/meta-pixel.min.js" defer></script>
+  <script type="text/plain" data-consent-category="marketing" src="/assets/js/meta-pixel.min.js?v=${metaPixelHash}" defer></script>
   <!-- End Meta Pixel Code -->
 
   <!-- Google tag (gtag.js) -->
-  <script type="text/plain" data-consent-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"></script>
-  <script type="text/plain" data-consent-category="analytics" src="/assets/js/gtag-config.min.js"></script>
+  <script type="text/plain" data-consent-category="analytics" async src="${gtagLoaderUrl}"></script>
+  <script type="text/plain" data-consent-category="analytics" src="/assets/js/gtag-config.min.js?v=${gtagConfigHash}"></script>
 `;
+};
 
 const TRACKING_BODY_TAG =
   '  <script src="/assets/js/tracking.min.js" defer></script>\n';
@@ -169,6 +187,8 @@ module.exports = {
   ensureHeadSnippets,
   ensureTrackingScript,
   trackerHeadBlock,
+  assetContentHash,
+  GA_MEASUREMENT_ID,
   shouldSkipPublicTrackerSync,
   listHtmlFiles,
   normalizeTrackerHeadPaths,
