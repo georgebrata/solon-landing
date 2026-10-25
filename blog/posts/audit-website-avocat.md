@@ -168,9 +168,9 @@ Este o reparație rapidă pentru cine administrează găzduirea, dar trebuie fă
 ## 9. Informațiile legale și regulile profesiei
 
 **Cum verifici:**
-- Website-ul are o politică de confidențialitate care descrie prelucrările reale, conform [Regulamentului (UE) 2016/679](https://legislatie.just.ro/Public/DetaliiDocumentAfis/201834)?
-- Dacă folosești cookie-uri care nu sunt strict necesare (de exemplu, pentru statistici), vizitatorul își dă acordul înainte ca ele să fie plasate? Potrivit art. 4 alin. (5) din [Legea nr. 506/2004](https://legislatie.just.ro/Public/DetaliiDocument/56973), stocarea de informații în dispozitivul vizitatorului necesită acordul acestuia, după o informare clară, cu excepțiile prevăzute de lege.
-- Textele de pe website respectă regulile de publicitate ale profesiei?
+- Website-ul are o politică de confidențialitate care descrie prelucrările reale și cuprinde informațiile cerute de art. 13 din [Regulamentul (UE) 2016/679](https://legislatie.just.ro/Public/DetaliiDocumentAfis/201834)?
+- Dacă folosești cookie-uri care nu sunt strict necesare (de exemplu, pentru statistici), vizitatorul își dă acordul înainte ca ele să fie plasate? Potrivit art. 4 alin. (5) din [Legea nr. 506/2004](https://legislatie.just.ro/Public/DetaliiDocument/56973), stocarea de informații în dispozitivul vizitatorului sau accesul la informațiile deja stocate acolo sunt permise numai dacă vizitatorul și-a dat acordul, după ce a primit, înainte de acord, informații clare și complete, inclusiv despre scop. Excepțiile sunt la alin. (6): stocarea făcută exclusiv pentru transmiterea unei comunicări și cea strict necesară pentru un serviciu pe care vizitatorul l-a cerut în mod expres. Textul legii trimite încă la Legea nr. 677/2001, abrogată; trimiterea se citește acum ca trimitere la Regulamentul (UE) 2016/679 (art. V din [Legea nr. 129/2018](https://legislatie.just.ro/Public/DetaliiDocument/201712)).
+- Textele de pe website respectă regulile de publicitate ale profesiei? Le găsești în [Statutul profesiei de avocat](https://www.unbr.ro/statutul-profesiei-de-avocat/) (art. 243¹–243³ și anexele nr. XXXIII și XXXIV) și în Codul deontologic al avocatului (art. 20): de exemplu, fără informații înșelătoare, fără garantarea rezultatului și fără mențiuni despre rezultatele obținute sau despre identitatea clienților.
 
 **Ce faci dacă pică:** un link către politica de confidențialitate sau un banner de cookie-uri nu înseamnă automat conformitate; contează ce se întâmplă efectiv pe website. Pentru regulile de publicitate, ghidul [ce are voie un avocat să publice online](../ce-are-voie-avocat-sa-publice-online/) explică limitele, cu trimiteri la textele aplicabile. Pentru o situație concretă, consultă baroul din care faci parte.
 
@@ -239,7 +239,9 @@ Formularul de contact și numărul de telefon, pentru că o problemă acolo îns
 - [Verificarea profilului de business pe Google](https://support.google.com/business/answer/7107242) - Google Business Profile Help
 - [WHOIS pentru domenii.ro](https://www.rotld.ro/) - RoTLD
 - [Regulamentul (UE) 2016/679 (GDPR)](https://legislatie.just.ro/Public/DetaliiDocumentAfis/201834) - legislatie.just.ro
-- [Legea nr. 506/2004, art. 4 alin. (5)](https://legislatie.just.ro/Public/DetaliiDocument/56973) - legislatie.just.ro
+- [Legea nr. 506/2004, art. 4 alin. (5)-(6)](https://legislatie.just.ro/Public/DetaliiDocument/56973) - legislatie.just.ro
+- [Legea nr. 129/2018, art. V (abrogarea Legii nr. 677/2001)](https://legislatie.just.ro/Public/DetaliiDocument/201712) - legislatie.just.ro
+- [Statutul profesiei de avocat, art. 243¹–243³](https://www.unbr.ro/statutul-profesiei-de-avocat/) - UNBR
 
 ## Despre autor
 
