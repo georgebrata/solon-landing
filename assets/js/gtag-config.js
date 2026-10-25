@@ -14,8 +14,7 @@
     window.dataLayer = [];
   }
 
-  const existing = window.gtag;
-  if (!(typeof existing === "function" && existing.__solonArgumentsStub === true)) {
+  if (!(typeof window.gtag === "function" && window.gtag.__solonArgumentsStub === true)) {
     /** @returns {void} */
     function gtag() {
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays

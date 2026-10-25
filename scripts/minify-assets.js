@@ -227,6 +227,7 @@ const minifyJs = async function minifyJs(relPath) {
 };
 
 (async () => {
+  require("./ensure-ga-measurement-sync.js");
   if (!minifyStyleMerged()) {
     process.exitCode = 1;
     return;

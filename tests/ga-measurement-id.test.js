@@ -46,7 +46,9 @@ test("data/ga-measurement.json is the canonical GA4 measurement id", () => {
 });
 
 test("consent.js, gtag-config.js, and sync tracker block reference the canonical id", () => {
-  assert.ok(consentSource.includes(`GA_MEASUREMENT_ID = "${GA_MEASUREMENT_ID}"`));
+  assert.ok(
+    consentSource.includes(`GA_MEASUREMENT_ID = "${GA_MEASUREMENT_ID}"; // @sync data/ga-measurement.json`),
+  );
   assert.ok(gtagConfigSource.includes(GA_MEASUREMENT_ID));
   const block = trackerHeadBlock();
   assert.ok(block.includes(gtagLoaderUrl));
