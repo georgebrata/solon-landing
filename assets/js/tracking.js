@@ -22,7 +22,7 @@
   /**
    * @returns {string}
    */
-  function generateEventId() {
+  const generateEventId = () => {
     try {
       if (global.crypto && typeof global.crypto.randomUUID === "function") {
         return global.crypto.randomUUID();
@@ -31,13 +31,13 @@
       // fall through
     }
     return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-  }
+  };
 
   /**
    * @param {Record<string, unknown>} [params]
    * @returns {Record<string, unknown>}
    */
-  function sanitizeParams(params) {
+  const sanitizeParams = (params) => {
     const out = {};
     const source = params && typeof params === "object" ? params : {};
     for (const [key, value] of Object.entries(source)) {
@@ -46,17 +46,17 @@
       out[key] = value;
     }
     return out;
-  }
+  };
 
   /**
    * @returns {{ hasConsent?: (category: string) => boolean } | null}
    */
-  function consentApi() {
+  const consentApi = () => {
     if (global.SolonConsent && typeof global.SolonConsent.hasConsent === "function") {
       return global.SolonConsent;
     }
     return null;
-  }
+  };
 
   /**
    * @param {string} metaEvent
@@ -64,7 +64,7 @@
    * @param {Record<string, unknown>} [params]
    * @returns {string}
    */
-  function solonTrack(metaEvent, ga4Event, params) {
+  const solonTrack = (metaEvent, ga4Event, params) => {
     const eventId = generateEventId();
     if (BLOCKED_META_EVENTS.has(metaEvent) || ga4Event === "purchase") {
       return eventId;
@@ -85,13 +85,13 @@
     }
 
     return eventId;
-  }
+  };
 
   /**
    * @param {string} text
    * @returns {number|undefined}
    */
-  function parseRonAmount(text) {
+  const parseRonAmount = (text) => {
     if (!text) return undefined;
     const normalized = String(text).replace(/\u00a0/gu, " ").replace(/[^\d.,]/gu, "").trim();
     if (!normalized) return undefined;
@@ -99,13 +99,13 @@
     const value = Number.parseFloat(compact);
     if (!Number.isFinite(value)) return undefined;
     return value;
-  }
+  };
 
   /**
    * @param {Element|null} btn
    * @returns {number|undefined}
    */
-  function priceFromBuyButton(btn) {
+  const priceFromBuyButton = (btn) => {
     if (!btn || typeof btn.closest !== "function") return undefined;
     const box = btn.closest(".box");
     if (!box) return undefined;
@@ -113,13 +113,13 @@
     const selector = billing === "annual" ? ".price-annual" : ".price-monthly";
     const priceEl = box.querySelector(`h4 ${selector}`);
     return parseRonAmount(priceEl ? priceEl.textContent : "");
-  }
+  };
 
   /**
    * @param {string} path
    * @returns {{ content_name: string, content_category: string, value?: number }|null}
    */
-  function viewContentContextForPath(path) {
+  const viewContentContextForPath = (path) => {
     const matchAbonament = path.match(/\/abonament\/([^/]+)\/?$/iu);
     if (matchAbonament) {
       const name = matchAbonament[1].toLowerCase();
@@ -129,13 +129,13 @@
       return { content_name: "oferta", content_category: "serviciu" };
     }
     return null;
-  }
+  };
 
   /**
    * @param {string} href
    * @returns {{ content_name: string, billing: string }|null}
    */
-  function packageFromCheckoutHref(href) {
+  const packageFromCheckoutHref = (href) => {
     if (!href) return null;
     try {
       const url = new URL(href, global.location?.href || "https://solon.agency/");
@@ -150,13 +150,24 @@
       return null;
     }
     return null;
-  }
+  };
+
+  /**
+   * @param {string} href
+   * @returns {"phone"|"email"|"whatsapp"|null}
+   */
+  const contactMethodForHref = (href) => {
+    if (/^tel:/iu.test(href)) return "phone";
+    if (/^mailto:/iu.test(href)) return "email";
+    if (/wa\.me|api\.whatsapp\.com|whatsapp:\/\//iu.test(href)) return "whatsapp";
+    return null;
+  };
 
   /**
    * @param {Element} target
    * @returns {void}
    */
-  function trackCheckoutClick(target) {
+  const trackCheckoutClick = (target) => {
     const btn = target.closest ? target.closest("a.buy-btn[data-plan], a[href]") : null;
     if (!btn || btn.tagName !== "A") return;
 
@@ -188,35 +199,29 @@
         currency: CURRENCY,
       });
     }
-  }
+  };
 
   /**
    * @param {Element} target
    * @returns {void}
    */
-  function trackContactClick(target) {
+  const trackContactClick = (target) => {
     const link = target.closest ? target.closest("a[href]") : null;
     if (!link) return;
     const href = (link.getAttribute("href") || "").trim();
     if (!href) return;
 
-    const method = /^tel:/iu.test(href)
-      ? "phone"
-      : /^mailto:/iu.test(href)
-        ? "email"
-        : /wa\.me|api\.whatsapp\.com|whatsapp:\/\//iu.test(href)
-          ? "whatsapp"
-          : null;
+    const method = contactMethodForHref(href);
     if (!method) return;
 
     solonTrack("Contact", "contact", { method });
-  }
+  };
 
   /**
    * Fire ViewContent once for package / offer landing pages.
    * @returns {void}
    */
-  function trackViewContentForPage() {
+  const trackViewContentForPage = () => {
     const path = global.location?.pathname || "";
     const ctx = viewContentContextForPath(path);
     if (!ctx) return;
@@ -225,12 +230,12 @@
       content_category: ctx.content_category,
       currency: CURRENCY,
     });
-  }
+  };
 
   /**
    * @returns {string}
    */
-  function readNewsletterSignUpEventId() {
+  const readNewsletterSignUpEventId = () => {
     try {
       const storage = global.sessionStorage;
       if (!storage) return "";
@@ -238,25 +243,25 @@
     } catch {
       return "";
     }
-  }
+  };
 
   /**
    * @param {string} eventId
    * @returns {void}
    */
-  function storeNewsletterSignUpEventId(eventId) {
+  const storeNewsletterSignUpEventId = (eventId) => {
     try {
       global.sessionStorage?.setItem(NEWSLETTER_SIGNUP_STORAGE_KEY, eventId);
     } catch {
       return;
     }
-  }
+  };
 
   /**
    * CompleteRegistration/sign_up at most once per browser session (form or confirm page).
    * @returns {string}
    */
-  function trackNewsletterSignUp() {
+  const trackNewsletterSignUp = () => {
     const existing = readNewsletterSignUpEventId();
     if (existing) {
       return existing;
@@ -264,23 +269,23 @@
     const eventId = solonTrack("CompleteRegistration", "sign_up", { content_name: "newsletter" });
     storeNewsletterSignUpEventId(eventId);
     return eventId;
-  }
+  };
 
   /**
    * Fire sign_up on newsletter confirmation landing when not already tracked.
    * @returns {void}
    */
-  function trackNewsletterConfirmationPage() {
+  const trackNewsletterConfirmationPage = () => {
     const path = global.location?.pathname || "";
     if (!/\/confirmare-abonare\/?$/iu.test(path)) return;
     trackNewsletterSignUp();
-  }
+  };
 
   /**
    * ViewContent when the homepage #servicii block is seen.
    * @returns {void}
    */
-  function observeHomeServices() {
+  const observeHomeServices = () => {
     const section = global.document?.querySelector("#servicii");
     if (!section || typeof global.IntersectionObserver !== "function") return;
     const io = new global.IntersectionObserver(
@@ -296,13 +301,13 @@
       { threshold: 0.25 },
     );
     io.observe(section);
-  }
+  };
 
   /**
    * Delegated click handlers for contact and checkout links.
    * @returns {void}
    */
-  function bindDocumentTracking() {
+  const bindDocumentTracking = () => {
     const doc = global.document;
     if (!doc || typeof doc.addEventListener !== "function") return;
 
@@ -316,20 +321,20 @@
       },
       true,
     );
-  }
+  };
 
   /**
    * Page-level tracking bootstrap.
    * @returns {void}
    */
-  function initTracking() {
+  const initTracking = () => {
     trackViewContentForPage();
     trackNewsletterConfirmationPage();
     if ((global.location?.pathname || "/") === "/" || (global.location?.pathname || "").endsWith("/index.html")) {
       observeHomeServices();
     }
     bindDocumentTracking();
-  }
+  };
 
   global.solonTrack = solonTrack;
   global.solonTrackNewsletterSignUp = trackNewsletterSignUp;
