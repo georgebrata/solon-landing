@@ -25,11 +25,11 @@
     "test:append-sheets": "node --test tests/append-blog-google-sheets.test.js"
   },
   "devDependencies": {
-    "puppeteer": "^24.2.0",
     "clean-css": "^5.3.3",
     "html-validate": "^11.17.0",
     "js-yaml": "^4.3.2",
     "marked": "^17.0.5",
+    "puppeteer": "^25.16.0",
     "terser": "^5.37.0"
   }
 }

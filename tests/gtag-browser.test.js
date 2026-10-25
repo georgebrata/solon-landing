@@ -191,6 +191,14 @@ describe("real gtag.js collect after analytics withdrawal", { skip: false }, () 
     await pageB.evaluate(() => {
       window.SolonConsent.saveCustom({ analytics: false, marketing: true });
     });
+    await pageA.evaluate(() => {
+      const key = window.SolonConsent.STORAGE_KEY;
+      window.SolonConsent.onConsentStorageEvent({
+        key,
+        newValue: window.localStorage.getItem(key),
+        storageArea: window.localStorage,
+      });
+    });
     await pageA.waitForFunction(
       () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
       { timeout: 15000 },
