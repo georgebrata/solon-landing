@@ -5,17 +5,25 @@
  */
 (function () {
 
+  const measurementId =
+    typeof window.SolonConsent?.GA_MEASUREMENT_ID === "string"
+      ? window.SolonConsent.GA_MEASUREMENT_ID
+      : "G-H41D7KCWHX";
+
   if (!window.dataLayer) {
     window.dataLayer = [];
   }
-  /** @returns {void} */
-  function gtag() {
-    // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
-    window.dataLayer.push(arguments);
-  }
-  if (typeof window.gtag !== "function") {
+
+  if (!(typeof window.gtag === "function" && window.gtag.__solonArgumentsStub === true)) {
+    /** @returns {void} */
+    function gtag() {
+      // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
+      window.dataLayer.push(arguments);
+    }
+    gtag.__solonArgumentsStub = true;
     window.gtag = gtag;
   }
+
   /**
    * @returns {string}
    */
@@ -32,7 +40,7 @@
   };
 
   window.gtag("js", new Date());
-  window.gtag("config", "G-H41D7KCWHX", {
+  window.gtag("config", measurementId, {
     currency: "RON",
     page_location: safePageLocation(),
   });

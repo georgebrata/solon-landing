@@ -25,6 +25,8 @@
   const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
   const MAX_AGE_MS = COOKIE_MAX_AGE * 1000;
   const CATEGORIES = ["necessary", "analytics", "marketing"];
+  const GA_MEASUREMENT_ID = "G-H41D7KCWHX"; // @sync data/ga-measurement.json
+  const GA_DISABLE_PROPERTY = `ga-disable-${GA_MEASUREMENT_ID}`;
   const SKIP_SCRIPT_ATTRS = {
     type: true,
     "data-consent-category": true,
@@ -159,15 +161,85 @@
     if (!win.dataLayer) {
       win.dataLayer = [];
     }
-    if (typeof win.gtag === "function") {
+    if (typeof win.gtag === "function" && win.gtag.__solonArgumentsStub === true) {
       return;
     }
     /** @returns {void} */
     function gtag() {
+      // skipcq: JS-0244 -- gtag command must be read from the Arguments object
+      const command = arguments[0];
+      if (command === "event" && win[GA_DISABLE_PROPERTY] === true) {
+        return;
+      }
       // skipcq: JS-0244 -- gtag.js only processes Arguments objects on dataLayer, not rest-param arrays
       win.dataLayer.push(arguments);
     }
+    gtag.__solonArgumentsStub = true;
     win.gtag = gtag;
+  }
+
+  /** Drops new GA transport while ga-disable is set (does not cancel in-flight requests). */
+  function installAnalyticsTransportGuard() {
+    if (win.__solonAnalyticsTransportGuard || !win.navigator) {
+      return;
+    }
+    win.__solonAnalyticsTransportGuard = true;
+    /**
+     * @param {string} url
+     * @returns {boolean}
+     */
+    const shouldDropGaTransport = (url) =>
+      win[GA_DISABLE_PROPERTY] === true &&
+      typeof url === "string" &&
+      /google-analytics\.com/u.test(url);
+    const nativeBeacon = win.navigator.sendBeacon?.bind(win.navigator);
+    if (nativeBeacon) {
+      win.navigator.sendBeacon = (url, data) => {
+        if (shouldDropGaTransport(url)) {
+          return true;
+        }
+        return nativeBeacon(url, data);
+      };
+    }
+    if (typeof win.fetch === "function") {
+      const nativeFetch = win.fetch.bind(win);
+      win.fetch = (input, init) => {
+        const url = typeof input === "string" ? input : input?.url || "";
+        if (shouldDropGaTransport(url)) {
+          return Promise.resolve(new Response(null, { status: 204 }));
+        }
+        return nativeFetch(input, init);
+      };
+    }
+  }
+
+  /** Stops gtag.js from accruing new engagement time on already-loaded tags (same tick as ga-disable).
+   * @returns {void}
+   */
+  function denyAnalyticsStorageSameTick() {
+    setupGtagStub();
+    if (typeof win.gtag !== "function") {
+      return;
+    }
+    win.gtag("consent", "update", { analytics_storage: "denied" });
+  }
+
+  /**
+   * @param {object|null} consent
+   * @returns {void}
+   */
+  function syncAnalyticsDisableFlag(consent) {
+    if (consent && isGrantedFlag(consent.analytics)) {
+      win[GA_DISABLE_PROPERTY] = false;
+      return;
+    }
+    win[GA_DISABLE_PROPERTY] = true;
+    if (typeof win.gtag === "function" && win.gtag.__solonArgumentsStub !== true) {
+      tryCall(() => {
+        win.gtag("config", GA_MEASUREMENT_ID, { send_page_view: false });
+      }, "gtag-config-disable");
+    }
+    denyAnalyticsStorageSameTick();
   }
 
   /**
@@ -331,6 +403,28 @@
     return parseConsent(storageGet());
   }
 
+  /** Cookie-only read for visibility fallback when localStorage may be stale.
+   * @returns {object|null}
+   */
+  function readStoredFromCookie() {
+    return parseConsent(readCookie(STORAGE_KEY));
+  }
+
+  /**
+   * @param {object} left
+   * @param {object} right
+   * @returns {boolean}
+   */
+  function consentEquals(left, right) {
+    if (!left || !right) {
+      return false;
+    }
+    return (
+      isGrantedFlag(left.analytics) === isGrantedFlag(right.analytics) &&
+      isGrantedFlag(left.marketing) === isGrantedFlag(right.marketing)
+    );
+  }
+
   /**
    * @param {object} consent
    * @returns {object}
@@ -418,14 +512,33 @@
   }
 
   /**
+   * @param {string} label
+   * @param {unknown} err
+   * @returns {void}
+   */
+  function logVendorCallbackError(label, err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const safe = message.slice(0, 200);
+    if (typeof win.SolonErrorLog?.warn === "function") {
+      win.SolonErrorLog.warn(`consent:${label}`, { message: safe });
+      return;
+    }
+    if (typeof console !== "undefined" && typeof console.warn === "function") {
+      console.warn(`[solon-consent] ${label}: ${safe}`);
+    }
+  }
+
+  /**
    * @param {Function} fn
+   * @param {string} [label]
    * @returns {boolean}
    */
-  function tryCall(fn) {
+  function tryCall(fn, label) {
     try {
       fn();
       return true;
-    } catch {
+    } catch (err) {
+      logVendorCallbackError(label || "vendor", err);
       return false;
     }
   }
@@ -468,14 +581,15 @@
     }
   }
 
-  /** Revokes analytics tags and clears analytics cookies only.
+  /** Stops hits from an already-loaded gtag.js instance after analytics withdrawal.
    * @returns {void}
    */
   function disableAnalyticsTags() {
+    setupGtagStub();
     if (typeof win.clarity === "function") {
       tryCall(() => {
         win.clarity("consent", false);
-      });
+      }, "clarity-consent");
     }
     expireCookiesForPrefixes(ANALYTICS_COOKIE_PREFIXES);
   }
@@ -487,7 +601,7 @@
     if (typeof win.fbq === "function") {
       tryCall(() => {
         win.fbq("consent", "revoke");
-      });
+      }, "fbq-revoke");
     }
     expireCookiesForPrefixes(MARKETING_COOKIE_PREFIXES);
   }
@@ -516,14 +630,14 @@
       if (typeof brevo.start === "function") {
         tryCall(() => {
           brevo.start();
-        });
+        }, "brevo-start");
       }
       return;
     }
     if (typeof brevo.stop === "function") {
       tryCall(() => {
         brevo.stop();
-      });
+      }, "brevo-stop");
     }
   }
 
@@ -540,13 +654,14 @@
     } else {
       current = next;
     }
+    syncAnalyticsDisableFlag(next);
     updateConsentMode(next);
     if (next.analytics || next.marketing) {
       activateInertScripts(next);
     }
     syncBrevo(next);
     if (isGrantedFlag(next.marketing)) {
-      tryCall(grantMarketingFbq);
+      tryCall(grantMarketingFbq, "fbq-grant");
     }
     if (!isGrantedFlag(next.analytics)) {
       disableAnalyticsTags();
@@ -564,7 +679,7 @@
             },
           }),
         );
-      });
+      }, "consent-granted-event");
     }
     return next;
   }
@@ -1125,6 +1240,83 @@
     doc.addEventListener("click", onFooterConsentClick);
   }
 
+  /** Applies consent from another tab or cookie refresh without writing storage.
+   * @param {object|null} consent
+   * @returns {object}
+   */
+  function applyRemoteChoice(consent) {
+    const next = consent ? cloneConsent(consent) : deniedConsent();
+    return applyChoice(next, { persist: false });
+  }
+
+  /**
+   * @param {StorageEvent} event
+   * @returns {void}
+   */
+  function onConsentStorageEvent(event) {
+    if (event.key !== STORAGE_KEY) {
+      return;
+    }
+    if (event.storageArea !== win.localStorage) {
+      return;
+    }
+    const next = parseConsent(event.newValue || "");
+    if (!next) {
+      applyRemoteChoice(null);
+      showBanner();
+      return;
+    }
+    applyRemoteChoice(next);
+    if (isGrantedFlag(next.analytics) || isGrantedFlag(next.marketing)) {
+      hideBanner();
+    } else {
+      showBanner();
+    }
+  }
+
+  /** Re-sync when the tab becomes visible (cookie + localStorage re-read).
+   * @returns {void}
+   */
+  function onVisibilityCookieRefresh() {
+    if (!doc || doc.visibilityState !== "visible") {
+      return;
+    }
+    const cookieChoice = readStoredFromCookie();
+    const storageChoice = parseConsent(readLocalStorage());
+    if (!cookieChoice) {
+      syncAnalyticsDisableFlag(null);
+      if (!consentEquals(current, deniedConsent())) {
+        applyRemoteChoice(null);
+        showBanner();
+      } else if (!isGrantedFlag(current.analytics)) {
+        disableAnalyticsTags();
+      }
+      return;
+    }
+    const next =
+      storageChoice && !consentEquals(storageChoice, cookieChoice) ? storageChoice : cookieChoice;
+    if (!consentEquals(next, current)) {
+      applyRemoteChoice(next);
+      if (isGrantedFlag(next.analytics) || isGrantedFlag(next.marketing)) {
+        hideBanner();
+      } else {
+        showBanner();
+      }
+    }
+  }
+
+  /** Cross-tab storage sync and cookie refresh when the tab is visible again.
+   * @returns {void}
+   */
+  function bindConsentSyncListeners() {
+    if (typeof win.addEventListener === "function") {
+      win.addEventListener("storage", onConsentStorageEvent);
+    }
+    if (doc && typeof doc.addEventListener === "function") {
+      doc.addEventListener("visibilitychange", onVisibilityCookieRefresh);
+    }
+  }
+
   /** Mounts UI after DOM is ready and applies a stored choice if present.
    * @returns {void}
    */
@@ -1145,11 +1337,16 @@
    */
   function boot() {
     setConsentModeDefault();
+    installAnalyticsTransportGuard();
     const stored = readStored();
     if (stored) {
       current = stored;
+      syncAnalyticsDisableFlag(stored);
       updateConsentMode(stored);
+    } else {
+      syncAnalyticsDisableFlag(null);
     }
+    bindConsentSyncListeners();
     if (!doc) {
       return;
     }
@@ -1163,6 +1360,8 @@
   const api = {
     CONSENT_VERSION,
     STORAGE_KEY,
+    GA_MEASUREMENT_ID,
+    GA_DISABLE_PROPERTY,
     CATEGORIES,
     deniedConsent,
     readStored,
@@ -1172,6 +1371,10 @@
     rejectAll,
     saveCustom,
     applyChoice,
+    applyRemoteChoice,
+    onConsentStorageEvent,
+    onVisibilityCookieRefresh,
+    syncAnalyticsDisableFlag,
     activateInertScripts,
     openPreferences,
     parseConsent,

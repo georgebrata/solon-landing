@@ -30,6 +30,12 @@ jobs:
       - name: Run consent tests
         run: npm run test:consent
 
+      - name: Install Chrome for gtag browser test
+        run: npx puppeteer browsers install chrome
+
+      - name: Run gtag browser test (skips when GTM unreachable)
+        run: npm run test:gtag-browser
+
       - name: Run feature flag tests
         run: npm run test:flags
 
