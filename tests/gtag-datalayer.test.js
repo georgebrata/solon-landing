@@ -8,8 +8,6 @@ const test = require("node:test");
 
 const root = path.join(__dirname, "..");
 const gtagConfigSource = fs.readFileSync(path.join(root, "assets/js/gtag-config.js"), "utf8");
-const consentSource = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
-
 /**
  * @param {unknown} value
  * @returns {void}
@@ -83,65 +81,5 @@ test("foreign gtag on window is upgraded to Arguments-pushing stub in gtag-confi
   for (const entry of dataLayer) {
     assertIsArgumentsObject(entry);
   }
-  consumeLikeGtagJs(dataLayer);
-});
-
-test("consent gtag stub output is accepted by a gtag.js-like Arguments-only consumer", () => {
-  const dataLayer = [];
-  const context = {
-    console,
-    Date,
-    JSON,
-    Object,
-    Array,
-    document: {
-      readyState: "complete",
-      cookie: "",
-      body: {
-        appendChild() {},
-        addEventListener() {},
-      },
-      head: { appendChild() {} },
-      getElementById() {
-        return null;
-      },
-      querySelector() {
-        return null;
-      },
-      querySelectorAll() {
-        return [];
-      },
-      createElement() {
-        return { setAttribute() {}, appendChild() {}, attributes: [], addEventListener() {} };
-      },
-      createTextNode(text) {
-        return { textContent: String(text) };
-      },
-      addEventListener() {},
-    },
-    localStorage: {
-      getItem() {
-        return null;
-      },
-      setItem() {},
-      removeItem() {},
-    },
-    location: {
-      pathname: "/",
-      protocol: "https:",
-      hostname: "solon.agency",
-      href: "https://solon.agency/",
-    },
-    addEventListener() {},
-    requestAnimationFrame(fn) {
-      fn();
-    },
-    dataLayer,
-  };
-  context.window = context;
-  context.globalThis = context;
-  vm.createContext(context);
-  vm.runInContext(consentSource, context);
-  context.gtag("event", "probe", { ok: true });
   consumeLikeGtagJs(dataLayer);
 });

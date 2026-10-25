@@ -486,7 +486,7 @@ const simulateGaUnloadHit = (win) => {
 test("analytics withdrawal sets ga-disable before consent update and cookie clearing", () => {
   const order = [];
   const { api, context } = loadConsent({ cookie: "_ga=GA1.1" });
-  let gaDisableStored;
+  let gaDisableStored = undefined;
   Object.defineProperty(context, GA_DISABLE_KEY, {
     configurable: true,
     enumerable: true,
@@ -596,6 +596,21 @@ test("foreign gtag is wrapped so dataLayer still receives Arguments objects", ()
   const pushed = dataLayer[dataLayer.length - 1];
   assertIsArgumentsObject(pushed);
   assert.equal(pushed[0], "event");
+});
+
+test("consent gtag stub output is accepted by a gtag.js-like Arguments-only consumer", () => {
+  const { context } = loadConsent();
+  const accepted = [];
+  for (const entry of context.dataLayer) {
+    if (Object.prototype.toString.call(entry) !== "[object Arguments]") {
+      throw new Error("gtag.js consumer rejected non-Arguments dataLayer entry");
+    }
+    accepted.push(entry);
+  }
+  context.gtag("event", "probe", { ok: true });
+  const last = context.dataLayer[context.dataLayer.length - 1];
+  assert.equal(Object.prototype.toString.call(last), "[object Arguments]");
+  assert.equal(last[0], "event");
 });
 
 test("reject all never activates GA gtag inert scripts", () => {

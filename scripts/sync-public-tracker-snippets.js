@@ -4,7 +4,7 @@
  * Ensures public HTML pages include consent-gated Meta Pixel + GA4 snippets
  * and tracking.min.js. Skips r/, error pages, and templates/.
  */
-const crypto = require("crypto");
+const nodeCrypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -15,7 +15,7 @@ const root = path.join(__dirname, "..");
  * @returns {string}
  */
 const assetContentHash = (relFromRoot) =>
-  crypto
+  nodeCrypto
     .createHash("sha256")
     .update(fs.readFileSync(path.join(root, relFromRoot)))
     .digest("hex")

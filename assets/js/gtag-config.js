@@ -30,6 +30,7 @@
       window.dataLayer.push(arguments);
       if (previous) {
         tryCall(() => {
+          // skipcq: JS-0244 -- forward legacy gtag calls without array-shaped dataLayer entries
           previous.apply(window, arguments);
         });
       }
