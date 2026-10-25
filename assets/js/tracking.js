@@ -8,7 +8,7 @@
   const CURRENCY = "RON";
   const PACKAGE_SLUGS = ["bronze", "silver", "gold", "platinum"];
   const PII_KEYS =
-    /^(email|e-mail|phone|telefon|tel|name|nume|firstname|first_name|lastname|last_name|mesaj|message|ip)$/i;
+    /^(email|e-mail|phone|telefon|tel|name|nume|firstname|first_name|lastname|last_name|mesaj|message|ip)$/iu;
   const GA4_CUSTOM_EVENTS = new Set([
     "view_item",
     "generate_lead",
@@ -73,15 +73,14 @@
     const consent = consentApi();
 
     if (
-      consent &&
-      consent.hasConsent("analytics") &&
+      consent?.hasConsent("analytics") &&
       GA4_CUSTOM_EVENTS.has(ga4Event) &&
       typeof global.gtag === "function"
     ) {
       global.gtag("event", ga4Event, { ...safe, event_id: eventId });
     }
 
-    if (consent && consent.hasConsent("marketing") && typeof global.fbq === "function") {
+    if (consent?.hasConsent("marketing") && typeof global.fbq === "function") {
       global.fbq("track", metaEvent, safe, { eventID: eventId });
     }
 
@@ -94,9 +93,9 @@
    */
   function parseRonAmount(text) {
     if (!text) return undefined;
-    const normalized = String(text).replace(/\u00a0/g, " ").replace(/[^\d.,]/g, "").trim();
+    const normalized = String(text).replace(/\u00a0/gu, " ").replace(/[^\d.,]/gu, "").trim();
     if (!normalized) return undefined;
-    const compact = normalized.replace(/\./g, "").replace(",", ".");
+    const compact = normalized.replace(/\./gu, "").replace(",", ".");
     const value = Number.parseFloat(compact);
     if (!Number.isFinite(value)) return undefined;
     return value;
@@ -121,12 +120,12 @@
    * @returns {{ content_name: string, content_category: string, value?: number }|null}
    */
   function viewContentContextForPath(path) {
-    const matchAbonament = path.match(/\/abonament\/([^/]+)\/?$/i);
+    const matchAbonament = path.match(/\/abonament\/([^/]+)\/?$/iu);
     if (matchAbonament) {
       const name = matchAbonament[1].toLowerCase();
       return { content_name: name, content_category: "pachet" };
     }
-    if (/\/oferta(-mobile)?\/?$/i.test(path)) {
+    if (/\/oferta(-mobile)?\/?$/iu.test(path)) {
       return { content_name: "oferta", content_category: "serviciu" };
     }
     return null;
@@ -138,18 +137,17 @@
    */
   function packageFromCheckoutHref(href) {
     if (!href) return null;
-    let url;
     try {
-      url = new URL(href, global.location?.href || "https://solon.agency/");
+      const url = new URL(href, global.location?.href || "https://solon.agency/");
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      if (pathParts.length === 2) {
+        const [pkg, term] = pathParts.map((p) => p.toLowerCase());
+        if (PACKAGE_SLUGS.includes(pkg) && (term === "lunar" || term === "anual")) {
+          return { content_name: pkg, billing: term === "anual" ? "annual" : "monthly" };
+        }
+      }
     } catch {
       return null;
-    }
-    const pathParts = url.pathname.split("/").filter(Boolean);
-    if (pathParts.length === 2) {
-      const [pkg, term] = pathParts.map((p) => p.toLowerCase());
-      if (PACKAGE_SLUGS.includes(pkg) && (term === "lunar" || term === "anual")) {
-        return { content_name: pkg, billing: term === "anual" ? "annual" : "monthly" };
-      }
     }
     return null;
   }
@@ -183,7 +181,7 @@
       return;
     }
 
-    if (/^https?:\/\/([^/]+\.)?mpy\.ro\//i.test(href) || /^https?:\/\/pay\.netopia\.ro\//i.test(href)) {
+    if (/^https?:\/\/([^/]+\.)?mpy\.ro\//iu.test(href) || /^https?:\/\/pay\.netopia\.ro\//iu.test(href)) {
       const plan = btn.getAttribute("data-plan") || "package";
       solonTrack("InitiateCheckout", "begin_checkout", {
         content_name: plan,
@@ -202,11 +200,14 @@
     const href = (link.getAttribute("href") || "").trim();
     if (!href) return;
 
-    let method;
-    if (/^tel:/i.test(href)) method = "phone";
-    else if (/^mailto:/i.test(href)) method = "email";
-    else if (/wa\.me|api\.whatsapp\.com|whatsapp:\/\//i.test(href)) method = "whatsapp";
-    else return;
+    const method = /^tel:/iu.test(href)
+      ? "phone"
+      : /^mailto:/iu.test(href)
+        ? "email"
+        : /wa\.me|api\.whatsapp\.com|whatsapp:\/\//iu.test(href)
+          ? "whatsapp"
+          : null;
+    if (!method) return;
 
     solonTrack("Contact", "contact", { method });
   }
@@ -271,7 +272,7 @@
    */
   function trackNewsletterConfirmationPage() {
     const path = global.location?.pathname || "";
-    if (!/\/confirmare-abonare\/?$/i.test(path)) return;
+    if (!/\/confirmare-abonare\/?$/iu.test(path)) return;
     trackNewsletterSignUp();
   }
 

@@ -17,12 +17,12 @@ const SKIP_SCAN_DIRS = new Set([".git", "node_modules", "assets", "scripts", "te
 /**
  * @returns {string[]}
  */
-function publicHtmlFiles() {
+const publicHtmlFiles = () => {
   const files = [];
   /**
    * @param {string} dir
    */
-  function walk(dir) {
+  const walk = (dir) => {
     for (const name of fs.readdirSync(dir)) {
       if (!SKIP_SCAN_DIRS.has(name)) {
         const full = path.join(dir, name);
@@ -34,21 +34,21 @@ function publicHtmlFiles() {
         }
       }
     }
-  }
+  };
   walk(root);
   return files;
-}
+};
 
 /**
  * @param {string} html
  * @param {RegExp} pattern
  * @returns {number}
  */
-function countMatches(html, pattern) {
+const countMatches = (html, pattern) => {
   const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
   const re = new RegExp(pattern.source, flags);
   return [...html.matchAll(re)].length;
-}
+};
 
 test("shouldSkipPublicTrackerSync skips r/, templates/, and error pages", () => {
   assert.equal(shouldSkipPublicTrackerSync("r/bronze/lunar/index.html"), true);
@@ -62,13 +62,13 @@ test("shouldSkipPublicTrackerSync skips r/, templates/, and error pages", () => 
 /**
  * @returns {string[]}
  */
-function shortLinkHtmlFiles() {
+const shortLinkHtmlFiles = () => {
   const rDir = path.join(root, "r");
   const files = [];
   /**
    * @param {string} dir
    */
-  function walk(dir) {
+  const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
@@ -80,7 +80,7 @@ function shortLinkHtmlFiles() {
   }
   walk(rDir);
   return files;
-}
+};
 
 test("sync helpers do not inject snippets into skipped r/ redirect stubs", () => {
   const rFiles = shortLinkHtmlFiles();

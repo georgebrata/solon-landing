@@ -15,40 +15,34 @@ const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates"]);
  * @param {string} relPath Repo-relative path using forward slashes.
  * @returns {boolean}
  */
-function shouldSkipPublicTrackerSync(relPath) {
-  const rel = String(relPath).replace(/\\/g, "/");
-  if (/^(?:403|404|500)\.html$/.test(rel)) {
-    return true;
-  }
-  if (rel === "r" || rel.startsWith("r/")) {
-    return true;
-  }
-  if (rel.startsWith("templates/")) {
-    return true;
-  }
-  if (rel.startsWith("node_modules/")) {
-    return true;
-  }
-  return false;
-}
+const shouldSkipPublicTrackerSync = (relPath) => {
+  const rel = String(relPath).replace(/\\/gu, "/");
+  return (
+    /^(?:403|404|500)\.html$/u.test(rel) ||
+    rel === "r" ||
+    rel.startsWith("r/") ||
+    rel.startsWith("templates/") ||
+    rel.startsWith("node_modules/")
+  );
+};
 
 /**
  * @param {string} filePath
  * @returns {string}
  */
-function relativeAssetPrefix(filePath) {
+const relativeAssetPrefix = (filePath) => {
   const dir = path.dirname(filePath);
   const rel = path.relative(root, dir);
   if (!rel || rel === ".") return "";
   const depth = rel.split(path.sep).filter(Boolean).length;
   return `${"../".repeat(depth)}`;
-}
+};
 
 /**
  * @param {string} prefix
  * @returns {string}
  */
-function trackerHeadBlock(prefix) {
+const trackerHeadBlock = (prefix) => {
   const asset = prefix ? `${prefix}assets/` : "assets/";
   return `
 <!-- counter.dev -->
@@ -66,7 +60,7 @@ function trackerHeadBlock(prefix) {
   <script type="text/plain" data-consent-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"></script>
   <script type="text/plain" data-consent-category="analytics" src="/assets/js/gtag-config.min.js"></script>
 `;
-}
+};
 
 const TRACKING_BODY_TAG =
   '  <script src="/assets/js/tracking.min.js" defer></script>\n';
@@ -76,22 +70,22 @@ const TRACKING_BODY_TAG =
  * @param {string} prefix
  * @returns {string}
  */
-function ensureHeadSnippets(html, prefix) {
+const ensureHeadSnippets = (html, prefix) => {
   if (html.includes("meta-pixel.min.js")) {
     return html;
   }
-  const anchor = /(<script[^>]*consent\.min\.js[^>]*><\/script>)/i;
+  const anchor = /(<script[^>]*consent\.min\.js[^>]*><\/script>)/iu;
   if (!anchor.test(html)) {
     return html;
   }
   return html.replace(anchor, `$1${trackerHeadBlock(prefix)}`);
-}
+};
 
 /**
  * @param {string} html
  * @returns {string}
  */
-function ensureTrackingScript(html) {
+const ensureTrackingScript = (html) => {
   if (!html.includes("consent.min.js")) {
     return html;
   }
@@ -100,20 +94,20 @@ function ensureTrackingScript(html) {
   }
   if (html.includes("forms.min.js")) {
     return html.replace(
-      /(\s*<script[^>]*forms\.min\.js[^>]*><\/script>)/i,
+      /(\s*<script[^>]*forms\.min\.js[^>]*><\/script>)/iu,
       `${TRACKING_BODY_TAG}$1`,
     );
   }
-  if (/<\/body>/i.test(html)) {
-    return html.replace(/<\/body>/i, `${TRACKING_BODY_TAG}</body>`);
+  if (/<\/body>/iu.test(html)) {
+    return html.replace(/<\/body>/iu, `${TRACKING_BODY_TAG}</body>`);
   }
   return html;
-}
+};
 
 /**
  * @returns {string[]}
  */
-function listHtmlFiles() {
+const listHtmlFiles = () => {
   const out = [];
   /**
    * @param {string} dir
@@ -133,18 +127,22 @@ function listHtmlFiles() {
   };
   walk(root);
   return out;
-}
+};
 
-function main() {
+/**
+ * Walks public HTML and injects tracker snippets where missing.
+ * @returns {void}
+ */
+const main = () => {
   let changed = 0;
   for (const file of listHtmlFiles()) {
-    const rel = path.relative(root, file).replace(/\\/g, "/");
+    const rel = path.relative(root, file).replace(/\\/gu, "/");
     if (shouldSkipPublicTrackerSync(rel)) {
       continue;
     }
 
     const prefix = relativeAssetPrefix(file);
-    let html = fs.readFileSync(file, "utf8");
+    const html = fs.readFileSync(file, "utf8");
     const next = ensureTrackingScript(ensureHeadSnippets(html, prefix));
     if (next !== html) {
       fs.writeFileSync(file, next);
@@ -152,7 +150,7 @@ function main() {
     }
   }
   console.log(`sync-public-tracker-snippets: updated ${changed} file(s)`);
-}
+};
 
 if (require.main === module) {
   main();
