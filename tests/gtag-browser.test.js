@@ -258,4 +258,43 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     await pageB.close();
     await context.close();
   });
+
+  it("blocked real XHR to google-analytics fires onerror and onloadend once", async (t) => {
+    if (suiteSkip) {
+      t.skip(suiteSkip);
+      return;
+    }
+    const page = await browser.newPage();
+    await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    await page.evaluate(() => {
+      window.SolonConsent.acceptAll();
+    });
+    await page.evaluate(() => {
+      window.SolonConsent.saveCustom({ analytics: false, marketing: true });
+    });
+    await page.waitForFunction(
+      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
+      { timeout: 15000 },
+    );
+    const counts = await page.evaluate(
+      (measurementId) =>
+        new Promise((resolve) => {
+          const tallies = { error: 0, loadend: 0 };
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", `https://www.google-analytics.com/g/collect?v=2&tid=${measurementId}`);
+          xhr.onerror = () => {
+            tallies.error += 1;
+          };
+          xhr.onloadend = () => {
+            tallies.loadend += 1;
+          };
+          xhr.send();
+          setTimeout(() => resolve(tallies), 100);
+        }),
+      GA_MEASUREMENT_ID,
+    );
+    assert.deepEqual(counts, { error: 1, loadend: 1 });
+    await page.close();
+  });
 });

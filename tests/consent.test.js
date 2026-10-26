@@ -879,6 +879,57 @@ test("blocked XHR send dispatches readystatechange, error and loadend once", () 
   assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
 });
 
+test("blocked XHR with accessor-only readyState on prototype still fires events once", () => {
+  let readyStateBacking = 1;
+  function AccessorReadyStateXHR() {
+    return undefined;
+  }
+  Object.defineProperty(AccessorReadyStateXHR.prototype, "readyState", {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return readyStateBacking;
+    },
+  });
+  AccessorReadyStateXHR.prototype.open = function (method, url) {
+    this.__solonGaOpenUrl = url;
+  };
+  AccessorReadyStateXHR.prototype.send = function () {
+    this.__solonTransportSent = this.__solonGaOpenUrl;
+  };
+  AccessorReadyStateXHR.prototype.dispatchEvent = function (event) {
+    const handler = this[`on${event.type}`];
+    if (typeof handler === "function") {
+      handler.call(this, event);
+    }
+    return true;
+  };
+  const { api, context } = loadConsent({
+    XMLHttpRequest: AccessorReadyStateXHR,
+    queueMicrotask: (fn) => {
+      fn();
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const xhr = new context.XMLHttpRequest();
+  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+  const counts = { readystatechange: 0, error: 0, loadend: 0 };
+  xhr.onreadystatechange = () => {
+    counts.readystatechange += 1;
+  };
+  xhr.onerror = () => {
+    counts.error += 1;
+  };
+  xhr.onloadend = () => {
+    counts.loadend += 1;
+  };
+  xhr.send();
+  assert.ok(xhr.__solonTransportSent === undefined);
+  assert.equal(xhr.readyState, 4);
+  assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
+});
+
 test("blocked image setAttribute src does not load and signals error once", () => {
   const { api, context } = loadConsent({
     queueMicrotask: (fn) => {

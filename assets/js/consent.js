@@ -293,7 +293,11 @@
         if (!EventCtor || !ProgressEventCtor || typeof xhr.dispatchEvent !== "function") {
           return;
         }
-        xhr.readyState = 4;
+        try {
+          Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
+        } catch {
+          // Prototype may expose readyState as accessor-only; events still fire below.
+        }
         const readystatechangeEvent = new EventCtor("readystatechange");
         const errorEvent = new ProgressEventCtor("error");
         const loadEndEvent = new ProgressEventCtor("loadend");
