@@ -18,8 +18,7 @@ const isolatedTestEnv = (base) => {
 
 const filePath = process.argv[2];
 if (!filePath) {
-  process.stderr.write("usage: count-registered-tests-cli.js <test-file>\n");
-  process.exit(2);
+  throw new Error("usage: count-registered-tests-cli.js <test-file>");
 }
 
 const result = spawnSync(process.execPath, ["--test", "--test-reporter", "tap", filePath], {
@@ -31,8 +30,7 @@ const result = spawnSync(process.execPath, ["--test", "--test-reporter", "tap", 
 const combined = `${result.stdout || ""}\n${result.stderr || ""}`;
 const match = combined.match(/# tests (\d+)/);
 if (!match) {
-  process.stderr.write(combined);
-  process.exit(1);
+  throw new Error(`could not parse registered test count: ${combined}`);
 }
 
 process.stdout.write(match[1]);
