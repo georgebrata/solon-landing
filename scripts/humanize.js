@@ -45,16 +45,6 @@ const {
 const DEFAULT_POSTS_DIR = path.join(__dirname, "../blog/posts");
 const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
 
-/**
- * Exact `blog/posts/*.md` filenames whose body is legally cleared byte-for-byte.
- * humanize.js must not rewrite these sources (pre-commit would break approval).
- * Add only basenames; new entries need legal sign-off on the fixed sha256.
- */
-const LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES = [
-  "proiect-modificare-legea-51-1995-website-avocat.md",
-];
-const HUMANIZE_SKIP_FILENAMES = new Set(LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES);
-
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
 const targetFile = getArgValue("--file");
@@ -670,19 +660,16 @@ const protectMarkdown = (markdown) => {
   };
 };
 
-if (require.main === module) {
-  const files = fs
-    .readdirSync(postsDir)
-    .filter((file) => file.endsWith(".md"))
-    .filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file))
-    .filter((file) => !targetFile || file === targetFile);
+const files = fs
+  .readdirSync(postsDir)
+  .filter((file) => file.endsWith(".md"))
+  .filter((file) => !targetFile || file === targetFile);
 
-  if (targetFile && files.length === 0) {
-    console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-    process.exitCode = 1;
-  } else {
-    humanizeFiles(files);
-  }
+if (targetFile && files.length === 0) {
+  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+  process.exitCode = 1;
+} else {
+  humanizeFiles(files);
 }
 
 function humanizeFiles(filesToProcess) {
