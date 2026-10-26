@@ -43,6 +43,8 @@
   }
   const BODY_OPEN_CLASS = "solon-consent-open";
   const BANNER_HEIGHT_VAR = "--solon-consent-banner-height";
+  const TRANSPORT_GUARD_SENTINEL = { __solonTransportGuard: "installed" };
+  let analyticsTransportGuardInstalled = false;
   const ui = {
     root: null,
     banner: null,
@@ -178,12 +180,42 @@
     win.gtag = gtag;
   }
 
+  /**
+   * @returns {void}
+   */
+  function markAnalyticsTransportGuardOnWindow() {
+    const prop = "__solonAnalyticsTransportGuard";
+    try {
+      const existing = Object.getOwnPropertyDescriptor(win, prop);
+      if (existing?.configurable) {
+        delete win[prop];
+      } else if (existing && win[prop] !== TRANSPORT_GUARD_SENTINEL) {
+        return;
+      }
+      Object.defineProperty(win, prop, {
+        value: TRANSPORT_GUARD_SENTINEL,
+        writable: false,
+        enumerable: false,
+        configurable: false,
+      });
+    } catch {
+      // Closure flag still records a successful install.
+    }
+  }
+
   /** Drops new GA / Clarity transport when analytics is withdrawn (does not cancel in-flight requests). */
   function installAnalyticsTransportGuard() {
-    if (win.__solonAnalyticsTransportGuard || !win.navigator) {
+    if (!win.navigator) {
       return;
     }
-    win.__solonAnalyticsTransportGuard = true;
+    if (analyticsTransportGuardInstalled) {
+      return;
+    }
+    if (win.__solonAnalyticsTransportGuard === TRANSPORT_GUARD_SENTINEL) {
+      analyticsTransportGuardInstalled = true;
+      return;
+    }
+    analyticsTransportGuardInstalled = true;
     /**
      * @param {unknown} input
      * @returns {string}
@@ -499,6 +531,7 @@
         nativeSetAttribute.call(this, name, value);
       };
     }
+    markAnalyticsTransportGuardOnWindow();
   }
 
   /** Stops gtag.js from accruing new engagement time on already-loaded tags (same tick as ga-disable).

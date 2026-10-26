@@ -340,6 +340,9 @@ const loadConsent = function loadConsent(options = {}) {
   if (options.dataLayer) {
     context.dataLayer = options.dataLayer;
   }
+  if (options.fakeTransportGuardKillSwitch) {
+    context.__solonAnalyticsTransportGuard = true;
+  }
   context.window = context;
   context.globalThis = context;
   vm.createContext(context);
@@ -1127,7 +1130,34 @@ test("shipped consent.js and consent.min.js omit test-only transport guard kill 
   for (const rel of ["assets/js/consent.js", "assets/js/consent.min.js"]) {
     const body = fs.readFileSync(path.join(root, rel), "utf8");
     assert.equal(body.includes("__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD"), false);
+    assert.equal(body.includes("SOLON_CONSENT_OMIT_TRANSPORT_GUARD"), false);
+    assert.equal(body.includes("SOLON_GTAG_DISABLE_CONSENT_GUARD"), false);
+    assert.equal(body.includes("__solonAnalyticsTransportGuard ||"), false);
+    assert.equal(body.includes("__solonAnalyticsTransportGuard||"), false);
   }
+});
+
+test("truthy __solonAnalyticsTransportGuard set before consent still installs transport guard", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    fakeTransportGuardKillSwitch: true,
+    queueMicrotask: (fn) => {
+      fn();
+    },
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.google-analytics.com/g/collect?v=2");
+  context.navigator.sendBeacon("https://h.clarity.ms/collect");
+  context.navigator.sendBeacon("https://ad.doubleclick.net/activity");
+  assert.equal(beacons.length, 0);
+  assert.equal(context.__solonAnalyticsTransportGuard?.__solonTransportGuard, "installed");
 });
 
 test("blocked image setAttribute src does not load and signals error once", () => {

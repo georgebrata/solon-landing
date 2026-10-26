@@ -45,6 +45,9 @@ const waitForFirstCollect = async (page, timeout = 60000) => {
   await page.waitForRequest((req) => isGaCollectTransportUrl(req.url()), { timeout });
 };
 
+const BLOCKED_XHR_READYSTATE_DONE = 4;
+const BLOCKED_XHR_POLL_TIMEOUT_MS = 5000;
+
 /**
  * @returns {string | false}
  */
@@ -63,6 +66,19 @@ const resolveSuiteSkip = () => {
 /**
  * @returns {Promise<import("http").Server>}
  */
+/**
+ * @param {string} relPath
+ * @returns {Buffer}
+ */
+const readConsentJsForBrowserTests = (relPath) => {
+  if (process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD === "1") {
+    let body = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
+    body = body.replace(/installAnalyticsTransportGuard\(\);?/g, "");
+    return Buffer.from(body, "utf8");
+  }
+  return fs.readFileSync(path.join(root, relPath));
+};
+
 const startStaticServer = () =>
   new Promise((resolve) => {
     const server = http.createServer((req, res) => {
@@ -70,7 +86,16 @@ const startStaticServer = () =>
       if (urlPath.endsWith("/")) {
         urlPath = `${urlPath}index.html`;
       }
-      const filePath = path.join(root, urlPath === "/" ? "index.html" : urlPath.replace(/^\//u, ""));
+      const rel = urlPath === "/" ? "index.html" : urlPath.replace(/^\//u, "");
+      if (
+        process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD === "1" &&
+        (rel === "assets/js/consent.js" || rel === "assets/js/consent.min.js")
+      ) {
+        res.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" });
+        res.end(readConsentJsForBrowserTests(rel));
+        return;
+      }
+      const filePath = path.join(root, rel);
       if (!filePath.startsWith(root) || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
         res.writeHead(404);
         res.end("not found");
@@ -177,7 +202,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
         runKey &&
         nonce &&
         process.env.SOLON_GTAG_PASS_CACHE_PATH &&
-        passedBrowserTests === 5
+        passedBrowserTests === 6
       ) {
         writeGtagPassCache(GTAG_PASS_CACHE_PATH, 1 + passedBrowserTests, { runKey, nonce });
       }
@@ -404,6 +429,76 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     passedBrowserTests += 1;
   });
 
+  it("ignores pre-set __solonAnalyticsTransportGuard=true and blocks GA, Clarity, and doubleclick after withdrawal", async (t) => {
+    if (suiteSkip) {
+      t.skip(suiteSkip);
+      return;
+    }
+    const page = await browser.newPage();
+    await page.evaluateOnNewDocument(() => {
+      window.__solonAnalyticsTransportGuard = true;
+    });
+    await installGaCollectInterception(page);
+    await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    await page.evaluate(() => {
+      window.SolonConsent.acceptAll();
+    });
+    await page.waitForFunction(
+      () => typeof window.gtag === "function",
+      { timeout: 15000 },
+    );
+    await page.evaluate(() => {
+      window.SolonConsent.saveCustom({ analytics: false, marketing: true });
+    });
+    await page.waitForFunction(
+      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
+      { timeout: 15000 },
+    );
+    const blocked = await page.evaluate(
+      async (doneState, timeoutMs) => {
+        const poll = (xhr) =>
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + timeoutMs;
+            const step = () => {
+              if (xhr.readyState === doneState) {
+                resolve(xhr.readyState);
+                return;
+              }
+              if (Date.now() >= deadline) {
+                reject(new Error(`blocked XHR readyState stayed ${xhr.readyState}`));
+                return;
+              }
+              queueMicrotask(step);
+            };
+            step();
+          });
+        const gaXhr = new XMLHttpRequest();
+        gaXhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+        gaXhr.send();
+        const clarityXhr = new XMLHttpRequest();
+        clarityXhr.open("GET", "https://h.clarity.ms/collect");
+        clarityXhr.send();
+        const dcXhr = new XMLHttpRequest();
+        dcXhr.open("GET", "https://ad.doubleclick.net/activity");
+        dcXhr.send();
+        return {
+          ga: await poll(gaXhr),
+          clarity: await poll(clarityXhr),
+          doubleclick: await poll(dcXhr),
+        };
+      },
+      BLOCKED_XHR_READYSTATE_DONE,
+      BLOCKED_XHR_POLL_TIMEOUT_MS,
+    );
+    assert.equal(blocked.ga, 4);
+    assert.equal(blocked.clarity, 4);
+    assert.equal(blocked.doubleclick, 4);
+    assertGaCollectSinkEmpty();
+    await page.close();
+    passedBrowserTests += 1;
+  });
+
   it("blocked GTM /g/collect XHR does not hit the network after withdrawal", async (t) => {
     if (suiteSkip) {
       t.skip(suiteSkip);
@@ -432,13 +527,29 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       }
     });
     const result = await page.evaluate(
-      () =>
-        new Promise((resolve) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("GET", "https://www.googletagmanager.com/g/collect?v=2");
-          xhr.send();
-          setTimeout(() => resolve({ readyState: xhr.readyState }), 100);
-        }),
+      async (doneState, timeoutMs) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://www.googletagmanager.com/g/collect?v=2");
+        xhr.send();
+        const readyState = await new Promise((resolve, reject) => {
+          const deadline = Date.now() + timeoutMs;
+          const step = () => {
+            if (xhr.readyState === doneState) {
+              resolve(xhr.readyState);
+              return;
+            }
+            if (Date.now() >= deadline) {
+              reject(new Error(`blocked XHR readyState stayed ${xhr.readyState}`));
+              return;
+            }
+            queueMicrotask(step);
+          };
+          step();
+        });
+        return { readyState };
+      },
+      BLOCKED_XHR_READYSTATE_DONE,
+      BLOCKED_XHR_POLL_TIMEOUT_MS,
     );
     assert.equal(result.readyState, 4);
     assert.equal(gaCollectUrls.length, 0);

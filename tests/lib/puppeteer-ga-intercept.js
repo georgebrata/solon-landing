@@ -51,11 +51,6 @@ const chromeLaunchArgs = (sink) => {
  * @returns {Promise<{ interceptedCollectUrls: string[] }>}
  */
 const installGaCollectInterception = async (page, options = {}) => {
-  if (process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD === "1") {
-    await page.evaluateOnNewDocument(() => {
-      window.__solonAnalyticsTransportGuard = true;
-    });
-  }
   const mutation = process.env.SOLON_GTAG_INTERCEPT_MUTATION || "";
   const guardOffProof = process.env.SOLON_GTAG_GUARD_OFF_PROOF === "1";
   let interceptCollect = options.interceptCollect !== false;

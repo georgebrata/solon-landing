@@ -32,10 +32,12 @@ const recordSinkRequest = (req) => {
   const hostname = host.replace(/:\d+$/u, "").toLowerCase();
   const isDoubleClick =
     hostname === "doubleclick.net" || hostname.endsWith(".doubleclick.net");
+  const isClarity = hostname === "clarity.ms" || hostname.endsWith(".clarity.ms");
   if (
     isGaCollectTransportUrl(url) ||
     isGaCollectTransportUrl(httpUrl) ||
-    isDoubleClick
+    isDoubleClick ||
+    isClarity
   ) {
     sinkHits.push(url);
   }
