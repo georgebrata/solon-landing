@@ -17,6 +17,12 @@ const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 
+const {
+  HUMANIZE_SKIP_FILENAMES,
+  humanizeMarkdown,
+  SKIP_LEGAL_CLEARED_LOG_PREFIX,
+} = require("../scripts/humanize.js");
+
 const FIXTURE = `---
 title: "Test: semicolons, en-dashes, FAQ"
 date: "2026-01-01"
@@ -216,7 +222,16 @@ tags: ["test"]
 Paragraf scurt cu tehnologia utilizată în propunere și suportul utilizat în text.
 `;
 
-test("humanize.js skips legal-cleared post filenames byte-for-byte", () => {
+test("humanize.js exports skip set and humanizeMarkdown rewrites jargon in memory", () => {
+  assert.equal(HUMANIZE_SKIP_FILENAMES.has(SKIP_LISTED_FILENAME), true);
+  assert.equal(HUMANIZE_SKIP_FILENAMES.has("viteza-website-avocat.md"), true);
+  const { updated, counts } = humanizeMarkdown(JARGON_FIXTURE);
+  assert.ok(counts.size > 0);
+  assert.doesNotMatch(updated, /utilizată/u);
+  assert.doesNotMatch(updated, /utilizat/u);
+});
+
+test("humanize.js skips legal-cleared post filenames byte-for-byte and logs each skip", () => {
   const source = JARGON_FIXTURE;
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-"));
   const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
@@ -228,6 +243,7 @@ test("humanize.js skips legal-cleared post filenames byte-for-byte", () => {
       [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir],
       { encoding: "utf8" },
     );
+    assert.match(output, new RegExp(`${SKIP_LEGAL_CLEARED_LOG_PREFIX} ${SKIP_LISTED_FILENAME}`, "u"));
     assert.match(output, /No humanizing changes found/u);
     assert.equal(fs.readFileSync(listedPath, "utf8"), source);
   } finally {
@@ -235,7 +251,7 @@ test("humanize.js skips legal-cleared post filenames byte-for-byte", () => {
   }
 });
 
-test("humanize.js --file on a skip-listed basename exits 0 with no output", () => {
+test("humanize.js --file on a skip-listed basename exits 0 with one skip log line", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-file-"));
   const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
 
@@ -252,7 +268,10 @@ test("humanize.js --file on a skip-listed basename exits 0 with no output", () =
       ],
       { encoding: "utf8" },
     );
-    assert.equal(output, "");
+    assert.equal(
+      output.trim(),
+      `${SKIP_LEGAL_CLEARED_LOG_PREFIX} ${SKIP_LISTED_FILENAME}`,
+    );
     assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
