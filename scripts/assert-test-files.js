@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 
 const fs = require("node:fs");
@@ -24,14 +23,14 @@ const files = fs
   .sort();
 
 let totalDeclarations = 0;
-let failed = false;
+/** @type {string[]} */
+const errors = [];
 
 for (const name of files) {
   const filePath = path.join(testsDir, name);
   const stat = fs.statSync(filePath);
   if (stat.size === 0) {
-    console.error(`::error::assert-test-files: ${name} is empty (0 bytes)`);
-    failed = true;
+    errors.push(`${name} is empty (0 bytes)`);
     continue;
   }
   const source = fs.readFileSync(filePath, "utf8");
@@ -40,22 +39,21 @@ for (const name of files) {
   totalDeclarations += count;
   const required = MIN_TEST_DECLARATIONS[name] ?? DEFAULT_MIN_TEST_DECLARATIONS;
   if (count < required) {
-    console.error(
-      `::error::assert-test-files: ${name} has ${count} test() declarations (minimum ${required})`,
-    );
-    failed = true;
+    errors.push(`${name} has ${count} test() declarations (minimum ${required})`);
   }
 }
 
 const minTotal =
   process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_TEST_DECLARATIONS;
 if (totalDeclarations < minTotal) {
-  console.error(
-    `::error::assert-test-files: total test() declarations ${totalDeclarations} is below floor ${minTotal}`,
+  errors.push(
+    `total test() declarations ${totalDeclarations} is below floor ${minTotal}`,
   );
-  failed = true;
 }
 
-if (failed) {
-  process.exit(1);
+if (errors.length > 0) {
+  for (const message of errors) {
+    console.error(`::error::assert-test-files: ${message}`);
+  }
+  throw new Error(`assert-test-files failed (${errors.length} issue(s))`);
 }
