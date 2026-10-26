@@ -249,7 +249,7 @@ Securitatea dispozitivelor mobile în practica avocațială modernă nu înseamn
 
 Trebuie să recunoaștem un compromis onest: la început, introducerea unui cod mai lung, verificarea periodică a permisiunilor și separarea strictă a conturilor pot adăuga o ușoară fricțiune în rutina zilnică. Însă această mică disciplină operațională este insignifiantă în comparație cu impactul devastator al unei breșe de securitate în fața instanței, a clienților și a autorităților de reglementare.
 
-Dacă dorești să implementezi o strategie completă de securitate mobilă pentru cabinetul tău, adaptat specificului practicii și echipei tale, echipa **SOLON** oferă consultanță de digitalizare și dezvoltare dedicată profesioniștilor din domeniul juridic.
+Dacă vrei o strategie de securitate mobilă pentru cabinetul tău, echipa SOLON oferă consultanță digitală adaptată profesiei de avocat.
 
 ---
 
