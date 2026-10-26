@@ -24,7 +24,7 @@ const indexnow = require("../scripts/indexnow");
 const { isExcludedFromSitemap, stripShortRedirectUrls } = require("../scripts/update-sitemap");
 
 const ROOT = path.join(__dirname, "..");
-const HTACCESS_HASH = "a67733be651e6944cdbb833443dcf41745f3e12a94deddd65d59fe28c042b999";
+const HTACCESS_HASH = "4d4ed43ed8a400ad126eec9d371d109a1ddc1e1a7a5562d5317a2d7d5226f7f3";
 const HIT_FETCH = "fetch(H,{method:'POST',mode:'no-cors',keepalive:true,credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'hit',id:ID})}).catch(function(){})";
 const PRIVACY_PARAGRAPH = "<p class=\"px-lg-5\"><strong>Linkuri scurte solon.agency.</strong> Când deschizi un link scurt de pe solon.agency, pagina de redirecționare trimite către Google Apps Script doar identificatorul public al linkului, ca să creștem un contor total de clicuri într-un tabel Google Sheets. Nu trimitem pagina de proveniență, parametrii din link, cookie-uri sau alți identificatori și nu păstrăm date despre tine, ci doar numărul total de clicuri pentru fiecare link. Google, ca persoană împuternicită, vede adresa IP a cererii, ca la orice conexiune la serverele sale. Temeiul este interesul nostru legitim de a ști de câte ori este folosit un link (art. 6 alin. (1) lit. f) RGPD).</p>";
 const COOKIES_PARAGRAPH = "<p class=\"px-lg-5\">Linkurile scurte solon.agency nu folosesc cookie-uri și nu citesc nimic de pe dispozitivul tău; contorul de clicuri numără doar totalul pentru fiecare link.</p>";
