@@ -1,6 +1,6 @@
 ---
 title: "Proiectul de modificare a Legii 51/1995: ce poate însemna pentru blogul și website-ul tău"
-seo_title: "Proiect modificare Legea 51/1995: ce înseamnă pentru website"
+seo_title: "Proiect Legea 51/1995: ce înseamnă pentru website"
 date: "2026-10-27"
 date_modified: "2026-10-27"
 slug: "proiect-modificare-legea-51-1995-website-avocat"
