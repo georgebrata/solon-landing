@@ -2810,7 +2810,7 @@ a.details-link:focus-visible,
   }
 }
 
-@media (max-width: 390px) { #footer .footer-bottom [data-demoanaf] { margin-bottom: 3.5rem; } }
+@media (max-width: 768px) { #footer .footer-bottom [data-demoanaf] { margin-bottom: 3.5rem; } }
 
 .hover-no-underline:hover {
   text-decoration: none;
