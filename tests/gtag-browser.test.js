@@ -332,12 +332,12 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       }
     });
     const result = await page.evaluate(
-      (measurementId) =>
+      () =>
         new Promise((resolve) => {
           const tallies = { error: 0, loadend: 0 };
           const order = [];
           const xhr = new XMLHttpRequest();
-          xhr.open("GET", `https://www.google-analytics.com/g/collect?v=2&tid=${measurementId}`);
+          xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2&tid=G-TEST000000");
           xhr.onreadystatechange = () => {
             order.push("readystatechange");
           };
@@ -352,7 +352,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
           xhr.send();
           setTimeout(() => resolve({ tallies, order, readyState: xhr.readyState }), 100);
         }),
-      GA_MEASUREMENT_ID,
     );
     assert.deepEqual(result.tallies, { error: 1, loadend: 1 });
     assert.deepEqual(result.order, ["readystatechange", "error", "loadend"]);

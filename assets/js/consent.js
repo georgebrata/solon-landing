@@ -180,9 +180,6 @@
 
   /** Drops new GA / Clarity transport when analytics is withdrawn (does not cancel in-flight requests). */
   function installAnalyticsTransportGuard() {
-    if (win.__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD === true) {
-      return;
-    }
     if (win.__solonAnalyticsTransportGuard || !win.navigator) {
       return;
     }

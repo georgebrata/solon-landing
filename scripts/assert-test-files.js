@@ -134,7 +134,8 @@ const runAssertTestFiles = function runAssertTestFiles() {
       mainFloors = readOriginMainFloors();
       mainTestFiles = listMainTestFiles();
     } catch (error) {
-      errors.push(error.message);
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`origin/main test guard floors failed: ${message}`, { cause: error });
     }
   }
 

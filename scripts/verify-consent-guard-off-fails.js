@@ -39,3 +39,38 @@ if (failCount < 5) {
 process.stdout.write(
   `consent guard off failed gtag-browser as expected (exit ${result.status ?? 1}, fail ${failCount})\n`,
 );
+
+const consentReusePattern = "blocked XHR open\\(\\) clears synthetic readyState before reuse";
+const consentResult = spawnSync(
+  process.execPath,
+  [
+    "--test",
+    "--test-name-pattern",
+    consentReusePattern,
+    path.join("tests", "consent.test.js"),
+  ],
+  {
+    cwd: repoRoot,
+    env: {
+      ...process.env,
+      SOLON_CONSENT_OMIT_TRANSPORT_GUARD: "1",
+      SOLON_CONSENT_GUARD_OFF_PROOF: "1",
+      SOLON_SKIP_ASSERT_INTEGRATION: "1",
+    },
+    encoding: "utf8",
+  },
+);
+
+if (consentResult.status === 0) {
+  console.error(
+    "::error::consent transport guard disabled should have failed blocked XHR reuse test but passed",
+  );
+  process.exitCode = 1;
+  throw new Error(
+    "consent transport guard disabled should have failed blocked XHR reuse test but passed",
+  );
+}
+
+process.stdout.write(
+  `consent guard off failed blocked XHR reuse as expected (exit ${consentResult.status ?? 1})\n`,
+);

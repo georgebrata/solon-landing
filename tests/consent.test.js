@@ -8,7 +8,10 @@ const vm = require("node:vm");
 const test = require("node:test");
 
 const root = path.join(__dirname, "..");
-const source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
+let source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
+if (process.env.SOLON_CONSENT_OMIT_TRANSPORT_GUARD === "1") {
+  source = source.replace(/\s*installAnalyticsTransportGuard\(\);\s*/gu, "\n");
+}
 const gtagConfigSource = fs.readFileSync(path.join(root, "assets/js/gtag-config.js"), "utf8");
 
 /**
@@ -843,6 +846,22 @@ test("ga-disable drops GA transport for URL objects, fetch, XHR, and image beaco
   assert.equal(beacons.length, 1);
 });
 
+test("ga-disable blocks doubleclick.net beacons when analytics is withdrawn", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://ad.doubleclick.net/activity;register_conversion=1");
+  assert.equal(beacons.length, 0);
+});
+
 test("ga-disable blocks googletagmanager.com/g/collect but not gtag.js loader", () => {
   const beacons = [];
   const { api, context } = loadConsent({
@@ -1102,6 +1121,13 @@ test("blocked XHR reuse requires delete this.readyState in consent open()", () =
   assert.equal(xhr.readyState, 4);
   xhr.open("GET", "https://example.com/safe");
   assert.notEqual(xhr.readyState, 1, "without delete this.readyState reuse stays blocked at 4");
+});
+
+test("shipped consent.js and consent.min.js omit test-only transport guard kill switch", () => {
+  for (const rel of ["assets/js/consent.js", "assets/js/consent.min.js"]) {
+    const body = fs.readFileSync(path.join(root, rel), "utf8");
+    assert.equal(body.includes("__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD"), false);
+  }
 });
 
 test("blocked image setAttribute src does not load and signals error once", () => {

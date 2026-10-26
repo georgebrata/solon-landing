@@ -77,11 +77,47 @@ const pathHasGaCollectSegments = (pathname) => pathHasAdjacentSegments(pathname,
 const pathHasCcmCollectSegments = (pathname) => pathHasAdjacentSegments(pathname, "ccm", "collect");
 
 /**
+ * @param {string} segment
+ * @returns {boolean}
+ */
+const collectPathSegmentMatches = (segment) => {
+  let normalized = segment.toLowerCase();
+  if (normalized.includes("%")) {
+    try {
+      normalized = decodeURIComponent(normalized).toLowerCase();
+    } catch {
+      return false;
+    }
+  }
+  normalized = normalized.split(";")[0].replace(/\.$/u, "").trim();
+  return normalized === "collect";
+};
+
+/**
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+const pathHasLooseCollectSegments = (pathname) => {
+  const parts = collapsePathSlashes(pathname || "").split("/").filter(Boolean);
+  for (let i = 0; i < parts.length; i += 1) {
+    const left = parts[i - 1]?.toLowerCase();
+    if (left === "g" || left === "j" || left === "r") {
+      if (collectPathSegmentMatches(parts[i])) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+/**
  * @param {string} pathname
  * @returns {boolean}
  */
 const isGaCollectPathname = (pathname) =>
-  pathHasGaCollectSegments(pathname) || pathHasCcmCollectSegments(pathname);
+  pathHasGaCollectSegments(pathname) ||
+  pathHasCcmCollectSegments(pathname) ||
+  pathHasLooseCollectSegments(pathname);
 
 /**
  * Block when raw or normalized pathname matches; malformed percent-encoding matches on GA/GTM hosts.

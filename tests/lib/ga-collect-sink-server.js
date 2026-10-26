@@ -28,7 +28,15 @@ let certDir = null;
 const recordSinkRequest = (req) => {
   const host = req.headers.host || "";
   const url = `https://${host}${req.url || "/"}`;
-  if (isGaCollectTransportUrl(url) || isGaCollectTransportUrl(`http://${host}${req.url || "/"}`)) {
+  const httpUrl = `http://${host}${req.url || "/"}`;
+  const hostname = host.replace(/:\d+$/u, "").toLowerCase();
+  const isDoubleClick =
+    hostname === "doubleclick.net" || hostname.endsWith(".doubleclick.net");
+  if (
+    isGaCollectTransportUrl(url) ||
+    isGaCollectTransportUrl(httpUrl) ||
+    isDoubleClick
+  ) {
     sinkHits.push(url);
   }
 };

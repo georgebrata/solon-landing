@@ -4,14 +4,14 @@
 const MIN_REGISTERED_TESTS_BY_FILE = {
   "append-blog-google-sheets.test.js": 8,
   "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 15,
+  "assert-test-files.test.js": 16,
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
-  "consent.test.js": 60,
+  "consent.test.js": 62,
   "error-log.test.js": 5,
   "error-pages.test.js": 12,
   "forms.test.js": 35,
-  "ga-collect-transport.test.js": 4,
+  "ga-collect-transport.test.js": 5,
   "ga-measurement-id.test.js": 4,
   "gtag-browser.test.js": 6,
   "gtag-datalayer.test.js": 2,
@@ -38,7 +38,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 356;
+const MIN_TOTAL_REGISTERED_TESTS = 360;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors

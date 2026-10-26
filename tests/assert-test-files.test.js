@@ -246,6 +246,26 @@ test("parseFloorsFromAssertLegacySource rejects zero floor entries", () => {
   );
 });
 
+test("assert-test-files surfaces origin/main floor guard failures instead of swallowing them", () => {
+  const missingBefore = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef";
+  const result = spawnSync(process.execPath, [scriptPath], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      SOLON_FORCE_MAIN_FLOOR_GUARD: "1",
+      SOLON_SKIP_ASSERT_INTEGRATION: "1",
+      GITHUB_EVENT_NAME: "push",
+      GITHUB_REF: "refs/heads/main",
+      GITHUB_EVENT_BEFORE: missingBefore,
+    },
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stderr}${result.stdout}`,
+    /origin\/main test guard floors failed|HEAD\^1 is missing|is missing for floor comparison/i,
+  );
+});
+
 test("assert-test-files rejects a test file deleted relative to main", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
   const testsDir = path.join(tmpDir, "tests");

@@ -34,6 +34,8 @@ const chromeLaunchArgs = (sink) => {
     `MAP googletagmanager.com:80 127.0.0.1:${sink.httpPort}`,
     `MAP *.doubleclick.net:80 127.0.0.1:${sink.httpPort}`,
     `MAP doubleclick.net:80 127.0.0.1:${sink.httpPort}`,
+    `MAP *.analytics.google.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP analytics.google.com:80 127.0.0.1:${sink.httpPort}`,
   ];
   return [
     "--no-sandbox",
@@ -51,7 +53,7 @@ const chromeLaunchArgs = (sink) => {
 const installGaCollectInterception = async (page, options = {}) => {
   if (process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD === "1") {
     await page.evaluateOnNewDocument(() => {
-      window.__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD = true;
+      window.__solonAnalyticsTransportGuard = true;
     });
   }
   const mutation = process.env.SOLON_GTAG_INTERCEPT_MUTATION || "";
@@ -64,13 +66,14 @@ const installGaCollectInterception = async (page, options = {}) => {
   /** @type {string[]} */
   const interceptedCollectUrls = [];
 
-  if (!fs.existsSync(GTAG_STUB_FIXTURE_PATH)) {
-    gtagLoaderFailure = `gtag loader fixture missing at ${GTAG_STUB_FIXTURE_PATH}`;
+  const gtagFixturePath = options.gtagFixturePath || GTAG_STUB_FIXTURE_PATH;
+  if (!fs.existsSync(gtagFixturePath)) {
+    gtagLoaderFailure = `gtag loader fixture missing at ${gtagFixturePath}`;
     const error = new Error(gtagLoaderFailure);
     error.code = "GTAG_LOADER_FIXTURE_MISSING";
     throw error;
   }
-  const gtagFixtureBody = fs.readFileSync(GTAG_STUB_FIXTURE_PATH, "utf8");
+  const gtagFixtureBody = fs.readFileSync(gtagFixturePath, "utf8");
 
   await page.setRequestInterception(true);
   page.on("request", (req) => {

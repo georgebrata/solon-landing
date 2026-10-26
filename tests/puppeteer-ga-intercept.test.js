@@ -2,6 +2,8 @@
 
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 const { test } = require("node:test");
 
 const {
@@ -27,9 +29,11 @@ test("installGaCollectInterception reports loader failure when stub fixture is m
     t.skip("puppeteer is not installed");
     return;
   }
-  const backupPath = `${GTAG_STUB_FIXTURE_PATH}.guard-backup`;
+  const missingFixture = path.join(
+    fs.mkdtempSync(path.join(os.tmpdir(), "solon-gtag-stub-missing-")),
+    "missing-gtag-stub.js",
+  );
   resetRealNetworkProductionCollectHits();
-  fs.renameSync(GTAG_STUB_FIXTURE_PATH, backupPath);
   const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -37,11 +41,10 @@ test("installGaCollectInterception reports loader failure when stub fixture is m
   try {
     const page = await browser.newPage();
     await assert.rejects(
-      () => installGaCollectInterception(page),
+      () => installGaCollectInterception(page, { gtagFixturePath: missingFixture }),
       (error) => error && error.code === "GTAG_LOADER_FIXTURE_MISSING",
     );
   } finally {
     await browser.close();
-    fs.renameSync(backupPath, GTAG_STUB_FIXTURE_PATH);
   }
 });
