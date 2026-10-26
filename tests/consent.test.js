@@ -855,6 +855,22 @@ test("ga-disable blocks googletagmanager.com/g/collect but not gtag.js loader", 
   assert.equal(beacons.length, 2);
 });
 
+test("ga-disable blocks googletagmanager.com /G/COLLECT case-insensitively", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.googletagmanager.com/G/COLLECT?v=2");
+  assert.equal(beacons.length, 0);
+});
+
 test("ga-disable blocks analytics.google.com and hostname substring false positives", () => {
   const beacons = [];
   const { api, context } = loadConsent({
@@ -973,7 +989,7 @@ test("blocked XHR open() clears synthetic readyState before reuse", () => {
   xhr.send();
   assert.equal(xhr.readyState, 4);
   xhr.open("GET", "https://example.com/safe");
-  assert.notEqual(xhr.readyState, 4);
+  assert.equal(xhr.readyState, 1);
 });
 
 test("blocked image setAttribute src does not load and signals error once", () => {

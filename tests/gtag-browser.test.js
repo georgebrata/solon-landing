@@ -8,18 +8,12 @@ const { describe, it, before, after } = require("node:test");
 
 const root = path.join(__dirname, "..");
 const { GA_MEASUREMENT_ID } = require("../scripts/lib/ga-measurement");
-
-const COLLECT_RE = /\/g\/collect\b/u;
-
-/**
- * @param {string} url
- * @returns {boolean}
- */
-const isGaCollectTransportUrl = (url) =>
-  COLLECT_RE.test(url) &&
-  /(?:^|\/\/)(?:[^/]*\.)?(?:google-analytics\.com|analytics\.google\.com)|googletagmanager\.com/u.test(
-    url,
-  );
+const {
+  isGaCollectTransportUrl,
+  installGaCollectInterception,
+  assertZeroRealProductionGaCollectHits,
+  resetRealNetworkProductionCollectHits,
+} = require("./lib/puppeteer-ga-intercept");
 
 /**
  * @param {string} url
@@ -36,7 +30,7 @@ const engagementEtFromCollectUrl = (url) => {
  * @returns {Promise<void>}
  */
 const waitForFirstCollect = async (page, timeout = 60000) => {
-  await page.waitForRequest((req) => COLLECT_RE.test(req.url()), { timeout });
+  await page.waitForRequest((req) => isGaCollectTransportUrl(req.url()), { timeout });
 };
 
 /**
@@ -121,6 +115,18 @@ const startStaticServer = () =>
     server.listen(0, "127.0.0.1", () => resolve(server));
   });
 
+describe("GA collect transport URL matcher", () => {
+  it("matches host and /g/collect path only on GA/GTM collect hosts", () => {
+    assert.equal(isGaCollectTransportUrl("https://www.googletagmanager.com/g/collect?v=2"), true);
+    assert.equal(isGaCollectTransportUrl("https://evil.com/g/collect?v=2"), false);
+    assert.equal(
+      isGaCollectTransportUrl("https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"),
+      false,
+    );
+    assert.equal(isGaCollectTransportUrl("https://www.google-analytics.com/G/COLLECT?v=2"), true);
+  });
+});
+
 describe("real gtag.js collect after analytics withdrawal", () => {
   /** @type {string | false} */
   let suiteSkip = false;
@@ -132,6 +138,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
   let baseUrl = "";
 
   before(async () => {
+    resetRealNetworkProductionCollectHits();
     suiteSkip = await resolveSuiteSkip();
     if (suiteSkip) {
       return;
@@ -152,12 +159,24 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     });
   });
 
+  /**
+   * @returns {Promise<import("puppeteer").Page>}
+   */
+  const newPageWithGaGuard = async () => {
+    const page = await browser.newPage();
+    await installGaCollectInterception(page);
+    return page;
+  };
+
   after(async () => {
     if (browser) {
       await browser.close();
     }
     if (server) {
       await new Promise((resolve) => server.close(resolve));
+    }
+    if (!suiteSkip) {
+      assertZeroRealProductionGaCollectHits();
     }
   });
 
@@ -166,10 +185,10 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    const page = await browser.newPage();
+    const page = await newPageWithGaGuard();
     let maxEtBeforeWithdraw = 0;
     const onCollectBefore = (req) => {
-      if (COLLECT_RE.test(req.url())) {
+      if (isGaCollectTransportUrl(req.url())) {
         maxEtBeforeWithdraw = Math.max(maxEtBeforeWithdraw, engagementEtFromCollectUrl(req.url()));
       }
     };
@@ -192,7 +211,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     const afterWithdraw = [];
     const onCollect = (req) => {
-      if (COLLECT_RE.test(req.url())) {
+      if (isGaCollectTransportUrl(req.url())) {
         afterWithdraw.push(req.url());
       }
     };
@@ -225,7 +244,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     }
     const context = await browser.createBrowserContext();
     const pageA = await context.newPage();
+    await installGaCollectInterception(pageA);
     const pageB = await context.newPage();
+    await installGaCollectInterception(pageB);
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     const firstCollect = waitForFirstCollect(pageA);
@@ -250,7 +271,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     const afterWithdraw = [];
     const onCollect = (req) => {
-      if (COLLECT_RE.test(req.url())) {
+      if (isGaCollectTransportUrl(req.url())) {
         afterWithdraw.push(req.url());
       }
     };
@@ -274,7 +295,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    const page = await browser.newPage();
+    const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     const firstCollect = waitForFirstCollect(page);
@@ -331,7 +352,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    const page = await browser.newPage();
+    const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     const firstCollect = waitForFirstCollect(page);
@@ -371,7 +392,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    const page = await browser.newPage();
+    const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     const firstCollect = waitForFirstCollect(page);

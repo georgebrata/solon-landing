@@ -72,7 +72,7 @@ const countDeclaredTests = (source) => {
 };
 
 /**
- * Registered tests reported by node:test for a single file (includes loop-generated tests).
+ * Passed tests reported by node:test TAP for a single file (fail-closed; skips/todos excluded).
  * @param {string} filePath
  * @returns {number}
  */
@@ -100,19 +100,19 @@ const countRegisteredTests = (filePath) => {
   return count;
 };
 
-/** Minimum registered tests per file (raise via scripts/update-assert-test-floors.js only). */
+/** Minimum passed tests per file (raise via scripts/update-assert-test-floors.js only). */
 const MIN_REGISTERED_TESTS_BY_FILE = {
   "append-blog-google-sheets.test.js": 8,
   "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 6,
+  "assert-test-files.test.js": 9,
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
-  "consent.test.js": 54,
+  "consent.test.js": 55,
   "error-log.test.js": 5,
   "error-pages.test.js": 12,
   "forms.test.js": 35,
   "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 5,
+  "gtag-browser.test.js": 6,
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
@@ -138,7 +138,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
 
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
 
-const MIN_TOTAL_REGISTERED_TESTS = 334;
+const MIN_TOTAL_REGISTERED_TESTS = 339;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
@@ -175,17 +175,17 @@ const runAssertTestFiles = function runAssertTestFiles() {
     }
     totalRegistered += registered;
     if (registered < 1) {
-      errors.push(`${name} registered 0 node:test cases`);
+      errors.push(`${name} passed 0 node:test cases`);
     }
     const required = MIN_REGISTERED_TESTS_BY_FILE[name] ?? DEFAULT_MIN_REGISTERED_TESTS;
     if (registered < required) {
-      errors.push(`${name} registered test count ${registered} is below floor ${required}`);
+      errors.push(`${name} passed test count ${registered} is below floor ${required}`);
     }
   }
 
   const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_REGISTERED_TESTS;
   if (totalRegistered < minTotal) {
-    errors.push(`total registered test count ${totalRegistered} is below floor ${minTotal}`);
+    errors.push(`total passed test count ${totalRegistered} is below floor ${minTotal}`);
   }
 
   if (errors.length > 0) {

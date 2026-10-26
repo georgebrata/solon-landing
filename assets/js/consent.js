@@ -263,7 +263,8 @@
      * @returns {boolean}
      */
     const isGoogleTagManagerCollectTransport = (hostname, pathname) =>
-      hostnameMatchesApex(hostname, "googletagmanager.com") && pathname.includes("/g/collect");
+      hostnameMatchesApex(hostname, "googletagmanager.com") &&
+      /\/g\/collect/i.test(pathname);
     /**
      * @param {string} hostname
      * @returns {boolean}

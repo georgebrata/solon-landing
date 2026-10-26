@@ -8,7 +8,10 @@ const path = require("node:path");
 const os = require("node:os");
 
 const scriptPath = path.join(__dirname, "..", "scripts", "assert-test-files.js");
+const cliPath = path.join(__dirname, "..", "scripts", "count-registered-tests-cli.js");
+const updateFloorsPath = path.join(__dirname, "..", "scripts", "update-assert-test-floors.js");
 const { countDeclaredTests, countRegisteredTests } = require(scriptPath);
+const { parseTapPassCount } = require(cliPath);
 
 test("assert-test-files rejects an empty tests/*.test.js", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
@@ -109,4 +112,80 @@ test("assert-test-files passes on real tests directory", (t) => {
   delete env.SOLON_TESTS_DIR;
   const result = spawnSync(process.execPath, [scriptPath], { encoding: "utf8", env });
   assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("parseTapPassCount ignores forged # tests and requires TAP version", () => {
+  const forged = [
+    "TAP version 13",
+    "# tests 999",
+    "ok 1 - real",
+    "# tests 1",
+    "# pass 1",
+    "# fail 0",
+    "# tests 999",
+  ].join("\n");
+  assert.equal(parseTapPassCount(forged), 1);
+  assert.equal(parseTapPassCount("no summary"), 0);
+  assert.equal(parseTapPassCount("# pass 999\n# tests 999"), 0);
+});
+
+test("countRegisteredTests returns 0 for skip-only and todo-only files", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
+  const testsDir = path.join(tmpDir, "tests");
+  fs.mkdirSync(testsDir);
+  const skipPath = path.join(testsDir, "skip-only.test.js");
+  fs.writeFileSync(
+    skipPath,
+    [
+      '"use strict";',
+      'const { test } = require("node:test");',
+      'test("skipped", (t) => { t.skip("n/a"); });',
+      "",
+    ].join("\n"),
+  );
+  const todoPath = path.join(testsDir, "todo-only.test.js");
+  fs.writeFileSync(
+    todoPath,
+    [
+      '"use strict";',
+      'const { test } = require("node:test");',
+      'test.todo("later");',
+      "",
+    ].join("\n"),
+  );
+  assert.equal(countRegisteredTests(skipPath), 0);
+  assert.equal(countRegisteredTests(todoPath), 0);
+});
+
+test("assert-test-files rejects skip-only file under SOLON_TESTS_DIR", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
+  const testsDir = path.join(tmpDir, "tests");
+  fs.mkdirSync(testsDir);
+  fs.writeFileSync(
+    path.join(testsDir, "only-skip.test.js"),
+    [
+      '"use strict";',
+      'const { test } = require("node:test");',
+      'test("skipped", (t) => { t.skip("n/a"); });',
+      "",
+    ].join("\n"),
+  );
+  const result = spawnSync(process.execPath, [scriptPath], {
+    encoding: "utf8",
+    env: { ...process.env, SOLON_TESTS_DIR: testsDir },
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stderr}${result.stdout}`, /only-skip\.test\.js passed 0/);
+});
+
+test("update-assert-test-floors fails when floor anchor is missing", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
+  const assertCopy = path.join(tmpDir, "assert-test-files.js");
+  fs.writeFileSync(assertCopy, '"use strict";\nmodule.exports = {};\n');
+  const result = spawnSync(process.execPath, [updateFloorsPath], {
+    encoding: "utf8",
+    env: { ...process.env, SOLON_ASSERT_TEST_FILES_PATH: assertCopy },
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stderr}${result.stdout}`, /anchor missing/i);
 });
