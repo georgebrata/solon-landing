@@ -21,6 +21,8 @@ const {
   HUMANIZE_SKIP_FILENAMES,
   humanizeFiles,
   humanizeMarkdown,
+  isPathInsideRealPostsDir,
+  resolveRealPostsDir,
 } = require("../scripts/humanize.js");
 
 /** @param {string} filename */
@@ -549,6 +551,55 @@ test("humanizeFiles rewrites a pre-validated basename without re-classifying ent
     assert.notEqual(fs.readFileSync(targetPath, "utf8"), JARGON_FIXTURE);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js missing --posts-dir prints a clean error without a stack trace", () => {
+  const missingDir = path.join(os.tmpdir(), `solon-humanize-missing-posts-${Date.now()}`);
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      path.join(__dirname, "../scripts/humanize.js"),
+      "--posts-dir",
+      missingDir,
+    ],
+    { encoding: "utf8" },
+  );
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Nu am găsit folderul de articole/u);
+  assert.ok(result.stderr.includes(missingDir));
+  assert.doesNotMatch(result.stderr, /ENOENT/u);
+  assert.doesNotMatch(result.stderr, /\n\s+at /u);
+});
+
+test("isPathInsideRealPostsDir accepts files under the filesystem root postsDir", () => {
+  const rootDir = path.parse(os.tmpdir()).root;
+  const realRoot = resolveRealPostsDir(rootDir);
+  const probePath = path.join(os.tmpdir(), `solon-humanize-root-prefix-${Date.now()}.md`);
+  fs.writeFileSync(probePath, "probe\n", "utf8");
+  try {
+    const realFile = fs.realpathSync(probePath);
+    assert.equal(isPathInsideRealPostsDir(realRoot, realFile), true);
+  } finally {
+    fs.rmSync(probePath, { force: true });
+  }
+});
+
+test("isPathInsideRealPostsDir rejects a sibling directory that shares a path prefix", () => {
+  const postsDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-posts-"));
+  const evilDir = `${postsDir}-evil`;
+  const evilFile = path.join(evilDir, "x.md");
+
+  try {
+    fs.mkdirSync(evilDir);
+    fs.writeFileSync(evilFile, JARGON_FIXTURE, "utf8");
+    const realPosts = resolveRealPostsDir(postsDir);
+    const realEvil = fs.realpathSync(evilFile);
+    assert.equal(isPathInsideRealPostsDir(realPosts, realEvil), false);
+  } finally {
+    fs.rmSync(evilDir, { recursive: true, force: true });
+    fs.rmSync(postsDir, { recursive: true, force: true });
   }
 });
 

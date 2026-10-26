@@ -77,7 +77,26 @@ const logSkippedLegalClearedPost = (filename) => {
  * @param {string} postsDir
  * @returns {string}
  */
-const resolveRealPostsDir = (postsDir) => fs.realpathSync(postsDir);
+const resolveRealPostsDir = (postsDir) => {
+  try {
+    return fs.realpathSync(postsDir);
+  } catch (error) {
+    if (error && typeof error === "object" && error.code === "ENOENT") {
+      const message = `Nu am găsit folderul de articole ${postsDir}.`;
+      const missing = new Error(message);
+      missing.code = "SOLON_POSTS_DIR_MISSING";
+      throw missing;
+    }
+    throw error;
+  }
+};
+
+/**
+ * @param {string} realPostsDir
+ * @returns {string}
+ */
+const realPostsDirPrefix = (realPostsDir) =>
+  realPostsDir.endsWith(path.sep) ? realPostsDir : `${realPostsDir}${path.sep}`;
 
 /**
  * @param {string} realPostsDir
@@ -86,9 +105,8 @@ const resolveRealPostsDir = (postsDir) => fs.realpathSync(postsDir);
  */
 const isPathInsideRealPostsDir = (realPostsDir, realFilePath) => {
   const resolvedFile = path.resolve(realFilePath);
-  return (
-    resolvedFile === realPostsDir || resolvedFile.startsWith(`${realPostsDir}${path.sep}`)
-  );
+  const prefix = realPostsDirPrefix(realPostsDir);
+  return resolvedFile === realPostsDir || resolvedFile.startsWith(prefix);
 };
 
 /**
@@ -792,6 +810,13 @@ const protectMarkdown = (markdown) => {
   };
 };
 
+/**
+ * Rewrites markdown post sources that were already validated by {@link classifyPostsMarkdownEntry}.
+ * Callers must pass only pre-classified basenames; this function does not re-run entry guards.
+ *
+ * @param {string[]} filesToProcess
+ * @param {{ postsDir: string, dryRun: boolean }} options
+ */
 function humanizeFiles(filesToProcess, { postsDir, dryRun }) {
   let changedFiles = 0;
   let totalChanges = 0;
@@ -1083,7 +1108,16 @@ if (require.main === module) {
     targetFile = path.basename(targetFile);
   }
   const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
-  const realPostsDir = resolveRealPostsDir(postsDir);
+  let realPostsDir;
+  try {
+    realPostsDir = resolveRealPostsDir(postsDir);
+  } catch (error) {
+    if (error && typeof error === "object" && error.code === "SOLON_POSTS_DIR_MISSING") {
+      console.error(error.message);
+      process.exit(1);
+    }
+    throw error;
+  }
 
   if (targetFile) {
     const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, targetFile);
@@ -1126,4 +1160,5 @@ module.exports = {
   formatPostsEntryIssue,
   resolveRealPostsDir,
   isPathInsideRealPostsDir,
+  realPostsDirPrefix,
 };
