@@ -660,9 +660,13 @@ const protectMarkdown = (markdown) => {
   };
 };
 
+/** Slugs with legal-cleared markdown (byte-exact); do not run humanize rules. */
+const HUMANIZE_SKIP_FILES = new Set(["proiect-modificare-legea-51-1995-website-avocat.md"]);
+
 const files = fs
   .readdirSync(postsDir)
   .filter((file) => file.endsWith(".md"))
+  .filter((file) => !HUMANIZE_SKIP_FILES.has(file))
   .filter((file) => !targetFile || file === targetFile);
 
 if (targetFile && files.length === 0) {
