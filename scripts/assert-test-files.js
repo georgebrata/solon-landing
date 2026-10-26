@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const { readOriginMainFloors } = require("./lib/origin-main-test-floors");
 
 const testsDir = process.env.SOLON_TESTS_DIR
   ? path.resolve(process.env.SOLON_TESTS_DIR)
@@ -104,10 +105,10 @@ const countRegisteredTests = (filePath) => {
 const MIN_REGISTERED_TESTS_BY_FILE = {
   "append-blog-google-sheets.test.js": 8,
   "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 9,
+  "assert-test-files.test.js": 11,
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
-  "consent.test.js": 55,
+  "consent.test.js": 57,
   "error-log.test.js": 5,
   "error-pages.test.js": 12,
   "forms.test.js": 35,
@@ -138,7 +139,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
 
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
 
-const MIN_TOTAL_REGISTERED_TESTS = 339;
+const MIN_TOTAL_REGISTERED_TESTS = 343;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
@@ -153,6 +154,16 @@ const runAssertTestFiles = function runAssertTestFiles() {
   let totalRegistered = 0;
   /** @type {string[]} */
   const errors = [];
+
+  /** @type {{ byFile: Record<string, number>, total: number } | null} */
+  let mainFloors = null;
+  if (!process.env.SOLON_TESTS_DIR) {
+    try {
+      mainFloors = readOriginMainFloors();
+    } catch (error) {
+      errors.push(error.message);
+    }
+  }
 
   for (const name of files) {
     const filePath = path.join(testsDir, name);
@@ -181,11 +192,28 @@ const runAssertTestFiles = function runAssertTestFiles() {
     if (registered < required) {
       errors.push(`${name} passed test count ${registered} is below floor ${required}`);
     }
+    if (mainFloors) {
+      const mainFloor = mainFloors.byFile[name] ?? 0;
+      if (required < mainFloor) {
+        errors.push(`${name} committed floor ${required} is below origin/main ${mainFloor}`);
+      }
+      if (registered < mainFloor) {
+        errors.push(`${name} passed test count ${registered} is below origin/main floor ${mainFloor}`);
+      }
+    }
   }
 
   const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_REGISTERED_TESTS;
   if (totalRegistered < minTotal) {
     errors.push(`total passed test count ${totalRegistered} is below floor ${minTotal}`);
+  }
+  if (mainFloors && minTotal > 0 && MIN_TOTAL_REGISTERED_TESTS < mainFloors.total) {
+    errors.push(
+      `committed total floor ${MIN_TOTAL_REGISTERED_TESTS} is below origin/main ${mainFloors.total}`,
+    );
+  }
+  if (mainFloors && minTotal > 0 && totalRegistered < mainFloors.total) {
+    errors.push(`total passed test count ${totalRegistered} is below origin/main ${mainFloors.total}`);
   }
 
   if (errors.length > 0) {

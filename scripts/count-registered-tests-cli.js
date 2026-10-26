@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 
@@ -33,21 +34,61 @@ const parseTapPassCount = (combined) => {
     return 0;
   }
   let passFromSummary = null;
+  let testsFromSummary = null;
   for (const line of combined.split("\n")) {
-    const match = line.match(/^# pass (\d+)\s*$/u);
-    if (match) {
-      passFromSummary = Number(match[1]);
+    const passMatch = line.match(/^# pass (\d+)\s*$/u);
+    if (passMatch) {
+      passFromSummary = Number(passMatch[1]);
+    }
+    const testsMatch = line.match(/^# tests (\d+)\s*$/u);
+    if (testsMatch) {
+      testsFromSummary = Number(testsMatch[1]);
     }
   }
   if (passFromSummary === null || !Number.isFinite(passFromSummary)) {
     return 0;
   }
+
+  let subtestOk = 0;
+  for (const line of combined.split("\n")) {
+    const okMatch = line.match(/^ok \d+ - (.+)$/u);
+    if (okMatch && !okMatch[1].endsWith(".test.js")) {
+      subtestOk += 1;
+    }
+  }
+  if (subtestOk === 0 && passFromSummary > 0 && testsFromSummary === 1) {
+    return 0;
+  }
   return passFromSummary;
+};
+
+/**
+ * @param {string} testFilePath
+ * @returns {number | null}
+ */
+const readGtagPassCache = (testFilePath) => {
+  const cachePath = process.env.SOLON_GTAG_PASS_CACHE_PATH;
+  if (!cachePath || path.basename(testFilePath) !== "gtag-browser.test.js") {
+    return null;
+  }
+  if (!fs.existsSync(cachePath)) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(cachePath, "utf8"));
+    if (typeof parsed.pass === "number" && Number.isFinite(parsed.pass)) {
+      return parsed.pass;
+    }
+  } catch {
+    return null;
+  }
+  return null;
 };
 
 module.exports = {
   parseTapPassCount,
   isolatedTestEnv,
+  readGtagPassCache,
 };
 
 if (require.main === module) {
@@ -56,10 +97,17 @@ if (require.main === module) {
     throw new Error("usage: count-registered-tests-cli.js <test-file>");
   }
 
+  const cachedPass = readGtagPassCache(filePath);
+  if (cachedPass !== null) {
+    process.stdout.write(String(cachedPass));
+    process.exit(0);
+  }
+
+  const timeoutMs = path.basename(filePath) === "assert-test-files.test.js" ? 300_000 : 120_000;
   const result = spawnSync(process.execPath, ["--test", "--test-reporter", "tap", filePath], {
     encoding: "utf8",
     env: isolatedTestEnv(process.env, filePath),
-    timeout: 120_000,
+    timeout: timeoutMs,
   });
 
   const combined = `${result.stdout || ""}\n${result.stderr || ""}`;

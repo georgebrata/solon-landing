@@ -2,12 +2,12 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { execSync } = require("node:child_process");
 const {
   countRegisteredTests,
   MIN_REGISTERED_TESTS_BY_FILE,
   MIN_TOTAL_REGISTERED_TESTS,
 } = require("./assert-test-files");
+const { readOriginMainFloors, parseFloorsFromAssertSource } = require("./lib/origin-main-test-floors");
 
 const testsDir = path.join(__dirname, "..", "tests");
 
@@ -16,38 +16,23 @@ const FLOOR_BLOCK_RE =
 
 /**
  * @param {string} source
- * @returns {{ byFile: Record<string, number>, total: number }}
+ * @returns {void}
  */
-const parseFloorsFromAssertSource = (source) => {
-  const blockMatch = source.match(/const MIN_REGISTERED_TESTS_BY_FILE = \{([\s\S]*?)\};/m);
-  const totalMatch = source.match(/const MIN_TOTAL_REGISTERED_TESTS = (\d+);/);
-  /** @type {Record<string, number>} */
-  const byFile = {};
-  if (blockMatch) {
-    const body = blockMatch[1];
-    for (const line of body.split("\n")) {
-      const entry = line.match(/^\s*"([^"]+)":\s*(\d+),?\s*$/u);
-      if (entry) {
-        byFile[entry[1]] = Number(entry[2]);
-      }
+const validateCommittedFloorsAgainstMain = (source) => {
+  const mainFloors = readOriginMainFloors();
+  const committedFloors = parseFloorsFromAssertSource(source);
+  for (const [name, mainFloor] of Object.entries(mainFloors.byFile)) {
+    const committedFloor = committedFloors.byFile[name] ?? 0;
+    if (committedFloor < mainFloor) {
+      throw new Error(
+        `update-assert-test-floors: committed floor for ${name} (${committedFloor}) is below origin/main (${mainFloor})`,
+      );
     }
   }
-  const total = totalMatch ? Number(totalMatch[1]) : 0;
-  return { byFile, total };
-};
-
-/**
- * @returns {{ byFile: Record<string, number>, total: number } | null}
- */
-const readOriginMainFloors = () => {
-  try {
-    const source = execSync("git show origin/main:scripts/assert-test-files.js", {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    return parseFloorsFromAssertSource(source);
-  } catch {
-    return null;
+  if (committedFloors.total < mainFloors.total) {
+    throw new Error(
+      `update-assert-test-floors: committed total floor (${committedFloors.total}) is below origin/main (${mainFloors.total})`,
+    );
   }
 };
 
@@ -69,12 +54,13 @@ const runUpdateAssertTestFloors = function runUpdateAssertTestFloors() {
     throw new Error("update-assert-test-floors: MIN_TOTAL_REGISTERED_TESTS anchor missing");
   }
 
+  const mainFloors = readOriginMainFloors();
+  validateCommittedFloorsAgainstMain(source);
+
   const files = fs
     .readdirSync(testsDir)
     .filter((name) => name.endsWith(".test.js"))
     .sort();
-
-  const mainFloors = readOriginMainFloors();
 
   /** @type {Record<string, number>} */
   const nextByFile = { ...MIN_REGISTERED_TESTS_BY_FILE };
@@ -84,13 +70,21 @@ const runUpdateAssertTestFloors = function runUpdateAssertTestFloors() {
     const filePath = path.join(testsDir, name);
     const registered = countRegisteredTests(filePath);
     totalRegistered += registered;
-    const previous = nextByFile[name] ?? 1;
-    const mainFloor = mainFloors?.byFile[name] ?? 0;
-    nextByFile[name] = Math.max(previous, registered, mainFloor);
+    const mainFloor = mainFloors.byFile[name] ?? 0;
+    if (registered < mainFloor) {
+      throw new Error(
+        `update-assert-test-floors: ${name} passed ${registered} tests, below origin/main floor ${mainFloor}`,
+      );
+    }
+    nextByFile[name] = Math.max(registered, mainFloor);
   }
 
-  const mainTotal = mainFloors?.total ?? 0;
-  const nextTotal = Math.max(MIN_TOTAL_REGISTERED_TESTS, totalRegistered, mainTotal);
+  const nextTotal = Math.max(totalRegistered, mainFloors.total);
+  if (nextTotal < mainFloors.total) {
+    throw new Error(
+      `update-assert-test-floors: next total floor ${nextTotal} would be below origin/main ${mainFloors.total}`,
+    );
+  }
 
   const lines = Object.keys(nextByFile)
     .sort()
@@ -114,7 +108,7 @@ ${lines}
   );
 };
 
-module.exports = { runUpdateAssertTestFloors };
+module.exports = { runUpdateAssertTestFloors, validateCommittedFloorsAgainstMain };
 
 if (require.main === module) {
   runUpdateAssertTestFloors();

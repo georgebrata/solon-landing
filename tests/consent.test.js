@@ -250,12 +250,21 @@ const loadConsent = function loadConsent(options = {}) {
     HTMLImageElement: options.HTMLImageElement,
   };
   if (!context.XMLHttpRequest) {
+    const xhrReadyStates = new WeakMap();
     function XMLHttpRequest() {
+      xhrReadyStates.set(this, 0);
       return undefined;
     }
+    Object.defineProperty(XMLHttpRequest.prototype, "readyState", {
+      configurable: false,
+      enumerable: true,
+      get() {
+        return xhrReadyStates.get(this) ?? 0;
+      },
+    });
     XMLHttpRequest.prototype.open = function (method, url) {
       this.__solonGaOpenUrl = url;
-      this.readyState = 1;
+      xhrReadyStates.set(this, 1);
     };
     XMLHttpRequest.prototype.send = function () {
       this.__solonTransportSent = this.__solonGaOpenUrl;
@@ -331,7 +340,8 @@ const loadConsent = function loadConsent(options = {}) {
   context.window = context;
   context.globalThis = context;
   vm.createContext(context);
-  vm.runInContext(source, context);
+  const consentSource = options.consentSource || source;
+  vm.runInContext(consentSource, context);
   return { api: context.SolonConsent, context, store, sessionStore, created, inertScripts, listeners };
 };
 
@@ -855,6 +865,22 @@ test("ga-disable blocks googletagmanager.com/g/collect but not gtag.js loader", 
   assert.equal(beacons.length, 2);
 });
 
+test("ga-disable blocks percent-encoded /g/collect path segments", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%63ollect?v=2");
+  assert.equal(beacons.length, 0);
+});
+
 test("ga-disable blocks googletagmanager.com /G/COLLECT case-insensitively", () => {
   const beacons = [];
   const { api, context } = loadConsent({
@@ -956,24 +982,28 @@ test("blocked XHR with accessor-only readyState on prototype still fires events 
     }
     return nativeDefineProperty.call(context.Object, target, property, attributes);
   };
-  api.acceptAll();
-  api.saveCustom({ analytics: false, marketing: true });
-  const xhr = new context.XMLHttpRequest();
-  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
-  const counts = { readystatechange: 0, error: 0, loadend: 0 };
-  xhr.onreadystatechange = () => {
-    counts.readystatechange += 1;
-  };
-  xhr.onerror = () => {
-    counts.error += 1;
-  };
-  xhr.onloadend = () => {
-    counts.loadend += 1;
-  };
-  xhr.send();
-  assert.ok(xhr.__solonTransportSent === undefined);
-  assert.equal(xhr.readyState, 1);
-  assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
+  try {
+    api.acceptAll();
+    api.saveCustom({ analytics: false, marketing: true });
+    const xhr = new context.XMLHttpRequest();
+    xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+    const counts = { readystatechange: 0, error: 0, loadend: 0 };
+    xhr.onreadystatechange = () => {
+      counts.readystatechange += 1;
+    };
+    xhr.onerror = () => {
+      counts.error += 1;
+    };
+    xhr.onloadend = () => {
+      counts.loadend += 1;
+    };
+    xhr.send();
+    assert.ok(xhr.__solonTransportSent === undefined);
+    assert.equal(xhr.readyState, 1);
+    assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
+  } finally {
+    context.Object.defineProperty = nativeDefineProperty;
+  }
 });
 
 test("blocked XHR open() clears synthetic readyState before reuse", () => {
@@ -990,6 +1020,24 @@ test("blocked XHR open() clears synthetic readyState before reuse", () => {
   assert.equal(xhr.readyState, 4);
   xhr.open("GET", "https://example.com/safe");
   assert.equal(xhr.readyState, 1);
+});
+
+test("blocked XHR reuse requires delete this.readyState in consent open()", () => {
+  const withoutDelete = source.replace(/\s*delete this\.readyState;\s*/u, "\n");
+  const { api, context } = loadConsent({
+    consentSource: withoutDelete,
+    queueMicrotask: (fn) => {
+      fn();
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const xhr = new context.XMLHttpRequest();
+  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+  xhr.send();
+  assert.equal(xhr.readyState, 4);
+  xhr.open("GET", "https://example.com/safe");
+  assert.notEqual(xhr.readyState, 1, "without delete this.readyState reuse stays blocked at 4");
 });
 
 test("blocked image setAttribute src does not load and signals error once", () => {

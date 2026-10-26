@@ -252,7 +252,13 @@
       }
       try {
         const base = win.location?.href || "https://solon.agency/";
-        return new URL(raw, base).pathname;
+        let pathname = new URL(raw, base).pathname;
+        try {
+          pathname = decodeURIComponent(pathname);
+        } catch {
+          // keep encoded pathname when decoding fails
+        }
+        return pathname;
       } catch {
         return "";
       }
