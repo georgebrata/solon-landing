@@ -154,17 +154,6 @@ const ensureHeadSnippets = (html) => {
  * @param {string} html
  * @returns {string}
  */
-const syncTrackerSnippetsInHtml = (html) => {
-  let next = ensureHeadSnippets(html);
-  next = normalizeTrackerHeadPaths(next);
-  next = ensureTrackingScript(next);
-  return normalizeTrackingScriptLine(next);
-};
-
-/**
- * @param {string} html
- * @returns {string}
- */
 const ensureTrackingScript = (html) => {
   if (!html.includes("consent.min.js")) {
     return html;
@@ -182,6 +171,17 @@ const ensureTrackingScript = (html) => {
     return html.replace(/<\/body>/iu, `\n${TRACKING_BODY_TAG}\n</body>`);
   }
   return html;
+};
+
+/**
+ * @param {string} html
+ * @returns {string}
+ */
+const syncTrackerSnippetsInHtml = (html) => {
+  let next = ensureHeadSnippets(html);
+  next = normalizeTrackerHeadPaths(next);
+  next = ensureTrackingScript(next);
+  return normalizeTrackingScriptLine(next);
 };
 
 /**
