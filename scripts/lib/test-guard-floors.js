@@ -8,6 +8,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
   "consent.test.js": 63,
+  "demoanaf-badge.test.js": 5,
   "error-log.test.js": 5,
   "error-pages.test.js": 12,
   "forms.test.js": 35,
