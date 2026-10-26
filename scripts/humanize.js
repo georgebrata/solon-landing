@@ -73,6 +73,115 @@ const logSkippedLegalClearedPost = (filename) => {
   console.log(formatSkippedLegalClearedLogLine(filename));
 };
 
+/**
+ * @param {string} postsDir
+ * @returns {string}
+ */
+const resolveRealPostsDir = (postsDir) => fs.realpathSync(postsDir);
+
+/**
+ * @param {string} realPostsDir
+ * @param {string} realFilePath
+ * @returns {boolean}
+ */
+const isPathInsideRealPostsDir = (realPostsDir, realFilePath) => {
+  const resolvedFile = path.resolve(realFilePath);
+  return (
+    resolvedFile === realPostsDir || resolvedFile.startsWith(`${realPostsDir}${path.sep}`)
+  );
+};
+
+/**
+ * @param {string} realPostsDir
+ * @param {string} postsDir
+ * @param {string} basename
+ * @returns {"ok" | "missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"}
+ */
+const classifyPostsMarkdownEntry = (realPostsDir, postsDir, basename) => {
+  if (!basename.endsWith(".md")) {
+    return "not-md";
+  }
+  const targetPath = path.join(postsDir, basename);
+  if (!fs.existsSync(targetPath)) {
+    return "missing";
+  }
+  let lstat;
+  try {
+    lstat = fs.lstatSync(targetPath);
+  } catch {
+    return "missing";
+  }
+  if (lstat.isSymbolicLink()) {
+    return "symlink";
+  }
+  if (!lstat.isFile()) {
+    return "not-regular-file";
+  }
+  let realFile;
+  try {
+    realFile = fs.realpathSync(targetPath);
+  } catch {
+    return "missing";
+  }
+  if (!isPathInsideRealPostsDir(realPostsDir, realFile)) {
+    return "outside-posts";
+  }
+  return "ok";
+};
+
+/**
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {"file" | "batch"} mode
+ * @returns {boolean}
+ */
+const postsEntryIssueIsFatal = (kind, mode) => {
+  if (kind === "not-regular-file") {
+    return mode === "file";
+  }
+  return true;
+};
+
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {boolean} fatal
+ * @returns {string}
+ */
+const formatPostsEntryIssue = (postsDir, basename, kind, fatal) => {
+  if (!fatal) {
+    return `${basename} din ${postsDir}: nu este fișier regulat; îl sar.`;
+  }
+  switch (kind) {
+    case "missing":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu l-am găsit.`;
+    case "not-md":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu este .md.`;
+    case "symlink":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: legătură simbolică.`;
+    case "outside-posts":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: rezolvă în afara folderului de articole.`;
+    case "not-regular-file":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu este fișier regulat.`;
+    default:
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}.`;
+  }
+};
+
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {"file" | "batch"} mode
+ */
+const reportPostsEntryIssue = (postsDir, basename, kind, mode) => {
+  const fatal = postsEntryIssueIsFatal(kind, mode);
+  console.error(formatPostsEntryIssue(postsDir, basename, kind, fatal));
+  if (fatal) {
+    process.exitCode = 1;
+  }
+};
+
 const rules = [
   // --- Lever 8: punctuation normalization ---
   // Only em-dashes (—) are an AI-prose signal; en-dashes (–) are correct
@@ -974,12 +1083,12 @@ if (require.main === module) {
     targetFile = path.basename(targetFile);
   }
   const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
+  const realPostsDir = resolveRealPostsDir(postsDir);
 
   if (targetFile) {
-    const targetPath = path.join(postsDir, targetFile);
-    if (!fs.existsSync(targetPath)) {
-      console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-      process.exitCode = 1;
+    const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, targetFile);
+    if (entryKind !== "ok") {
+      reportPostsEntryIssue(postsDir, targetFile, entryKind, "file");
     } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
       logSkippedLegalClearedPost(targetFile);
     } else {
@@ -987,19 +1096,34 @@ if (require.main === module) {
     }
   } else {
     const markdownFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith(".md"));
+    /** @type {string[]} */
+    const filesToProcess = [];
 
     for (const file of markdownFiles) {
       if (HUMANIZE_SKIP_FILENAMES.has(file)) {
         logSkippedLegalClearedPost(file);
+        continue;
       }
+      const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, file);
+      if (entryKind === "ok") {
+        filesToProcess.push(file);
+        continue;
+      }
+      // Symlinks / outside targets are a security refusal (exit 1). A directory
+      // named like *.md is a benign skip (exit 0) — not an escape attempt.
+      reportPostsEntryIssue(postsDir, file, entryKind, "batch");
     }
 
-    const filesToProcess = markdownFiles.filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file));
     humanizeFiles(filesToProcess, { postsDir, dryRun });
   }
 }
 
 module.exports = {
   humanizeMarkdown,
+  humanizeFiles,
   HUMANIZE_SKIP_FILENAMES,
+  classifyPostsMarkdownEntry,
+  formatPostsEntryIssue,
+  resolveRealPostsDir,
+  isPathInsideRealPostsDir,
 };
