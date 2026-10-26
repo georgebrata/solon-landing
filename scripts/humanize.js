@@ -59,13 +59,17 @@ const LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES = [
 ];
 const HUMANIZE_SKIP_FILENAMES = new Set(LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES);
 
-const SKIP_LEGAL_CLEARED_LOG_PREFIX = "skip legal-cleared post source:";
+/**
+ * @param {string} filename
+ * @returns {string}
+ */
+const formatSkippedLegalClearedLogLine = (filename) => `${filename}: skipped (legal-cleared)`;
 
 /**
  * @param {string} filename
  */
 const logSkippedLegalClearedPost = (filename) => {
-  console.log(`${SKIP_LEGAL_CLEARED_LOG_PREFIX} ${filename}`);
+  console.log(formatSkippedLegalClearedLogLine(filename));
 };
 
 const rules = [
@@ -996,5 +1000,5 @@ module.exports = {
   LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES,
   HUMANIZE_SKIP_FILENAMES,
   logSkippedLegalClearedPost,
-  SKIP_LEGAL_CLEARED_LOG_PREFIX,
+  formatSkippedLegalClearedLogLine,
 };

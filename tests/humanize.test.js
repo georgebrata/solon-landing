@@ -18,9 +18,9 @@ const path = require("node:path");
 const test = require("node:test");
 
 const {
+  formatSkippedLegalClearedLogLine,
   HUMANIZE_SKIP_FILENAMES,
   humanizeMarkdown,
-  SKIP_LEGAL_CLEARED_LOG_PREFIX,
 } = require("../scripts/humanize.js");
 
 const FIXTURE = `---
@@ -243,7 +243,7 @@ test("humanize.js skips legal-cleared post filenames byte-for-byte and logs each
       [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir],
       { encoding: "utf8" },
     );
-    assert.match(output, new RegExp(`${SKIP_LEGAL_CLEARED_LOG_PREFIX} ${SKIP_LISTED_FILENAME}`, "u"));
+    assert.ok(output.includes(`${formatSkippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`));
     assert.match(output, /No humanizing changes found/u);
     assert.equal(fs.readFileSync(listedPath, "utf8"), source);
   } finally {
@@ -268,10 +268,7 @@ test("humanize.js --file on a skip-listed basename exits 0 with one skip log lin
       ],
       { encoding: "utf8" },
     );
-    assert.equal(
-      output.trim(),
-      `${SKIP_LEGAL_CLEARED_LOG_PREFIX} ${SKIP_LISTED_FILENAME}`,
-    );
+    assert.equal(output.trim(), formatSkippedLegalClearedLogLine(SKIP_LISTED_FILENAME));
     assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
