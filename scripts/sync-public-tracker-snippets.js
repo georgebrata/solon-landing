@@ -22,7 +22,7 @@ const assetContentHash = (relFromRoot) =>
     .digest("hex")
     .slice(0, 10);
 
-const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates", "tests"]);
+const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates"]);
 
 /**
  * @param {string} relPath Repo-relative path using forward slashes.

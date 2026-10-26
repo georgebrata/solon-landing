@@ -226,7 +226,7 @@ const hasUngatedGtagLoader = (html) => {
   return scriptTagAttrBlobs(html).some(
     (attrs) =>
       /\bgoogletagmanager\.com\/gtag\/js\b/iu.test(attrs) &&
-      !/\?id=G-H41D7KCWHX\b/iu.test(attrs),
+      !new RegExp(`\\?id=${GA_MEASUREMENT_ID}\\b`, "iu").test(attrs),
   );
 };
 

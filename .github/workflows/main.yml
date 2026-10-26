@@ -1,9 +1,8 @@
 # Production pipeline for solon.agency
 #
-# Policy: pull requests never FTP-deploy. CI Production runs targeted checks on every
-# push/PR; the full npm test suite runs on pull_request (Tests workflow) and on
-# push to main (test-suite job). FTP deploy runs only after CI succeeds on push to
-# main or an intentional workflow_dispatch.
+# Policy: pull requests never FTP-deploy. Tests and npm audit run on every
+# push/PR to main. FTP deploy runs only after CI succeeds on push to main
+# or an intentional workflow_dispatch.
 #
 # This file supersedes the outdated claim in issue #21 that .github/workflows/
 # is empty. Lighthouse CI and W3C HTML validation from #21 remain follow-ups.

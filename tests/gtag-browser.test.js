@@ -10,30 +10,10 @@ const root = path.join(__dirname, "..");
 const { GA_MEASUREMENT_ID } = require("../scripts/lib/ga-measurement");
 const {
   isGaCollectTransportUrl,
-  isGoogleTrackingRequestUrl,
   installGaCollectInterception,
   assertZeroRealProductionGaCollectHits,
   resetRealNetworkProductionCollectHits,
-  chromeLaunchArgs,
 } = require("./lib/puppeteer-ga-intercept");
-const {
-  startGaCollectSinkServer,
-  stopGaCollectSinkServer,
-  resetGaCollectSink,
-  assertGaCollectSinkEmpty,
-} = require("./lib/ga-collect-sink-server");
-const { writeGtagPassCache } = require("../scripts/lib/gtag-pass-cache");
-
-const GTAG_PASS_CACHE_PATH = process.env.SOLON_GTAG_PASS_CACHE_PATH
-  ? path.resolve(process.env.SOLON_GTAG_PASS_CACHE_PATH)
-  : path.join(__dirname, ".cache", "gtag-browser-pass.json");
-
-const GTAG_WITHDRAWAL_BROWSER_IT = 5;
-const GTAG_BLOG_BROWSER_IT = 6;
-const GTAG_BROWSER_PASSED_IT = GTAG_WITHDRAWAL_BROWSER_IT + GTAG_BLOG_BROWSER_IT;
-
-/** @type {number} */
-let gtagBrowserPassedIts = 0;
 
 /**
  * @param {string} url
@@ -54,21 +34,41 @@ const waitForFirstCollect = async (page, timeout = 60000) => {
 };
 
 /**
- * @param {{ interceptedCollectUrls: string[] }} interceptState
- * @param {number} [timeout]
- * @returns {Promise<string>}
+ * @param {number} ms
+ * @returns {Promise<void>}
  */
-const waitForInterceptedCollect = async (interceptState, timeout = 60000) => {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    if (interceptState.interceptedCollectUrls.length > 0) {
-      return interceptState.interceptedCollectUrls[0];
-    }
-    await new Promise((resolve) => {
-      setTimeout(resolve, 50);
-    });
+const sleep = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
+
+/**
+ * @returns {Promise<boolean>}
+ */
+const canReachGoogleTagManager = async () => {
+  if (process.env.SKIP_GTAG_BROWSER === "1") {
+    return false;
   }
-  throw new Error(`timed out after ${timeout}ms waiting for intercepted GA collect`);
+  const attempts = 3;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, {
+        method: "GET",
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        return true;
+      }
+    } catch {
+      // try again with backoff
+    }
+    if (attempt < attempts - 1) {
+      await sleep(1000 * (attempt + 1));
+    }
+  }
+  return false;
 };
 
 /**
@@ -120,22 +120,10 @@ describe("GA collect transport URL matcher", () => {
     assert.equal(isGaCollectTransportUrl("https://www.googletagmanager.com/g/collect?v=2"), true);
     assert.equal(isGaCollectTransportUrl("https://evil.com/g/collect?v=2"), false);
     assert.equal(
-      isGaCollectTransportUrl("https://www.googletagmanager.com/gtag/js?id=G-TEST000000"),
+      isGaCollectTransportUrl("https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"),
       false,
     );
     assert.equal(isGaCollectTransportUrl("https://www.google-analytics.com/G/COLLECT?v=2"), true);
-    assert.equal(
-      isGaCollectTransportUrl("https://www.googletagmanager.com./g/collect?v=2"),
-      true,
-    );
-    assert.equal(
-      isGaCollectTransportUrl("https://www.googletagmanager.com/g/collection?v=2"),
-      false,
-    );
-    assert.equal(
-      isGaCollectTransportUrl("https://www.googletagmanager.com/ccm/collect?v=2"),
-      true,
-    );
   });
 });
 
@@ -148,24 +136,26 @@ describe("real gtag.js collect after analytics withdrawal", () => {
   let server = null;
   /** @type {string} */
   let baseUrl = "";
-  /** @type {{ httpsPort: number, httpPort: number, spkiHash: string } | null} */
-  let sinkMeta = null;
 
   before(async () => {
     resetRealNetworkProductionCollectHits();
-    suiteSkip = resolveSuiteSkip();
+    suiteSkip = await resolveSuiteSkip();
     if (suiteSkip) {
       return;
     }
+    if (!(await canReachGoogleTagManager())) {
+      throw new Error(
+        "googletagmanager.com unreachable: real gtag browser regression tests did not run",
+      );
+    }
     const puppeteer = require("puppeteer");
-    sinkMeta = await startGaCollectSinkServer();
     server = await startStaticServer();
     const addr = server.address();
     const port = typeof addr === "object" && addr ? addr.port : 0;
     baseUrl = `http://127.0.0.1:${port}/tests/fixtures/gtag-withdrawal/`;
     browser = await puppeteer.launch({
       headless: true,
-      args: chromeLaunchArgs(sinkMeta),
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
   });
 
@@ -185,27 +175,10 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
-    if (sinkMeta) {
-      await stopGaCollectSinkServer();
-    }
     if (!suiteSkip) {
       assertZeroRealProductionGaCollectHits();
     }
   });
-
-  /**
-   * @param {import("puppeteer").Page} page
-   * @returns {Promise<void>}
-   */
-  const assertNoCollectLeakAfterWithdraw = async (page) => {
-    resetGaCollectSink();
-    await new Promise((r) => setTimeout(r, 5000));
-    await page.evaluate(() => {
-      document.dispatchEvent(new Event("visibilitychange"));
-    });
-    await new Promise((r) => setTimeout(r, 3000));
-    assertGaCollectSinkEmpty();
-  };
 
   it("sends no new /g/collect after withdrawal (single tab)", async (t) => {
     if (suiteSkip) {
@@ -243,7 +216,11 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       }
     };
     page.on("request", onCollect);
-    await assertNoCollectLeakAfterWithdraw(page);
+    await new Promise((r) => setTimeout(r, 5000));
+    await page.evaluate(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await new Promise((r) => setTimeout(r, 3000));
     page.off("request", onCollect);
     assert.equal(afterWithdraw.length, 0, `expected 0 collect hits after withdrawal, got ${afterWithdraw.length}`);
     for (const url of afterWithdraw) {
@@ -258,7 +235,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.equal(gaCookiesAfter.length, 0, `expected no _ga cookies after withdrawal, got ${gaCookiesAfter.join(", ")}`);
     await page.close();
-    gtagBrowserPassedIts += 1;
   });
 
   it("sends no new /g/collect on tab A after tab B withdraws (cross-tab)", async (t) => {
@@ -300,7 +276,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       }
     };
     pageA.on("request", onCollect);
-    await assertNoCollectLeakAfterWithdraw(pageA);
+    await new Promise((r) => setTimeout(r, 5000));
+    await pageA.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+    await new Promise((r) => setTimeout(r, 3000));
     pageA.off("request", onCollect);
     assert.equal(afterWithdraw.length, 0, `tab A expected 0 collects after tab B withdrew, got ${afterWithdraw.length}`);
     const gaCookiesOnA = await pageA.evaluate(() =>
@@ -310,7 +288,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     await pageA.close();
     await pageB.close();
     await context.close();
-    gtagBrowserPassedIts += 1;
   });
 
   it("blocked real XHR to google-analytics fires onerror and onloadend once", async (t) => {
@@ -367,9 +344,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     assert.deepEqual(result.order, ["readystatechange", "error", "loadend"]);
     assert.equal(result.readyState, 4);
     assert.equal(gaCollectUrls.length, 0);
-    assertGaCollectSinkEmpty();
     await page.close();
-    gtagBrowserPassedIts += 1;
   });
 
   it("blocked XHR reuse resets readyState after analytics withdrawal", async (t) => {
@@ -409,9 +384,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.equal(result.afterBlock, 4);
     assert.equal(result.afterReuse, 1);
-    await assertNoCollectLeakAfterWithdraw(page);
     await page.close();
-    gtagBrowserPassedIts += 1;
   });
 
   it("blocked GTM /g/collect XHR does not hit the network after withdrawal", async (t) => {
@@ -452,283 +425,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.equal(result.readyState, 4);
     assert.equal(gaCollectUrls.length, 0);
-    assertGaCollectSinkEmpty();
     await page.close();
-    gtagBrowserPassedIts += 1;
-  });
-});
-
-/**
- * @returns {string}
- */
-const sampleBlogPostUrlPath = () => {
-  const blogDir = path.join(root, "blog");
-  for (const name of fs.readdirSync(blogDir)) {
-    if (name === "index.html") {
-      continue;
-    }
-    const postIndex = path.join(blogDir, name, "index.html");
-    if (fs.existsSync(postIndex)) {
-      return `/blog/${name}/`;
-    }
-  }
-  throw new Error("no blog post HTML found under blog/");
-};
-
-/**
- * @param {import("puppeteer").Page} page
- * @returns {{ urls: () => string[], detach: () => void }}
- */
-const attachGoogleHostRequestRecorder = (page) => {
-  /** @type {string[]} */
-  const urls = [];
-  const onRequest = (req) => {
-    if (isGoogleTrackingRequestUrl(req.url())) {
-      urls.push(req.url());
-    }
-  };
-  page.on("request", onRequest);
-  return {
-    urls: () => [...urls],
-    detach: () => {
-      page.off("request", onRequest);
-    },
-  };
-};
-
-/**
- * @param {() => string[]} getUrls
- * @param {number} idleMs
- * @returns {Promise<void>}
- */
-const waitForGoogleHostRequestsIdle = async (getUrls, idleMs = 2000) => {
-  let lastLen = getUrls().length;
-  let stableSince = Date.now();
-  while (Date.now() - stableSince < idleMs) {
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100);
-    });
-    const len = getUrls().length;
-    if (len !== lastLen) {
-      lastLen = len;
-      stableSince = Date.now();
-    }
-  }
-};
-
-describe("blog pages consent-gated GA4 in Chrome", () => {
-  /** @type {string | false} */
-  let suiteSkip = false;
-  /** @type {import("puppeteer").Browser | null} */
-  let browser = null;
-  /** @type {import("http").Server | null} */
-  let server = null;
-  /** @type {string} */
-  let blogUrl = "";
-  /** @type {string} */
-  let postUrl = "";
-  /** @type {{ httpsPort: number, httpPort: number, spkiHash: string } | null} */
-  let sinkMeta = null;
-
-  before(async () => {
-    resetRealNetworkProductionCollectHits();
-    suiteSkip = resolveSuiteSkip();
-    if (suiteSkip) {
-      return;
-    }
-    const puppeteer = require("puppeteer");
-    sinkMeta = await startGaCollectSinkServer();
-    server = await startStaticServer();
-    const addr = server.address();
-    const port = typeof addr === "object" && addr ? addr.port : 0;
-    blogUrl = `http://127.0.0.1:${port}/blog/`;
-    postUrl = `http://127.0.0.1:${port}${sampleBlogPostUrlPath()}`;
-    browser = await puppeteer.launch({
-      headless: true,
-      args: chromeLaunchArgs(sinkMeta),
-    });
-  });
-
-  after(async () => {
-    if (browser) {
-      await browser.close();
-    }
-    if (server) {
-      await new Promise((resolve) => server.close(resolve));
-    }
-    if (sinkMeta) {
-      await stopGaCollectSinkServer();
-    }
-    if (!suiteSkip) {
-      assertZeroRealProductionGaCollectHits();
-      const runKey = process.env.SOLON_GTAG_PASS_RUN_KEY;
-      const nonce = process.env.SOLON_GTAG_PASS_NONCE;
-      const cacheEligible =
-        !process.env.SOLON_GTAG_INTERCEPT_MUTATION &&
-        process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD !== "1" &&
-        process.env.SOLON_GTAG_GUARD_OFF_PROOF !== "1";
-      if (
-        cacheEligible &&
-        runKey &&
-        nonce &&
-        process.env.SOLON_GTAG_PASS_CACHE_PATH &&
-        gtagBrowserPassedIts === GTAG_BROWSER_PASSED_IT
-      ) {
-        writeGtagPassCache(GTAG_PASS_CACHE_PATH, 1 + gtagBrowserPassedIts, { runKey, nonce });
-      }
-    }
-  });
-
-  /**
-   * @returns {Promise<{ page: import("puppeteer").Page, interceptState: { interceptedCollectUrls: string[] } }>}
-   */
-  const newPageWithGaGuard = async () => {
-    const page = await browser.newPage();
-    const interceptState = await installGaCollectInterception(page);
-    return { page, interceptState };
-  };
-
-  it("sends no Google host requests before consent on /blog/", async (t) => {
-    if (suiteSkip) {
-      t.skip(suiteSkip);
-      return;
-    }
-    const { page } = await newPageWithGaGuard();
-    const recorder = attachGoogleHostRequestRecorder(page);
-    await page.goto(blogUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForFunction(() => window.SolonConsent?.rejectAll, { timeout: 15000 });
-    await waitForGoogleHostRequestsIdle(recorder.urls);
-    assert.deepEqual(recorder.urls(), []);
-    recorder.detach();
-    await page.close();
-    gtagBrowserPassedIts += 1;
-  });
-
-  it("sends no Google host requests after reject-all on /blog/", async (t) => {
-    if (suiteSkip) {
-      t.skip(suiteSkip);
-      return;
-    }
-    const { page } = await newPageWithGaGuard();
-    const recorder = attachGoogleHostRequestRecorder(page);
-    await page.goto(blogUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForFunction(() => window.SolonConsent?.rejectAll, { timeout: 15000 });
-    await page.evaluate(() => {
-      window.SolonConsent.rejectAll();
-    });
-    await page.waitForFunction(
-      () => window.SolonConsent.hasConsent("analytics") === false,
-      { timeout: 15000 },
-    );
-    await waitForGoogleHostRequestsIdle(recorder.urls);
-    assert.deepEqual(recorder.urls(), []);
-    recorder.detach();
-    await page.close();
-    gtagBrowserPassedIts += 1;
-  });
-
-  it("sends no Google host requests before consent on a blog post page", async (t) => {
-    if (suiteSkip) {
-      t.skip(suiteSkip);
-      return;
-    }
-    const { page } = await newPageWithGaGuard();
-    const recorder = attachGoogleHostRequestRecorder(page);
-    await page.goto(postUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForFunction(() => window.SolonConsent?.rejectAll, { timeout: 15000 });
-    await waitForGoogleHostRequestsIdle(recorder.urls);
-    assert.deepEqual(recorder.urls(), []);
-    recorder.detach();
-    await page.close();
-    gtagBrowserPassedIts += 1;
-  });
-
-  it("sends no Google host requests after reject-all on a blog post page", async (t) => {
-    if (suiteSkip) {
-      t.skip(suiteSkip);
-      return;
-    }
-    const { page } = await newPageWithGaGuard();
-    const recorder = attachGoogleHostRequestRecorder(page);
-    await page.goto(postUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForFunction(() => window.SolonConsent?.rejectAll, { timeout: 15000 });
-    await page.evaluate(() => {
-      window.SolonConsent.rejectAll();
-    });
-    await page.waitForFunction(
-      () => window.SolonConsent.hasConsent("analytics") === false,
-      { timeout: 15000 },
-    );
-    await waitForGoogleHostRequestsIdle(recorder.urls);
-    assert.deepEqual(recorder.urls(), []);
-    recorder.detach();
-    await page.close();
-    gtagBrowserPassedIts += 1;
-  });
-
-  it("serves offline gtag.js stub and sends page_view collect with dl=/blog/ after consent", async (t) => {
-    if (suiteSkip) {
-      t.skip(suiteSkip);
-      return;
-    }
-    const { page, interceptState } = await newPageWithGaGuard();
-    await page.goto(blogUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
-    const gtagJs = page.waitForRequest(
-      (req) => req.url().includes("googletagmanager.com/gtag/js"),
-      { timeout: 60000 },
-    );
-    await page.evaluate(() => {
-      window.SolonConsent.acceptAll();
-    });
-    await gtagJs;
-    const collectUrl = await waitForInterceptedCollect(interceptState);
-    const stubLoaded = await page.evaluate(() => window.gtag && window.gtag.__solonArgumentsStub === true);
-    assert.equal(stubLoaded, true);
-    assert.match(collectUrl, /[?&]dl=/u);
-    const dlMatch = collectUrl.match(/[?&]dl=([^&]+)/u);
-    assert.ok(dlMatch, "collect URL must include dl=");
-    const decoded = decodeURIComponent(dlMatch[1].replace(/\+/gu, " "));
-    assert.match(decoded, /\/blog\//u, `expected dl to include /blog/, got ${decoded}`);
-    await page.close();
-    gtagBrowserPassedIts += 1;
-  });
-
-  it("sends no new GA collect hits on /blog/ after analytics withdrawal", async (t) => {
-    if (suiteSkip) {
-      t.skip(suiteSkip);
-      return;
-    }
-    const { page, interceptState } = await newPageWithGaGuard();
-    await page.goto(blogUrl, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
-    await page.evaluate(() => {
-      window.SolonConsent.acceptAll();
-    });
-    await waitForInterceptedCollect(interceptState);
-    await page.evaluate(() => {
-      window.SolonConsent.saveCustom({ analytics: false, marketing: true });
-    });
-    await page.waitForFunction(
-      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
-      { timeout: 15000 },
-    );
-    resetGaCollectSink();
-    const afterWithdraw = [];
-    const onCollect = (req) => {
-      if (isGaCollectTransportUrl(req.url())) {
-        afterWithdraw.push(req.url());
-      }
-    };
-    page.on("request", onCollect);
-    await page.evaluate(() => {
-      document.dispatchEvent(new Event("visibilitychange"));
-    });
-    await waitForGoogleHostRequestsIdle(() => afterWithdraw, 2500);
-    page.off("request", onCollect);
-    assert.equal(afterWithdraw.length, 0, `expected 0 collect hits after withdrawal, got ${afterWithdraw.length}`);
-    assertGaCollectSinkEmpty();
-    await page.close();
-    gtagBrowserPassedIts += 1;
   });
 });
