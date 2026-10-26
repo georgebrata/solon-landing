@@ -26,6 +26,9 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
+      - name: Assert test files declare tests
+        run: node scripts/assert-test-files.js
+
       - name: Run form validation tests
         run: npm run test:forms
 
@@ -35,7 +38,7 @@ jobs:
       - name: Install Chrome for gtag browser test
         run: npx puppeteer browsers install chrome
 
-      - name: Run gtag browser test (skips when GTM unreachable)
+      - name: Run gtag browser test (retries GTM reachability)
         run: npm run test:gtag-browser
 
       - name: Run feature flag tests

@@ -63,6 +63,36 @@ const loadTracking = (overrides = {}) => {
   };
 };
 
+test("solonTrack fails closed when SolonConsent omits GA_DISABLE_PROPERTY", () => {
+  const gtagCalls = [];
+  const context = {
+    console,
+    window: {
+      SolonConsent: {
+        hasConsent: (category) => category === "analytics" || category === "marketing",
+      },
+      gtag: (...args) => {
+        gtagCalls.push(args);
+      },
+      fbq: () => undefined,
+      location: { pathname: "/", href: "https://solon.agency/" },
+      document: {
+        readyState: "complete",
+        addEventListener() {
+          return undefined;
+        },
+        querySelector() {
+          return null;
+        },
+      },
+    },
+  };
+  context.globalThis = context.window;
+  vm.runInNewContext(trackingSource, context, { filename: "tracking.js" });
+  context.window.solonTrack("Lead", "generate_lead", { content_name: "Contact" });
+  assert.equal(gtagCalls.length, 0);
+});
+
 test("solonTrack sends nothing without consent", () => {
   const { solonTrack, gtagCalls, fbqCalls } = loadTracking({
     consent: {
