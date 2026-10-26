@@ -1,0 +1,57 @@
+{
+  "FAQ": [],
+  "Testimonials": [
+    {
+      "id": "guritanu",
+      "Nume": "Avocat Cristian Gurițanu",
+      "Subtitlu": "Cabinet Individual de Avocat Cristian Gurițanu",
+      "Citat": "Colaborarea cu echipa SOLON a depășit așteptările mele. Aveam nevoie de o prezență digitală serioasă, care să reflecte profesionalismul și atenția la detalii cu care îmi practic meseria. Am primit exact asta: un logo elegant, un website modern pe care îl pot actualiza singur și o vizibilitate concretă pe Google, pe care o regăsesc deja în numărul de solicitări noi.",
+      "Imagine": "assets/img/team/guritanu-portret.webp",
+      "Alt": "Avocat Dumitrescu Alexandru din Turda - review pentru SOLON, agentia digitala pentru avocati",
+      "Width": "432",
+      "Height": "426",
+      "Visible": true,
+      "Active": false,
+      "QuoteClass": ""
+    },
+    {
+      "id": "dumitrescu",
+      "Nume": "Avocat Dumitrescu Alexandru",
+      "Subtitlu": "Cabinet Individual de Avocat Dumitrescu Alexandru",
+      "Citat": "Recomand echipa Solon și altor colegi care doresc să se adapteze la tendințele actuale ale avocaturii și doresc o colaborare cu o echipă dinamică și inovativă care atinge nevoile clientului la cele mai înalte standarde.",
+      "Imagine": "assets/img/team/dumitrescu2.webp",
+      "Alt": "Avocat Dumitrescu Alexandru din Turda - review pentru SOLON, agentia digitala pentru avocati",
+      "Width": "432",
+      "Height": "456",
+      "Visible": true,
+      "Active": false,
+      "QuoteClass": ""
+    },
+    {
+      "id": "mihai",
+      "Nume": "Avocat Marinău Mihai",
+      "Subtitlu": "Societate Civilă Profesională de Avocați Marinău și Asociații",
+      "Citat": "Cu ajutorul echipei Solon, avem acum un site modern care reflectă profesionalism, care ne reprezintă identitatea și ne sporeste prezența online. Experiența de lucru cu Solon a fost eficienta, echipa lor fiind profesionistă, creativă și orientată către rezultate.",
+      "Imagine": "assets/img/team/mihai.webp",
+      "Alt": "Avocat Mihai Marinau - review SOLON, agentia digitala pentru avocati",
+      "Width": "443",
+      "Height": "427",
+      "Visible": true,
+      "Active": false,
+      "QuoteClass": ""
+    },
+    {
+      "id": "nagy",
+      "Nume": "Avocat Nagy Sebastian",
+      "Subtitlu": "Cabinet Individual de Avocat Nagy Sebastian",
+      "Citat": "Performanțele site-ului creat sunt cu adevărat impresionante. Viteza de încărcare excelentă, navigarea intuitivă și adaptabilitatea pe diverse dispozitive mobile sunt câteva dintre punctele forte ale acestuia.",
+      "Imagine": "assets/img/team/sebi.webp",
+      "Alt": "Avocat Sebastian Nagy - review SOLON, agentia digitala pentru avocati",
+      "Width": "500",
+      "Height": "522",
+      "Visible": true,
+      "Active": true,
+      "QuoteClass": "testimonial-quote"
+    }
+  ]
+}

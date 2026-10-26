@@ -65,6 +65,12 @@ jobs:
       - name: Test pricing build (snapshot)
         run: npm run test:pricing
 
+      - name: Test homepage sheets privacy
+        run: npm run test:homepage-sheets
+
+      - name: Check homepage sheets build
+        run: node scripts/build-homepage-sheets.js --offline --check
+
       - name: Test blog sheet append script
         run: npm run test:append-sheets
 
@@ -154,6 +160,12 @@ jobs:
           SHEETS_API_URL: ${{ vars.SHEETS_API_URL }}
           SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
         run: node scripts/build-pricing.js
+
+      - name: Build homepage FAQ and testimonials from SOLON API
+        env:
+          SHEETS_API_URL: ${{ vars.SHEETS_API_URL }}
+          SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
+        run: node scripts/build-homepage-sheets.js
 
       # After pricing. On API failure it logs ::error:: and does not rewrite the snapshot, .htaccess, or r/.
       - name: Build short links from SOLON API

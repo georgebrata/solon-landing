@@ -76,7 +76,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | Ahrefs | `analytics.ahrefs.com` | script, connect |
 | counter.dev | `cdn.counter.dev`, `t.counter.dev` | script, connect |
 | Jost + Open Sans (self-hosted) | `/assets/fonts/*.woff2`, `assets/css/fonts.css` (merged into `style.min.css`) | font (`'self'`) |
-| Forms, FAQ Sheets, and the short-link click counter | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action. The counter POST uses `connect-src` only and sends no API key. |
+| Contact/newsletter/callback forms and the short-link click counter | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action (`assets/js/forms.js` POST to Apps Script; counter POST uses `connect-src` only and sends no API key). Homepage FAQ/testimonials are build-time only (`scripts/build-homepage-sheets.js`). |
 | IP lookup | `api64.ipify.org` | connect |
 | Support chat (disabled; re-enable per Trello jIwDAiCn) | `solon-agency.app.n8n.cloud` — omit from CSP while off | connect |
 | Stripe Payment Links | `buy.stripe.com` is a **top-level navigation** (not CSP). `js.stripe.com` / `hooks.stripe.com` reserved if Checkout is ever embedded | frame, script |

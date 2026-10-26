@@ -19,6 +19,8 @@
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "test:chat": "node --test tests/support-chat.test.js",
     "build:pricing": "node scripts/build-pricing.js",
+    "build:homepage-sheets": "node scripts/build-homepage-sheets.js",
+    "test:homepage-sheets": "node --test tests/homepage-sheets-privacy.test.js",
     "test:pricing": "node --test tests/pricing.test.js",
     "build:shortlinks": "node scripts/build-shortlinks.js",
     "test:shortlinks": "node --test tests/shortlinks.test.js",

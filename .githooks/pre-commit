@@ -42,6 +42,7 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
+node scripts/build-homepage-sheets.js --offline
 npm run minify
 
 # Build the blog
