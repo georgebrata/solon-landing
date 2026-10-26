@@ -8,7 +8,10 @@ const vm = require("node:vm");
 const test = require("node:test");
 
 const root = path.join(__dirname, "..");
-const source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
+let source = fs.readFileSync(path.join(root, "assets/js/consent.js"), "utf8");
+if (process.env.SOLON_CONSENT_OMIT_TRANSPORT_GUARD === "1") {
+  source = source.replace(/\s*installAnalyticsTransportGuard\(\);\s*/gu, "\n");
+}
 const gtagConfigSource = fs.readFileSync(path.join(root, "assets/js/gtag-config.js"), "utf8");
 
 /**
@@ -250,12 +253,21 @@ const loadConsent = function loadConsent(options = {}) {
     HTMLImageElement: options.HTMLImageElement,
   };
   if (!context.XMLHttpRequest) {
+    const xhrReadyStates = new WeakMap();
     function XMLHttpRequest() {
+      xhrReadyStates.set(this, 0);
       return undefined;
     }
+    Object.defineProperty(XMLHttpRequest.prototype, "readyState", {
+      configurable: false,
+      enumerable: true,
+      get() {
+        return xhrReadyStates.get(this) ?? 0;
+      },
+    });
     XMLHttpRequest.prototype.open = function (method, url) {
       this.__solonGaOpenUrl = url;
-      this.readyState = 1;
+      xhrReadyStates.set(this, 1);
     };
     XMLHttpRequest.prototype.send = function () {
       this.__solonTransportSent = this.__solonGaOpenUrl;
@@ -328,10 +340,14 @@ const loadConsent = function loadConsent(options = {}) {
   if (options.dataLayer) {
     context.dataLayer = options.dataLayer;
   }
+  if (options.fakeTransportGuardKillSwitch) {
+    context.__solonAnalyticsTransportGuard = true;
+  }
   context.window = context;
   context.globalThis = context;
   vm.createContext(context);
-  vm.runInContext(source, context);
+  const consentSource = options.consentSource || source;
+  vm.runInContext(consentSource, context);
   return { api: context.SolonConsent, context, store, sessionStore, created, inertScripts, listeners };
 };
 
@@ -833,6 +849,22 @@ test("ga-disable drops GA transport for URL objects, fetch, XHR, and image beaco
   assert.equal(beacons.length, 1);
 });
 
+test("ga-disable blocks doubleclick.net beacons when analytics is withdrawn", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://ad.doubleclick.net/activity;register_conversion=1");
+  assert.equal(beacons.length, 0);
+});
+
 test("ga-disable blocks googletagmanager.com/g/collect but not gtag.js loader", () => {
   const beacons = [];
   const { api, context } = loadConsent({
@@ -853,6 +885,86 @@ test("ga-disable blocks googletagmanager.com/g/collect but not gtag.js loader", 
   context[api.GA_DISABLE_PROPERTY] = false;
   context.navigator.sendBeacon("https://www.googletagmanager.com/g/collect?v=2");
   assert.equal(beacons.length, 2);
+});
+
+test("ga-disable blocks percent-encoded /g/collect path segments", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%63ollect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%2563ollect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%252Fcollect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com//g//collect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%ZZollect?v=2");
+  assert.equal(beacons.length, 0);
+});
+
+test("ga-disable blocks googletagmanager.com /g/collection paths", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/collection?v=2");
+  assert.equal(beacons.length, 0);
+});
+
+test("ga-disable allowlist blocks malformed GTM loader path variants", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const blocked = [
+    "https://www.googletagmanager.com/gtag/js;x=1?id=G-TEST",
+    "https://www.googletagmanager.com/gtag/%3Bjs",
+    "https://www.googletagmanager.com/gtag%20/js",
+    "https://www.googletagmanager.com/gtag/%00/js",
+    "https://www.googletagmanager.com/gtag/%3Bc",
+    "https://www.googletagmanager.com/gtag/%5Cjs",
+    "https://www.googletagmanager.com/gtag/js%2Fcollect",
+  ];
+  for (const url of blocked) {
+    context.navigator.sendBeacon(url);
+  }
+  assert.equal(beacons.length, 0);
+  context.navigator.sendBeacon("https://www.googletagmanager.com/gtag/js?id=G-TEST000000");
+  assert.equal(beacons.length, 1);
+});
+
+test("analytics accepted still allows google-analytics.com collect transports", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  context.navigator.sendBeacon("https://www.google-analytics.com/g/collect?v=2");
+  assert.equal(beacons.length, 1);
 });
 
 test("ga-disable blocks googletagmanager.com /G/COLLECT case-insensitively", () => {
@@ -956,24 +1068,28 @@ test("blocked XHR with accessor-only readyState on prototype still fires events 
     }
     return nativeDefineProperty.call(context.Object, target, property, attributes);
   };
-  api.acceptAll();
-  api.saveCustom({ analytics: false, marketing: true });
-  const xhr = new context.XMLHttpRequest();
-  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
-  const counts = { readystatechange: 0, error: 0, loadend: 0 };
-  xhr.onreadystatechange = () => {
-    counts.readystatechange += 1;
-  };
-  xhr.onerror = () => {
-    counts.error += 1;
-  };
-  xhr.onloadend = () => {
-    counts.loadend += 1;
-  };
-  xhr.send();
-  assert.ok(xhr.__solonTransportSent === undefined);
-  assert.equal(xhr.readyState, 1);
-  assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
+  try {
+    api.acceptAll();
+    api.saveCustom({ analytics: false, marketing: true });
+    const xhr = new context.XMLHttpRequest();
+    xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+    const counts = { readystatechange: 0, error: 0, loadend: 0 };
+    xhr.onreadystatechange = () => {
+      counts.readystatechange += 1;
+    };
+    xhr.onerror = () => {
+      counts.error += 1;
+    };
+    xhr.onloadend = () => {
+      counts.loadend += 1;
+    };
+    xhr.send();
+    assert.ok(xhr.__solonTransportSent === undefined);
+    assert.equal(xhr.readyState, 1);
+    assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
+  } finally {
+    context.Object.defineProperty = nativeDefineProperty;
+  }
 });
 
 test("blocked XHR open() clears synthetic readyState before reuse", () => {
@@ -990,6 +1106,58 @@ test("blocked XHR open() clears synthetic readyState before reuse", () => {
   assert.equal(xhr.readyState, 4);
   xhr.open("GET", "https://example.com/safe");
   assert.equal(xhr.readyState, 1);
+});
+
+test("blocked XHR reuse requires delete this.readyState in consent open()", () => {
+  const withoutDelete = source.replace(/\s*delete this\.readyState;\s*/u, "\n");
+  const { api, context } = loadConsent({
+    consentSource: withoutDelete,
+    queueMicrotask: (fn) => {
+      fn();
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const xhr = new context.XMLHttpRequest();
+  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+  xhr.send();
+  assert.equal(xhr.readyState, 4);
+  xhr.open("GET", "https://example.com/safe");
+  assert.notEqual(xhr.readyState, 1, "without delete this.readyState reuse stays blocked at 4");
+});
+
+test("shipped consent.js and consent.min.js omit test-only transport guard kill switch", () => {
+  for (const rel of ["assets/js/consent.js", "assets/js/consent.min.js"]) {
+    const body = fs.readFileSync(path.join(root, rel), "utf8");
+    assert.equal(body.includes("__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD"), false);
+    assert.equal(body.includes("SOLON_CONSENT_OMIT_TRANSPORT_GUARD"), false);
+    assert.equal(body.includes("SOLON_GTAG_DISABLE_CONSENT_GUARD"), false);
+    assert.equal(body.includes("__solonAnalyticsTransportGuard ||"), false);
+    assert.equal(body.includes("__solonAnalyticsTransportGuard||"), false);
+  }
+});
+
+test("truthy __solonAnalyticsTransportGuard set before consent still installs transport guard", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    fakeTransportGuardKillSwitch: true,
+    queueMicrotask: (fn) => {
+      fn();
+    },
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.google-analytics.com/g/collect?v=2");
+  context.navigator.sendBeacon("https://h.clarity.ms/collect");
+  context.navigator.sendBeacon("https://ad.doubleclick.net/activity");
+  assert.equal(beacons.length, 0);
+  assert.equal(context.__solonAnalyticsTransportGuard?.__solonTransportGuard, "installed");
 });
 
 test("blocked image setAttribute src does not load and signals error once", () => {

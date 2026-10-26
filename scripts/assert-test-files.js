@@ -3,6 +3,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const { readOriginMainFloors, listMainTestFiles } = require("./lib/origin-main-test-floors");
+const {
+  MIN_REGISTERED_TESTS_BY_FILE,
+  MIN_TOTAL_REGISTERED_TESTS,
+} = require("./lib/test-guard-floors");
 
 const testsDir = process.env.SOLON_TESTS_DIR
   ? path.resolve(process.env.SOLON_TESTS_DIR)
@@ -100,50 +105,13 @@ const countRegisteredTests = (filePath) => {
   return count;
 };
 
-/** Minimum passed tests per file (raise via scripts/update-assert-test-floors.js only). */
-const MIN_REGISTERED_TESTS_BY_FILE = {
-  "append-blog-google-sheets.test.js": 8,
-  "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 9,
-  "blog-schema.test.js": 3,
-  "brevo-tracker.test.js": 7,
-  "consent.test.js": 55,
-  "error-log.test.js": 5,
-  "error-pages.test.js": 12,
-  "forms.test.js": 35,
-  "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 6,
-  "gtag-datalayer.test.js": 2,
-  "html-integrity.test.js": 4,
-  "html-validate.test.js": 11,
-  "humanize.test.js": 24,
-  "indexnow.test.js": 18,
-  "json-ld-injection.test.js": 17,
-  "jsonld.test.js": 2,
-  "legal-content-guard.test.js": 3,
-  "meta-pixel-privacy.test.js": 4,
-  "partners.test.js": 4,
-  "price-toggle.test.js": 3,
-  "pricing.test.js": 26,
-  "shortlinks-hit.test.js": 2,
-  "shortlinks.test.js": 24,
-  "sitemap.test.js": 7,
-  "stamp-asset-refs.test.js": 6,
-  "support-chat.test.js": 5,
-  "tracking-snippets.test.js": 7,
-  "tracking.test.js": 17,
-  "turnstile-gate.test.js": 3,
-  "unsubscribe-privacy.test.js": 5,
-};
-
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
-
-const MIN_TOTAL_REGISTERED_TESTS = 359;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
  * @returns {void}
  */
+// skipcq: JS-R1005 -- single guard entrypoint; splitting would duplicate floor wiring
 const runAssertTestFiles = function runAssertTestFiles() {
   const files = fs
     .readdirSync(testsDir)
@@ -153,6 +121,32 @@ const runAssertTestFiles = function runAssertTestFiles() {
   let totalRegistered = 0;
   /** @type {string[]} */
   const errors = [];
+
+  const skipMainFloorGuard =
+    Boolean(process.env.SOLON_TESTS_DIR) && process.env.SOLON_FORCE_MAIN_FLOOR_GUARD !== "1";
+
+  /** @type {{ byFile: Record<string, number>, total: number } | null} */
+  let mainFloors = null;
+  /** @type {string[]} */
+  let mainTestFiles = [];
+  if (!skipMainFloorGuard) {
+    try {
+      mainFloors = readOriginMainFloors();
+      mainTestFiles = listMainTestFiles();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`origin/main test guard floors failed: ${message}`, { cause: error });
+    }
+  }
+
+  if (mainTestFiles.length > 0) {
+    const localNames = new Set(files);
+    for (const name of mainTestFiles) {
+      if (!localNames.has(name)) {
+        errors.push(`${name} exists on main but is missing from tests/`);
+      }
+    }
+  }
 
   for (const name of files) {
     const filePath = path.join(testsDir, name);
@@ -181,11 +175,28 @@ const runAssertTestFiles = function runAssertTestFiles() {
     if (registered < required) {
       errors.push(`${name} passed test count ${registered} is below floor ${required}`);
     }
+    if (mainFloors) {
+      const mainFloor = mainFloors.byFile[name] ?? 0;
+      if (required < mainFloor) {
+        errors.push(`${name} committed floor ${required} is below origin/main ${mainFloor}`);
+      }
+      if (registered < mainFloor) {
+        errors.push(`${name} passed test count ${registered} is below origin/main floor ${mainFloor}`);
+      }
+    }
   }
 
-  const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_REGISTERED_TESTS;
+  const minTotal = skipMainFloorGuard ? 0 : MIN_TOTAL_REGISTERED_TESTS;
   if (totalRegistered < minTotal) {
     errors.push(`total passed test count ${totalRegistered} is below floor ${minTotal}`);
+  }
+  if (mainFloors && minTotal > 0 && MIN_TOTAL_REGISTERED_TESTS < mainFloors.total) {
+    errors.push(
+      `committed total floor ${MIN_TOTAL_REGISTERED_TESTS} is below origin/main ${mainFloors.total}`,
+    );
+  }
+  if (mainFloors && minTotal > 0 && totalRegistered < mainFloors.total) {
+    errors.push(`total passed test count ${totalRegistered} is below origin/main ${mainFloors.total}`);
   }
 
   if (errors.length > 0) {
