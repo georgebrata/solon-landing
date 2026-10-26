@@ -671,21 +671,22 @@ const protectMarkdown = (markdown) => {
 };
 
 if (require.main === module) {
-  if (targetFile && HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
-    process.exit(0);
-  }
+  const skipListedTarget =
+    Boolean(targetFile) && HUMANIZE_SKIP_FILENAMES.has(targetFile);
 
-  const files = fs
-    .readdirSync(postsDir)
-    .filter((file) => file.endsWith(".md"))
-    .filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file))
-    .filter((file) => !targetFile || file === targetFile);
+  if (!skipListedTarget) {
+    const files = fs
+      .readdirSync(postsDir)
+      .filter((file) => file.endsWith(".md"))
+      .filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file))
+      .filter((file) => !targetFile || file === targetFile);
 
-  if (targetFile && files.length === 0) {
-    console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-    process.exitCode = 1;
-  } else {
-    humanizeFiles(files);
+    if (targetFile && files.length === 0) {
+      console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+      process.exitCode = 1;
+    } else {
+      humanizeFiles(files);
+    }
   }
 }
 
