@@ -113,7 +113,7 @@ const MIN_TOTAL_DECLARED_TESTS = 318;
  * Ensure every tests/*.test.js file is non-empty and declares enough test()/it() calls.
  * @returns {void}
  */
-function runAssertTestFiles() {
+const runAssertTestFiles = function runAssertTestFiles() {
   const files = fs
     .readdirSync(testsDir)
     .filter((name) => name.endsWith(".test.js"))
@@ -153,7 +153,7 @@ function runAssertTestFiles() {
     }
     throw new Error(`assert-test-files failed (${errors.length} issue(s))`);
   }
-}
+};
 
 module.exports = {
   countDeclaredTests,
