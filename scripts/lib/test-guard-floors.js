@@ -17,7 +17,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
-  "humanize.test.js": 11,
+  "humanize.test.js": 24,
   "indexnow.test.js": 18,
   "json-ld-injection.test.js": 17,
   "jsonld.test.js": 2,
@@ -38,7 +38,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 369;
+const MIN_TOTAL_REGISTERED_TESTS = 382;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors
