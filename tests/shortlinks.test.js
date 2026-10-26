@@ -24,7 +24,7 @@ const indexnow = require("../scripts/indexnow");
 const { isExcludedFromSitemap, stripShortRedirectUrls } = require("../scripts/update-sitemap");
 
 const ROOT = path.join(__dirname, "..");
-const HTACCESS_HASH = "e0239483a7a8f483fef424f89e3f2fa138d06dce594a9ac84382941a72229ffc";
+const HTACCESS_HASH = "a67733be651e6944cdbb833443dcf41745f3e12a94deddd65d59fe28c042b999";
 const HIT_FETCH = "fetch(H,{method:'POST',mode:'no-cors',keepalive:true,credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'hit',id:ID})}).catch(function(){})";
 const PRIVACY_PARAGRAPH = "<p class=\"px-lg-5\"><strong>Linkuri scurte solon.agency.</strong> Când deschizi un link scurt de pe solon.agency, pagina de redirecționare trimite către Google Apps Script doar identificatorul public al linkului, ca să creștem un contor total de clicuri într-un tabel Google Sheets. Nu trimitem pagina de proveniență, parametrii din link, cookie-uri sau alți identificatori și nu păstrăm date despre tine, ci doar numărul total de clicuri pentru fiecare link. Google, ca persoană împuternicită, vede adresa IP a cererii, ca la orice conexiune la serverele sale. Temeiul este interesul nostru legitim de a ști de câte ori este folosit un link (art. 6 alin. (1) lit. f) RGPD).</p>";
 const COOKIES_PARAGRAPH = "<p class=\"px-lg-5\">Linkurile scurte solon.agency nu folosesc cookie-uri și nu citesc nimic de pe dispozitivul tău; contorul de clicuri numără doar totalul pentru fiecare link.</p>";
@@ -581,6 +581,20 @@ test("redirect page counts with credentials omit and never sendBeacon", () => {
   const quiet = runPage(skipped, { search: "" });
   assert.equal(quiet.calls.length, 0);
   assert.equal(quiet.landed, "https://example.com/a?b=1");
+});
+
+test("directory trailing-slash redirect sits after blog/posts deny and before short links", () => {
+  const htaccess = fs.readFileSync(path.join(ROOT, ".htaccess"), "utf8");
+  const postsDeny = htaccess.indexOf("RewriteRule ^blog/posts(?:/|$) - [F,L]");
+  const slashBegin = htaccess.indexOf("# Canonical trailing slash for on-disk directories");
+  const slashRule = htaccess.indexOf("RewriteRule ^ %{REQUEST_URI}/ [R=301,L]");
+  const shortlinksStart = htaccess.indexOf("# SHORTLINKS:START");
+  assert.ok(postsDeny > 0, "blog/posts deny must exist");
+  assert.ok(slashBegin > postsDeny, "trailing-slash block must follow blog/posts deny");
+  assert.ok(slashRule > slashBegin, "trailing-slash RewriteRule must follow its comment");
+  assert.ok(shortlinksStart > slashRule, "SHORTLINKS must follow trailing-slash redirect");
+  assert.match(htaccess, /RewriteCond %\{REQUEST_FILENAME\} -d/);
+  assert.match(htaccess, /RewriteCond %\{REQUEST_URI\} !\/\$/);
 });
 
 test("committed short links match the snapshot and leave the rest of .htaccess unchanged", () => {
