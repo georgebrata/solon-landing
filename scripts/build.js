@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { stampHtml } = require('./stamp-asset-refs');
-const { syncTrackerSnippetsInHtml } = require('./sync-public-tracker-snippets');
 const { applyPostJsonLd } = require('./json-ld');
 
 /**
@@ -316,14 +315,14 @@ const build = async () => {
     if (!fs.existsSync(postDir)) fs.mkdirSync(postDir, { recursive: true });
 
     const outPath = path.join(postDir, 'index.html');
-    const html = stampHtml(syncTrackerSnippetsInHtml(generatePostHTML(post, posts, marked)), outPath);
+    const html = stampHtml(generatePostHTML(post, posts, marked), outPath);
     fs.writeFileSync(outPath, html);
     console.log(`Generated: /blog/${post.frontmatter.slug}/index.html`);
   });
 
   // Generate list page
   const listPath = path.join(OUTPUT_DIR, 'index.html');
-  const listHtml = stampHtml(syncTrackerSnippetsInHtml(generateListHTML(posts)), listPath);
+  const listHtml = stampHtml(generateListHTML(posts), listPath);
   fs.writeFileSync(listPath, listHtml);
   console.log('Generated: /blog/index.html');
 
