@@ -9,8 +9,10 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "brevo-tracker.test.js": 7,
   "consent.test.js": 63,
   "demoanaf-badge.test.js": 5,
-  "error-log.test.js": 5,
+  "error-log.test.js": 7,
   "error-pages.test.js": 12,
+  "feedback-form-prefill.test.js": 33,
+  "feedback-privacy.test.js": 2,
   "forms.test.js": 35,
   "ga-collect-transport.test.js": 6,
   "ga-measurement-id.test.js": 4,
@@ -33,13 +35,13 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "sitemap.test.js": 7,
   "stamp-asset-refs.test.js": 6,
   "support-chat.test.js": 5,
-  "tracking-snippets.test.js": 15,
+  "tracking-snippets.test.js": 16,
   "tracking.test.js": 17,
   "turnstile-gate.test.js": 3,
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 397;
+const MIN_TOTAL_REGISTERED_TESTS = 441;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors
