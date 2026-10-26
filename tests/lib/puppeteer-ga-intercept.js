@@ -59,7 +59,7 @@ const installGaCollectInterception = async (page) => {
       })
       .catch(() => {
         leakedCollectUrls.push(url);
-        void req.abort("failed");
+        req.abort("failed").catch(() => undefined);
       });
   });
   return { interceptedCollectUrls };
