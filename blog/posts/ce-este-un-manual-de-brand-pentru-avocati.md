@@ -192,4 +192,4 @@ Un manual de brand este, pentru un avocat, mult mai mult decât un logo frumos: 
 
 Trebuie reținut și un compromis real: un manual de brand de calitate presupune o investiție inițială de timp și buget și disciplina de a-l respecta ulterior. Însă alternativa - o identitate inconsecventă, refăcută la fiecare material nou - costă, pe termen lung, mai mult, atât financiar, cât și reputațional.
 
-Dacă vrei să construiești un manual de brand profesionist pentru cabinetul tău - cu identitate vizuală coerentă, aplicații complete și conformitate deontologică -, echipa **SOLON** oferă consultanță de branding și digitalizare adaptată specificului practicii tale juridice.
+Dacă vrei un manual de brand pentru cabinetul tău (identitate vizuală coerentă, aplicații pe materialele cabinetului, reguli deontologice respectate), echipa SOLON oferă consultanță de branding și digitalizare pentru avocați.
