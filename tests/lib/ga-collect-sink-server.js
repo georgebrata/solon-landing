@@ -10,8 +10,7 @@ const { createHash } = require("node:crypto");
 
 const { isGaCollectTransportUrl } = require("../../scripts/lib/ga-collect-transport");
 
-/** @type {string[]} */
-let sinkHits = [];
+const sinkHits = [];
 
 /** @type {import("http").Server | null} */
 let httpServer = null;
@@ -65,6 +64,13 @@ const sinkCertificateSpkiHash = () => {
 };
 
 /**
+ * @returns {void}
+ */
+const resetGaCollectSink = () => {
+  sinkHits.length = 0;
+};
+
+/**
  * @returns {Promise<{ httpPort: number, httpsPort: number, spkiHash: string }>}
  */
 const startGaCollectSinkServer = async () => {
@@ -100,21 +106,14 @@ const startGaCollectSinkServer = async () => {
  */
 const stopGaCollectSinkServer = () =>
   new Promise((resolve) => {
-    const closeHttp = httpServer ? new Promise((r) => httpServer.close(() => r(undefined))) : Promise.resolve();
-    const closeHttps = httpsServer ? new Promise((r) => httpsServer.close(() => r(undefined))) : Promise.resolve();
+    const closeHttp = httpServer ? new Promise((r) => httpServer.close(() => r())) : Promise.resolve();
+    const closeHttps = httpsServer ? new Promise((r) => httpsServer.close(() => r())) : Promise.resolve();
     Promise.all([closeHttp, closeHttps]).then(() => {
       httpServer = null;
       httpsServer = null;
       resolve();
     });
   });
-
-/**
- * @returns {void}
- */
-const resetGaCollectSink = () => {
-  sinkHits.length = 0;
-};
 
 /**
  * @returns {string[]}

@@ -19,6 +19,7 @@ test("gtag stub fixture exists and contains no production measurement id", () =>
 });
 
 test("installGaCollectInterception reports loader failure when stub fixture is missing", async (t) => {
+  /** @type {typeof import("puppeteer") | undefined} */
   let puppeteer;
   try {
     puppeteer = require("puppeteer");

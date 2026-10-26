@@ -27,11 +27,13 @@ const failCount = failMatch ? Number(failMatch[1]) : 0;
 
 if (result.status === 0) {
   console.error("::error::consent transport guard disabled should have failed gtag-browser tests but passed");
-  process.exit(1);
+  process.exitCode = 1;
+  throw new Error("consent transport guard disabled should have failed gtag-browser tests but passed");
 }
 if (failCount < 5) {
   console.error(`::error::consent guard off expected at least 5 failed browser tests, got fail ${failCount}`);
-  process.exit(1);
+  process.exitCode = 1;
+  throw new Error(`consent guard off expected at least 5 failed browser tests, got fail ${failCount}`);
 }
 
 process.stdout.write(

@@ -346,13 +346,12 @@
       }
       const rawPathname = transportRawPathname(input);
       const gaDisabled = win[GA_DISABLE_PROPERTY] === true;
-      if (gaDisabled && isDeniedAnalyticsHost(hostname)) {
-        return !isAllowlistedDeniedHostLoader(hostname, rawPathname);
-      }
-      if (isClarityCollectHost(hostname) && clarityTransportBlocked()) {
-        return true;
-      }
-      return false;
+      return (
+        (gaDisabled &&
+          isDeniedAnalyticsHost(hostname) &&
+          !isAllowlistedDeniedHostLoader(hostname, rawPathname)) ||
+        (isClarityCollectHost(hostname) && clarityTransportBlocked())
+      );
     };
     /**
      * @param {() => void} fn

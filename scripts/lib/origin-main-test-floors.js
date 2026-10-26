@@ -119,6 +119,9 @@ const parseFloorsFromAssertLegacySource = (source) => {
   });
 };
 
+/**
+ * @returns {{ byFile: Record<string, number>, total: number }}
+ */
 const readOriginMainFloors = () => {
   requireOriginMainRef();
   const ref = resolveMainFloorRef();

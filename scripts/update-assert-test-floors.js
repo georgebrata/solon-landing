@@ -3,10 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { countRegisteredTests } = require("./assert-test-files");
-const {
-  MIN_REGISTERED_TESTS_BY_FILE,
-  validateTestGuardFloors,
-} = require("./lib/test-guard-floors");
+const { MIN_REGISTERED_TESTS_BY_FILE } = require("./lib/test-guard-floors");
 const { readOriginMainFloors, parseFloorsFromModuleSource } = require("./lib/origin-main-test-floors");
 
 const testsDir = path.join(__dirname, "..", "tests");

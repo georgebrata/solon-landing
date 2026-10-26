@@ -6,8 +6,7 @@ const path = require("node:path");
 const repoRoot = path.join(__dirname, "..");
 const mutation = process.argv[2];
 if (mutation !== "continue" && mutation !== "no-intercept") {
-  console.error("usage: verify-gtag-mutation-fails.js <continue|no-intercept>");
-  process.exit(2);
+  throw new Error("usage: verify-gtag-mutation-fails.js <continue|no-intercept>");
 }
 
 const env = {
@@ -27,7 +26,8 @@ const result = spawnSync(process.execPath, ["--test", path.join("tests", "gtag-b
 
 if (result.status === 0) {
   console.error(`::error::gtag mutation ${mutation} should have failed tests but passed`);
-  process.exit(1);
+  process.exitCode = 1;
+  throw new Error(`gtag mutation ${mutation} should have failed tests but passed`);
 }
 
 process.stdout.write(`gtag mutation ${mutation} failed as expected (exit ${result.status ?? 1})\n`);
