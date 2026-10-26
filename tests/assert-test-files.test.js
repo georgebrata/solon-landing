@@ -248,6 +248,7 @@ test("assert-test-files rejects a test file deleted relative to main", () => {
       ...process.env,
       SOLON_TESTS_DIR: testsDir,
       CI: "true",
+      SOLON_FORCE_MAIN_FLOOR_GUARD: "1",
       SOLON_SKIP_ASSERT_INTEGRATION: "1",
     },
   });

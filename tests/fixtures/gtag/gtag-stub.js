@@ -64,6 +64,7 @@
    * @returns {void}
    */
   const gtagWithCollect = function gtagWithCollect() {
+    // skipcq: JS-0244 -- mirror gtag dataLayer Arguments objects for consent tests
     global.dataLayer.push(arguments);
     const command = arguments[0];
     if (command === "config" || command === "event") {

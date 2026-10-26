@@ -157,7 +157,8 @@ const runAssertTestFiles = function runAssertTestFiles() {
   /** @type {string[]} */
   const errors = [];
 
-  const skipMainFloorGuard = Boolean(process.env.SOLON_TESTS_DIR) && !process.env.CI;
+  const skipMainFloorGuard =
+    Boolean(process.env.SOLON_TESTS_DIR) && process.env.SOLON_FORCE_MAIN_FLOOR_GUARD !== "1";
 
   /** @type {{ byFile: Record<string, number>, total: number } | null} */
   let mainFloors = null;
