@@ -10,6 +10,7 @@ const {
   shouldSkipPublicTrackerSync,
   ensureHeadSnippets,
   ensureTrackingScript,
+  listHtmlFiles,
   trackerHeadBlock,
   assetContentHash,
   normalizeTrackerHeadPaths,
@@ -55,13 +56,16 @@ const countMatches = (html, pattern) => {
   return [...html.matchAll(re)].length;
 };
 
-test("shouldSkipPublicTrackerSync skips r/, templates/, error pages, unsubscribe, and client-nou", () => {
+test("shouldSkipPublicTrackerSync skips r/, templates/, error pages, unsubscribe, feedback, and client-nou", () => {
   assert.equal(shouldSkipPublicTrackerSync("r/bronze/lunar/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("r/api/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("templates/layout.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("unsubscribe/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("unsubscribe/success/index.html"), true);
+  assert.equal(shouldSkipPublicTrackerSync("feedback/index.html"), true);
+  assert.equal(shouldSkipPublicTrackerSync("feedback"), true);
   assert.equal(shouldSkipPublicTrackerSync("client-nou/index.html"), true);
+  assert.equal(shouldSkipPublicTrackerSync("tests/fixtures/gtag-withdrawal/index.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("404.html"), true);
   assert.equal(shouldSkipPublicTrackerSync("blog/index.html"), false);
   assert.equal(shouldSkipPublicTrackerSync("index.html"), false);
@@ -144,6 +148,24 @@ test("public HTML includes each tracker script at most once", () => {
     }
   }
   assert.deepEqual(offenders, []);
+});
+
+test("sync-public-tracker-snippets does not walk tests/ HTML fixtures", () => {
+  const fixture = path.join(root, "tests/fixtures/gtag-withdrawal/index.html");
+  const before = fs.readFileSync(fixture, "utf8");
+  const htmlUnderTests = listHtmlFiles().filter((file) =>
+    file.replace(/\\/gu, "/").includes("/tests/"),
+  );
+  assert.deepEqual(htmlUnderTests, []);
+  const rel = "tests/fixtures/gtag-withdrawal/index.html";
+  assert.equal(shouldSkipPublicTrackerSync(rel), true);
+  const { execFileSync } = require("node:child_process");
+  execFileSync(process.execPath, [path.join(root, "scripts/sync-public-tracker-snippets.js")], {
+    cwd: root,
+    stdio: "pipe",
+  });
+  const after = fs.readFileSync(fixture, "utf8");
+  assert.equal(after, before);
 });
 
 test("client-nou redirect page has no tracker snippets", () => {

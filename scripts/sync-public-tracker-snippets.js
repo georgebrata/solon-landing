@@ -22,7 +22,7 @@ const assetContentHash = (relFromRoot) =>
     .digest("hex")
     .slice(0, 10);
 
-const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates"]);
+const SKIP_DIR_NAMES = new Set([".git", "node_modules", "r", "templates", "tests"]);
 
 /**
  * @param {string} relPath Repo-relative path using forward slashes.
@@ -38,7 +38,11 @@ const shouldSkipPublicTrackerSync = (relPath) => {
     rel.startsWith("node_modules/") ||
     rel === "unsubscribe" ||
     rel.startsWith("unsubscribe/") ||
-    rel === "client-nou/index.html"
+    rel === "feedback" ||
+    rel.startsWith("feedback/") ||
+    rel === "client-nou/index.html" ||
+    rel === "tests" ||
+    rel.startsWith("tests/")
   );
 };
 
