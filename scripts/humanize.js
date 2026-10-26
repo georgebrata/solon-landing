@@ -45,10 +45,160 @@ const {
 const DEFAULT_POSTS_DIR = path.join(__dirname, "../blog/posts");
 const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
 
-const args = process.argv.slice(2);
-const dryRun = args.includes("--dry-run");
-const targetFile = getArgValue("--file");
-const postsDir = path.resolve(getArgValue("--posts-dir") || DEFAULT_POSTS_DIR);
+/**
+ * Exact `blog/posts/*.md` basenames whose prose is legally cleared byte-for-byte.
+ * humanize.js must not rewrite these sources (pre-commit would break approval).
+ * Add a basename only after legal/content sign-off on the fixed text; Legal tracks
+ * approved hashes outside this repo (no hash check here).
+ *
+ * Matching is by filename only: renaming a post slug changes the basename — update
+ * this list when a cleared article is renamed, or protection is dropped silently.
+ */
+const LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES = [
+  "proiect-modificare-legea-51-1995-website-avocat.md",
+  "viteza-website-avocat.md",
+];
+const HUMANIZE_SKIP_FILENAMES = new Set(LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES);
+
+/**
+ * @param {string} filename
+ * @returns {string}
+ */
+const formatSkippedLegalClearedLogLine = (filename) => `${filename}: skipped (legal-cleared)`;
+
+/**
+ * @param {string} filename
+ */
+const logSkippedLegalClearedPost = (filename) => {
+  console.log(formatSkippedLegalClearedLogLine(filename));
+};
+
+/**
+ * @param {string} postsDir
+ * @returns {string}
+ */
+const resolveRealPostsDir = (postsDir) => {
+  try {
+    return fs.realpathSync(postsDir);
+  } catch (error) {
+    if (error && typeof error === "object" && error.code === "ENOENT") {
+      const message = `Nu am găsit folderul de articole ${postsDir}.`;
+      const missing = new Error(message);
+      missing.code = "SOLON_POSTS_DIR_MISSING";
+      throw missing;
+    }
+    throw error;
+  }
+};
+
+/**
+ * @param {string} realPostsDir
+ * @returns {string}
+ */
+const realPostsDirPrefix = (realPostsDir) =>
+  realPostsDir.endsWith(path.sep) ? realPostsDir : `${realPostsDir}${path.sep}`;
+
+/**
+ * @param {string} realPostsDir
+ * @param {string} realFilePath
+ * @returns {boolean}
+ */
+const isPathInsideRealPostsDir = (realPostsDir, realFilePath) => {
+  const resolvedFile = path.resolve(realFilePath);
+  const prefix = realPostsDirPrefix(realPostsDir);
+  return resolvedFile === realPostsDir || resolvedFile.startsWith(prefix);
+};
+
+/**
+ * @param {string} realPostsDir
+ * @param {string} postsDir
+ * @param {string} basename
+ * @returns {"ok" | "missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"}
+ */
+const classifyPostsMarkdownEntry = (realPostsDir, postsDir, basename) => {
+  if (!basename.endsWith(".md")) {
+    return "not-md";
+  }
+  const targetPath = path.join(postsDir, basename);
+  if (!fs.existsSync(targetPath)) {
+    return "missing";
+  }
+  let lstat;
+  try {
+    lstat = fs.lstatSync(targetPath);
+  } catch {
+    return "missing";
+  }
+  if (lstat.isSymbolicLink()) {
+    return "symlink";
+  }
+  if (!lstat.isFile()) {
+    return "not-regular-file";
+  }
+  let realFile;
+  try {
+    realFile = fs.realpathSync(targetPath);
+  } catch {
+    return "missing";
+  }
+  if (!isPathInsideRealPostsDir(realPostsDir, realFile)) {
+    return "outside-posts";
+  }
+  return "ok";
+};
+
+/**
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {"file" | "batch"} mode
+ * @returns {boolean}
+ */
+const postsEntryIssueIsFatal = (kind, mode) => {
+  if (kind === "not-regular-file") {
+    return mode === "file";
+  }
+  return true;
+};
+
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {boolean} fatal
+ * @returns {string}
+ */
+const formatPostsEntryIssue = (postsDir, basename, kind, fatal) => {
+  if (!fatal) {
+    return `${basename} din ${postsDir}: nu este fișier regulat; îl sar.`;
+  }
+  switch (kind) {
+    case "missing":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu l-am găsit.`;
+    case "not-md":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu este .md.`;
+    case "symlink":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: legătură simbolică.`;
+    case "outside-posts":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: rezolvă în afara folderului de articole.`;
+    case "not-regular-file":
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu este fișier regulat.`;
+    default:
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}.`;
+  }
+};
+
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {"file" | "batch"} mode
+ */
+const reportPostsEntryIssue = (postsDir, basename, kind, mode) => {
+  const fatal = postsEntryIssueIsFatal(kind, mode);
+  console.error(formatPostsEntryIssue(postsDir, basename, kind, fatal));
+  if (fatal) {
+    process.exitCode = 1;
+  }
+};
 
 const rules = [
   // --- Lever 8: punctuation normalization ---
@@ -660,19 +810,14 @@ const protectMarkdown = (markdown) => {
   };
 };
 
-const files = fs
-  .readdirSync(postsDir)
-  .filter((file) => file.endsWith(".md"))
-  .filter((file) => !targetFile || file === targetFile);
-
-if (targetFile && files.length === 0) {
-  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-  process.exitCode = 1;
-} else {
-  humanizeFiles(files);
-}
-
-function humanizeFiles(filesToProcess) {
+/**
+ * Rewrites markdown post sources that were already validated by {@link classifyPostsMarkdownEntry}.
+ * Callers must pass only pre-classified basenames; this function does not re-run entry guards.
+ *
+ * @param {string[]} filesToProcess
+ * @param {{ postsDir: string, dryRun: boolean }} options
+ */
+function humanizeFiles(filesToProcess, { postsDir, dryRun }) {
   let changedFiles = 0;
   let totalChanges = 0;
   const totalsByRule = new Map();
@@ -949,8 +1094,71 @@ function printRuleSummary(totalsByRule) {
   });
 }
 
-function getArgValue(flag) {
+function getArgValue(args, flag) {
   const index = args.indexOf(flag);
   if (index === -1) return "";
   return args[index + 1] || "";
 }
+
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  const dryRun = args.includes("--dry-run");
+  let targetFile = getArgValue(args, "--file");
+  if (targetFile) {
+    targetFile = path.basename(targetFile);
+  }
+  const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
+  let realPostsDir;
+  try {
+    realPostsDir = resolveRealPostsDir(postsDir);
+  } catch (error) {
+    if (error && typeof error === "object" && error.code === "SOLON_POSTS_DIR_MISSING") {
+      console.error(error.message);
+      process.exit(1);
+    }
+    throw error;
+  }
+
+  if (targetFile) {
+    const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, targetFile);
+    if (entryKind !== "ok") {
+      reportPostsEntryIssue(postsDir, targetFile, entryKind, "file");
+    } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
+      logSkippedLegalClearedPost(targetFile);
+    } else {
+      humanizeFiles([targetFile], { postsDir, dryRun });
+    }
+  } else {
+    const markdownFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith(".md"));
+    /** @type {string[]} */
+    const filesToProcess = [];
+
+    for (const file of markdownFiles) {
+      if (HUMANIZE_SKIP_FILENAMES.has(file)) {
+        logSkippedLegalClearedPost(file);
+        continue;
+      }
+      const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, file);
+      if (entryKind === "ok") {
+        filesToProcess.push(file);
+        continue;
+      }
+      // Symlinks / outside targets are a security refusal (exit 1). A directory
+      // named like *.md is a benign skip (exit 0) — not an escape attempt.
+      reportPostsEntryIssue(postsDir, file, entryKind, "batch");
+    }
+
+    humanizeFiles(filesToProcess, { postsDir, dryRun });
+  }
+}
+
+module.exports = {
+  humanizeMarkdown,
+  humanizeFiles,
+  HUMANIZE_SKIP_FILENAMES,
+  classifyPostsMarkdownEntry,
+  formatPostsEntryIssue,
+  resolveRealPostsDir,
+  isPathInsideRealPostsDir,
+  realPostsDirPrefix,
+};

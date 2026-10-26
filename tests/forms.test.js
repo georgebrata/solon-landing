@@ -569,7 +569,7 @@ const TELEFON_FORM_NOTICE =
 
 const walkHtmlFiles = (dir, acc = []) => {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (ent.name === "node_modules" || ent.name === ".git") continue;
+    if (ent.name === "node_modules" || ent.name === ".git" || ent.name === ".worktrees") continue;
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) walkHtmlFiles(full, acc);
     else if (ent.name.endsWith(".html")) acc.push(full);

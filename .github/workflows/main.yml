@@ -1,8 +1,9 @@
 # Production pipeline for solon.agency
 #
-# Policy: pull requests never FTP-deploy. Tests and npm audit run on every
-# push/PR to main. FTP deploy runs only after CI succeeds on push to main
-# or an intentional workflow_dispatch.
+# Policy: pull requests never FTP-deploy. CI Production runs targeted checks on every
+# push/PR; the full npm test suite runs on pull_request (Tests workflow) and on
+# push to main (test-suite job). FTP deploy runs only after CI succeeds on push to
+# main or an intentional workflow_dispatch.
 #
 # This file supersedes the outdated claim in issue #21 that .github/workflows/
 # is empty. Lighthouse CI and W3C HTML validation from #21 remain follow-ups.
@@ -79,9 +80,44 @@ jobs:
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
+  test-suite:
+    name: test-suite
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+        run: npm ci
+
+      - name: Fetch origin/main for HTML validate git probes
+        run: git fetch --no-tags --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+
+      - name: Install Chrome for gtag browser test
+        run: npx puppeteer browsers install chrome
+
+      - name: Run full unit and integration tests
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+        run: npm test
+
   deploy:
     name: deploy
-    needs: [ci]
+    needs: [ci, test-suite]
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     permissions:
