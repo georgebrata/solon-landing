@@ -112,7 +112,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "error-pages.test.js": 12,
   "forms.test.js": 35,
   "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 6,
+  "gtag-browser.test.js": 9,
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
@@ -130,7 +130,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "sitemap.test.js": 7,
   "stamp-asset-refs.test.js": 6,
   "support-chat.test.js": 5,
-  "tracking-snippets.test.js": 7,
+  "tracking-snippets.test.js": 10,
   "tracking.test.js": 17,
   "turnstile-gate.test.js": 3,
   "unsubscribe-privacy.test.js": 5,
@@ -138,7 +138,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
 
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
 
-const MIN_TOTAL_REGISTERED_TESTS = 339;
+const MIN_TOTAL_REGISTERED_TESTS = 345;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.

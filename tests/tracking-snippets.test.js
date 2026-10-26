@@ -10,11 +10,13 @@ const {
   shouldSkipPublicTrackerSync,
   ensureHeadSnippets,
   ensureTrackingScript,
+  hasConsentGatedGtag,
   trackerHeadBlock,
   assetContentHash,
   normalizeTrackerHeadPaths,
   normalizeTrackingScriptLine,
 } = require("../scripts/sync-public-tracker-snippets");
+const { GA_MEASUREMENT_ID, gtagLoaderUrl } = require("../scripts/lib/ga-measurement");
 
 const SKIP_SCAN_DIRS = new Set([".git", "node_modules", "assets", "scripts", "tests", "docs", "r", "templates"]);
 
@@ -150,4 +152,95 @@ test("client-nou redirect page has no tracker snippets", () => {
   assert.equal(/tracking(?:\.min)?\.js/i.test(html), false);
   assert.equal(/meta-pixel(?:\.min)?\.js/i.test(html), false);
   assert.equal(/gtag-config(?:\.min)?\.js/i.test(html), false);
+});
+
+/**
+ * @param {string} html
+ * @returns {boolean}
+ */
+const hasUngatedGtagLoader = (html) => {
+  const re =
+    /<script\b([^>]*)\bsrc=["']https:\/\/www\.googletagmanager\.com\/gtag\/js[^"']*["']([^>]*)>/giu;
+  for (const match of html.matchAll(re)) {
+    const attrs = `${match[1]}${match[2]}`;
+    if (!/type=["']text\/plain["']/iu.test(attrs)) {
+      return true;
+    }
+    if (!/data-consent-category=["']analytics["']/iu.test(attrs)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * @returns {string[]}
+ */
+const blogHtmlFiles = () => {
+  const blogDir = path.join(root, "blog");
+  /** @type {string[]} */
+  const files = [];
+  /**
+   * @param {string} dir
+   */
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (entry.isFile() && entry.name.endsWith(".html")) {
+        files.push(full);
+      }
+    }
+  };
+  walk(blogDir);
+  return files;
+};
+
+test("ensureHeadSnippets adds consent-gated gtag when meta-pixel exists but gtag is missing", () => {
+  const partial = `<script src="/assets/js/consent.min.js?v=1"></script>
+  <script type="text/plain" data-consent-category="marketing" src="/assets/js/meta-pixel.min.js?v=1" defer></script>
+  <!-- End Meta Pixel Code -->
+  <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=1"></script>`;
+  assert.equal(hasConsentGatedGtag(partial), false);
+  const next = ensureHeadSnippets(partial);
+  assert.equal(hasConsentGatedGtag(next), true);
+  assert.match(next, new RegExp(gtagLoaderUrl.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")));
+  assert.match(next, /gtag-config\.min\.js\?v=[a-f0-9]{10}/u);
+  assert.equal(countMatches(next, /googletagmanager\.com\/gtag\/js/iu), 1);
+});
+
+test("every blog HTML page includes exactly one consent-gated GA4 gtag block", () => {
+  const files = blogHtmlFiles();
+  assert.ok(files.length > 0, "expected blog HTML pages");
+  const missing = [];
+  const duplicateLoader = [];
+  for (const file of files) {
+    const html = fs.readFileSync(file, "utf8");
+    if (!hasConsentGatedGtag(html)) {
+      missing.push(path.relative(root, file));
+    }
+    const loaders = countMatches(html, /googletagmanager\.com\/gtag\/js\?id=/giu);
+    if (loaders !== 1) {
+      duplicateLoader.push(`${path.relative(root, file)} (${loaders})`);
+    }
+    assert.equal(
+      html.includes(GA_MEASUREMENT_ID),
+      true,
+      `${path.relative(root, file)} must reference ${GA_MEASUREMENT_ID}`,
+    );
+  }
+  assert.deepEqual(missing, []);
+  assert.deepEqual(duplicateLoader, []);
+});
+
+test("blog HTML pages have no ungated googletagmanager gtag loader scripts", () => {
+  const offenders = [];
+  for (const file of blogHtmlFiles()) {
+    const html = fs.readFileSync(file, "utf8");
+    if (hasUngatedGtagLoader(html)) {
+      offenders.push(path.relative(root, file));
+    }
+  }
+  assert.deepEqual(offenders, []);
 });

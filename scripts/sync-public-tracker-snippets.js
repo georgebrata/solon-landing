@@ -90,19 +90,75 @@ const trackerHeadBlock = () => {
 const TRACKING_BODY_TAG =
   '  <script src="/assets/js/tracking.min.js" defer></script>\n';
 
+const CONSENT_GATED_GTAG_LOADER_RE =
+  /<script\s+type=["']text\/plain["']\s+data-consent-category=["']analytics["'][^>]*src=["']https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=/iu;
+
+const CONSENT_GATED_GTAG_CONFIG_RE =
+  /<script\s+type=["']text\/plain["']\s+data-consent-category=["']analytics["'][^>]*gtag-config\.min\.js/iu;
+
+/**
+ * @param {string} html
+ * @returns {boolean}
+ */
+const hasConsentGatedGtag = (html) =>
+  CONSENT_GATED_GTAG_LOADER_RE.test(html) && CONSENT_GATED_GTAG_CONFIG_RE.test(html);
+
+/**
+ * @returns {string}
+ */
+const gtagHeadSnippet = () => {
+  const gtagConfigHash = assetContentHash("assets/js/gtag-config.min.js");
+  return `
+  <!-- Google tag (gtag.js) -->
+  <script type="text/plain" data-consent-category="analytics" async src="${gtagLoaderUrl}"></script>
+  <script type="text/plain" data-consent-category="analytics" src="/assets/js/gtag-config.min.js?v=${gtagConfigHash}"></script>
+`;
+};
+
 /**
  * @param {string} html
  * @returns {string}
  */
-const ensureHeadSnippets = (html) => {
-  if (html.includes("meta-pixel.min.js")) {
+const ensureGtagHeadSnippets = (html) => {
+  if (hasConsentGatedGtag(html)) {
     return html;
+  }
+  const snippet = gtagHeadSnippet();
+  const afterMeta = /(<!-- End Meta Pixel Code -->)/iu;
+  if (afterMeta.test(html)) {
+    return html.replace(afterMeta, `$1${snippet}`);
   }
   const anchor = /(<script[^>]*consent\.min\.js[^>]*><\/script>)/iu;
   if (!anchor.test(html)) {
     return html;
   }
-  return html.replace(anchor, `$1${trackerHeadBlock()}`);
+  return html.replace(anchor, `$1${snippet}`);
+};
+
+/**
+ * @param {string} html
+ * @returns {string}
+ */
+const ensureHeadSnippets = (html) => {
+  let next = html;
+  if (!html.includes("meta-pixel.min.js")) {
+    const anchor = /(<script[^>]*consent\.min\.js[^>]*><\/script>)/iu;
+    if (anchor.test(next)) {
+      next = next.replace(anchor, `$1${trackerHeadBlock()}`);
+    }
+  }
+  return ensureGtagHeadSnippets(next);
+};
+
+/**
+ * @param {string} html
+ * @returns {string}
+ */
+const syncTrackerSnippetsInHtml = (html) => {
+  let next = ensureHeadSnippets(html);
+  next = normalizeTrackerHeadPaths(next);
+  next = ensureTrackingScript(next);
+  return normalizeTrackingScriptLine(next);
 };
 
 /**
@@ -166,9 +222,7 @@ const main = () => {
     }
 
     const html = fs.readFileSync(file, "utf8");
-    let next = ensureTrackingScript(ensureHeadSnippets(html));
-    next = normalizeTrackerHeadPaths(next);
-    next = normalizeTrackingScriptLine(next);
+    const next = syncTrackerSnippetsInHtml(html);
     if (next !== html) {
       fs.writeFileSync(file, next);
       changed += 1;
@@ -183,7 +237,9 @@ if (require.main === module) {
 
 module.exports = {
   ensureHeadSnippets,
+  ensureGtagHeadSnippets,
   ensureTrackingScript,
+  hasConsentGatedGtag,
   trackerHeadBlock,
   assetContentHash,
   GA_MEASUREMENT_ID,
@@ -191,4 +247,5 @@ module.exports = {
   listHtmlFiles,
   normalizeTrackerHeadPaths,
   normalizeTrackingScriptLine,
+  syncTrackerSnippetsInHtml,
 };
