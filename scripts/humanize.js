@@ -969,11 +969,22 @@ function getArgValue(args, flag) {
 if (require.main === module) {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
-  const targetFile = getArgValue(args, "--file");
+  let targetFile = getArgValue(args, "--file");
+  if (targetFile) {
+    targetFile = path.basename(targetFile);
+  }
   const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
 
-  if (targetFile && HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
-    logSkippedLegalClearedPost(targetFile);
+  if (targetFile) {
+    const targetPath = path.join(postsDir, targetFile);
+    if (!fs.existsSync(targetPath)) {
+      console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+      process.exitCode = 1;
+    } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
+      logSkippedLegalClearedPost(targetFile);
+    } else {
+      humanizeFiles([targetFile], { postsDir, dryRun });
+    }
   } else {
     const markdownFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith(".md"));
 
@@ -983,16 +994,8 @@ if (require.main === module) {
       }
     }
 
-    const filesToProcess = markdownFiles
-      .filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file))
-      .filter((file) => !targetFile || file === targetFile);
-
-    if (targetFile && filesToProcess.length === 0) {
-      console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-      process.exitCode = 1;
-    } else {
-      humanizeFiles(filesToProcess, { postsDir, dryRun });
-    }
+    const filesToProcess = markdownFiles.filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file));
+    humanizeFiles(filesToProcess, { postsDir, dryRun });
   }
 }
 

@@ -11,7 +11,7 @@
  */
 
 const assert = require("node:assert/strict");
-const { execFileSync } = require("node:child_process");
+const { execFileSync, spawnSync } = require("node:child_process");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
@@ -286,6 +286,55 @@ test("humanize.js --file on a skip-listed basename exits 0 with one skip log lin
         tmpDir,
         "--file",
         SKIP_LISTED_FILENAME,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.equal(output, `${skippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`);
+    assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file on a missing skip-listed basename exits 1 with stderr only", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-missing-"));
+
+  try {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        tmpDir,
+        "--file",
+        SKIP_LISTED_FILENAME,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.notEqual(result.status, 0);
+    assert.equal(result.stdout, "");
+    assert.match(result.stderr, /Nu am gasit fisierul/u);
+    assert.match(result.stderr, new RegExp(SKIP_LISTED_FILENAME));
+    assert.match(result.stderr, new RegExp(tmpDir));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file normalizes nested paths to basename", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-basename-"));
+  const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
+
+  try {
+    fs.writeFileSync(listedPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        tmpDir,
+        "--file",
+        `blog/posts/${SKIP_LISTED_FILENAME}`,
       ],
       { encoding: "utf8" },
     );
