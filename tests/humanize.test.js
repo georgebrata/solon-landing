@@ -18,10 +18,12 @@ const path = require("node:path");
 const test = require("node:test");
 
 const {
-  formatSkippedLegalClearedLogLine,
   HUMANIZE_SKIP_FILENAMES,
   humanizeMarkdown,
 } = require("../scripts/humanize.js");
+
+/** @param {string} filename */
+const skippedLegalClearedLogLine = (filename) => `${filename}: skipped (legal-cleared)`;
 
 const FIXTURE = `---
 title: "Test: semicolons, en-dashes, FAQ"
@@ -222,6 +224,25 @@ tags: ["test"]
 Paragraf scurt cu tehnologia utilizată în propunere și suportul utilizat în text.
 `;
 
+test("requiring humanize.js does not read from the filesystem", () => {
+  const fs = require("node:fs");
+  const originalReaddir = fs.readdirSync;
+  let readdirCallsDuringRequire = 0;
+  fs.readdirSync = (...args) => {
+    readdirCallsDuringRequire += 1;
+    return originalReaddir(...args);
+  };
+
+  try {
+    const resolved = require.resolve("../scripts/humanize.js");
+    delete require.cache[resolved];
+    require("../scripts/humanize.js");
+    assert.equal(readdirCallsDuringRequire, 0);
+  } finally {
+    fs.readdirSync = originalReaddir;
+  }
+});
+
 test("humanize.js exports skip set and humanizeMarkdown rewrites jargon in memory", () => {
   assert.equal(HUMANIZE_SKIP_FILENAMES.has(SKIP_LISTED_FILENAME), true);
   assert.equal(HUMANIZE_SKIP_FILENAMES.has("viteza-website-avocat.md"), true);
@@ -243,7 +264,7 @@ test("humanize.js skips legal-cleared post filenames byte-for-byte and logs each
       [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir],
       { encoding: "utf8" },
     );
-    assert.ok(output.includes(`${formatSkippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`));
+    assert.ok(output.includes(`${skippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`));
     assert.match(output, /No humanizing changes found/u);
     assert.equal(fs.readFileSync(listedPath, "utf8"), source);
   } finally {
@@ -268,7 +289,7 @@ test("humanize.js --file on a skip-listed basename exits 0 with one skip log lin
       ],
       { encoding: "utf8" },
     );
-    assert.equal(output.trim(), formatSkippedLegalClearedLogLine(SKIP_LISTED_FILENAME));
+    assert.equal(output, `${skippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`);
     assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });

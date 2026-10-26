@@ -48,7 +48,8 @@ const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
 /**
  * Exact `blog/posts/*.md` basenames whose prose is legally cleared byte-for-byte.
  * humanize.js must not rewrite these sources (pre-commit would break approval).
- * Add only basenames after legal/content sign-off on the fixed text.
+ * Add a basename only after legal/content sign-off on the fixed text; Legal tracks
+ * approved hashes outside this repo (no hash check here).
  *
  * Matching is by filename only: renaming a post slug changes the basename — update
  * this list when a cleared article is renamed, or protection is dropped silently.
@@ -997,8 +998,5 @@ if (require.main === module) {
 
 module.exports = {
   humanizeMarkdown,
-  LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES,
   HUMANIZE_SKIP_FILENAMES,
-  logSkippedLegalClearedPost,
-  formatSkippedLegalClearedLogLine,
 };
