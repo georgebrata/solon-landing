@@ -41,14 +41,6 @@ const waitForFirstCollect = async (page, timeout = 60000) => {
 };
 
 /**
- * @param {number} ms
- * @returns {Promise<void>}
- */
-const sleep = (ms) => new Promise((resolve) => {
-  setTimeout(resolve, ms);
-});
-
-/**
  * @returns {string | false}
  */
 const resolveSuiteSkip = () => {

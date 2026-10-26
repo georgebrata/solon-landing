@@ -147,6 +147,7 @@ const MIN_TOTAL_REGISTERED_TESTS = 353;
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
  * @returns {void}
  */
+// skipcq: JS-R1005 -- single guard entrypoint; splitting would duplicate floor wiring
 const runAssertTestFiles = function runAssertTestFiles() {
   const files = fs
     .readdirSync(testsDir)

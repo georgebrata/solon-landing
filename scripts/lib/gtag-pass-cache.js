@@ -1,6 +1,6 @@
 "use strict";
 
-const crypto = require("node:crypto");
+const { randomBytes } = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 const { execSync } = require("node:child_process");
@@ -32,7 +32,7 @@ const resolveRunKey = () => {
 /**
  * @returns {string}
  */
-const newCacheNonce = () => crypto.randomBytes(16).toString("hex");
+const newCacheNonce = () => randomBytes(16).toString("hex");
 
 /**
  * @param {string} cachePath

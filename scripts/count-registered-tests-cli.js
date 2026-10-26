@@ -1,12 +1,8 @@
 "use strict";
 
-const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
-const {
-  readGtagPassCache,
-  resolveRunKey,
-} = require("./lib/gtag-pass-cache");
+const { readGtagPassCache } = require("./lib/gtag-pass-cache");
 
 /**
  * @param {NodeJS.ProcessEnv} base
@@ -98,7 +94,7 @@ if (require.main === module) {
   const cachedPass = readGtagPassCacheForCli(filePath);
   if (cachedPass !== null) {
     process.stdout.write(String(cachedPass));
-    process.exit(0);
+    return;
   }
 
   const timeoutMs = path.basename(filePath) === "assert-test-files.test.js" ? 300_000 : 120_000;

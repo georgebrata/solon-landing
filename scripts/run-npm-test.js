@@ -35,7 +35,7 @@ const run = (command, args) => {
     stdio: "inherit",
   });
   if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+    throw new Error(`npm test step failed: ${args.join(" ")} (exit ${result.status ?? 1})`);
   }
 };
 
@@ -44,6 +44,11 @@ const testFiles = fs
   .filter((name) => name.endsWith(".test.js"))
   .sort()
   .map((name) => path.join("tests", name));
-run(process.execPath, ["--test", ...testFiles]);
-run(process.execPath, [path.join("scripts", "assert-test-files.js")]);
-run(process.execPath, [path.join("scripts", "test-feature-flags.js")]);
+try {
+  run(process.execPath, ["--test", ...testFiles]);
+  run(process.execPath, [path.join("scripts", "assert-test-files.js")]);
+  run(process.execPath, [path.join("scripts", "test-feature-flags.js")]);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+}

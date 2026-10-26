@@ -284,19 +284,19 @@
      * @returns {{ ok: true, pathname: string } | { ok: false }}
      */
     const decodeCollectPathname = (pathname) => {
-      let current = pathname || "";
+      let pathCursor = pathname || "";
       for (let i = 0; i < MAX_PATH_DECODES; i += 1) {
         try {
-          const next = decodeURIComponent(current);
-          if (next === current) {
+          const next = decodeURIComponent(pathCursor);
+          if (next === pathCursor) {
             break;
           }
-          current = next;
+          pathCursor = next;
         } catch {
           return { ok: false };
         }
       }
-      return { ok: true, pathname: collapsePathSlashes(current) };
+      return { ok: true, pathname: collapsePathSlashes(pathCursor) };
     };
     /**
      * @param {string} rawPathname
