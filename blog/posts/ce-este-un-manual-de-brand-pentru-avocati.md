@@ -164,7 +164,7 @@ Un branding bun pentru un avocat nu „strigă”, ci inspiră încredere prin s
 
 ## 11. Exemple reale de manuale de brand realizate de SOLON
 
-Teoria devine clară când vezi rezultate concrete. SOLON a construit manuale de brand complete pentru cabinete și societăți de avocatură din România, fiecare cu logo, paletă, tipografie și aplicații proprii:
+Teoria devine clară când vezi rezultate concrete. SOLON a realizat manuale de brand pentru cabinete și societăți de avocatură din România, fiecare cu logo, paletă, tipografie și aplicații proprii:
 
 - [Manual de brand - Avocat Sebastian Nagy](https://drive.google.com/file/d/1eRG_suV_iegm77FExiTXy7JtbJSuE1jX/view)
 - [Manual de brand - Marinău și Asociații](https://drive.google.com/file/d/1szlxO2fdNahhP7DCaJuFWB_msUd6XAdQ/view)

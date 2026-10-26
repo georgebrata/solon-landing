@@ -250,4 +250,4 @@ Dezavantajul principal: Notion necesită timp de configurare inițială și disc
 
 Nu este nici un software de facturare, nici un instrument de semnătură electronică - aceste nevoi rămân acoperite de instrumente complementare.
 
-Dacă vrei să implementezi un workspace Notion complet pentru cabinetul tău - cu baze de date relaționale, șabloane, automatizări și permisiuni configurate corespunzător - echipa **SOLON** poate construi întreaga arhitectură și instrui echipa pentru adoptarea eficientă a sistemului.
+Dacă vrei un workspace Notion pentru cabinetul tău (baze de date, șabloane, automatizări, permisiuni), echipa SOLON te poate ajuta să îl configurezi și să instruiești echipa.

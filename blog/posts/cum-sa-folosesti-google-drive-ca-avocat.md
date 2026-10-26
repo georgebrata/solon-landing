@@ -172,4 +172,4 @@ Documentele juridice conțin adesea date cu caracter personal sau informații co
 
 Google Drive este mult mai mult decât un server de fișiere în cloud. Configurat corect - cu o structură de foldere logică, permisiuni stricte, Shared Drives pentru echipă, versionare controlată și integrări cu Gmail, Calendar și instrumentele de automatizare - devine sistemul nervos al cabinetului tău digital. Fiecare document este localizabil, fiecare versiune este trasabilă, fiecare colaborare este controlată.
 
-Dacă vrei să implementezi un sistem complet de gestiune documentară bazat pe Google Drive, adaptat specificului cabinetului tău de avocatură, echipa SOLON îți poate construi arhitectura, configura permisiunile și automatiza fluxurile de lucru de la zero.
+Dacă vrei să organizezi documentele cabinetului în Google Drive, echipa SOLON te poate ajuta cu structura, permisiunile și automatizarea fluxurilor de lucru.

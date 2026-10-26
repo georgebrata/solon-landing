@@ -232,7 +232,7 @@ Implementarea unui sistem automatizat de Client Intake elimină orele irosite pe
 
 Adoptarea acestei tehnologii presupune o curbă inițială de adaptare: echipa ta trebuie să renunțe la primirea documentelor pe canale informale, iar formularele trebuie calibrate periodic pentru a nu deveni descurajant de lungi pentru clienții mai puțin familiarizați cu mediul digital. Odată depășită faza de configurare, sistemul devine un pilon stabil de organizare, permițându-ți să te concentrezi exclusiv pe analiza juridică a cauzei și pe redactarea apărării.
 
-Dacă dorești să implementezi un flux complet automatizat de client intake pentru cabinetul tău, adaptat specificului practicii și echipei tale, echipa **SOLON** oferă consultanță de digitalizare și dezvoltare dedicată profesioniștilor din domeniul juridic.
+Dacă vrei să automatizezi client intake-ul în cabinetul tău, echipa SOLON oferă consultanță digitală și dezvoltare pentru avocați.
 
 ---
 
