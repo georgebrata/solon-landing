@@ -94,18 +94,17 @@ if (require.main === module) {
   const cachedPass = readGtagPassCacheForCli(filePath);
   if (cachedPass !== null) {
     process.stdout.write(String(cachedPass));
-    return;
+  } else {
+    const timeoutMs = path.basename(filePath) === "assert-test-files.test.js" ? 300_000 : 120_000;
+    const result = spawnSync(process.execPath, ["--test", "--test-reporter", "tap", filePath], {
+      encoding: "utf8",
+      env: isolatedTestEnv(process.env, filePath),
+      timeout: timeoutMs,
+    });
+
+    const combined = `${result.stdout || ""}\n${result.stderr || ""}`;
+    const passCount = parseTapPassCount(combined);
+
+    process.stdout.write(String(passCount));
   }
-
-  const timeoutMs = path.basename(filePath) === "assert-test-files.test.js" ? 300_000 : 120_000;
-  const result = spawnSync(process.execPath, ["--test", "--test-reporter", "tap", filePath], {
-    encoding: "utf8",
-    env: isolatedTestEnv(process.env, filePath),
-    timeout: timeoutMs,
-  });
-
-  const combined = `${result.stdout || ""}\n${result.stderr || ""}`;
-  const passCount = parseTapPassCount(combined);
-
-  process.stdout.write(String(passCount));
 }
