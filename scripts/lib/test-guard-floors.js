@@ -31,7 +31,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "pricing.test.js": 26,
   "puppeteer-ga-intercept.test.js": 2,
   "shortlinks-hit.test.js": 2,
-  "shortlinks.test.js": 25,
+  "shortlinks.test.js": 26,
   "sitemap.test.js": 7,
   "stamp-asset-refs.test.js": 6,
   "support-chat.test.js": 5,
@@ -41,7 +41,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 441;
+const MIN_TOTAL_REGISTERED_TESTS = 442;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors

@@ -1,7 +1,9 @@
 # Defence in depth for Hostico cPanel Apache (public_html).
 # Forbids HTTP access to VCS, build tooling, and sources that must not be public.
-# Does not rewrite or redirect existing HTML routes; DirectoryIndex still serves
-# /blog/<slug>/, /studii-de-caz/, etc. .well-known stays allowed for ACME.
+# Directory listings disabled (Options -Indexes). Trailing-slash 301 for on-disk directories;
+# DirectoryIndex still serves /blog/<slug>/, /studii-de-caz/, etc. .well-known stays allowed for ACME.
+
+Options -Indexes
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
