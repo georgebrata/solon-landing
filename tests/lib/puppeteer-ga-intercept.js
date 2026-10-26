@@ -7,6 +7,7 @@ const { GA_MEASUREMENT_ID } = require("../../scripts/lib/ga-measurement");
 const {
   isGaCollectTransportUrl,
   isGtagLoaderUrl,
+  isGoogleTrackingRequestUrl,
 } = require("../../scripts/lib/ga-collect-transport");
 
 const GTAG_STUB_FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "gtag", "gtag-stub.js");
@@ -36,6 +37,14 @@ const chromeLaunchArgs = (sink) => {
     `MAP doubleclick.net:80 127.0.0.1:${sink.httpPort}`,
     `MAP *.analytics.google.com:80 127.0.0.1:${sink.httpPort}`,
     `MAP analytics.google.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP *.google.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP google.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP *.gstatic.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP gstatic.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP *.google.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP google.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP *.gstatic.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP gstatic.com:80 127.0.0.1:${sink.httpPort}`,
   ];
   return [
     "--no-sandbox",
@@ -135,6 +144,7 @@ module.exports = {
   chromeLaunchArgs,
   isGaCollectTransportUrl,
   isGtagLoaderUrl,
+  isGoogleTrackingRequestUrl,
   installGaCollectInterception,
   assertZeroRealProductionGaCollectHits,
   resetRealNetworkProductionCollectHits,

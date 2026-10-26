@@ -6,6 +6,7 @@ const { test } = require("node:test");
 const {
   gaCollectPathMatch,
   isGaCollectTransportUrl,
+  isGoogleTrackingRequestUrl,
   pathHasGaCollectSegments,
 } = require("../scripts/lib/ga-collect-transport");
 
@@ -49,4 +50,14 @@ test("isGaCollectTransportUrl matches /ccm/collect and encoded GA paths", () => 
     isGaCollectTransportUrl("https://www.googletagmanager.com/g/collection?v=2"),
     false,
   );
+});
+
+test("isGoogleTrackingRequestUrl matches GA/GTM/analytics.google.com and related hosts", () => {
+  assert.equal(isGoogleTrackingRequestUrl("https://www.googletagmanager.com/gtag/js?id=G-TEST"), true);
+  assert.equal(isGoogleTrackingRequestUrl("https://www.googletagmanager.com/g/collect?v=2"), true);
+  assert.equal(isGoogleTrackingRequestUrl("https://www.google-analytics.com/g/collect?v=2"), true);
+  assert.equal(isGoogleTrackingRequestUrl("https://region1.analytics.google.com/g/collect?v=2"), true);
+  assert.equal(isGoogleTrackingRequestUrl("https://www.google.com/generate_204"), true);
+  assert.equal(isGoogleTrackingRequestUrl("https://fonts.gstatic.com/s/roboto.woff2"), true);
+  assert.equal(isGoogleTrackingRequestUrl("https://example.com/g/collect"), false);
 });

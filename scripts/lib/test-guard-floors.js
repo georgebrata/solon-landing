@@ -12,9 +12,9 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "error-log.test.js": 5,
   "error-pages.test.js": 12,
   "forms.test.js": 35,
-  "ga-collect-transport.test.js": 5,
+  "ga-collect-transport.test.js": 6,
   "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 7,
+  "gtag-browser.test.js": 13,
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
@@ -33,13 +33,13 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "sitemap.test.js": 7,
   "stamp-asset-refs.test.js": 6,
   "support-chat.test.js": 5,
-  "tracking-snippets.test.js": 7,
+  "tracking-snippets.test.js": 15,
   "tracking.test.js": 17,
   "turnstile-gate.test.js": 3,
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 387;
+const MIN_TOTAL_REGISTERED_TESTS = 397;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors
