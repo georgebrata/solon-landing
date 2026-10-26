@@ -30,35 +30,49 @@ const waitForFirstCollect = async (page, timeout = 60000) => {
 };
 
 /**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
+const sleep = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
+
+/**
  * @returns {Promise<boolean>}
  */
 const canReachGoogleTagManager = async () => {
   if (process.env.SKIP_GTAG_BROWSER === "1") {
     return false;
   }
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, {
-      method: "GET",
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-    return res.ok;
-  } catch {
-    return false;
+  const attempts = 3;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, {
+        method: "GET",
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        return true;
+      }
+    } catch {
+      // try again with backoff
+    }
+    if (attempt < attempts - 1) {
+      await sleep(1000 * (attempt + 1));
+    }
   }
+  return false;
 };
 
 /**
- * @returns {Promise<string | false>}
+ * @returns {string | false}
  */
-const resolveSuiteSkip = async () => {
+const resolveSuiteSkip = () => {
   if (process.env.SKIP_GTAG_BROWSER === "1") {
     return "SKIP_GTAG_BROWSER=1";
-  }
-  if (!(await canReachGoogleTagManager())) {
-    return "googletagmanager.com unreachable";
   }
   try {
     require.resolve("puppeteer");
@@ -112,6 +126,11 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     if (suiteSkip) {
       return;
     }
+    if (!(await canReachGoogleTagManager())) {
+      throw new Error(
+        "googletagmanager.com unreachable: real gtag browser regression tests did not run",
+      );
+    }
     const puppeteer = require("puppeteer");
     server = await startStaticServer();
     const addr = server.address();
@@ -147,10 +166,11 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     page.on("request", onCollectBefore);
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(page);
     await page.evaluate(() => {
       window.SolonConsent.acceptAll();
     });
-    await waitForFirstCollect(page);
+    await firstCollect;
     await new Promise((r) => setTimeout(r, 2500));
     page.off("request", onCollectBefore);
     await page.evaluate(() => {
@@ -198,8 +218,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     const pageB = await context.newPage();
     await pageA.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageA.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(pageA);
     await pageA.evaluate(() => window.SolonConsent.acceptAll());
-    await waitForFirstCollect(pageA);
+    await firstCollect;
     await pageB.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await pageB.waitForFunction(
       () => window.SolonConsent?.hasConsent("analytics") === true,
@@ -236,5 +257,44 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     await pageA.close();
     await pageB.close();
     await context.close();
+  });
+
+  it("blocked real XHR to google-analytics fires onerror and onloadend once", async (t) => {
+    if (suiteSkip) {
+      t.skip(suiteSkip);
+      return;
+    }
+    const page = await browser.newPage();
+    await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    await page.evaluate(() => {
+      window.SolonConsent.acceptAll();
+    });
+    await page.evaluate(() => {
+      window.SolonConsent.saveCustom({ analytics: false, marketing: true });
+    });
+    await page.waitForFunction(
+      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
+      { timeout: 15000 },
+    );
+    const counts = await page.evaluate(
+      (measurementId) =>
+        new Promise((resolve) => {
+          const tallies = { error: 0, loadend: 0 };
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", `https://www.google-analytics.com/g/collect?v=2&tid=${measurementId}`);
+          xhr.onerror = () => {
+            tallies.error += 1;
+          };
+          xhr.onloadend = () => {
+            tallies.loadend += 1;
+          };
+          xhr.send();
+          setTimeout(() => resolve(tallies), 100);
+        }),
+      GA_MEASUREMENT_ID,
+    );
+    assert.deepEqual(counts, { error: 1, loadend: 1 });
+    await page.close();
   });
 });
