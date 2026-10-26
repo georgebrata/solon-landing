@@ -265,6 +265,12 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       return;
     }
     const page = await browser.newPage();
+    const gaCollectUrls = [];
+    page.on("request", (req) => {
+      if (/google-analytics\.com/u.test(req.url())) {
+        gaCollectUrls.push(req.url());
+      }
+    });
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
     await page.evaluate(() => {
@@ -277,24 +283,32 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
       { timeout: 15000 },
     );
-    const counts = await page.evaluate(
+    const result = await page.evaluate(
       (measurementId) =>
         new Promise((resolve) => {
           const tallies = { error: 0, loadend: 0 };
+          const order = [];
           const xhr = new XMLHttpRequest();
           xhr.open("GET", `https://www.google-analytics.com/g/collect?v=2&tid=${measurementId}`);
+          xhr.onreadystatechange = () => {
+            order.push("readystatechange");
+          };
           xhr.onerror = () => {
             tallies.error += 1;
+            order.push("error");
           };
           xhr.onloadend = () => {
             tallies.loadend += 1;
+            order.push("loadend");
           };
           xhr.send();
-          setTimeout(() => resolve(tallies), 100);
+          setTimeout(() => resolve({ tallies, order, readyState: xhr.readyState }), 100);
         }),
       GA_MEASUREMENT_ID,
     );
-    assert.deepEqual(counts, { error: 1, loadend: 1 });
+    assert.deepEqual(result.tallies, { error: 1, loadend: 1 });
+    assert.deepEqual(result.order, ["readystatechange", "error", "loadend"]);
+    assert.equal(gaCollectUrls.length, 0);
     await page.close();
   });
 });

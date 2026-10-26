@@ -219,7 +219,7 @@
       try {
         const base = win.location?.href || "https://solon.agency/";
         let hostname = new URL(raw, base).hostname.toLowerCase();
-        if (hostname.endsWith(".")) {
+        while (hostname.endsWith(".")) {
           hostname = hostname.slice(0, -1);
         }
         return hostname;
@@ -296,7 +296,11 @@
         try {
           Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
         } catch {
-          // Prototype may expose readyState as accessor-only; events still fire below.
+          try {
+            xhr.readyState = 4;
+          } catch {
+            // Prototype may expose readyState as accessor-only; events still fire below.
+          }
         }
         const readystatechangeEvent = new EventCtor("readystatechange");
         const errorEvent = new ProgressEventCtor("error");
@@ -343,6 +347,10 @@
       const nativeSend = NativeXHR.prototype.send;
       NativeXHR.prototype.open = function (method, url, ...rest) {
         this.__solonGaOpenUrl = transportUrlFromInput(url);
+        const ownReadyState = Object.getOwnPropertyDescriptor(this, "readyState");
+        if (ownReadyState?.configurable) {
+          delete this.readyState;
+        }
         return nativeOpen.call(this, method, url, ...rest);
       };
       NativeXHR.prototype.send = function (...args) {

@@ -7,53 +7,156 @@ const testsDir = process.env.SOLON_TESTS_DIR
   ? path.resolve(process.env.SOLON_TESTS_DIR)
   : path.join(__dirname, "..", "tests");
 
-/** Minimum number of `test(` declarations per file (empty or stub files must not pass). */
-const MIN_TEST_DECLARATIONS = {
-  "consent.test.js": 45,
+/**
+ * @param {string} source
+ * @returns {string}
+ */
+const stripJavaScriptComments = (source) => {
+  let out = "";
+  let i = 0;
+  const len = source.length;
+  while (i < len) {
+    const ch = source[i];
+    const next = source[i + 1];
+    if (ch === "/" && next === "/") {
+      i += 2;
+      while (i < len && source[i] !== "\n") {
+        i += 1;
+      }
+      continue;
+    }
+    if (ch === "/" && next === "*") {
+      i += 2;
+      while (i < len - 1 && !(source[i] === "*" && source[i + 1] === "/")) {
+        i += 1;
+      }
+      i += 2;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === "`") {
+      const quote = ch;
+      out += ch;
+      i += 1;
+      while (i < len) {
+        const c = source[i];
+        out += c;
+        i += 1;
+        if (c === "\\" && i < len) {
+          out += source[i];
+          i += 1;
+          continue;
+        }
+        if (c === quote) {
+          break;
+        }
+      }
+      continue;
+    }
+    out += ch;
+    i += 1;
+  }
+  return out;
 };
 
-const DEFAULT_MIN_TEST_DECLARATIONS = 1;
+/**
+ * @param {string} source
+ * @returns {number}
+ */
+const countDeclaredTests = (source) => {
+  const stripped = stripJavaScriptComments(source);
+  const re = /(?<![.\w])(?:test|it)(?:\.(?:only|skip|todo|concurrent))?\s*\(/gu;
+  const matches = stripped.match(re);
+  return matches ? matches.length : 0;
+};
 
-/** Minimum total `test(` declarations across tests/*.test.js (guards accidental mass deletion). */
-const MIN_TOTAL_TEST_DECLARATIONS = 280;
+/** Minimum declared test()/it() calls per file (ab3c8693 + this branch). */
+const MIN_DECLARED_TESTS_BY_FILE = {
+  "append-blog-google-sheets.test.js": 8,
+  "apps-script-brevo.test.js": 21,
+  "assert-test-files.test.js": 5,
+  "blog-schema.test.js": 3,
+  "brevo-tracker.test.js": 7,
+  "consent.test.js": 53,
+  "error-log.test.js": 5,
+  "error-pages.test.js": 8,
+  "forms.test.js": 31,
+  "ga-measurement-id.test.js": 4,
+  "gtag-browser.test.js": 3,
+  "gtag-datalayer.test.js": 2,
+  "html-integrity.test.js": 4,
+  "html-validate.test.js": 11,
+  "humanize.test.js": 4,
+  "indexnow.test.js": 18,
+  "json-ld-injection.test.js": 17,
+  "jsonld.test.js": 2,
+  "legal-content-guard.test.js": 3,
+  "meta-pixel-privacy.test.js": 4,
+  "partners.test.js": 4,
+  "price-toggle.test.js": 3,
+  "pricing.test.js": 26,
+  "shortlinks-hit.test.js": 2,
+  "shortlinks.test.js": 16,
+  "sitemap.test.js": 7,
+  "stamp-asset-refs.test.js": 6,
+  "support-chat.test.js": 5,
+  "tracking-snippets.test.js": 7,
+  "tracking.test.js": 17,
+  "turnstile-gate.test.js": 3,
+  "unsubscribe-privacy.test.js": 5,
+};
 
-const files = fs
-  .readdirSync(testsDir)
-  .filter((name) => name.endsWith(".test.js"))
-  .sort();
+const DEFAULT_MIN_DECLARED_TESTS = 1;
 
-let totalDeclarations = 0;
-/** @type {string[]} */
-const errors = [];
+const MIN_TOTAL_DECLARED_TESTS = 318;
 
-for (const name of files) {
-  const filePath = path.join(testsDir, name);
-  const stat = fs.statSync(filePath);
-  if (stat.size === 0) {
-    errors.push(`${name} is empty (0 bytes)`);
-    continue;
+const runAssertTestFiles = () => {
+  const files = fs
+    .readdirSync(testsDir)
+    .filter((name) => name.endsWith(".test.js"))
+    .sort();
+
+  let totalDeclared = 0;
+  /** @type {string[]} */
+  const errors = [];
+
+  for (const name of files) {
+    const filePath = path.join(testsDir, name);
+    const stat = fs.statSync(filePath);
+    if (stat.size === 0) {
+      errors.push(`${name} is empty (0 bytes)`);
+      continue;
+    }
+    const source = fs.readFileSync(filePath, "utf8");
+    const declared = countDeclaredTests(source);
+    totalDeclared += declared;
+    if (declared < 1) {
+      errors.push(`${name} has no declared test()/it() calls after stripping comments`);
+    }
+    const required = MIN_DECLARED_TESTS_BY_FILE[name] ?? DEFAULT_MIN_DECLARED_TESTS;
+    if (declared < required) {
+      errors.push(`${name} declared test count ${declared} is below floor ${required}`);
+    }
   }
-  const source = fs.readFileSync(filePath, "utf8");
-  const matches = source.match(/\btest\s*\(/g);
-  const count = matches ? matches.length : 0;
-  totalDeclarations += count;
-  const required = MIN_TEST_DECLARATIONS[name] ?? DEFAULT_MIN_TEST_DECLARATIONS;
-  if (count < required) {
-    errors.push(`${name} has ${count} test() declarations (minimum ${required})`);
-  }
-}
 
-const minTotal =
-  process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_TEST_DECLARATIONS;
-if (totalDeclarations < minTotal) {
-  errors.push(
-    `total test() declarations ${totalDeclarations} is below floor ${minTotal}`,
-  );
-}
-
-if (errors.length > 0) {
-  for (const message of errors) {
-    console.error(`::error::assert-test-files: ${message}`);
+  const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_DECLARED_TESTS;
+  if (totalDeclared < minTotal) {
+    errors.push(`total declared test count ${totalDeclared} is below floor ${minTotal}`);
   }
-  throw new Error(`assert-test-files failed (${errors.length} issue(s))`);
+
+  if (errors.length > 0) {
+    for (const message of errors) {
+      console.error(`::error::assert-test-files: ${message}`);
+    }
+    throw new Error(`assert-test-files failed (${errors.length} issue(s))`);
+  }
+};
+
+module.exports = {
+  countDeclaredTests,
+  stripJavaScriptComments,
+  runAssertTestFiles,
+};
+
+if (require.main === module) {
+  runAssertTestFiles();
 }

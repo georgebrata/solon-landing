@@ -255,6 +255,7 @@ const loadConsent = function loadConsent(options = {}) {
     }
     XMLHttpRequest.prototype.open = function (method, url) {
       this.__solonGaOpenUrl = url;
+      this.readyState = 1;
     };
     XMLHttpRequest.prototype.send = function () {
       this.__solonTransportSent = this.__solonGaOpenUrl;
@@ -885,7 +886,7 @@ test("blocked XHR with accessor-only readyState on prototype still fires events 
     return undefined;
   }
   Object.defineProperty(AccessorReadyStateXHR.prototype, "readyState", {
-    configurable: true,
+    configurable: false,
     enumerable: true,
     get() {
       return readyStateBacking;
@@ -910,6 +911,13 @@ test("blocked XHR with accessor-only readyState on prototype still fires events 
       fn();
     },
   });
+  const nativeDefineProperty = context.Object.defineProperty;
+  context.Object.defineProperty = function definePropertyGuard(target, property, attributes) {
+    if (property === "readyState") {
+      throw new TypeError("readyState cannot be redefined");
+    }
+    return nativeDefineProperty.call(context.Object, target, property, attributes);
+  };
   api.acceptAll();
   api.saveCustom({ analytics: false, marketing: true });
   const xhr = new context.XMLHttpRequest();
@@ -926,8 +934,24 @@ test("blocked XHR with accessor-only readyState on prototype still fires events 
   };
   xhr.send();
   assert.ok(xhr.__solonTransportSent === undefined);
-  assert.equal(xhr.readyState, 4);
+  assert.equal(xhr.readyState, 1);
   assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
+});
+
+test("blocked XHR open() clears synthetic readyState before reuse", () => {
+  const { api, context } = loadConsent({
+    queueMicrotask: (fn) => {
+      fn();
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const xhr = new context.XMLHttpRequest();
+  xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+  xhr.send();
+  assert.equal(xhr.readyState, 4);
+  xhr.open("GET", "https://example.com/safe");
+  assert.notEqual(xhr.readyState, 4);
 });
 
 test("blocked image setAttribute src does not load and signals error once", () => {
@@ -962,6 +986,22 @@ test("transport guard strips trailing dot from analytics and clarity hostnames",
   api.saveCustom({ analytics: false, marketing: true });
   context.navigator.sendBeacon("https://www.google-analytics.com./g/collect?v=2");
   context.navigator.sendBeacon("https://k.clarity.ms./collect");
+  assert.equal(beacons.length, 0);
+});
+
+test("transport guard strips multiple trailing dots from hostname", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.google-analytics.com../g/collect?v=2");
   assert.equal(beacons.length, 0);
 });
 
