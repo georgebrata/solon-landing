@@ -11,11 +11,19 @@
  */
 
 const assert = require("node:assert/strict");
-const { execFileSync } = require("node:child_process");
+const { execFileSync, spawnSync } = require("node:child_process");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
+
+const {
+  HUMANIZE_SKIP_FILENAMES,
+  humanizeMarkdown,
+} = require("../scripts/humanize.js");
+
+/** @param {string} filename */
+const skippedLegalClearedLogLine = (filename) => `${filename}: skipped (legal-cleared)`;
 
 const FIXTURE = `---
 title: "Test: semicolons, en-dashes, FAQ"
@@ -200,4 +208,160 @@ Notează încât sensul să rămână același.
   assert.match(first.outputs[0], /No humanizing changes found/u);
   assert.equal(second.text, first.text);
   assert.match(second.outputs[0], /No humanizing changes found/u);
+});
+
+const SKIP_LISTED_FILENAME = "proiect-modificare-legea-51-1995-website-avocat.md";
+
+const JARGON_FIXTURE = `---
+title: "Skip list fixture"
+date: "2026-01-01"
+slug: "skip-list-fixture"
+description: "Humanize jargon probe."
+categories: ["test"]
+tags: ["test"]
+---
+
+Paragraf scurt cu tehnologia utilizată în propunere și suportul utilizat în text.
+`;
+
+test("requiring humanize.js does not read from the filesystem", () => {
+  const fs = require("node:fs");
+  const originalReaddir = fs.readdirSync;
+  let readdirCallsDuringRequire = 0;
+  fs.readdirSync = (...args) => {
+    readdirCallsDuringRequire += 1;
+    return originalReaddir(...args);
+  };
+
+  try {
+    const resolved = require.resolve("../scripts/humanize.js");
+    delete require.cache[resolved];
+    require("../scripts/humanize.js");
+    assert.equal(readdirCallsDuringRequire, 0);
+  } finally {
+    fs.readdirSync = originalReaddir;
+  }
+});
+
+test("humanize.js exports skip set and humanizeMarkdown rewrites jargon in memory", () => {
+  assert.equal(HUMANIZE_SKIP_FILENAMES.has(SKIP_LISTED_FILENAME), true);
+  assert.equal(HUMANIZE_SKIP_FILENAMES.has("viteza-website-avocat.md"), true);
+  const { updated, counts } = humanizeMarkdown(JARGON_FIXTURE);
+  assert.ok(counts.size > 0);
+  assert.doesNotMatch(updated, /utilizată/u);
+  assert.doesNotMatch(updated, /utilizat/u);
+});
+
+test("humanize.js skips legal-cleared post filenames byte-for-byte and logs each skip", () => {
+  const source = JARGON_FIXTURE;
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-"));
+  const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
+
+  try {
+    fs.writeFileSync(listedPath, source, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir],
+      { encoding: "utf8" },
+    );
+    assert.ok(output.includes(`${skippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`));
+    assert.match(output, /No humanizing changes found/u);
+    assert.equal(fs.readFileSync(listedPath, "utf8"), source);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file on a skip-listed basename exits 0 with one skip log line", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-file-"));
+  const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
+
+  try {
+    fs.writeFileSync(listedPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        tmpDir,
+        "--file",
+        SKIP_LISTED_FILENAME,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.equal(output, `${skippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`);
+    assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file on a missing skip-listed basename exits 1 with stderr only", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-missing-"));
+
+  try {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        tmpDir,
+        "--file",
+        SKIP_LISTED_FILENAME,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.notEqual(result.status, 0);
+    assert.equal(result.stdout, "");
+    assert.match(result.stderr, /Nu am gasit fisierul/u);
+    assert.match(result.stderr, new RegExp(SKIP_LISTED_FILENAME));
+    assert.match(result.stderr, new RegExp(tmpDir));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file normalizes nested paths to basename", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-basename-"));
+  const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
+
+  try {
+    fs.writeFileSync(listedPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        tmpDir,
+        "--file",
+        `blog/posts/${SKIP_LISTED_FILENAME}`,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.equal(output, `${skippedLegalClearedLogLine(SKIP_LISTED_FILENAME)}\n`);
+    assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js still humanizes unlisted post sources", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-other-"));
+  const otherPath = path.join(tmpDir, "unlisted-jargon-probe.md");
+
+  try {
+    fs.writeFileSync(otherPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir],
+      { encoding: "utf8" },
+    );
+    assert.match(output, /updated unlisted-jargon-probe\.md/u);
+    const updated = fs.readFileSync(otherPath, "utf8");
+    assert.notEqual(updated, JARGON_FIXTURE);
+    assert.doesNotMatch(updated, /utilizată/u);
+    assert.doesNotMatch(updated, /utilizat/u);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

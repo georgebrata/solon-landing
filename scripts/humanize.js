@@ -45,10 +45,33 @@ const {
 const DEFAULT_POSTS_DIR = path.join(__dirname, "../blog/posts");
 const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
 
-const args = process.argv.slice(2);
-const dryRun = args.includes("--dry-run");
-const targetFile = getArgValue("--file");
-const postsDir = path.resolve(getArgValue("--posts-dir") || DEFAULT_POSTS_DIR);
+/**
+ * Exact `blog/posts/*.md` basenames whose prose is legally cleared byte-for-byte.
+ * humanize.js must not rewrite these sources (pre-commit would break approval).
+ * Add a basename only after legal/content sign-off on the fixed text; Legal tracks
+ * approved hashes outside this repo (no hash check here).
+ *
+ * Matching is by filename only: renaming a post slug changes the basename — update
+ * this list when a cleared article is renamed, or protection is dropped silently.
+ */
+const LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES = [
+  "proiect-modificare-legea-51-1995-website-avocat.md",
+  "viteza-website-avocat.md",
+];
+const HUMANIZE_SKIP_FILENAMES = new Set(LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES);
+
+/**
+ * @param {string} filename
+ * @returns {string}
+ */
+const formatSkippedLegalClearedLogLine = (filename) => `${filename}: skipped (legal-cleared)`;
+
+/**
+ * @param {string} filename
+ */
+const logSkippedLegalClearedPost = (filename) => {
+  console.log(formatSkippedLegalClearedLogLine(filename));
+};
 
 const rules = [
   // --- Lever 8: punctuation normalization ---
@@ -660,19 +683,7 @@ const protectMarkdown = (markdown) => {
   };
 };
 
-const files = fs
-  .readdirSync(postsDir)
-  .filter((file) => file.endsWith(".md"))
-  .filter((file) => !targetFile || file === targetFile);
-
-if (targetFile && files.length === 0) {
-  console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
-  process.exitCode = 1;
-} else {
-  humanizeFiles(files);
-}
-
-function humanizeFiles(filesToProcess) {
+function humanizeFiles(filesToProcess, { postsDir, dryRun }) {
   let changedFiles = 0;
   let totalChanges = 0;
   const totalsByRule = new Map();
@@ -949,8 +960,46 @@ function printRuleSummary(totalsByRule) {
   });
 }
 
-function getArgValue(flag) {
+function getArgValue(args, flag) {
   const index = args.indexOf(flag);
   if (index === -1) return "";
   return args[index + 1] || "";
 }
+
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  const dryRun = args.includes("--dry-run");
+  let targetFile = getArgValue(args, "--file");
+  if (targetFile) {
+    targetFile = path.basename(targetFile);
+  }
+  const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
+
+  if (targetFile) {
+    const targetPath = path.join(postsDir, targetFile);
+    if (!fs.existsSync(targetPath)) {
+      console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+      process.exitCode = 1;
+    } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
+      logSkippedLegalClearedPost(targetFile);
+    } else {
+      humanizeFiles([targetFile], { postsDir, dryRun });
+    }
+  } else {
+    const markdownFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith(".md"));
+
+    for (const file of markdownFiles) {
+      if (HUMANIZE_SKIP_FILENAMES.has(file)) {
+        logSkippedLegalClearedPost(file);
+      }
+    }
+
+    const filesToProcess = markdownFiles.filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file));
+    humanizeFiles(filesToProcess, { postsDir, dryRun });
+  }
+}
+
+module.exports = {
+  humanizeMarkdown,
+  HUMANIZE_SKIP_FILENAMES,
+};
