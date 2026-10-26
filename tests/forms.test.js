@@ -604,7 +604,7 @@ test("contact and newsletter forms carry their privacy notice above submit", () 
   const newsletterNoteBlog =
     "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe website de adresa ta.";
   const newsletterNoteStandalone =
-    "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
+    "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe website de adresa ta.";
   const contactPages = ["index.html", "studii-de-caz/index.html"];
   const newsletterPages = [
     { rel: "templates/layout.html", note: newsletterNoteBlog },
