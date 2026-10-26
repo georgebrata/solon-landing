@@ -73,6 +73,82 @@ const logSkippedLegalClearedPost = (filename) => {
   console.log(formatSkippedLegalClearedLogLine(filename));
 };
 
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @returns {"ok" | "missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"}
+ */
+const classifyPostsMarkdownEntry = (postsDir, basename) => {
+  if (!basename.endsWith(".md")) {
+    return "not-md";
+  }
+  const targetPath = path.join(postsDir, basename);
+  if (!fs.existsSync(targetPath)) {
+    return "missing";
+  }
+  let lstat;
+  try {
+    lstat = fs.lstatSync(targetPath);
+  } catch {
+    return "missing";
+  }
+  if (lstat.isSymbolicLink()) {
+    return "symlink";
+  }
+  if (!lstat.isFile()) {
+    return "not-regular-file";
+  }
+  const resolvedPosts = path.resolve(postsDir);
+  let realFile;
+  try {
+    realFile = fs.realpathSync(targetPath);
+  } catch {
+    return "missing";
+  }
+  const resolvedFile = path.resolve(realFile);
+  if (resolvedFile !== resolvedPosts && !resolvedFile.startsWith(`${resolvedPosts}${path.sep}`)) {
+    return "outside-posts";
+  }
+  return "ok";
+};
+
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @returns {string}
+ */
+const formatPostsEntryIssue = (postsDir, basename, kind) => {
+  switch (kind) {
+    case "missing":
+      return `Nu am găsit fișierul ${basename} în ${postsDir}.`;
+    case "not-md":
+      return `Fișierul ${basename} nu este .md în ${postsDir}; îl sar.`;
+    case "symlink":
+      return `Nu urmez legăturile simbolice: ${basename} în ${postsDir}.`;
+    case "outside-posts":
+      return `Fișierul ${basename} rezolvă în afara folderului de articole; îl sar.`;
+    case "not-regular-file":
+      return `${basename}: nu este fișier regulat; îl sar.`;
+    default:
+      return `${basename}: nu pot procesa acest articol.`;
+  }
+};
+
+/**
+ * @param {string} postsDir
+ * @param {string} basename
+ * @returns {boolean} false when the entry must not be humanized
+ */
+const logPostsEntryIssue = (postsDir, basename) => {
+  const kind = classifyPostsMarkdownEntry(postsDir, basename);
+  if (kind === "ok") {
+    return true;
+  }
+  console.error(formatPostsEntryIssue(postsDir, basename, kind));
+  return false;
+};
+
 const rules = [
   // --- Lever 8: punctuation normalization ---
   // Only em-dashes (—) are an AI-prose signal; en-dashes (–) are correct
@@ -689,6 +765,11 @@ function humanizeFiles(filesToProcess, { postsDir, dryRun }) {
   const totalsByRule = new Map();
 
   filesToProcess.forEach((file) => {
+    if (classifyPostsMarkdownEntry(postsDir, file) !== "ok") {
+      logPostsEntryIssue(postsDir, file);
+      process.exitCode = 1;
+      return;
+    }
     const filePath = path.join(postsDir, file);
     const original = fs.readFileSync(filePath, "utf8");
     const { updated, counts } = humanizeMarkdown(original);
@@ -976,13 +1057,9 @@ if (require.main === module) {
   const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
 
   if (targetFile) {
-    const targetPath = path.join(postsDir, targetFile);
-    const isMarkdownPostFile =
-      targetFile.endsWith(".md") &&
-      fs.existsSync(targetPath) &&
-      fs.statSync(targetPath).isFile();
-    if (!isMarkdownPostFile) {
-      console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
+    const entryKind = classifyPostsMarkdownEntry(postsDir, targetFile);
+    if (entryKind !== "ok") {
+      console.error(formatPostsEntryIssue(postsDir, targetFile, entryKind));
       process.exitCode = 1;
     } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
       logSkippedLegalClearedPost(targetFile);
@@ -991,14 +1068,25 @@ if (require.main === module) {
     }
   } else {
     const markdownFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith(".md"));
+    /** @type {string[]} */
+    const filesToProcess = [];
 
     for (const file of markdownFiles) {
       if (HUMANIZE_SKIP_FILENAMES.has(file)) {
         logSkippedLegalClearedPost(file);
+        continue;
+      }
+      const entryKind = classifyPostsMarkdownEntry(postsDir, file);
+      if (entryKind === "ok") {
+        filesToProcess.push(file);
+        continue;
+      }
+      console.error(formatPostsEntryIssue(postsDir, file, entryKind));
+      if (entryKind === "symlink" || entryKind === "outside-posts") {
+        process.exitCode = 1;
       }
     }
 
-    const filesToProcess = markdownFiles.filter((file) => !HUMANIZE_SKIP_FILENAMES.has(file));
     humanizeFiles(filesToProcess, { postsDir, dryRun });
   }
 }
@@ -1006,4 +1094,6 @@ if (require.main === module) {
 module.exports = {
   humanizeMarkdown,
   HUMANIZE_SKIP_FILENAMES,
+  classifyPostsMarkdownEntry,
+  formatPostsEntryIssue,
 };
