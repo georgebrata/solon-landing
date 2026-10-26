@@ -3,7 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
-const { readOriginMainFloors } = require("./lib/origin-main-test-floors");
+const { readOriginMainFloors, listMainTestFiles } = require("./lib/origin-main-test-floors");
 
 const testsDir = process.env.SOLON_TESTS_DIR
   ? path.resolve(process.env.SOLON_TESTS_DIR)
@@ -105,13 +105,14 @@ const countRegisteredTests = (filePath) => {
 const MIN_REGISTERED_TESTS_BY_FILE = {
   "append-blog-google-sheets.test.js": 8,
   "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 11,
+  "assert-test-files.test.js": 14,
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
-  "consent.test.js": 57,
+  "consent.test.js": 58,
   "error-log.test.js": 5,
   "error-pages.test.js": 12,
   "forms.test.js": 35,
+  "ga-collect-transport.test.js": 4,
   "ga-measurement-id.test.js": 4,
   "gtag-browser.test.js": 6,
   "gtag-datalayer.test.js": 2,
@@ -126,6 +127,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "partners.test.js": 4,
   "price-toggle.test.js": 3,
   "pricing.test.js": 26,
+  "puppeteer-ga-intercept.test.js": 2,
   "shortlinks-hit.test.js": 2,
   "shortlinks.test.js": 24,
   "sitemap.test.js": 7,
@@ -139,7 +141,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
 
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
 
-const MIN_TOTAL_REGISTERED_TESTS = 343;
+const MIN_TOTAL_REGISTERED_TESTS = 353;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
@@ -155,13 +157,27 @@ const runAssertTestFiles = function runAssertTestFiles() {
   /** @type {string[]} */
   const errors = [];
 
+  const skipMainFloorGuard = Boolean(process.env.SOLON_TESTS_DIR) && !process.env.CI;
+
   /** @type {{ byFile: Record<string, number>, total: number } | null} */
   let mainFloors = null;
-  if (!process.env.SOLON_TESTS_DIR) {
+  /** @type {string[]} */
+  let mainTestFiles = [];
+  if (!skipMainFloorGuard) {
     try {
       mainFloors = readOriginMainFloors();
+      mainTestFiles = listMainTestFiles();
     } catch (error) {
       errors.push(error.message);
+    }
+  }
+
+  if (mainTestFiles.length > 0) {
+    const localNames = new Set(files);
+    for (const name of mainTestFiles) {
+      if (!localNames.has(name)) {
+        errors.push(`${name} exists on main but is missing from tests/`);
+      }
     }
   }
 
@@ -203,7 +219,7 @@ const runAssertTestFiles = function runAssertTestFiles() {
     }
   }
 
-  const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_REGISTERED_TESTS;
+  const minTotal = skipMainFloorGuard ? 0 : MIN_TOTAL_REGISTERED_TESTS;
   if (totalRegistered < minTotal) {
     errors.push(`total passed test count ${totalRegistered} is below floor ${minTotal}`);
   }

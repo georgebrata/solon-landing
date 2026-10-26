@@ -3,6 +3,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const {
+  readGtagPassCache,
+  resolveRunKey,
+} = require("./lib/gtag-pass-cache");
 
 /**
  * @param {NodeJS.ProcessEnv} base
@@ -66,29 +70,23 @@ const parseTapPassCount = (combined) => {
  * @param {string} testFilePath
  * @returns {number | null}
  */
-const readGtagPassCache = (testFilePath) => {
+const readGtagPassCacheForCli = (testFilePath) => {
   const cachePath = process.env.SOLON_GTAG_PASS_CACHE_PATH;
   if (!cachePath || path.basename(testFilePath) !== "gtag-browser.test.js") {
     return null;
   }
-  if (!fs.existsSync(cachePath)) {
+  const runKey = process.env.SOLON_GTAG_PASS_RUN_KEY;
+  const nonce = process.env.SOLON_GTAG_PASS_NONCE;
+  if (!runKey || !nonce) {
     return null;
   }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(cachePath, "utf8"));
-    if (typeof parsed.pass === "number" && Number.isFinite(parsed.pass)) {
-      return parsed.pass;
-    }
-  } catch {
-    return null;
-  }
-  return null;
+  return readGtagPassCache(cachePath, { runKey, nonce });
 };
 
 module.exports = {
   parseTapPassCount,
   isolatedTestEnv,
-  readGtagPassCache,
+  readGtagPassCacheForCli,
 };
 
 if (require.main === module) {
@@ -97,7 +95,7 @@ if (require.main === module) {
     throw new Error("usage: count-registered-tests-cli.js <test-file>");
   }
 
-  const cachedPass = readGtagPassCache(filePath);
+  const cachedPass = readGtagPassCacheForCli(filePath);
   if (cachedPass !== null) {
     process.stdout.write(String(cachedPass));
     process.exit(0);

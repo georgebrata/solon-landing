@@ -14,7 +14,9 @@ const {
   assertZeroRealProductionGaCollectHits,
   resetRealNetworkProductionCollectHits,
   getPassthroughCollectUrls,
+  chromeLaunchArgs,
 } = require("./lib/puppeteer-ga-intercept");
+const { writeGtagPassCache } = require("../scripts/lib/gtag-pass-cache");
 
 const GTAG_PASS_CACHE_PATH = process.env.SOLON_GTAG_PASS_CACHE_PATH
   ? path.resolve(process.env.SOLON_GTAG_PASS_CACHE_PATH)
@@ -95,12 +97,20 @@ describe("GA collect transport URL matcher", () => {
     assert.equal(isGaCollectTransportUrl("https://www.googletagmanager.com/g/collect?v=2"), true);
     assert.equal(isGaCollectTransportUrl("https://evil.com/g/collect?v=2"), false);
     assert.equal(
-      isGaCollectTransportUrl("https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"),
+      isGaCollectTransportUrl("https://www.googletagmanager.com/gtag/js?id=G-TEST000000"),
       false,
     );
     assert.equal(isGaCollectTransportUrl("https://www.google-analytics.com/G/COLLECT?v=2"), true);
     assert.equal(
       isGaCollectTransportUrl("https://www.googletagmanager.com./g/collect?v=2"),
+      true,
+    );
+    assert.equal(
+      isGaCollectTransportUrl("https://www.googletagmanager.com/g/collection?v=2"),
+      false,
+    );
+    assert.equal(
+      isGaCollectTransportUrl("https://www.googletagmanager.com/ccm/collect?v=2"),
       true,
     );
   });
@@ -115,6 +125,8 @@ describe("real gtag.js collect after analytics withdrawal", () => {
   let server = null;
   /** @type {string} */
   let baseUrl = "";
+  /** @type {number} */
+  let executedTests = 0;
 
   before(async () => {
     resetRealNetworkProductionCollectHits();
@@ -129,7 +141,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     baseUrl = `http://127.0.0.1:${port}/tests/fixtures/gtag-withdrawal/`;
     browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: chromeLaunchArgs(),
     });
   });
 
@@ -152,11 +164,11 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     if (!suiteSkip) {
       assert.equal(getPassthroughCollectUrls().length, 0);
       assertZeroRealProductionGaCollectHits();
-      fs.mkdirSync(path.dirname(GTAG_PASS_CACHE_PATH), { recursive: true });
-      fs.writeFileSync(GTAG_PASS_CACHE_PATH, JSON.stringify({ pass: 6 }));
-    } else if (process.env.SOLON_GTAG_PASS_CACHE_PATH) {
-      fs.mkdirSync(path.dirname(GTAG_PASS_CACHE_PATH), { recursive: true });
-      fs.writeFileSync(GTAG_PASS_CACHE_PATH, JSON.stringify({ pass: 1 }));
+      const runKey = process.env.SOLON_GTAG_PASS_RUN_KEY;
+      const nonce = process.env.SOLON_GTAG_PASS_NONCE;
+      if (runKey && nonce && process.env.SOLON_GTAG_PASS_CACHE_PATH && executedTests > 0) {
+        writeGtagPassCache(GTAG_PASS_CACHE_PATH, 1 + executedTests, { runKey, nonce });
+      }
     }
   });
 
@@ -165,6 +177,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
+    executedTests += 1;
     const page = await newPageWithGaGuard();
     let maxEtBeforeWithdraw = 0;
     const onCollectBefore = (req) => {
@@ -222,6 +235,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
+    executedTests += 1;
     const context = await browser.createBrowserContext();
     const pageA = await context.newPage();
     await installGaCollectInterception(pageA);
@@ -275,6 +289,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
+    executedTests += 1;
     const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
@@ -332,6 +347,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
+    executedTests += 1;
     const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
@@ -372,6 +388,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
+    executedTests += 1;
     const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });

@@ -14,7 +14,7 @@
     "test:gtag-browser": "node --test tests/gtag-browser.test.js",
     "test:error-pages": "node --test tests/error-pages.test.js",
     "test:indexnow": "node --test tests/indexnow.test.js tests/sitemap.test.js",
-    "test": "node --test tests/*.test.js && SOLON_GTAG_PASS_CACHE_PATH=tests/.cache/gtag-browser-pass.json node scripts/assert-test-files.js && node scripts/test-feature-flags.js",
+    "test": "node scripts/run-npm-test.js",
     "validate:html": "node scripts/validate-html.js",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "test:chat": "node --test tests/support-chat.test.js",

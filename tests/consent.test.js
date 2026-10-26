@@ -878,7 +878,27 @@ test("ga-disable blocks percent-encoded /g/collect path segments", () => {
   api.acceptAll();
   api.saveCustom({ analytics: false, marketing: true });
   context.navigator.sendBeacon("https://www.googletagmanager.com/g/%63ollect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%2563ollect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%252Fcollect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com//g//collect?v=2");
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/%ZZollect?v=2");
   assert.equal(beacons.length, 0);
+});
+
+test("ga-disable does not block googletagmanager.com /g/collection paths", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/collection?v=2");
+  assert.equal(beacons.length, 1);
 });
 
 test("ga-disable blocks googletagmanager.com /G/COLLECT case-insensitively", () => {

@@ -241,36 +241,113 @@
     const isGoogleAnalyticsCollectHost = (hostname) =>
       hostnameMatchesApex(hostname, "google-analytics.com") ||
       hostnameMatchesApex(hostname, "analytics.google.com");
+    /** @sync scripts/lib/ga-collect-transport.js — keep pathname collect matching aligned */
+    const MAX_PATH_DECODES = 8;
+    /**
+     * @param {string} pathname
+     * @returns {string}
+     */
+    const collapsePathSlashes = (pathname) => pathname.replace(/\/+/g, "/");
+    /**
+     * @param {string} pathname
+     * @returns {boolean}
+     */
+    const pathHasGaCollectSegments = (pathname) => {
+      const parts = collapsePathSlashes(pathname || "").split("/").filter(Boolean);
+      for (let i = 0; i < parts.length - 1; i += 1) {
+        if (parts[i].toLowerCase() === "g" && parts[i + 1].toLowerCase() === "collect") {
+          return true;
+        }
+      }
+      return false;
+    };
+    /**
+     * @param {string} pathname
+     * @returns {boolean}
+     */
+    const pathHasCcmCollectSegments = (pathname) => {
+      const parts = collapsePathSlashes(pathname || "").split("/").filter(Boolean);
+      for (let i = 0; i < parts.length - 1; i += 1) {
+        if (parts[i].toLowerCase() === "ccm" && parts[i + 1].toLowerCase() === "collect") {
+          return true;
+        }
+      }
+      return false;
+    };
+    /**
+     * @param {string} pathname
+     * @returns {boolean}
+     */
+    const isGaCollectPathname = (pathname) =>
+      pathHasGaCollectSegments(pathname) || pathHasCcmCollectSegments(pathname);
+    /**
+     * @param {string} pathname
+     * @returns {{ ok: true, pathname: string } | { ok: false }}
+     */
+    const decodeCollectPathname = (pathname) => {
+      let current = pathname || "";
+      for (let i = 0; i < MAX_PATH_DECODES; i += 1) {
+        try {
+          const next = decodeURIComponent(current);
+          if (next === current) {
+            break;
+          }
+          current = next;
+        } catch {
+          return { ok: false };
+        }
+      }
+      return { ok: true, pathname: collapsePathSlashes(current) };
+    };
+    /**
+     * @param {string} rawPathname
+     * @returns {{ matches: boolean, decodeFailed: boolean }}
+     */
+    const gaCollectPathMatch = (rawPathname) => {
+      const raw = rawPathname || "";
+      if (isGaCollectPathname(raw)) {
+        return { matches: true, decodeFailed: false };
+      }
+      const decoded = decodeCollectPathname(raw);
+      if (!decoded.ok) {
+        return { matches: false, decodeFailed: true };
+      }
+      if (isGaCollectPathname(decoded.pathname)) {
+        return { matches: true, decodeFailed: false };
+      }
+      return { matches: false, decodeFailed: false };
+    };
     /**
      * @param {unknown} input
      * @returns {string}
      */
-    const transportPathname = (input) => {
+    const transportRawPathname = (input) => {
       const raw = transportUrlFromInput(input);
       if (!raw) {
         return "";
       }
       try {
         const base = win.location?.href || "https://solon.agency/";
-        let pathname = new URL(raw, base).pathname;
-        try {
-          pathname = decodeURIComponent(pathname);
-        } catch {
-          // keep encoded pathname when decoding fails
-        }
-        return pathname;
+        return new URL(raw, base).pathname;
       } catch {
         return "";
       }
     };
     /**
      * @param {string} hostname
-     * @param {string} pathname
+     * @param {string} rawPathname
      * @returns {boolean}
      */
-    const isGoogleTagManagerCollectTransport = (hostname, pathname) =>
-      hostnameMatchesApex(hostname, "googletagmanager.com") &&
-      /\/g\/collect/i.test(pathname);
+    const isGoogleTagManagerCollectTransport = (hostname, rawPathname) => {
+      if (!hostnameMatchesApex(hostname, "googletagmanager.com")) {
+        return false;
+      }
+      const pathCheck = gaCollectPathMatch(rawPathname);
+      if (pathCheck.decodeFailed) {
+        return true;
+      }
+      return pathCheck.matches;
+    };
     /**
      * @param {string} hostname
      * @returns {boolean}
@@ -293,12 +370,12 @@
       if (!hostname) {
         return false;
       }
-      const pathname = transportPathname(input);
+      const rawPathname = transportRawPathname(input);
       const gaDisabled = win[GA_DISABLE_PROPERTY] === true;
       return (
         (gaDisabled &&
           (isGoogleAnalyticsCollectHost(hostname) ||
-            isGoogleTagManagerCollectTransport(hostname, pathname))) ||
+            isGoogleTagManagerCollectTransport(hostname, rawPathname))) ||
         (isClarityCollectHost(hostname) && clarityTransportBlocked())
       );
     };

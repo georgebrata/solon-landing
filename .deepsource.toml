@@ -2,6 +2,7 @@ version = 1
 
 exclude_patterns = [
   "node_modules/**",
+  "tests/fixtures/**",
   "assets/vendor/**",
   "**/*.min.js",
   "**/*.min.css",

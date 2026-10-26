@@ -227,6 +227,34 @@ test("update-assert-test-floors fails when consent floor is below origin/main", 
   assert.throws(() => validateCommittedFloorsAgainstMain(tampered), /committed floor for consent\.test\.js/i);
 });
 
+test("parseFloorsFromAssertSource throws when floors block is missing", () => {
+  assert.throws(
+    () => parseFloorsFromAssertSource('"use strict";'),
+    /could not parse MIN_REGISTERED_TESTS_BY_FILE/,
+  );
+});
+
+test("assert-test-files rejects a test file deleted relative to main", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
+  const testsDir = path.join(tmpDir, "tests");
+  fs.mkdirSync(testsDir);
+  fs.writeFileSync(
+    path.join(testsDir, "kept.test.js"),
+    'const { test } = require("node:test");\ntest("x", () => {});\n',
+  );
+  const result = spawnSync(process.execPath, [scriptPath], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      SOLON_TESTS_DIR: testsDir,
+      CI: "true",
+      SOLON_SKIP_ASSERT_INTEGRATION: "1",
+    },
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stderr}${result.stdout}`, /missing from tests/);
+});
+
 test("update-assert-test-floors fails when floor anchor is missing", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
   const assertCopy = path.join(tmpDir, "assert-test-files.js");
