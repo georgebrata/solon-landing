@@ -75,10 +75,29 @@ const logSkippedLegalClearedPost = (filename) => {
 
 /**
  * @param {string} postsDir
+ * @returns {string}
+ */
+const resolveRealPostsDir = (postsDir) => fs.realpathSync(postsDir);
+
+/**
+ * @param {string} realPostsDir
+ * @param {string} realFilePath
+ * @returns {boolean}
+ */
+const isPathInsideRealPostsDir = (realPostsDir, realFilePath) => {
+  const resolvedFile = path.resolve(realFilePath);
+  return (
+    resolvedFile === realPostsDir || resolvedFile.startsWith(`${realPostsDir}${path.sep}`)
+  );
+};
+
+/**
+ * @param {string} realPostsDir
+ * @param {string} postsDir
  * @param {string} basename
  * @returns {"ok" | "missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"}
  */
-const classifyPostsMarkdownEntry = (postsDir, basename) => {
+const classifyPostsMarkdownEntry = (realPostsDir, postsDir, basename) => {
   if (!basename.endsWith(".md")) {
     return "not-md";
   }
@@ -98,55 +117,69 @@ const classifyPostsMarkdownEntry = (postsDir, basename) => {
   if (!lstat.isFile()) {
     return "not-regular-file";
   }
-  const resolvedPosts = path.resolve(postsDir);
   let realFile;
   try {
     realFile = fs.realpathSync(targetPath);
   } catch {
     return "missing";
   }
-  const resolvedFile = path.resolve(realFile);
-  if (resolvedFile !== resolvedPosts && !resolvedFile.startsWith(`${resolvedPosts}${path.sep}`)) {
+  if (!isPathInsideRealPostsDir(realPostsDir, realFile)) {
     return "outside-posts";
   }
   return "ok";
 };
 
 /**
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {"file" | "batch"} mode
+ * @returns {boolean}
+ */
+const postsEntryIssueIsFatal = (kind, mode) => {
+  if (kind === "not-regular-file") {
+    return mode === "file";
+  }
+  return true;
+};
+
+/**
  * @param {string} postsDir
  * @param {string} basename
  * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {boolean} fatal
  * @returns {string}
  */
-const formatPostsEntryIssue = (postsDir, basename, kind) => {
+const formatPostsEntryIssue = (postsDir, basename, kind, fatal) => {
+  if (!fatal) {
+    return `${basename} din ${postsDir}: nu este fișier regulat; îl sar.`;
+  }
   switch (kind) {
     case "missing":
-      return `Nu am găsit fișierul ${basename} în ${postsDir}.`;
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu l-am găsit.`;
     case "not-md":
-      return `Fișierul ${basename} nu este .md în ${postsDir}; îl sar.`;
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu este .md.`;
     case "symlink":
-      return `Nu urmez legăturile simbolice: ${basename} în ${postsDir}.`;
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: legătură simbolică.`;
     case "outside-posts":
-      return `Fișierul ${basename} rezolvă în afara folderului de articole; îl sar.`;
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: rezolvă în afara folderului de articole.`;
     case "not-regular-file":
-      return `${basename}: nu este fișier regulat; îl sar.`;
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}: nu este fișier regulat.`;
     default:
-      return `${basename}: nu pot procesa acest articol.`;
+      return `Nu pot procesa fișierul ${basename} din ${postsDir}.`;
   }
 };
 
 /**
  * @param {string} postsDir
  * @param {string} basename
- * @returns {boolean} false when the entry must not be humanized
+ * @param {"missing" | "not-md" | "symlink" | "outside-posts" | "not-regular-file"} kind
+ * @param {"file" | "batch"} mode
  */
-const logPostsEntryIssue = (postsDir, basename) => {
-  const kind = classifyPostsMarkdownEntry(postsDir, basename);
-  if (kind === "ok") {
-    return true;
+const reportPostsEntryIssue = (postsDir, basename, kind, mode) => {
+  const fatal = postsEntryIssueIsFatal(kind, mode);
+  console.error(formatPostsEntryIssue(postsDir, basename, kind, fatal));
+  if (fatal) {
+    process.exitCode = 1;
   }
-  console.error(formatPostsEntryIssue(postsDir, basename, kind));
-  return false;
 };
 
 const rules = [
@@ -765,11 +798,6 @@ function humanizeFiles(filesToProcess, { postsDir, dryRun }) {
   const totalsByRule = new Map();
 
   filesToProcess.forEach((file) => {
-    if (classifyPostsMarkdownEntry(postsDir, file) !== "ok") {
-      logPostsEntryIssue(postsDir, file);
-      process.exitCode = 1;
-      return;
-    }
     const filePath = path.join(postsDir, file);
     const original = fs.readFileSync(filePath, "utf8");
     const { updated, counts } = humanizeMarkdown(original);
@@ -1055,12 +1083,12 @@ if (require.main === module) {
     targetFile = path.basename(targetFile);
   }
   const postsDir = path.resolve(getArgValue(args, "--posts-dir") || DEFAULT_POSTS_DIR);
+  const realPostsDir = resolveRealPostsDir(postsDir);
 
   if (targetFile) {
-    const entryKind = classifyPostsMarkdownEntry(postsDir, targetFile);
+    const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, targetFile);
     if (entryKind !== "ok") {
-      console.error(formatPostsEntryIssue(postsDir, targetFile, entryKind));
-      process.exitCode = 1;
+      reportPostsEntryIssue(postsDir, targetFile, entryKind, "file");
     } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
       logSkippedLegalClearedPost(targetFile);
     } else {
@@ -1076,15 +1104,14 @@ if (require.main === module) {
         logSkippedLegalClearedPost(file);
         continue;
       }
-      const entryKind = classifyPostsMarkdownEntry(postsDir, file);
+      const entryKind = classifyPostsMarkdownEntry(realPostsDir, postsDir, file);
       if (entryKind === "ok") {
         filesToProcess.push(file);
         continue;
       }
-      console.error(formatPostsEntryIssue(postsDir, file, entryKind));
-      if (entryKind === "symlink" || entryKind === "outside-posts") {
-        process.exitCode = 1;
-      }
+      // Symlinks / outside targets are a security refusal (exit 1). A directory
+      // named like *.md is a benign skip (exit 0) — not an escape attempt.
+      reportPostsEntryIssue(postsDir, file, entryKind, "batch");
     }
 
     humanizeFiles(filesToProcess, { postsDir, dryRun });
@@ -1093,7 +1120,10 @@ if (require.main === module) {
 
 module.exports = {
   humanizeMarkdown,
+  humanizeFiles,
   HUMANIZE_SKIP_FILENAMES,
   classifyPostsMarkdownEntry,
   formatPostsEntryIssue,
+  resolveRealPostsDir,
+  isPathInsideRealPostsDir,
 };

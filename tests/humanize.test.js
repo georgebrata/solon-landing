@@ -19,6 +19,7 @@ const test = require("node:test");
 
 const {
   HUMANIZE_SKIP_FILENAMES,
+  humanizeFiles,
   humanizeMarkdown,
 } = require("../scripts/humanize.js");
 
@@ -313,7 +314,8 @@ test("humanize.js --file on a missing skip-listed basename exits 1 with stderr o
     );
     assert.notEqual(result.status, 0);
     assert.equal(result.stdout, "");
-    assert.match(result.stderr, /Nu am găsit fișierul/u);
+    assert.match(result.stderr, /Nu pot procesa fișierul/u);
+    assert.match(result.stderr, /nu l-am găsit/u);
     assert.match(result.stderr, new RegExp(SKIP_LISTED_FILENAME));
     assert.ok(result.stderr.includes(tmpDir));
   } finally {
@@ -371,7 +373,7 @@ test("humanize.js --file rejects .generation-log.jsonl with not-md error", () =>
 
   try {
     fs.writeFileSync(path.join(tmpDir, ".generation-log.jsonl"), "{}\n", "utf8");
-    assertHumanizeFileRejected(tmpDir, ".generation-log.jsonl", /nu este \.md în/u);
+    assertHumanizeFileRejected(tmpDir, ".generation-log.jsonl", /nu este \.md\./u);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -381,7 +383,7 @@ test("humanize.js --file rejects . without EISDIR", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-file-dot-"));
 
   try {
-    assertHumanizeFileRejected(tmpDir, ".", /Fișierul \. nu este \.md în/u);
+    assertHumanizeFileRejected(tmpDir, ".", /Nu pot procesa fișierul \. din/u);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -391,7 +393,7 @@ test("humanize.js --file rejects .. without EISDIR", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-file-dotdot-"));
 
   try {
-    assertHumanizeFileRejected(tmpDir, "..", /Fișierul \.\. nu este \.md în/u);
+    assertHumanizeFileRejected(tmpDir, "..", /Nu pot procesa fișierul \.\. din/u);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -402,7 +404,7 @@ test("humanize.js --file rejects uppercase .MD extension", () => {
 
   try {
     fs.writeFileSync(path.join(tmpDir, "uppercase-post.MD"), JARGON_FIXTURE, "utf8");
-    assertHumanizeFileRejected(tmpDir, "uppercase-post.MD", /nu este \.md în/u);
+    assertHumanizeFileRejected(tmpDir, "uppercase-post.MD", /nu este \.md\./u);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -429,7 +431,8 @@ test("humanize.js --file does not follow a symlinked .md outside postsDir", () =
       { encoding: "utf8" },
     );
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /legăturile simbolice/u);
+    assert.match(result.stderr, /legătură simbolică/u);
+    assert.match(result.stderr, /Nu pot procesa fișierul/u);
     assert.ok(result.stderr.includes(linkName));
     assert.ok(result.stderr.includes(postsDir));
     assert.equal(fs.readFileSync(outsidePath, "utf8"), JARGON_FIXTURE);
@@ -455,7 +458,9 @@ test("humanize.js full-folder run does not follow a symlinked .md outside postsD
       [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", postsDir],
       { encoding: "utf8" },
     );
-    assert.match(result.stderr, /legăturile simbolice/u);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /legătură simbolică/u);
+    assert.match(result.stderr, /Nu pot procesa fișierul/u);
     assert.ok(result.stderr.includes(linkName));
     assert.equal(fs.readFileSync(outsidePath, "utf8"), JARGON_FIXTURE);
     assert.notEqual(fs.readFileSync(localPath, "utf8"), JARGON_FIXTURE);
@@ -476,9 +481,72 @@ test("humanize.js full-folder run skips a directory named like a .md file", () =
       [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", tmpDir],
       { encoding: "utf8" },
     );
-    assert.match(result.stderr, /fake-post\.md: nu este fișier regulat; îl sar/u);
+    assert.match(result.stderr, /fake-post\.md din .* nu este fișier regulat; îl sar/u);
     assert.doesNotMatch(result.stderr, /EISDIR/u);
     assert.equal(result.status, 0);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file succeeds when postsDir is reached through a symlink", () => {
+  const realPostsDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-real-posts-"));
+  const wrapperDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-posts-wrapper-"));
+  const postsLink = path.join(wrapperDir, "posts-link");
+  const targetPath = path.join(realPostsDir, "via-symlink-postsdir.md");
+
+  try {
+    fs.symlinkSync(realPostsDir, postsLink);
+    fs.writeFileSync(targetPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        postsLink,
+        "--file",
+        "via-symlink-postsdir.md",
+      ],
+      { encoding: "utf8" },
+    );
+    assert.match(output, /updated via-symlink-postsdir\.md/u);
+    assert.notEqual(fs.readFileSync(targetPath, "utf8"), JARGON_FIXTURE);
+  } finally {
+    fs.rmSync(wrapperDir, { recursive: true, force: true });
+    fs.rmSync(realPostsDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js full-folder run humanizes posts when postsDir is reached through a symlink", () => {
+  const realPostsDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-real-batch-"));
+  const wrapperDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-batch-wrapper-"));
+  const postsLink = path.join(wrapperDir, "posts-link");
+  const targetPath = path.join(realPostsDir, "batch-via-symlink-postsdir.md");
+
+  try {
+    fs.symlinkSync(realPostsDir, postsLink);
+    fs.writeFileSync(targetPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [path.join(__dirname, "../scripts/humanize.js"), "--posts-dir", postsLink],
+      { encoding: "utf8" },
+    );
+    assert.match(output, /updated batch-via-symlink-postsdir\.md/u);
+    assert.notEqual(fs.readFileSync(targetPath, "utf8"), JARGON_FIXTURE);
+  } finally {
+    fs.rmSync(wrapperDir, { recursive: true, force: true });
+    fs.rmSync(realPostsDir, { recursive: true, force: true });
+  }
+});
+
+test("humanizeFiles rewrites a pre-validated basename without re-classifying entries", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-files-api-"));
+  const targetPath = path.join(tmpDir, "api-probe.md");
+
+  try {
+    fs.writeFileSync(targetPath, JARGON_FIXTURE, "utf8");
+    humanizeFiles(["api-probe.md"], { postsDir: tmpDir, dryRun: false });
+    assert.notEqual(fs.readFileSync(targetPath, "utf8"), JARGON_FIXTURE);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
