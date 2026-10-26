@@ -235,6 +235,30 @@ test("humanize.js skips legal-cleared post filenames byte-for-byte", () => {
   }
 });
 
+test("humanize.js --file on a skip-listed basename exits 0 with no output", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-file-"));
+  const listedPath = path.join(tmpDir, SKIP_LISTED_FILENAME);
+
+  try {
+    fs.writeFileSync(listedPath, JARGON_FIXTURE, "utf8");
+    const output = execFileSync(
+      process.execPath,
+      [
+        path.join(__dirname, "../scripts/humanize.js"),
+        "--posts-dir",
+        tmpDir,
+        "--file",
+        SKIP_LISTED_FILENAME,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.equal(output, "");
+    assert.equal(fs.readFileSync(listedPath, "utf8"), JARGON_FIXTURE);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test("humanize.js still humanizes unlisted post sources", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-other-"));
   const otherPath = path.join(tmpDir, "unlisted-jargon-probe.md");

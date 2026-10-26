@@ -671,6 +671,10 @@ const protectMarkdown = (markdown) => {
 };
 
 if (require.main === module) {
+  if (targetFile && HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
+    process.exit(0);
+  }
+
   const files = fs
     .readdirSync(postsDir)
     .filter((file) => file.endsWith(".md"))

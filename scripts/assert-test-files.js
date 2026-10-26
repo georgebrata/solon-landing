@@ -116,7 +116,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
-  "humanize.test.js": 6,
+  "humanize.test.js": 7,
   "indexnow.test.js": 18,
   "json-ld-injection.test.js": 17,
   "jsonld.test.js": 2,
@@ -138,7 +138,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
 
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
 
-const MIN_TOTAL_REGISTERED_TESTS = 341;
+const MIN_TOTAL_REGISTERED_TESTS = 342;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
