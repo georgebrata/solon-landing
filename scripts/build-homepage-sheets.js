@@ -4,7 +4,10 @@
  * or committed data/homepage-sheets.snapshot.json. Legacy public FAQ JSON is used
  * only when the API key is missing and the snapshot FAQ array is empty.
  *
- * Usage: node scripts/build-homepage-sheets.js [--offline] [--check]
+ * The committed snapshot is never rewritten during deploy/CI; refresh it locally with
+ * --write-snapshot after verifying API output.
+ *
+ * Usage: node scripts/build-homepage-sheets.js [--offline] [--check] [--write-snapshot]
  */
 (() => {
   const fs = require("fs");
@@ -89,6 +92,78 @@
     return { FAQ: faq, Testimonials: testimonials };
   };
 
+  const readCommittedSnapshot = () => validateSnapshot(JSON.parse(fs.readFileSync(SNAPSHOT, "utf8")));
+
+  /**
+   * @param {unknown} apiRows
+   * @param {ReturnType<typeof validateSnapshot>["FAQ"]} committedFaq
+   */
+  const pickFaqRows = (apiRows, committedFaq) => {
+    if (!Array.isArray(apiRows)) {
+      console.warn("::warning::build-homepage-sheets: FAQ tab missing or not an array; using committed snapshot");
+      return committedFaq;
+    }
+    const normalized = apiRows.map(normalizeFaqRow).filter(Boolean);
+    const visible = normalized.filter((row) => row.Visible);
+    if (visible.length === 0) {
+      console.warn("::warning::build-homepage-sheets: FAQ tab empty or no visible rows; using committed snapshot");
+      return committedFaq;
+    }
+    return normalized;
+  };
+
+  /**
+   * @param {unknown} apiRows
+   * @param {ReturnType<typeof validateSnapshot>["Testimonials"]} committedTestimonials
+   */
+  const pickTestimonialRows = (apiRows, committedTestimonials) => {
+    if (!Array.isArray(apiRows)) {
+      console.warn(
+        "::warning::build-homepage-sheets: Testimonials tab missing or not an array; using committed snapshot",
+      );
+      return committedTestimonials;
+    }
+    const normalized = apiRows.map(normalizeTestimonialRow).filter(Boolean);
+    const visible = normalized.filter((row) => row.Visible);
+    if (visible.length === 0) {
+      console.warn(
+        "::warning::build-homepage-sheets: Testimonials tab empty or missing required columns; using committed snapshot",
+      );
+      return committedTestimonials;
+    }
+    return normalized;
+  };
+
+  /**
+   * @param {ReturnType<typeof validateSnapshot>["Testimonials"]} items
+   */
+  const ensureCarouselActive = (items) => {
+    const visible = items.filter((item) => item.Visible);
+    if (visible.length === 0) return items;
+    if (visible.some((item) => item.Active)) return items;
+    const firstVisibleId = visible[0].id;
+    return items.map((item) => ({
+      ...item,
+      Active: item.Visible && item.id === firstVisibleId,
+    }));
+  };
+
+  /**
+   * @param {{ faqRows?: unknown, testimonialRows?: unknown, committed: ReturnType<typeof validateSnapshot> }} input
+   */
+  const buildRenderData = (input) => {
+    const faq =
+      input.faqRows === undefined
+        ? input.committed.FAQ
+        : pickFaqRows(input.faqRows, input.committed.FAQ);
+    const testimonials = ensureCarouselActive(
+      input.testimonialRows === undefined
+        ? input.committed.Testimonials
+        : pickTestimonialRows(input.testimonialRows, input.committed.Testimonials),
+    );
+    return { FAQ: faq, Testimonials: testimonials };
+  };
+
   /** @param {typeof fetch} fetchImpl */
   const fetchLegacyFaq = async (fetchImpl) => {
     const requestUrl = new URL(LEGACY_FAQ_URL);
@@ -112,30 +187,39 @@
   const resolveData = async (options = {}) => {
     const offline = Boolean(options.offline);
     const fetchImpl = options.fetchImpl || fetch;
+    const committed = readCommittedSnapshot();
     let source = "snapshot";
-    let data = validateSnapshot(JSON.parse(fs.readFileSync(SNAPSHOT, "utf8")));
+    let data = buildRenderData({ committed });
 
-    if (!offline && process.env.SHEETS_API_KEY) {
+    if (offline) {
+      return { data, source, committed };
+    }
+
+    if (process.env.SHEETS_API_KEY) {
       try {
         const raw = {};
         for (const tab of API_TABS) raw[tab] = await fetchTab(tab, { fetchImpl });
-        data = validateSnapshot({
-          FAQ: raw.FAQ,
-          Testimonials: raw.Testimonials,
+        data = buildRenderData({
+          faqRows: raw.FAQ,
+          testimonialRows: raw.Testimonials,
+          committed,
         });
         source = "api";
-        fs.writeFileSync(SNAPSHOT, `${JSON.stringify(data, null, 2)}\n`);
       } catch (error) {
         console.error(
           `::error::build-homepage-sheets: SOLON API failed (${error.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`,
         );
-        data = validateSnapshot(JSON.parse(fs.readFileSync(SNAPSHOT, "utf8")));
+        data = buildRenderData({ committed });
       }
-    } else if (!offline && data.FAQ.length === 0) {
+    } else if (!offline && data.FAQ.filter((row) => row.Visible).length === 0) {
       try {
         const legacy = await fetchLegacyFaq(fetchImpl);
-        if (legacy.length > 0) {
-          data = { ...data, FAQ: legacy };
+        if (legacy.some((row) => row.Visible)) {
+          data = buildRenderData({
+            faqRows: legacy,
+            testimonialRows: committed.Testimonials,
+            committed,
+          });
           source = "legacy-faq";
         }
       } catch (error) {
@@ -143,22 +227,23 @@
       }
     }
 
-    return { data, source };
+    return { data, source, committed };
   };
 
   /**
-   * @param {ReturnType<typeof validateSnapshot>["FAQ"]} items
+   * @param {ReturnType<typeof validateSnapshot>["FAQ"][number]} item
+   * @param {number} index
    */
   const renderFaqItem = (item, index) => {
     return `            <li data-aos="fade-in" data-aos-delay="${index * 100}">
             <i class="bi bi-question-circle icon-help"></i>
             <button type="button" data-bs-toggle="collapse" class="collapse collapsed" data-bs-target="#faq-list-${index}" aria-expanded="false" aria-controls="faq-list-${index}">
-                ${item.Intrebare}
+                ${esc(item.Intrebare)}
             <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i>
             </button>
             <div id="faq-list-${index}" class="collapse" data-bs-parent=".faq-list">
             <p>
-                ${item.Raspuns}
+                ${esc(item.Raspuns)}
             </p>
             </div>
         </li>`;
@@ -173,7 +258,7 @@ ${rows}
           <!-- HOME-FAQ:END -->`;
   };
 
-  /** @param {ReturnType<typeof validateSnapshot>["Testimonials"]} items */
+  /** @param {ReturnType<typeof validateSnapshot>["Testimonials"][number]} item */
   const renderTestimonialSlide = (item) => {
     const activeClass = item.Active ? " active" : "";
     const quoteClass = item.QuoteClass ? ` class="${esc(item.QuoteClass)}"` : "";
@@ -203,8 +288,9 @@ ${rows}
 
   /** @param {ReturnType<typeof validateSnapshot>["Testimonials"]} items */
   const renderTestimonialsBlock = (items) => {
-    const visible = items.filter((item) => item.Visible);
-    const slides = visible.map((item) => renderTestimonialSlide(item)).join("\n");
+    const slides = ensureCarouselActive(items.filter((item) => item.Visible)).map((item) =>
+      renderTestimonialSlide(item),
+    ).join("\n");
     return `<!-- TESTIMONIALS:START (generated by scripts/build-homepage-sheets.js; do not edit by hand) -->
 ${slides}
               <!-- TESTIMONIALS:END -->`;
@@ -215,15 +301,24 @@ ${slides}
    * @param {ReturnType<typeof validateSnapshot>} data
    */
   const render = (html, data) => {
-    let out = replaceBlock(html, "HOME-FAQ", renderFaqBlock(data.FAQ));
-    out = replaceBlock(out, "TESTIMONIALS", renderTestimonialsBlock(data.Testimonials));
+    const prepared = {
+      FAQ: data.FAQ,
+      Testimonials: ensureCarouselActive(data.Testimonials),
+    };
+    let out = replaceBlock(html, "HOME-FAQ", renderFaqBlock(prepared.FAQ));
+    out = replaceBlock(out, "TESTIMONIALS", renderTestimonialsBlock(prepared.Testimonials));
     return out;
   };
 
   const main = async () => {
     const offline = process.argv.includes("--offline");
     const check = process.argv.includes("--check");
+    const writeSnapshot = process.argv.includes("--write-snapshot");
     const { data, source } = await resolveData({ offline });
+    if (writeSnapshot && !offline && source === "api") {
+      fs.writeFileSync(SNAPSHOT, `${JSON.stringify(data, null, 2)}\n`);
+      console.log(`build-homepage-sheets: wrote ${path.relative(root, SNAPSHOT)} from API render data`);
+    }
     const before = fs.readFileSync(INDEX, "utf8");
     const after = render(before, data);
     if (check) {
@@ -247,12 +342,17 @@ ${slides}
   }
 
   module.exports = {
+    esc,
     validateSnapshot,
     render,
     renderFaqBlock,
     renderTestimonialsBlock,
     resolveData,
     replaceBlock,
+    readCommittedSnapshot,
+    buildRenderData,
+    pickTestimonialRows,
+    ensureCarouselActive,
     LEGACY_FAQ_URL,
     API_TABS,
   };

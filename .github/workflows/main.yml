@@ -167,6 +167,9 @@ jobs:
           SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
         run: node scripts/build-homepage-sheets.js
 
+      - name: Ensure homepage sheets snapshot was not rewritten on deploy
+        run: git diff --exit-code data/homepage-sheets.snapshot.json
+
       # After pricing. On API failure it logs ::error:: and does not rewrite the snapshot, .htaccess, or r/.
       - name: Build short links from SOLON API
         env:
