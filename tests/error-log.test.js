@@ -2,11 +2,47 @@
 
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { createLogger, sanitize, parseSentryDsn } = require("../assets/js/error-log.js");
+const {
+  createLogger,
+  sanitize,
+  redactLocationHref,
+  parseSentryDsn,
+} = require("../assets/js/error-log.js");
 
 const noop = () => undefined;
 const silentConsole = { info: noop, warn: noop, error: noop };
 const noSleep = () => Promise.resolve();
+
+test("redactLocationHref drops entire query string and hash", () => {
+  const href =
+    "https://solon.agency/feedback/?foo=1&e=secret%40x.ro&email=other%40x.ro#e=hash%40x.ro";
+  const redacted = redactLocationHref(href);
+  assert.equal(redacted, "https://solon.agency/feedback/");
+});
+
+test("error log payload href omits hash and sensitive query params", async () => {
+  const calls = [];
+  const logger = createLogger({
+    endpoint: "https://example.com/errors",
+    fetch: (_url, init) => {
+      calls.push(JSON.parse(init.body));
+      return Promise.resolve({ ok: true });
+    },
+    console: silentConsole,
+    sleep: noSleep,
+  });
+  const previousLocation = globalThis.location;
+  globalThis.location = {
+    href: "https://solon.agency/feedback/?e=secret%40x.ro#e=drop%40x.ro",
+  };
+  logger.error({ type: "client", message: "probe" });
+  await logger.flush();
+  globalThis.location = previousLocation;
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].href, "https://solon.agency/feedback/");
+  assert.doesNotMatch(calls[0].href, /secret@x\.ro/i);
+  assert.doesNotMatch(calls[0].href, /#/);
+});
 
 test("redacts emails, IPs, and phone numbers from logged strings", () => {
   const sample =

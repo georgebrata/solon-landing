@@ -8,12 +8,15 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
   "consent.test.js": 63,
-  "error-log.test.js": 5,
+  "demoanaf-badge.test.js": 5,
+  "error-log.test.js": 7,
   "error-pages.test.js": 12,
+  "feedback-form-prefill.test.js": 33,
+  "feedback-privacy.test.js": 2,
   "forms.test.js": 35,
-  "ga-collect-transport.test.js": 5,
+  "ga-collect-transport.test.js": 6,
   "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 7,
+  "gtag-browser.test.js": 13,
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
@@ -27,19 +30,18 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "price-toggle.test.js": 3,
   "pricing.test.js": 26,
   "puppeteer-ga-intercept.test.js": 2,
-  "self-hosted-fonts.test.js": 3,
   "shortlinks-hit.test.js": 2,
-  "shortlinks.test.js": 24,
+  "shortlinks.test.js": 25,
   "sitemap.test.js": 7,
   "stamp-asset-refs.test.js": 6,
   "support-chat.test.js": 5,
-  "tracking-snippets.test.js": 7,
+  "tracking-snippets.test.js": 16,
   "tracking.test.js": 17,
   "turnstile-gate.test.js": 3,
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 385;
+const MIN_TOTAL_REGISTERED_TESTS = 441;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors

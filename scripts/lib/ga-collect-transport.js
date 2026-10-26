@@ -191,6 +191,37 @@ const isGtagLoaderUrl = (url) => {
   }
 };
 
+/** Host suffixes blocked before analytics consent and after reject in browser guards. */
+const GOOGLE_TRACKING_HOST_APEXES = [
+  "google.com",
+  "google-analytics.com",
+  "googletagmanager.com",
+  "analytics.google.com",
+  "doubleclick.net",
+  "gstatic.com",
+];
+
+/**
+ * @param {string} hostname
+ * @returns {boolean}
+ */
+const isGoogleTrackingHost = (hostname) => {
+  const normalized = normalizeHostname(hostname);
+  return GOOGLE_TRACKING_HOST_APEXES.some((apex) => hostnameMatchesApex(normalized, apex));
+};
+
+/**
+ * @param {string} url
+ * @returns {boolean}
+ */
+const isGoogleTrackingRequestUrl = (url) => {
+  try {
+    return isGoogleTrackingHost(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+};
+
 module.exports = {
   MAX_PATH_DECODES,
   normalizeHostname,
@@ -205,4 +236,7 @@ module.exports = {
   isGoogleTagManagerCollectHost,
   isGaCollectTransportUrl,
   isGtagLoaderUrl,
+  GOOGLE_TRACKING_HOST_APEXES,
+  isGoogleTrackingHost,
+  isGoogleTrackingRequestUrl,
 };
