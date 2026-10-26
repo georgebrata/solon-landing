@@ -61,14 +61,18 @@ describe("branded error pages", () => {
   }
 
   it("self-hosts Jost and Open Sans instead of requesting Google Fonts", () => {
-    const css = read("assets/css/error-pages.css");
-    assert.match(css, /@font-face/);
-    assert.match(css, /url\("\/assets\/fonts\/jost-latin-400-normal\.woff2"\)/);
-    assert.match(css, /url\("\/assets\/fonts\/open-sans-latin-400-normal\.woff2"\)/);
+    const errorLayoutCss = read("assets/css/error-pages.css");
+    assert.doesNotMatch(errorLayoutCss, /@font-face/);
+    const bundled = read("assets/css/style.min.css");
+    assert.match(bundled, /@font-face/);
+    assert.match(bundled, /url\("\/assets\/fonts\/jost-latin-400-normal\.woff2"\)/);
+    assert.match(bundled, /url\("\/assets\/fonts\/open-sans-latin-400-normal\.woff2"\)/);
     for (const file of ERROR_PAGES) {
       const html = read(file);
       assert.doesNotMatch(html, /fonts\.googleapis\.com/);
       assert.doesNotMatch(html, /fonts\.gstatic\.com/);
+      assert.match(html, /href="\/assets\/css\/style\.min\.css\?v=[a-f0-9]+"/);
+      assert.match(html, /rel="preload"[^>]+href="\/assets\/fonts\/[^"]+\.woff2"/);
     }
     const requiredFiles = [
       "assets/fonts/jost-latin-400-normal.woff2",
@@ -79,6 +83,7 @@ describe("branded error pages", () => {
       "assets/fonts/open-sans-latin-600-normal.woff2",
       "assets/fonts/open-sans-latin-ext-400-normal.woff2",
       "assets/fonts/open-sans-latin-ext-600-normal.woff2",
+      "assets/fonts/OFL.txt",
     ];
     for (const file of requiredFiles) {
       assert.equal(fs.existsSync(path.join(ROOT, file)), true, `missing ${file}`);
