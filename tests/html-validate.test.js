@@ -206,10 +206,13 @@ test("git enumeration ignores untracked HTML and CI requires origin/main", () =>
   } finally {
     fs.unlinkSync(probe);
   }
-  assert.equal(loadGitText(ROOT, "origin/main:data/html-validate-baseline.json", true), null);
+  assert.equal(
+    loadGitText(ROOT, "origin/main:__solon-html-validate-missing-probe__", true),
+    null,
+  );
   assert.throws(
     () => loadGitText(ROOT, "origin/does-not-exist:data/html-validate-baseline.json", true),
-    /fetch origin\/main/
+    /Could not read origin\/does-not-exist/
   );
   assert.equal(loadGitText(ROOT, "origin/does-not-exist:data/html-validate-baseline.json", false), null);
 });
