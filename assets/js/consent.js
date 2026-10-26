@@ -43,6 +43,8 @@
   }
   const BODY_OPEN_CLASS = "solon-consent-open";
   const BANNER_HEIGHT_VAR = "--solon-consent-banner-height";
+  const TRANSPORT_GUARD_SENTINEL = { __solonTransportGuard: "installed" };
+  let analyticsTransportGuardInstalled = false;
   const ui = {
     root: null,
     banner: null,
@@ -178,12 +180,42 @@
     win.gtag = gtag;
   }
 
+  /**
+   * @returns {void}
+   */
+  function markAnalyticsTransportGuardOnWindow() {
+    const prop = "__solonAnalyticsTransportGuard";
+    try {
+      const existing = Object.getOwnPropertyDescriptor(win, prop);
+      if (existing?.configurable) {
+        delete win[prop];
+      } else if (existing && win[prop] !== TRANSPORT_GUARD_SENTINEL) {
+        return;
+      }
+      Object.defineProperty(win, prop, {
+        value: TRANSPORT_GUARD_SENTINEL,
+        writable: false,
+        enumerable: false,
+        configurable: false,
+      });
+    } catch {
+      // Closure flag still records a successful install.
+    }
+  }
+
   /** Drops new GA / Clarity transport when analytics is withdrawn (does not cancel in-flight requests). */
   function installAnalyticsTransportGuard() {
-    if (win.__solonAnalyticsTransportGuard || !win.navigator) {
+    if (!win.navigator) {
       return;
     }
-    win.__solonAnalyticsTransportGuard = true;
+    if (analyticsTransportGuardInstalled) {
+      return;
+    }
+    if (win.__solonAnalyticsTransportGuard === TRANSPORT_GUARD_SENTINEL) {
+      analyticsTransportGuardInstalled = true;
+      return;
+    }
+    analyticsTransportGuardInstalled = true;
     /**
      * @param {unknown} input
      * @returns {string}
@@ -241,11 +273,73 @@
     const isGoogleAnalyticsCollectHost = (hostname) =>
       hostnameMatchesApex(hostname, "google-analytics.com") ||
       hostnameMatchesApex(hostname, "analytics.google.com");
+    /** Denied-state allowlist: only exact /gtag/js on GTM after strict pathname parsing. */
+    const MAX_PATH_DECODES = 8;
+    /**
+     * @param {string} pathname
+     * @returns {string}
+     */
+    const collapsePathSlashes = (pathname) => pathname.replace(/\/+/gu, "/");
+    /**
+     * @param {string} rawPathname
+     * @returns {{ ok: true, pathname: string } | { ok: false, pathname: string }}
+     */
+    const strictParsedPathname = (rawPathname) => {
+      let pathCursor = rawPathname || "";
+      for (let i = 0; i < MAX_PATH_DECODES; i += 1) {
+        try {
+          const next = decodeURIComponent(pathCursor);
+          if (next === pathCursor) {
+            break;
+          }
+          pathCursor = next;
+        } catch {
+          return { ok: false, pathname: "" };
+        }
+      }
+      return { ok: true, pathname: collapsePathSlashes(pathCursor) };
+    };
+    /**
+     * @param {string} pathname
+     * @returns {boolean}
+     */
+    const isExactGtagLoaderPathname = (pathname) => {
+      const parts = (pathname || "").split("/").filter(Boolean);
+      return parts.length === 2 && parts[0].toLowerCase() === "gtag" && parts[1].toLowerCase() === "js";
+    };
+    /**
+     * @param {string} hostname
+     * @returns {boolean}
+     */
+    const isDoubleClickHost = (hostname) => hostnameMatchesApex(hostname, "doubleclick.net");
+    /**
+     * @param {string} hostname
+     * @returns {boolean}
+     */
+    const isDeniedAnalyticsHost = (hostname) =>
+      isGoogleAnalyticsCollectHost(hostname) ||
+      hostnameMatchesApex(hostname, "googletagmanager.com") ||
+      isDoubleClickHost(hostname);
+    /**
+     * @param {string} hostname
+     * @param {string} rawPathname
+     * @returns {boolean}
+     */
+    const isAllowlistedDeniedHostLoader = (hostname, rawPathname) => {
+      if (!hostnameMatchesApex(hostname, "googletagmanager.com")) {
+        return false;
+      }
+      const parsed = strictParsedPathname(rawPathname);
+      if (!parsed.ok) {
+        return false;
+      }
+      return isExactGtagLoaderPathname(parsed.pathname);
+    };
     /**
      * @param {unknown} input
      * @returns {string}
      */
-    const transportPathname = (input) => {
+    const transportRawPathname = (input) => {
       const raw = transportUrlFromInput(input);
       if (!raw) {
         return "";
@@ -257,14 +351,6 @@
         return "";
       }
     };
-    /**
-     * @param {string} hostname
-     * @param {string} pathname
-     * @returns {boolean}
-     */
-    const isGoogleTagManagerCollectTransport = (hostname, pathname) =>
-      hostnameMatchesApex(hostname, "googletagmanager.com") &&
-      /\/g\/collect/i.test(pathname);
     /**
      * @param {string} hostname
      * @returns {boolean}
@@ -287,12 +373,12 @@
       if (!hostname) {
         return false;
       }
-      const pathname = transportPathname(input);
+      const rawPathname = transportRawPathname(input);
       const gaDisabled = win[GA_DISABLE_PROPERTY] === true;
       return (
         (gaDisabled &&
-          (isGoogleAnalyticsCollectHost(hostname) ||
-            isGoogleTagManagerCollectTransport(hostname, pathname))) ||
+          isDeniedAnalyticsHost(hostname) &&
+          !isAllowlistedDeniedHostLoader(hostname, rawPathname)) ||
         (isClarityCollectHost(hostname) && clarityTransportBlocked())
       );
     };
@@ -445,6 +531,7 @@
         nativeSetAttribute.call(this, name, value);
       };
     }
+    markAnalyticsTransportGuardOnWindow();
   }
 
   /** Stops gtag.js from accruing new engagement time on already-loaded tags (same tick as ga-disable).
