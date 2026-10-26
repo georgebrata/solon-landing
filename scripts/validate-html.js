@@ -164,7 +164,7 @@ const loadGitText = (root, spec, enforceMain) => {
       if (!warnedMissingRef) {
         warnedMissingRef = true;
         console.warn(
-          "Skipping the origin/main ratchet because that ref is not available. npm test does not fetch it. CI runs npm run validate:html after fetching origin/main and fails if the ref cannot be read."
+          "Skipping the origin/main ratchet because that ref is not available. Fetch origin/main locally (git fetch origin main) before npm run validate:html, or rely on CI workflows that fetch it before npm test / validate:html."
         );
       }
       return null;

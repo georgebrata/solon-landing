@@ -22,7 +22,8 @@
     "test:pricing": "node --test tests/pricing.test.js",
     "build:shortlinks": "node scripts/build-shortlinks.js",
     "test:shortlinks": "node --test tests/shortlinks.test.js",
-    "test:append-sheets": "node --test tests/append-blog-google-sheets.test.js"
+    "test:append-sheets": "node --test tests/append-blog-google-sheets.test.js",
+    "test:update-floors": "node scripts/update-assert-test-floors.js"
   },
   "devDependencies": {
     "clean-css": "^5.3.3",

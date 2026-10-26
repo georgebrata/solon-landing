@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { spawnSync } = require("node:child_process");
 
 const testsDir = process.env.SOLON_TESTS_DIR
   ? path.resolve(process.env.SOLON_TESTS_DIR)
@@ -59,6 +60,7 @@ const stripJavaScriptComments = (source) => {
 };
 
 /**
+ * Static test()/it() call sites after comment stripping (guards comment/string false positives).
  * @param {string} source
  * @returns {number}
  */
@@ -69,19 +71,48 @@ const countDeclaredTests = (source) => {
   return matches ? matches.length : 0;
 };
 
-/** Minimum declared test()/it() calls per file (ab3c8693 + this branch). */
-const MIN_DECLARED_TESTS_BY_FILE = {
+/**
+ * Registered tests reported by node:test for a single file (includes loop-generated tests).
+ * @param {string} filePath
+ * @returns {number}
+ */
+const countRegisteredTests = (filePath) => {
+  const cliPath = path.join(__dirname, "count-registered-tests-cli.js");
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith("NODE_TEST") || key === "NODE_OPTIONS") {
+      delete env[key];
+    }
+  }
+  const result = spawnSync(process.execPath, [cliPath, filePath], {
+    encoding: "utf8",
+    env,
+  });
+  if (result.status !== 0) {
+    throw new Error(
+      `could not read registered test count for ${path.basename(filePath)}: ${result.stderr || result.stdout}`,
+    );
+  }
+  const count = Number(String(result.stdout).trim());
+  if (!Number.isFinite(count)) {
+    throw new Error(`invalid registered test count for ${path.basename(filePath)}`);
+  }
+  return count;
+};
+
+/** Minimum registered tests per file (raise via scripts/update-assert-test-floors.js only). */
+const MIN_REGISTERED_TESTS_BY_FILE = {
   "append-blog-google-sheets.test.js": 8,
   "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 5,
+  "assert-test-files.test.js": 6,
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
-  "consent.test.js": 53,
+  "consent.test.js": 54,
   "error-log.test.js": 5,
-  "error-pages.test.js": 8,
-  "forms.test.js": 31,
+  "error-pages.test.js": 12,
+  "forms.test.js": 35,
   "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 3,
+  "gtag-browser.test.js": 5,
   "gtag-datalayer.test.js": 2,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
@@ -95,7 +126,7 @@ const MIN_DECLARED_TESTS_BY_FILE = {
   "price-toggle.test.js": 3,
   "pricing.test.js": 26,
   "shortlinks-hit.test.js": 2,
-  "shortlinks.test.js": 16,
+  "shortlinks.test.js": 24,
   "sitemap.test.js": 7,
   "stamp-asset-refs.test.js": 6,
   "support-chat.test.js": 5,
@@ -105,12 +136,12 @@ const MIN_DECLARED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const DEFAULT_MIN_DECLARED_TESTS = 1;
+const DEFAULT_MIN_REGISTERED_TESTS = 1;
 
-const MIN_TOTAL_DECLARED_TESTS = 318;
+const MIN_TOTAL_REGISTERED_TESTS = 334;
 
 /**
- * Ensure every tests/*.test.js file is non-empty and declares enough test()/it() calls.
+ * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.
  * @returns {void}
  */
 const runAssertTestFiles = function runAssertTestFiles() {
@@ -119,7 +150,7 @@ const runAssertTestFiles = function runAssertTestFiles() {
     .filter((name) => name.endsWith(".test.js"))
     .sort();
 
-  let totalDeclared = 0;
+  let totalRegistered = 0;
   /** @type {string[]} */
   const errors = [];
 
@@ -132,19 +163,29 @@ const runAssertTestFiles = function runAssertTestFiles() {
     }
     const source = fs.readFileSync(filePath, "utf8");
     const declared = countDeclaredTests(source);
-    totalDeclared += declared;
     if (declared < 1) {
       errors.push(`${name} has no declared test()/it() calls after stripping comments`);
     }
-    const required = MIN_DECLARED_TESTS_BY_FILE[name] ?? DEFAULT_MIN_DECLARED_TESTS;
-    if (declared < required) {
-      errors.push(`${name} declared test count ${declared} is below floor ${required}`);
+    let registered = 0;
+    try {
+      registered = countRegisteredTests(filePath);
+    } catch (error) {
+      errors.push(`${name}: ${error.message}`);
+      continue;
+    }
+    totalRegistered += registered;
+    if (registered < 1) {
+      errors.push(`${name} registered 0 node:test cases`);
+    }
+    const required = MIN_REGISTERED_TESTS_BY_FILE[name] ?? DEFAULT_MIN_REGISTERED_TESTS;
+    if (registered < required) {
+      errors.push(`${name} registered test count ${registered} is below floor ${required}`);
     }
   }
 
-  const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_DECLARED_TESTS;
-  if (totalDeclared < minTotal) {
-    errors.push(`total declared test count ${totalDeclared} is below floor ${minTotal}`);
+  const minTotal = process.env.SOLON_TESTS_DIR ? 0 : MIN_TOTAL_REGISTERED_TESTS;
+  if (totalRegistered < minTotal) {
+    errors.push(`total registered test count ${totalRegistered} is below floor ${minTotal}`);
   }
 
   if (errors.length > 0) {
@@ -157,8 +198,11 @@ const runAssertTestFiles = function runAssertTestFiles() {
 
 module.exports = {
   countDeclaredTests,
+  countRegisteredTests,
   stripJavaScriptComments,
   runAssertTestFiles,
+  MIN_REGISTERED_TESTS_BY_FILE,
+  MIN_TOTAL_REGISTERED_TESTS,
 };
 
 if (require.main === module) {
