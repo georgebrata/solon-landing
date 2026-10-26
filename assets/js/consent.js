@@ -219,7 +219,7 @@
       try {
         const base = win.location?.href || "https://solon.agency/";
         let hostname = new URL(raw, base).hostname.toLowerCase();
-        if (hostname.endsWith(".")) {
+        while (hostname.endsWith(".")) {
           hostname = hostname.slice(0, -1);
         }
         return hostname;
@@ -285,6 +285,23 @@
      * @param {XMLHttpRequest} xhr
      * @returns {void}
      */
+    const trySetBlockedXhrReadyState = (xhr) => {
+      try {
+        Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
+        return;
+      } catch {
+        // Fall through to assignment when defineProperty is rejected.
+      }
+      try {
+        xhr.readyState = 4;
+      } catch {
+        // Prototype may expose readyState as accessor-only; events still fire below.
+      }
+    };
+    /**
+     * @param {XMLHttpRequest} xhr
+     * @returns {void}
+     */
     const finishBlockedXhr = (xhr) => {
       scheduleMicrotask(() => {
         const EventCtor = win.Event || (typeof Event !== "undefined" ? Event : null);
@@ -293,11 +310,7 @@
         if (!EventCtor || !ProgressEventCtor || typeof xhr.dispatchEvent !== "function") {
           return;
         }
-        try {
-          Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
-        } catch {
-          // Prototype may expose readyState as accessor-only; events still fire below.
-        }
+        trySetBlockedXhrReadyState(xhr);
         const readystatechangeEvent = new EventCtor("readystatechange");
         const errorEvent = new ProgressEventCtor("error");
         const loadEndEvent = new ProgressEventCtor("loadend");
@@ -343,6 +356,10 @@
       const nativeSend = NativeXHR.prototype.send;
       NativeXHR.prototype.open = function (method, url, ...rest) {
         this.__solonGaOpenUrl = transportUrlFromInput(url);
+        const ownReadyState = Object.getOwnPropertyDescriptor(this, "readyState");
+        if (ownReadyState?.configurable) {
+          delete this.readyState;
+        }
         return nativeOpen.call(this, method, url, ...rest);
       };
       NativeXHR.prototype.send = function (...args) {

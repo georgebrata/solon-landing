@@ -26,32 +26,11 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
-      - name: Assert test files declare tests
-        run: node scripts/assert-test-files.js
-
-      - name: Run form validation tests
-        run: npm run test:forms
-
-      - name: Run consent tests
-        run: npm run test:consent
+      - name: Fetch origin/main for HTML validate git probes
+        run: git fetch --no-tags --depth=1 origin +refs/heads/main:refs/remotes/origin/main
 
       - name: Install Chrome for gtag browser test
         run: npx puppeteer browsers install chrome
 
-      - name: Run gtag browser test (retries GTM reachability)
-        run: npm run test:gtag-browser
-
-      - name: Run feature flag tests
-        run: npm run test:flags
-
-      - name: Run asset cache-busting tests
-        run: npm run test:assets
-
-      - name: Run error page tests
-        run: npm run test:error-pages
-
-      - name: Run IndexNow tests
-        run: npm run test:indexnow
-
-      - name: Run blog sheet append tests
-        run: npm run test:append-sheets
+      - name: Run full unit and integration tests
+        run: npm test
