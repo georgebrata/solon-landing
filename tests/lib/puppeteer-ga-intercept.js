@@ -33,17 +33,6 @@ const isGaCollectTransportUrl = (url) => {
   }
 };
 
-/**
- * @param {string} url
- * @returns {boolean}
- */
-const isProductionGaCollectUrl = (url) => {
-  if (!isGaCollectTransportUrl(url)) {
-    return false;
-  }
-  return url.includes(GA_MEASUREMENT_ID) || /[?&]tid=G-[A-Z0-9]+/iu.test(url);
-};
-
 /** @type {string[]} */
 const leakedCollectUrls = [];
 
@@ -68,9 +57,11 @@ const installGaCollectInterception = async (page) => {
         contentType: "text/plain",
         body: "",
       })
-      .catch(() => {
+      .catch(function onCollectRespondFailure() {
         leakedCollectUrls.push(url);
-        req.abort("failed").catch(() => {});
+        req.abort("failed").catch(function onCollectAbortFailure() {
+          return undefined;
+        });
       });
   });
   return { interceptedCollectUrls };
@@ -98,7 +89,6 @@ module.exports = {
   GA_MEASUREMENT_ID,
   COLLECT_PATH_RE,
   isGaCollectTransportUrl,
-  isProductionGaCollectUrl,
   installGaCollectInterception,
   assertZeroRealProductionGaCollectHits,
   resetRealNetworkProductionCollectHits,
