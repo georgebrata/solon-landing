@@ -94,7 +94,7 @@ test("every public page with the site footer has one demoanaf head script and fo
 });
 
 const PRIVACY_DEMOANAF_PARAGRAPH_PLAIN =
-  "Insigna „firmă verificată” din subsolul fiecărei pagini este încărcată de pe demoanaf.ro, platformă operată de Gamerina SRL (CUI RO43020532, Cluj-Napoca). Pentru a afișa insigna, browserul tău se conectează direct la serverele demoanaf.ro, care primesc astfel adresa ta IP și informații despre browser. Insigna nu plasează cookie-uri și nu stochează nimic pe dispozitivul tău, iar noi nu primim aceste date. Temeiul este interesul nostru legitim de a-ți arăta, din surse publice (ONRC, ANAF), datele oficiale ale SOLON SRL (art. 6 alin. (1) lit. f) din Regulamentul (UE) 2016/679). Pentru prelucrările ulterioare, Gamerina SRL acționează ca operator independent, conform propriei politici de confidențialitate DemoANAF.";
+  "Insigna „firmă verificată” din subsolul paginilor website-ului este încărcată de pe demoanaf.ro, platformă operată de Gamerina SRL (CUI RO43020532, Cluj-Napoca). Pentru a afișa insigna, browserul tău se conectează direct la serverele demoanaf.ro, care primesc astfel adresa ta IP și informații despre browser. Insigna nu plasează cookie-uri și nu folosește identificatori de urmărire, iar noi nu primim aceste date. Temeiul este interesul nostru legitim de a-ți arăta, din surse publice (ONRC, ANAF), datele oficiale ale SOLON SRL (art. 6 alin. (1) lit. f) din Regulamentul (UE) 2016/679). Pentru prelucrările ulterioare, Gamerina SRL acționează ca operator independent, conform propriei politici de confidențialitate DemoANAF.";
 
 /**
  * @param {string} html
