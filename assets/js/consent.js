@@ -285,6 +285,23 @@
      * @param {XMLHttpRequest} xhr
      * @returns {void}
      */
+    const trySetBlockedXhrReadyState = (xhr) => {
+      try {
+        Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
+        return;
+      } catch {
+        // Fall through to assignment when defineProperty is rejected.
+      }
+      try {
+        xhr.readyState = 4;
+      } catch {
+        // Prototype may expose readyState as accessor-only; events still fire below.
+      }
+    };
+    /**
+     * @param {XMLHttpRequest} xhr
+     * @returns {void}
+     */
     const finishBlockedXhr = (xhr) => {
       scheduleMicrotask(() => {
         const EventCtor = win.Event || (typeof Event !== "undefined" ? Event : null);
@@ -293,15 +310,7 @@
         if (!EventCtor || !ProgressEventCtor || typeof xhr.dispatchEvent !== "function") {
           return;
         }
-        try {
-          Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
-        } catch {
-          try {
-            xhr.readyState = 4;
-          } catch {
-            // Prototype may expose readyState as accessor-only; events still fire below.
-          }
-        }
+        trySetBlockedXhrReadyState(xhr);
         const readystatechangeEvent = new EventCtor("readystatechange");
         const errorEvent = new ProgressEventCtor("error");
         const loadEndEvent = new ProgressEventCtor("loadend");

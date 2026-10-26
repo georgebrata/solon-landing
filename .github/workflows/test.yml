@@ -26,6 +26,9 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
+      - name: Fetch origin/main for HTML validate git probes
+        run: git fetch --no-tags --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+
       - name: Install Chrome for gtag browser test
         run: npx puppeteer browsers install chrome
 

@@ -38,15 +38,15 @@ const stripJavaScriptComments = (source) => {
       out += ch;
       i += 1;
       while (i < len) {
-        const c = source[i];
-        out += c;
+        const character = source[i];
+        out += character;
         i += 1;
-        if (c === "\\" && i < len) {
+        if (character === "\\" && i < len) {
           out += source[i];
           i += 1;
           continue;
         }
-        if (c === quote) {
+        if (character === quote) {
           break;
         }
       }
@@ -109,7 +109,11 @@ const DEFAULT_MIN_DECLARED_TESTS = 1;
 
 const MIN_TOTAL_DECLARED_TESTS = 318;
 
-const runAssertTestFiles = () => {
+/**
+ * Ensure every tests/*.test.js file is non-empty and declares enough test()/it() calls.
+ * @returns {void}
+ */
+function runAssertTestFiles() {
   const files = fs
     .readdirSync(testsDir)
     .filter((name) => name.endsWith(".test.js"))
@@ -149,7 +153,7 @@ const runAssertTestFiles = () => {
     }
     throw new Error(`assert-test-files failed (${errors.length} issue(s))`);
   }
-};
+}
 
 module.exports = {
   countDeclaredTests,

@@ -265,17 +265,13 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       return;
     }
     const page = await browser.newPage();
-    const gaCollectUrls = [];
-    page.on("request", (req) => {
-      if (/google-analytics\.com/u.test(req.url())) {
-        gaCollectUrls.push(req.url());
-      }
-    });
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(page);
     await page.evaluate(() => {
       window.SolonConsent.acceptAll();
     });
+    await firstCollect;
     await page.evaluate(() => {
       window.SolonConsent.saveCustom({ analytics: false, marketing: true });
     });
@@ -283,6 +279,13 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
       { timeout: 15000 },
     );
+    const gaCollectUrls = [];
+    page.on("request", (req) => {
+      const url = req.url();
+      if (COLLECT_RE.test(url) && /google-analytics\.com/u.test(url)) {
+        gaCollectUrls.push(url);
+      }
+    });
     const result = await page.evaluate(
       (measurementId) =>
         new Promise((resolve) => {
