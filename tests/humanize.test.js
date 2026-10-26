@@ -345,6 +345,57 @@ test("humanize.js --file normalizes nested paths to basename", () => {
   }
 });
 
+/** @param {string} tmpDir @param {string} fileArg */
+const assertHumanizeFileMissing = (tmpDir, fileArg) => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      path.join(__dirname, "../scripts/humanize.js"),
+      "--posts-dir",
+      tmpDir,
+      "--file",
+      fileArg,
+    ],
+    { encoding: "utf8" },
+  );
+  assert.notEqual(result.status, 0);
+  assert.equal(result.stdout, "");
+  assert.match(result.stderr, /Nu am gasit fisierul/u);
+  assert.ok(result.stderr.includes(fileArg));
+  assert.match(result.stderr, new RegExp(tmpDir));
+};
+
+test("humanize.js --file rejects .generation-log.jsonl with missing-file error", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-file-jsonl-"));
+
+  try {
+    fs.writeFileSync(path.join(tmpDir, ".generation-log.jsonl"), "{}\n", "utf8");
+    assertHumanizeFileMissing(tmpDir, ".generation-log.jsonl");
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file rejects . without EISDIR", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-file-dot-"));
+
+  try {
+    assertHumanizeFileMissing(tmpDir, ".");
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("humanize.js --file rejects .. without EISDIR", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-file-dotdot-"));
+
+  try {
+    assertHumanizeFileMissing(tmpDir, "..");
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test("humanize.js still humanizes unlisted post sources", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-humanize-skip-other-"));
   const otherPath = path.join(tmpDir, "unlisted-jargon-probe.md");

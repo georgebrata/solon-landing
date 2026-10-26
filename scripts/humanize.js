@@ -977,7 +977,11 @@ if (require.main === module) {
 
   if (targetFile) {
     const targetPath = path.join(postsDir, targetFile);
-    if (!fs.existsSync(targetPath)) {
+    const isMarkdownPostFile =
+      targetFile.endsWith(".md") &&
+      fs.existsSync(targetPath) &&
+      fs.statSync(targetPath).isFile();
+    if (!isMarkdownPostFile) {
       console.error(`Nu am gasit fisierul ${targetFile} in ${postsDir}.`);
       process.exitCode = 1;
     } else if (HUMANIZE_SKIP_FILENAMES.has(targetFile)) {
