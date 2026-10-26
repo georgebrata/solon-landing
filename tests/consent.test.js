@@ -833,6 +833,28 @@ test("ga-disable drops GA transport for URL objects, fetch, XHR, and image beaco
   assert.equal(beacons.length, 1);
 });
 
+test("ga-disable blocks googletagmanager.com/g/collect but not gtag.js loader", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/collect?v=2");
+  context.navigator.sendBeacon("https://region1.googletagmanager.com/g/collect?v=2");
+  assert.equal(beacons.length, 0);
+  context.navigator.sendBeacon("https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX");
+  assert.equal(beacons.length, 1);
+  context[api.GA_DISABLE_PROPERTY] = false;
+  context.navigator.sendBeacon("https://www.googletagmanager.com/g/collect?v=2");
+  assert.equal(beacons.length, 2);
+});
+
 test("ga-disable blocks analytics.google.com and hostname substring false positives", () => {
   const beacons = [];
   const { api, context } = loadConsent({

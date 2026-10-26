@@ -13,6 +13,16 @@ const COLLECT_RE = /\/g\/collect\b/u;
 
 /**
  * @param {string} url
+ * @returns {boolean}
+ */
+const isGaCollectTransportUrl = (url) =>
+  COLLECT_RE.test(url) &&
+  /(?:^|\/\/)(?:[^/]*\.)?(?:google-analytics\.com|analytics\.google\.com)|googletagmanager\.com/u.test(
+    url,
+  );
+
+/**
+ * @param {string} url
  * @returns {number}
  */
 const engagementEtFromCollectUrl = (url) => {
@@ -282,7 +292,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     const gaCollectUrls = [];
     page.on("request", (req) => {
       const url = req.url();
-      if (COLLECT_RE.test(url) && /google-analytics\.com/u.test(url)) {
+      if (isGaCollectTransportUrl(url)) {
         gaCollectUrls.push(url);
       }
     });
@@ -311,6 +321,88 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.deepEqual(result.tallies, { error: 1, loadend: 1 });
     assert.deepEqual(result.order, ["readystatechange", "error", "loadend"]);
+    assert.equal(result.readyState, 4);
+    assert.equal(gaCollectUrls.length, 0);
+    await page.close();
+  });
+
+  it("blocked XHR reuse resets readyState after analytics withdrawal", async (t) => {
+    if (suiteSkip) {
+      t.skip(suiteSkip);
+      return;
+    }
+    const page = await browser.newPage();
+    await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(page);
+    await page.evaluate(() => {
+      window.SolonConsent.acceptAll();
+    });
+    await firstCollect;
+    await page.evaluate(() => {
+      window.SolonConsent.saveCustom({ analytics: false, marketing: true });
+    });
+    await page.waitForFunction(
+      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
+      { timeout: 15000 },
+    );
+    const result = await page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
+          xhr.send();
+          setTimeout(() => {
+            const afterBlock = xhr.readyState;
+            xhr.open("GET", "https://example.com/safe-reuse");
+            setTimeout(() => {
+              resolve({ afterBlock, afterReuse: xhr.readyState });
+            }, 50);
+          }, 150);
+        }),
+    );
+    assert.equal(result.afterBlock, 4);
+    assert.equal(result.afterReuse, 1);
+    await page.close();
+  });
+
+  it("blocked GTM /g/collect XHR does not hit the network after withdrawal", async (t) => {
+    if (suiteSkip) {
+      t.skip(suiteSkip);
+      return;
+    }
+    const page = await browser.newPage();
+    await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
+    const firstCollect = waitForFirstCollect(page);
+    await page.evaluate(() => {
+      window.SolonConsent.acceptAll();
+    });
+    await firstCollect;
+    await page.evaluate(() => {
+      window.SolonConsent.saveCustom({ analytics: false, marketing: true });
+    });
+    await page.waitForFunction(
+      () => window[window.SolonConsent.GA_DISABLE_PROPERTY] === true,
+      { timeout: 15000 },
+    );
+    const gaCollectUrls = [];
+    page.on("request", (req) => {
+      const url = req.url();
+      if (isGaCollectTransportUrl(url)) {
+        gaCollectUrls.push(url);
+      }
+    });
+    const result = await page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", "https://www.googletagmanager.com/g/collect?v=2");
+          xhr.send();
+          setTimeout(() => resolve({ readyState: xhr.readyState }), 100);
+        }),
+    );
+    assert.equal(result.readyState, 4);
     assert.equal(gaCollectUrls.length, 0);
     await page.close();
   });

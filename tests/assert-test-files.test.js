@@ -8,7 +8,7 @@ const path = require("node:path");
 const os = require("node:os");
 
 const scriptPath = path.join(__dirname, "..", "scripts", "assert-test-files.js");
-const { countDeclaredTests } = require(scriptPath);
+const { countDeclaredTests, countRegisteredTests } = require(scriptPath);
 
 test("assert-test-files rejects an empty tests/*.test.js", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
@@ -79,7 +79,32 @@ test("assert-test-files meets consent.test.js declaration floor", () => {
   assert.ok(countDeclaredTests(consentSource) >= 53);
 });
 
-test("assert-test-files passes on real tests directory", () => {
+test("assert-test-files counts loop-generated registered tests", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
+  const testsDir = path.join(tmpDir, "tests");
+  fs.mkdirSync(testsDir);
+  const filePath = path.join(testsDir, "loop.test.js");
+  fs.writeFileSync(
+    filePath,
+    [
+      '"use strict";',
+      'const { test } = require("node:test");',
+      "const names = ['alpha', 'beta'];",
+      "for (const name of names) {",
+      "  test(name, () => {});",
+      "}",
+      "",
+    ].join("\n"),
+  );
+  assert.equal(countDeclaredTests(fs.readFileSync(filePath, "utf8")), 1);
+  assert.equal(countRegisteredTests(filePath), 2);
+});
+
+test("assert-test-files passes on real tests directory", (t) => {
+  if (process.env.SOLON_SKIP_ASSERT_INTEGRATION === "1") {
+    t.skip("full guard runs from npm test before the suite");
+    return;
+  }
   const env = { ...process.env };
   delete env.SOLON_TESTS_DIR;
   const result = spawnSync(process.execPath, [scriptPath], { encoding: "utf8", env });

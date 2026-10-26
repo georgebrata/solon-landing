@@ -242,6 +242,29 @@
       hostnameMatchesApex(hostname, "google-analytics.com") ||
       hostnameMatchesApex(hostname, "analytics.google.com");
     /**
+     * @param {unknown} input
+     * @returns {string}
+     */
+    const transportPathname = (input) => {
+      const raw = transportUrlFromInput(input);
+      if (!raw) {
+        return "";
+      }
+      try {
+        const base = win.location?.href || "https://solon.agency/";
+        return new URL(raw, base).pathname;
+      } catch {
+        return "";
+      }
+    };
+    /**
+     * @param {string} hostname
+     * @param {string} pathname
+     * @returns {boolean}
+     */
+    const isGoogleTagManagerCollectTransport = (hostname, pathname) =>
+      hostnameMatchesApex(hostname, "googletagmanager.com") && pathname.includes("/g/collect");
+    /**
      * @param {string} hostname
      * @returns {boolean}
      */
@@ -263,8 +286,12 @@
       if (!hostname) {
         return false;
       }
+      const pathname = transportPathname(input);
+      const gaDisabled = win[GA_DISABLE_PROPERTY] === true;
       return (
-        (isGoogleAnalyticsCollectHost(hostname) && win[GA_DISABLE_PROPERTY] === true) ||
+        (gaDisabled &&
+          (isGoogleAnalyticsCollectHost(hostname) ||
+            isGoogleTagManagerCollectTransport(hostname, pathname))) ||
         (isClarityCollectHost(hostname) && clarityTransportBlocked())
       );
     };
