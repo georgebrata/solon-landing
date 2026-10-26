@@ -52,6 +52,7 @@ const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
  */
 const LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES = [
   "proiect-modificare-legea-51-1995-website-avocat.md",
+  "viteza-website-avocat.md",
 ];
 const HUMANIZE_SKIP_FILENAMES = new Set(LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES);
 
