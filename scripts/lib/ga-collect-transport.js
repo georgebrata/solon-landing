@@ -50,12 +50,14 @@ const decodeCollectPathname = (pathname) => {
 
 /**
  * @param {string} pathname
+ * @param {string} leftSegment
+ * @param {string} rightSegment
  * @returns {boolean}
  */
-const pathHasGaCollectSegments = (pathname) => {
+const pathHasAdjacentSegments = (pathname, leftSegment, rightSegment) => {
   const parts = collapsePathSlashes(pathname || "").split("/").filter(Boolean);
   for (let i = 0; i < parts.length - 1; i += 1) {
-    if (parts[i].toLowerCase() === "g" && parts[i + 1].toLowerCase() === "collect") {
+    if (parts[i].toLowerCase() === leftSegment && parts[i + 1].toLowerCase() === rightSegment) {
       return true;
     }
   }
@@ -66,15 +68,13 @@ const pathHasGaCollectSegments = (pathname) => {
  * @param {string} pathname
  * @returns {boolean}
  */
-const pathHasCcmCollectSegments = (pathname) => {
-  const parts = collapsePathSlashes(pathname || "").split("/").filter(Boolean);
-  for (let i = 0; i < parts.length - 1; i += 1) {
-    if (parts[i].toLowerCase() === "ccm" && parts[i + 1].toLowerCase() === "collect") {
-      return true;
-    }
-  }
-  return false;
-};
+const pathHasGaCollectSegments = (pathname) => pathHasAdjacentSegments(pathname, "g", "collect");
+
+/**
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+const pathHasCcmCollectSegments = (pathname) => pathHasAdjacentSegments(pathname, "ccm", "collect");
 
 /**
  * @param {string} pathname

@@ -69,7 +69,9 @@ const installGaCollectInterception = async (page, options = {}) => {
         })
         .catch(() => {
           leakedCollectUrls.push(url);
-          req.abort("failed").catch(() => undefined);
+          req.abort("failed").catch(() => {
+            leakedCollectUrls.push(url);
+          });
         });
       return;
     }
@@ -77,7 +79,9 @@ const installGaCollectInterception = async (page, options = {}) => {
     if (isCollect) {
       if (!interceptCollect) {
         passthroughCollectUrls.push(url);
-        req.continue().catch(() => undefined);
+        req.continue().catch(() => {
+          passthroughCollectUrls.push(url);
+        });
         return;
       }
       interceptedCollectUrls.push(url);
@@ -89,12 +93,18 @@ const installGaCollectInterception = async (page, options = {}) => {
         })
         .catch(() => {
           leakedCollectUrls.push(url);
-          req.abort("failed").catch(() => undefined);
+          req.abort("failed").catch(() => {
+            leakedCollectUrls.push(url);
+          });
         });
       return;
     }
 
-    req.continue().catch(() => undefined);
+    req.continue().catch(() => {
+      if (isGaCollectTransportUrl(url)) {
+        passthroughCollectUrls.push(url);
+      }
+    });
   });
   return { interceptedCollectUrls };
 };
