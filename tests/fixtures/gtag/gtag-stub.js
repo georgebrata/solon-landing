@@ -6,18 +6,7 @@
 (function gtagTestStub(global) {
   "use strict";
 
-  const script = global.document && global.document.currentScript;
-  let measurementId = "G-TEST000000";
-  if (script && script.src) {
-    try {
-      const idParam = new URL(script.src, global.location.href).searchParams.get("id");
-      if (idParam && /^G-[A-Z0-9]+$/u.test(idParam)) {
-        measurementId = idParam;
-      }
-    } catch {
-      // keep default test id
-    }
-  }
+  const measurementId = "G-TEST000000";
 
   global.dataLayer = global.dataLayer || [];
 
@@ -38,7 +27,8 @@
    */
   const collectUrl = (pathQuery) => `https://www.google-analytics.com/g/collect?${pathQuery}`;
 
-  const baseQuery = `v=2&tid=${encodeURIComponent(measurementId)}&_et=1`;
+  const pagePath = global.location?.pathname || "/";
+  const baseQuery = `v=2&tid=${encodeURIComponent(measurementId)}&dl=${encodeURIComponent(pagePath)}&_et=1`;
 
   /**
    * @returns {void}
@@ -86,6 +76,7 @@
       }
     }
   };
+  gtagWithCollect.__solonArgumentsStub = true;
   global.gtag = gtagWithCollect;
   if (global.document && typeof global.document.addEventListener === "function") {
     global.document.addEventListener("visibilitychange", () => {

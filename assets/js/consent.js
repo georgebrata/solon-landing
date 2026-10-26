@@ -147,11 +147,11 @@
       return;
     }
     const path = win.location.pathname || "";
-    const { pathAndQuery, email, stripped } = stripEmailQueryFromHref(win.location.href);
+    const { pathAndQuery, email, stripped: emailStripped } = stripEmailQueryFromHref(win.location.href);
     if (/\/unsubscribe\/?$/iu.test(path) && email) {
       win.__solonUnsubscribeEmail = email;
     }
-    if (stripped) {
+    if (emailStripped) {
       win.history.replaceState(null, "", pathAndQuery);
     }
   }
