@@ -26,6 +26,9 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
+      - name: Assert test files declare tests
+        run: node scripts/assert-test-files.js
+
       - name: Run form validation tests
         run: npm run test:forms
 
