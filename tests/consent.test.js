@@ -262,6 +262,10 @@ const loadConsent = function loadConsent(options = {}) {
     XMLHttpRequest.prototype.dispatchEvent = function (event) {
       this.__solonDispatched = this.__solonDispatched || [];
       this.__solonDispatched.push(event.type);
+      const handler = this[`on${event.type}`];
+      if (typeof handler === "function") {
+        handler.call(this, event);
+      }
       return true;
     };
     context.XMLHttpRequest = XMLHttpRequest;
@@ -279,6 +283,13 @@ const loadConsent = function loadConsent(options = {}) {
         this.__solonImageSrcSet = value;
       },
     });
+    imageProto.dispatchEvent = function (event) {
+      const handler = this[`on${event.type}`];
+      if (typeof handler === "function") {
+        handler.call(this, event);
+      }
+      return true;
+    };
     function HTMLImageElement() {
       return undefined;
     }
@@ -842,7 +853,7 @@ test("ga-disable blocks analytics.google.com and hostname substring false positi
   assert.equal(beacons.length, 2);
 });
 
-test("blocked XHR send dispatches error and loadend", () => {
+test("blocked XHR send dispatches readystatechange, error and loadend once", () => {
   const { api, context } = loadConsent({
     queueMicrotask: (fn) => {
       fn();
@@ -852,17 +863,23 @@ test("blocked XHR send dispatches error and loadend", () => {
   api.saveCustom({ analytics: false, marketing: true });
   const xhr = new context.XMLHttpRequest();
   xhr.open("GET", "https://www.google-analytics.com/g/collect?v=2");
-  const events = [];
-  xhr.dispatchEvent = (event) => {
-    events.push(event.type);
-    return true;
+  const counts = { readystatechange: 0, error: 0, loadend: 0 };
+  xhr.onreadystatechange = () => {
+    counts.readystatechange += 1;
+  };
+  xhr.onerror = () => {
+    counts.error += 1;
+  };
+  xhr.onloadend = () => {
+    counts.loadend += 1;
   };
   xhr.send();
   assert.ok(xhr.__solonTransportSent === undefined);
-  assert.deepEqual(events, ["error", "loadend"]);
+  assert.equal(xhr.readyState, 4);
+  assert.deepEqual(counts, { readystatechange: 1, error: 1, loadend: 1 });
 });
 
-test("blocked image setAttribute src does not load and signals error", () => {
+test("blocked image setAttribute src does not load and signals error once", () => {
   const { api, context } = loadConsent({
     queueMicrotask: (fn) => {
       fn();
@@ -871,13 +888,49 @@ test("blocked image setAttribute src does not load and signals error", () => {
   api.acceptAll();
   api.saveCustom({ analytics: false, marketing: true });
   const img = Object.create(context.HTMLImageElement.prototype);
-  const errors = [];
+  let errorCount = 0;
   img.onerror = () => {
-    errors.push("error");
+    errorCount += 1;
   };
   img.setAttribute("src", "https://www.google-analytics.com/g/collect?v=2");
   assert.ok(img.__solonImageSrcSet === undefined);
-  assert.deepEqual(errors, ["error"]);
+  assert.equal(errorCount, 1);
+});
+
+test("transport guard strips trailing dot from analytics and clarity hostnames", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.navigator.sendBeacon("https://www.google-analytics.com./g/collect?v=2");
+  context.navigator.sendBeacon("https://k.clarity.ms./collect");
+  assert.equal(beacons.length, 0);
+});
+
+test("transport guard blocks URL-like objects via String coercion", () => {
+  const fetches = [];
+  const collect = "https://www.google-analytics.com/g/collect?v=2";
+  const urlLike = { toString: () => collect };
+  const { api, context } = loadConsent({
+    fetch(input) {
+      fetches.push(input);
+      return Promise.resolve(new context.Response());
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  context.fetch(urlLike);
+  const img = new context.HTMLImageElement();
+  img.src = urlLike;
+  assert.equal(fetches.length, 0);
+  assert.ok(img.__solonImageSrcSet === undefined);
 });
 
 test("analytics withdrawal blocks clarity.ms collect transport", () => {

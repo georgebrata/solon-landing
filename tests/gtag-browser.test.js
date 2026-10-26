@@ -30,24 +30,41 @@ const waitForFirstCollect = async (page, timeout = 60000) => {
 };
 
 /**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
+const sleep = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
+
+/**
  * @returns {Promise<boolean>}
  */
 const canReachGoogleTagManager = async () => {
   if (process.env.SKIP_GTAG_BROWSER === "1") {
     return false;
   }
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, {
-      method: "GET",
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-    return res.ok;
-  } catch {
-    return false;
+  const attempts = 3;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, {
+        method: "GET",
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        return true;
+      }
+    } catch {
+      // try again with backoff
+    }
+    if (attempt < attempts - 1) {
+      await sleep(1000 * (attempt + 1));
+    }
   }
+  return false;
 };
 
 /**

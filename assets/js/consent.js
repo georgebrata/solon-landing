@@ -198,6 +198,13 @@
       if (input && typeof input === "object" && typeof input.url === "string") {
         return input.url;
       }
+      if (input != null) {
+        try {
+          return String(input);
+        } catch {
+          return "";
+        }
+      }
       return "";
     };
     /**
@@ -211,7 +218,11 @@
       }
       try {
         const base = win.location?.href || "https://solon.agency/";
-        return new URL(raw, base).hostname.toLowerCase();
+        let hostname = new URL(raw, base).hostname.toLowerCase();
+        if (hostname.endsWith(".")) {
+          hostname = hostname.slice(0, -1);
+        }
+        return hostname;
       } catch {
         return "";
       }
@@ -258,7 +269,7 @@
       );
     };
     /**
-     * @param {XMLHttpRequest} xhr
+     * @param {() => void} fn
      * @returns {void}
      */
     const scheduleMicrotask = (fn) => {
@@ -279,21 +290,16 @@
         const EventCtor = win.Event || (typeof Event !== "undefined" ? Event : null);
         const ProgressEventCtor =
           win.ProgressEvent || (typeof ProgressEvent !== "undefined" ? ProgressEvent : EventCtor);
-        if (!ProgressEventCtor) {
+        if (!EventCtor || !ProgressEventCtor || typeof xhr.dispatchEvent !== "function") {
           return;
         }
+        xhr.readyState = 4;
+        const readystatechangeEvent = new EventCtor("readystatechange");
         const errorEvent = new ProgressEventCtor("error");
         const loadEndEvent = new ProgressEventCtor("loadend");
-        if (typeof xhr.onerror === "function") {
-          xhr.onerror(errorEvent);
-        }
-        if (typeof xhr.onloadend === "function") {
-          xhr.onloadend(loadEndEvent);
-        }
-        if (typeof xhr.dispatchEvent === "function") {
-          xhr.dispatchEvent(errorEvent);
-          xhr.dispatchEvent(loadEndEvent);
-        }
+        xhr.dispatchEvent(readystatechangeEvent);
+        xhr.dispatchEvent(errorEvent);
+        xhr.dispatchEvent(loadEndEvent);
       });
     };
     /**
@@ -302,12 +308,11 @@
      */
     const finishBlockedImage = (img) => {
       scheduleMicrotask(() => {
-        if (typeof img.onerror === "function") {
-          img.onerror(new Event("error"));
+        const EventCtor = win.Event || (typeof Event !== "undefined" ? Event : null);
+        if (!EventCtor || typeof img.dispatchEvent !== "function") {
+          return;
         }
-        if (typeof img.dispatchEvent === "function") {
-          img.dispatchEvent(new Event("error"));
-        }
+        img.dispatchEvent(new EventCtor("error"));
       });
     };
     const nativeBeacon = win.navigator.sendBeacon?.bind(win.navigator);
