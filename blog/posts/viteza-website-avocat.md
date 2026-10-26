@@ -95,7 +95,7 @@ Un potențial client caută un avocat pe telefon, între două întâlniri, și 
 
 <div class="row justify-content-center my-4">
   <div class="col-md-8">
-    <img src="../../assets/img/undraw_time-management_fedt.png" alt="Ilustrație: măsurarea vitezei de încărcare a unui website de avocat" class="img-fluid rounded shadow-sm" loading="lazy" decoding="async" />
+    <img src="../../assets/img/undraw_time-management_fedt.png" alt="Ilustrație: măsurarea vitezei de încărcare a unui website de avocat" class="img-fluid rounded shadow-sm" width="1351" height="1263" fetchpriority="high" decoding="async" />
   </div>
 </div>
 
@@ -113,7 +113,7 @@ Google a grupat experiența de încărcare în trei măsurători, numite **Core 
 | **INP** (Interaction to Next Paint) | cât de repede reacționează pagina când atingi un buton sau deschizi meniul | cel mult 200 de milisecunde |
 | **CLS** (Cumulative Layout Shift) | cât de mult „sare” conținutul în timpul încărcării | cel mult 0,1 |
 
-Două detalii contează. Primul: pragurile se evaluează la 75% dintre vizite, separat pe mobil și pe desktop, deci nu ajunge ca pagina să meargă repede pe laptopul tău. Al doilea: INP a înlocuit în 2024 vechea măsurătoare FID, așa că ghidurile mai vechi care vorbesc despre FID sunt depășite.
+Două detalii contează. Primul: pragurile se evaluează la 75% dintre vizite, separat pe mobil și pe desktop, deci nu ajunge ca pagina să meargă repede pe laptopul tău. Al doilea: INP a înlocuit în martie 2024 vechea măsurătoare FID, așa că ghidurile mai vechi care vorbesc despre FID sunt depășite.
 
 ## 2. Cum măsori pe telefon, gratuit
 
