@@ -1,8 +1,7 @@
 /*!
  * SOLON hand-written test fixture — not Google gtag.js, no Google copyrighted code.
  * Loaded by Puppeteer interception instead of googletagmanager.com/gtag/js.
- * Defines gtag/dataLayer and emits synthetic /g/collect (and related) transports
- * via sendBeacon, fetch, XMLHttpRequest, and Image for consent-guard tests.
+ * Defines gtag/dataLayer and emits synthetic /g/collect transports for consent tests.
  */
 (function gtagTestStub(global) {
   "use strict";
@@ -21,6 +20,17 @@
   }
 
   global.dataLayer = global.dataLayer || [];
+
+  /**
+   * @returns {void}
+   */
+  const setGaCookie = () => {
+    if (!global.document) {
+      return;
+    }
+    const suffix = `${Math.floor(Math.random() * 1e9)}.${Math.floor(Date.now() / 1000)}`;
+    global.document.cookie = `_ga=GA1.1.${suffix}; path=/`;
+  };
 
   /**
    * @param {string} pathQuery
@@ -68,6 +78,7 @@
     global.dataLayer.push(arguments);
     const command = arguments[0];
     if (command === "config" || command === "event") {
+      setGaCookie();
       if (typeof global.queueMicrotask === "function") {
         global.queueMicrotask(fireCollectTransports);
       } else {
@@ -76,6 +87,15 @@
     }
   };
   global.gtag = gtagWithCollect;
+  if (global.document && typeof global.document.addEventListener === "function") {
+    global.document.addEventListener("visibilitychange", () => {
+      if (typeof global.queueMicrotask === "function") {
+        global.queueMicrotask(fireCollectTransports);
+      } else {
+        global.setTimeout(fireCollectTransports, 0);
+      }
+    });
+  }
   gtagWithCollect("js", new Date());
   gtagWithCollect("config", measurementId, { send_page_view: true });
 })(typeof globalThis !== "undefined" ? globalThis : window);

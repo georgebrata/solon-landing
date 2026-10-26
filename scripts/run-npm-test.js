@@ -21,6 +21,7 @@ const sharedEnv = {
   SOLON_GTAG_PASS_CACHE_PATH: cachePath,
   SOLON_GTAG_PASS_RUN_KEY: runKey,
   SOLON_GTAG_PASS_NONCE: nonce,
+  SOLON_SKIP_ASSERT_INTEGRATION: "1",
 };
 
 /**
@@ -46,6 +47,11 @@ const testFiles = fs
   .map((name) => path.join("tests", name));
 try {
   run(process.execPath, ["--test", ...testFiles]);
+  if (process.env.SOLON_SKIP_GTAG_MUTATION !== "1") {
+    run(process.execPath, [path.join("scripts", "verify-gtag-mutation-fails.js"), "continue"]);
+    run(process.execPath, [path.join("scripts", "verify-gtag-mutation-fails.js"), "no-intercept"]);
+    run(process.execPath, [path.join("scripts", "verify-consent-guard-off-fails.js")]);
+  }
   run(process.execPath, [path.join("scripts", "assert-test-files.js")]);
   run(process.execPath, [path.join("scripts", "test-feature-flags.js")]);
 } catch (error) {

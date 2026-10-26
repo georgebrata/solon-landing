@@ -2,13 +2,18 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { countRegisteredTests, MIN_REGISTERED_TESTS_BY_FILE } = require("./assert-test-files");
-const { readOriginMainFloors, parseFloorsFromAssertSource } = require("./lib/origin-main-test-floors");
+const { countRegisteredTests } = require("./assert-test-files");
+const {
+  MIN_REGISTERED_TESTS_BY_FILE,
+  validateTestGuardFloors,
+} = require("./lib/test-guard-floors");
+const { readOriginMainFloors, parseFloorsFromModuleSource } = require("./lib/origin-main-test-floors");
 
 const testsDir = path.join(__dirname, "..", "tests");
+const floorsPath = path.join(__dirname, "lib", "test-guard-floors.js");
 
 const FLOOR_BLOCK_RE =
-  /\/\*\* Minimum (?:registered|passed) tests per file[\s\S]*?^const MIN_REGISTERED_TESTS_BY_FILE = \{[\s\S]*?\};/m;
+  /\/\*\* Minimum passed tests per file \(raise via scripts\/update-assert-test-floors\.js only\)\. \*\/\s*const MIN_REGISTERED_TESTS_BY_FILE = \{[\s\S]*?\};/m;
 
 /**
  * @param {string} source
@@ -16,7 +21,7 @@ const FLOOR_BLOCK_RE =
  */
 const validateCommittedFloorsAgainstMain = (source) => {
   const mainFloors = readOriginMainFloors();
-  const committedFloors = parseFloorsFromAssertSource(source);
+  const committedFloors = parseFloorsFromModuleSource(source);
   for (const [name, mainFloor] of Object.entries(mainFloors.byFile)) {
     const committedFloor = committedFloors.byFile[name] ?? 0;
     if (committedFloor < mainFloor) {
@@ -36,15 +41,13 @@ const validateCommittedFloorsAgainstMain = (source) => {
  * @returns {void}
  */
 const runUpdateAssertTestFloors = function runUpdateAssertTestFloors() {
-  const targetPath = process.env.SOLON_ASSERT_TEST_FILES_PATH
-    ? path.resolve(process.env.SOLON_ASSERT_TEST_FILES_PATH)
-    : path.join(__dirname, "assert-test-files.js");
+  const targetPath = process.env.SOLON_ASSERT_TEST_FLOORS_PATH
+    ? path.resolve(process.env.SOLON_ASSERT_TEST_FLOORS_PATH)
+    : floorsPath;
 
   let source = fs.readFileSync(targetPath, "utf8");
   if (!FLOOR_BLOCK_RE.test(source)) {
-    throw new Error(
-      "update-assert-test-floors: MIN_REGISTERED_TESTS_BY_FILE anchor missing in assert-test-files.js",
-    );
+    throw new Error("update-assert-test-floors: MIN_REGISTERED_TESTS_BY_FILE anchor missing in test-guard-floors.js");
   }
   if (!/const MIN_TOTAL_REGISTERED_TESTS = \d+;/u.test(source)) {
     throw new Error("update-assert-test-floors: MIN_TOTAL_REGISTERED_TESTS anchor missing");

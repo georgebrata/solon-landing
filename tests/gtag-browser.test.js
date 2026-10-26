@@ -13,9 +13,14 @@ const {
   installGaCollectInterception,
   assertZeroRealProductionGaCollectHits,
   resetRealNetworkProductionCollectHits,
-  getPassthroughCollectUrls,
   chromeLaunchArgs,
 } = require("./lib/puppeteer-ga-intercept");
+const {
+  startGaCollectSinkServer,
+  stopGaCollectSinkServer,
+  resetGaCollectSink,
+  assertGaCollectSinkEmpty,
+} = require("./lib/ga-collect-sink-server");
 const { writeGtagPassCache } = require("../scripts/lib/gtag-pass-cache");
 
 const GTAG_PASS_CACHE_PATH = process.env.SOLON_GTAG_PASS_CACHE_PATH
@@ -118,7 +123,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
   /** @type {string} */
   let baseUrl = "";
   /** @type {number} */
-  let executedTests = 0;
+  let passedBrowserTests = 0;
+  /** @type {{ httpsPort: number, httpPort: number, spkiHash: string } | null} */
+  let sinkMeta = null;
 
   before(async () => {
     resetRealNetworkProductionCollectHits();
@@ -127,13 +134,14 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       return;
     }
     const puppeteer = require("puppeteer");
+    sinkMeta = await startGaCollectSinkServer();
     server = await startStaticServer();
     const addr = server.address();
     const port = typeof addr === "object" && addr ? addr.port : 0;
     baseUrl = `http://127.0.0.1:${port}/tests/fixtures/gtag-withdrawal/`;
     browser = await puppeteer.launch({
       headless: true,
-      args: chromeLaunchArgs(),
+      args: chromeLaunchArgs(sinkMeta),
     });
   });
 
@@ -153,23 +161,48 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
+    if (sinkMeta) {
+      await stopGaCollectSinkServer();
+    }
     if (!suiteSkip) {
-      assert.equal(getPassthroughCollectUrls().length, 0);
       assertZeroRealProductionGaCollectHits();
       const runKey = process.env.SOLON_GTAG_PASS_RUN_KEY;
       const nonce = process.env.SOLON_GTAG_PASS_NONCE;
-      if (runKey && nonce && process.env.SOLON_GTAG_PASS_CACHE_PATH && executedTests > 0) {
-        writeGtagPassCache(GTAG_PASS_CACHE_PATH, 1 + executedTests, { runKey, nonce });
+      const cacheEligible =
+        !process.env.SOLON_GTAG_INTERCEPT_MUTATION &&
+        process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD !== "1" &&
+        process.env.SOLON_GTAG_GUARD_OFF_PROOF !== "1";
+      if (
+        cacheEligible &&
+        runKey &&
+        nonce &&
+        process.env.SOLON_GTAG_PASS_CACHE_PATH &&
+        passedBrowserTests === 5
+      ) {
+        writeGtagPassCache(GTAG_PASS_CACHE_PATH, 1 + passedBrowserTests, { runKey, nonce });
       }
     }
   });
+
+  /**
+   * @param {import("puppeteer").Page} page
+   * @returns {Promise<void>}
+   */
+  const assertNoCollectLeakAfterWithdraw = async (page) => {
+    resetGaCollectSink();
+    await new Promise((r) => setTimeout(r, 5000));
+    await page.evaluate(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await new Promise((r) => setTimeout(r, 3000));
+    assertGaCollectSinkEmpty();
+  };
 
   it("sends no new /g/collect after withdrawal (single tab)", async (t) => {
     if (suiteSkip) {
       t.skip(suiteSkip);
       return;
     }
-    executedTests += 1;
     const page = await newPageWithGaGuard();
     let maxEtBeforeWithdraw = 0;
     const onCollectBefore = (req) => {
@@ -201,11 +234,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       }
     };
     page.on("request", onCollect);
-    await new Promise((r) => setTimeout(r, 5000));
-    await page.evaluate(() => {
-      document.dispatchEvent(new Event("visibilitychange"));
-    });
-    await new Promise((r) => setTimeout(r, 3000));
+    await assertNoCollectLeakAfterWithdraw(page);
     page.off("request", onCollect);
     assert.equal(afterWithdraw.length, 0, `expected 0 collect hits after withdrawal, got ${afterWithdraw.length}`);
     for (const url of afterWithdraw) {
@@ -220,6 +249,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.equal(gaCookiesAfter.length, 0, `expected no _ga cookies after withdrawal, got ${gaCookiesAfter.join(", ")}`);
     await page.close();
+    passedBrowserTests += 1;
   });
 
   it("sends no new /g/collect on tab A after tab B withdraws (cross-tab)", async (t) => {
@@ -227,7 +257,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    executedTests += 1;
     const context = await browser.createBrowserContext();
     const pageA = await context.newPage();
     await installGaCollectInterception(pageA);
@@ -262,9 +291,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       }
     };
     pageA.on("request", onCollect);
-    await new Promise((r) => setTimeout(r, 5000));
-    await pageA.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
-    await new Promise((r) => setTimeout(r, 3000));
+    await assertNoCollectLeakAfterWithdraw(pageA);
     pageA.off("request", onCollect);
     assert.equal(afterWithdraw.length, 0, `tab A expected 0 collects after tab B withdrew, got ${afterWithdraw.length}`);
     const gaCookiesOnA = await pageA.evaluate(() =>
@@ -274,6 +301,7 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     await pageA.close();
     await pageB.close();
     await context.close();
+    passedBrowserTests += 1;
   });
 
   it("blocked real XHR to google-analytics fires onerror and onloadend once", async (t) => {
@@ -281,7 +309,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    executedTests += 1;
     const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
@@ -331,7 +358,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     assert.deepEqual(result.order, ["readystatechange", "error", "loadend"]);
     assert.equal(result.readyState, 4);
     assert.equal(gaCollectUrls.length, 0);
+    assertGaCollectSinkEmpty();
     await page.close();
+    passedBrowserTests += 1;
   });
 
   it("blocked XHR reuse resets readyState after analytics withdrawal", async (t) => {
@@ -339,7 +368,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    executedTests += 1;
     const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
@@ -372,7 +400,9 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.equal(result.afterBlock, 4);
     assert.equal(result.afterReuse, 1);
+    await assertNoCollectLeakAfterWithdraw(page);
     await page.close();
+    passedBrowserTests += 1;
   });
 
   it("blocked GTM /g/collect XHR does not hit the network after withdrawal", async (t) => {
@@ -380,7 +410,6 @@ describe("real gtag.js collect after analytics withdrawal", () => {
       t.skip(suiteSkip);
       return;
     }
-    executedTests += 1;
     const page = await newPageWithGaGuard();
     await page.goto(baseUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForFunction(() => window.SolonConsent?.acceptAll, { timeout: 15000 });
@@ -414,6 +443,8 @@ describe("real gtag.js collect after analytics withdrawal", () => {
     );
     assert.equal(result.readyState, 4);
     assert.equal(gaCollectUrls.length, 0);
+    assertGaCollectSinkEmpty();
     await page.close();
+    passedBrowserTests += 1;
   });
 });

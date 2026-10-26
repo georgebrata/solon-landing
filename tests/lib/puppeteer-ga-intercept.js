@@ -11,33 +11,37 @@ const {
 
 const GTAG_STUB_FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "gtag", "gtag-stub.js");
 
-const CHROME_HOST_RESOLVER_RULES = [
-  "MAP www.google-analytics.com 127.0.0.1",
-  "MAP region1.google-analytics.com 127.0.0.1",
-  "MAP www.googletagmanager.com 127.0.0.1",
-  "MAP region1.googletagmanager.com 127.0.0.1",
-  "MAP www.google.com 127.0.0.1",
-  "MAP region1.analytics.google.com 127.0.0.1",
-  "MAP analytics.google.com 127.0.0.1",
-].join(", ");
-
-/** @type {string[]} */
-const leakedCollectUrls = [];
-
-/** @type {string[]} */
-const passthroughCollectUrls = [];
-
 /** @type {string | null} */
 let gtagLoaderFailure = null;
 
 /**
+ * @param {{ httpsPort: number, httpPort: number, spkiHash: string }} sink
  * @returns {string[]}
  */
-const chromeLaunchArgs = () => [
-  "--no-sandbox",
-  "--disable-setuid-sandbox",
-  `--host-resolver-rules=${CHROME_HOST_RESOLVER_RULES}`,
-];
+const chromeLaunchArgs = (sink) => {
+  const rules = [
+    `MAP *.google-analytics.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP google-analytics.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP *.analytics.google.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP analytics.google.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP *.googletagmanager.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP googletagmanager.com:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP *.doubleclick.net:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP doubleclick.net:443 127.0.0.1:${sink.httpsPort}`,
+    `MAP *.google-analytics.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP google-analytics.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP *.googletagmanager.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP googletagmanager.com:80 127.0.0.1:${sink.httpPort}`,
+    `MAP *.doubleclick.net:80 127.0.0.1:${sink.httpPort}`,
+    `MAP doubleclick.net:80 127.0.0.1:${sink.httpPort}`,
+  ];
+  return [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    `--host-resolver-rules=${rules.join(", ")}`,
+    `--ignore-certificate-errors-spki-list=${sink.spkiHash}`,
+  ];
+};
 
 /**
  * @param {import("puppeteer").Page} page
@@ -45,13 +49,26 @@ const chromeLaunchArgs = () => [
  * @returns {Promise<{ interceptedCollectUrls: string[] }>}
  */
 const installGaCollectInterception = async (page, options = {}) => {
-  const interceptCollect = options.interceptCollect !== false;
+  if (process.env.SOLON_GTAG_DISABLE_CONSENT_GUARD === "1") {
+    await page.evaluateOnNewDocument(() => {
+      window.__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD = true;
+    });
+  }
+  const mutation = process.env.SOLON_GTAG_INTERCEPT_MUTATION || "";
+  const guardOffProof = process.env.SOLON_GTAG_GUARD_OFF_PROOF === "1";
+  let interceptCollect = options.interceptCollect !== false;
+  if (mutation === "no-intercept" || guardOffProof) {
+    interceptCollect = false;
+  }
+  const forceCollectContinue = mutation === "continue" || guardOffProof;
   /** @type {string[]} */
   const interceptedCollectUrls = [];
 
   if (!fs.existsSync(GTAG_STUB_FIXTURE_PATH)) {
-    gtagLoaderFailure = `gtag test stub missing at ${GTAG_STUB_FIXTURE_PATH}`;
-    throw new Error(gtagLoaderFailure);
+    gtagLoaderFailure = `gtag loader fixture missing at ${GTAG_STUB_FIXTURE_PATH}`;
+    const error = new Error(gtagLoaderFailure);
+    error.code = "GTAG_LOADER_FIXTURE_MISSING";
+    throw error;
   }
   const gtagFixtureBody = fs.readFileSync(GTAG_STUB_FIXTURE_PATH, "utf8");
 
@@ -68,20 +85,14 @@ const installGaCollectInterception = async (page, options = {}) => {
           body: gtagFixtureBody,
         })
         .catch(() => {
-          leakedCollectUrls.push(url);
-          req.abort("failed").catch(() => {
-            leakedCollectUrls.push(url);
-          });
+          gtagLoaderFailure = `gtag loader respond failed for ${url}`;
         });
       return;
     }
 
     if (isCollect) {
-      if (!interceptCollect) {
-        passthroughCollectUrls.push(url);
-        req.continue().catch(() => {
-          passthroughCollectUrls.push(url);
-        });
+      if (!interceptCollect || forceCollectContinue) {
+        req.continue().catch(() => undefined);
         return;
       }
       interceptedCollectUrls.push(url);
@@ -92,19 +103,12 @@ const installGaCollectInterception = async (page, options = {}) => {
           body: "",
         })
         .catch(() => {
-          leakedCollectUrls.push(url);
-          req.abort("failed").catch(() => {
-            leakedCollectUrls.push(url);
-          });
+          req.abort("failed").catch(() => undefined);
         });
       return;
     }
 
-    req.continue().catch(() => {
-      if (isGaCollectTransportUrl(url)) {
-        passthroughCollectUrls.push(url);
-      }
-    });
+    req.continue().catch(() => undefined);
   });
   return { interceptedCollectUrls };
 };
@@ -114,17 +118,9 @@ const installGaCollectInterception = async (page, options = {}) => {
  */
 const assertZeroRealProductionGaCollectHits = () => {
   if (gtagLoaderFailure) {
-    throw new Error(`gtag loader fixture failure: ${gtagLoaderFailure}`);
-  }
-  if (passthroughCollectUrls.length > 0) {
-    throw new Error(
-      `GA collect must not passthrough to the network: ${passthroughCollectUrls.join(", ")}`,
-    );
-  }
-  if (leakedCollectUrls.length > 0) {
-    throw new Error(
-      `production GA collect must not reach the network (${GA_MEASUREMENT_ID}): ${leakedCollectUrls.join(", ")}`,
-    );
+    const error = new Error(`gtag loader failure: ${gtagLoaderFailure}`);
+    error.code = "GTAG_LOADER_FAILURE";
+    throw error;
   }
 };
 
@@ -132,17 +128,7 @@ const assertZeroRealProductionGaCollectHits = () => {
  * @returns {void}
  */
 const resetRealNetworkProductionCollectHits = () => {
-  leakedCollectUrls.length = 0;
-  passthroughCollectUrls.length = 0;
   gtagLoaderFailure = null;
-};
-
-/**
- * @param {string} url
- * @returns {void}
- */
-const recordGaCollectPassthroughForTests = (url) => {
-  passthroughCollectUrls.push(url);
 };
 
 module.exports = {
@@ -154,7 +140,4 @@ module.exports = {
   installGaCollectInterception,
   assertZeroRealProductionGaCollectHits,
   resetRealNetworkProductionCollectHits,
-  recordGaCollectPassthroughForTests,
-  getLeakedCollectUrls: () => [...leakedCollectUrls],
-  getPassthroughCollectUrls: () => [...passthroughCollectUrls],
 };

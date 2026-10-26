@@ -885,7 +885,7 @@ test("ga-disable blocks percent-encoded /g/collect path segments", () => {
   assert.equal(beacons.length, 0);
 });
 
-test("ga-disable does not block googletagmanager.com /g/collection paths", () => {
+test("ga-disable blocks googletagmanager.com /g/collection paths", () => {
   const beacons = [];
   const { api, context } = loadConsent({
     navigator: {
@@ -898,6 +898,50 @@ test("ga-disable does not block googletagmanager.com /g/collection paths", () =>
   api.acceptAll();
   api.saveCustom({ analytics: false, marketing: true });
   context.navigator.sendBeacon("https://www.googletagmanager.com/g/collection?v=2");
+  assert.equal(beacons.length, 0);
+});
+
+test("ga-disable allowlist blocks malformed GTM loader path variants", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  api.saveCustom({ analytics: false, marketing: true });
+  const blocked = [
+    "https://www.googletagmanager.com/gtag/js;x=1?id=G-TEST",
+    "https://www.googletagmanager.com/gtag/%3Bjs",
+    "https://www.googletagmanager.com/gtag%20/js",
+    "https://www.googletagmanager.com/gtag/%00/js",
+    "https://www.googletagmanager.com/gtag/%3Bc",
+    "https://www.googletagmanager.com/gtag/%5Cjs",
+    "https://www.googletagmanager.com/gtag/js%2Fcollect",
+  ];
+  for (const url of blocked) {
+    context.navigator.sendBeacon(url);
+  }
+  assert.equal(beacons.length, 0);
+  context.navigator.sendBeacon("https://www.googletagmanager.com/gtag/js?id=G-TEST000000");
+  assert.equal(beacons.length, 1);
+});
+
+test("analytics accepted still allows google-analytics.com collect transports", () => {
+  const beacons = [];
+  const { api, context } = loadConsent({
+    navigator: {
+      sendBeacon(url) {
+        beacons.push(String(url));
+        return true;
+      },
+    },
+  });
+  api.acceptAll();
+  context.navigator.sendBeacon("https://www.google-analytics.com/g/collect?v=2");
   assert.equal(beacons.length, 1);
 });
 

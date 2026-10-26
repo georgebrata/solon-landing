@@ -180,6 +180,9 @@
 
   /** Drops new GA / Clarity transport when analytics is withdrawn (does not cancel in-flight requests). */
   function installAnalyticsTransportGuard() {
+    if (win.__SOLON_TEST_DISABLE_ANALYTICS_TRANSPORT_GUARD === true) {
+      return;
+    }
     if (win.__solonAnalyticsTransportGuard || !win.navigator) {
       return;
     }
@@ -241,7 +244,7 @@
     const isGoogleAnalyticsCollectHost = (hostname) =>
       hostnameMatchesApex(hostname, "google-analytics.com") ||
       hostnameMatchesApex(hostname, "analytics.google.com");
-    /** @sync scripts/lib/ga-collect-transport.js — keep pathname collect matching aligned */
+    /** Denied-state allowlist: only exact /gtag/js on GTM after strict pathname parsing. */
     const MAX_PATH_DECODES = 8;
     /**
      * @param {string} pathname
@@ -249,42 +252,11 @@
      */
     const collapsePathSlashes = (pathname) => pathname.replace(/\/+/gu, "/");
     /**
-     * @param {string} pathname
-     * @param {string} leftSegment
-     * @param {string} rightSegment
-     * @returns {boolean}
+     * @param {string} rawPathname
+     * @returns {{ ok: true, pathname: string } | { ok: false, pathname: string }}
      */
-    const pathHasAdjacentSegments = (pathname, leftSegment, rightSegment) => {
-      const parts = collapsePathSlashes(pathname || "").split("/").filter(Boolean);
-      for (let i = 0; i < parts.length - 1; i += 1) {
-        if (parts[i].toLowerCase() === leftSegment && parts[i + 1].toLowerCase() === rightSegment) {
-          return true;
-        }
-      }
-      return false;
-    };
-    /**
-     * @param {string} pathname
-     * @returns {boolean}
-     */
-    const pathHasGaCollectSegments = (pathname) => pathHasAdjacentSegments(pathname, "g", "collect");
-    /**
-     * @param {string} pathname
-     * @returns {boolean}
-     */
-    const pathHasCcmCollectSegments = (pathname) => pathHasAdjacentSegments(pathname, "ccm", "collect");
-    /**
-     * @param {string} pathname
-     * @returns {boolean}
-     */
-    const isGaCollectPathname = (pathname) =>
-      pathHasGaCollectSegments(pathname) || pathHasCcmCollectSegments(pathname);
-    /**
-     * @param {string} pathname
-     * @returns {{ ok: true, pathname: string } | { ok: false }}
-     */
-    const decodeCollectPathname = (pathname) => {
-      let pathCursor = pathname || "";
+    const strictParsedPathname = (rawPathname) => {
+      let pathCursor = rawPathname || "";
       for (let i = 0; i < MAX_PATH_DECODES; i += 1) {
         try {
           const next = decodeURIComponent(pathCursor);
@@ -293,28 +265,46 @@
           }
           pathCursor = next;
         } catch {
-          return { ok: false };
+          return { ok: false, pathname: "" };
         }
       }
       return { ok: true, pathname: collapsePathSlashes(pathCursor) };
     };
     /**
-     * @param {string} rawPathname
-     * @returns {{ matches: boolean, decodeFailed: boolean }}
+     * @param {string} pathname
+     * @returns {boolean}
      */
-    const gaCollectPathMatch = (rawPathname) => {
-      const raw = rawPathname || "";
-      if (isGaCollectPathname(raw)) {
-        return { matches: true, decodeFailed: false };
+    const isExactGtagLoaderPathname = (pathname) => {
+      const parts = (pathname || "").split("/").filter(Boolean);
+      return parts.length === 2 && parts[0].toLowerCase() === "gtag" && parts[1].toLowerCase() === "js";
+    };
+    /**
+     * @param {string} hostname
+     * @returns {boolean}
+     */
+    const isDoubleClickHost = (hostname) => hostnameMatchesApex(hostname, "doubleclick.net");
+    /**
+     * @param {string} hostname
+     * @returns {boolean}
+     */
+    const isDeniedAnalyticsHost = (hostname) =>
+      isGoogleAnalyticsCollectHost(hostname) ||
+      hostnameMatchesApex(hostname, "googletagmanager.com") ||
+      isDoubleClickHost(hostname);
+    /**
+     * @param {string} hostname
+     * @param {string} rawPathname
+     * @returns {boolean}
+     */
+    const isAllowlistedDeniedHostLoader = (hostname, rawPathname) => {
+      if (!hostnameMatchesApex(hostname, "googletagmanager.com")) {
+        return false;
       }
-      const decoded = decodeCollectPathname(raw);
-      if (!decoded.ok) {
-        return { matches: false, decodeFailed: true };
+      const parsed = strictParsedPathname(rawPathname);
+      if (!parsed.ok) {
+        return false;
       }
-      if (isGaCollectPathname(decoded.pathname)) {
-        return { matches: true, decodeFailed: false };
-      }
-      return { matches: false, decodeFailed: false };
+      return isExactGtagLoaderPathname(parsed.pathname);
     };
     /**
      * @param {unknown} input
@@ -331,21 +321,6 @@
       } catch {
         return "";
       }
-    };
-    /**
-     * @param {string} hostname
-     * @param {string} rawPathname
-     * @returns {boolean}
-     */
-    const isGoogleTagManagerCollectTransport = (hostname, rawPathname) => {
-      if (!hostnameMatchesApex(hostname, "googletagmanager.com")) {
-        return false;
-      }
-      const pathCheck = gaCollectPathMatch(rawPathname);
-      if (pathCheck.decodeFailed) {
-        return true;
-      }
-      return pathCheck.matches;
     };
     /**
      * @param {string} hostname
@@ -371,12 +346,13 @@
       }
       const rawPathname = transportRawPathname(input);
       const gaDisabled = win[GA_DISABLE_PROPERTY] === true;
-      return (
-        (gaDisabled &&
-          (isGoogleAnalyticsCollectHost(hostname) ||
-            isGoogleTagManagerCollectTransport(hostname, rawPathname))) ||
-        (isClarityCollectHost(hostname) && clarityTransportBlocked())
-      );
+      if (gaDisabled && isDeniedAnalyticsHost(hostname)) {
+        return !isAllowlistedDeniedHostLoader(hostname, rawPathname);
+      }
+      if (isClarityCollectHost(hostname) && clarityTransportBlocked()) {
+        return true;
+      }
+      return false;
     };
     /**
      * @param {() => void} fn

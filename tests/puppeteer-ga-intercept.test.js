@@ -1,15 +1,14 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const { test } = require("node:test");
 
 const {
-  assertZeroRealProductionGaCollectHits,
-  resetRealNetworkProductionCollectHits,
-  recordGaCollectPassthroughForTests,
   GTAG_STUB_FIXTURE_PATH,
+  installGaCollectInterception,
+  resetRealNetworkProductionCollectHits,
 } = require("./lib/puppeteer-ga-intercept");
-const fs = require("node:fs");
 
 test("gtag stub fixture exists and contains no production measurement id", () => {
   assert.ok(fs.existsSync(GTAG_STUB_FIXTURE_PATH));
@@ -19,10 +18,29 @@ test("gtag stub fixture exists and contains no production measurement id", () =>
   assert.match(body, /not Google gtag\.js/i);
 });
 
-test("assertZeroRealProductionGaCollectHits fails when collect passthrough is recorded", () => {
+test("installGaCollectInterception reports loader failure when stub fixture is missing", async (t) => {
+  let puppeteer;
+  try {
+    puppeteer = require("puppeteer");
+  } catch {
+    t.skip("puppeteer is not installed");
+    return;
+  }
+  const backupPath = `${GTAG_STUB_FIXTURE_PATH}.guard-backup`;
   resetRealNetworkProductionCollectHits();
-  recordGaCollectPassthroughForTests("https://www.google-analytics.com/g/collect?v=2");
-  assert.throws(() => assertZeroRealProductionGaCollectHits(), /passthrough/i);
-  resetRealNetworkProductionCollectHits();
-  assertZeroRealProductionGaCollectHits();
+  fs.renameSync(GTAG_STUB_FIXTURE_PATH, backupPath);
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+  try {
+    const page = await browser.newPage();
+    await assert.rejects(
+      () => installGaCollectInterception(page),
+      (error) => error && error.code === "GTAG_LOADER_FIXTURE_MISSING",
+    );
+  } finally {
+    await browser.close();
+    fs.renameSync(backupPath, GTAG_STUB_FIXTURE_PATH);
+  }
 });

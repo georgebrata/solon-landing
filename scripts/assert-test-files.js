@@ -4,6 +4,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { readOriginMainFloors, listMainTestFiles } = require("./lib/origin-main-test-floors");
+const {
+  MIN_REGISTERED_TESTS_BY_FILE,
+  MIN_TOTAL_REGISTERED_TESTS,
+} = require("./lib/test-guard-floors");
 
 const testsDir = process.env.SOLON_TESTS_DIR
   ? path.resolve(process.env.SOLON_TESTS_DIR)
@@ -101,47 +105,7 @@ const countRegisteredTests = (filePath) => {
   return count;
 };
 
-/** Minimum passed tests per file (raise via scripts/update-assert-test-floors.js only). */
-const MIN_REGISTERED_TESTS_BY_FILE = {
-  "append-blog-google-sheets.test.js": 8,
-  "apps-script-brevo.test.js": 21,
-  "assert-test-files.test.js": 14,
-  "blog-schema.test.js": 3,
-  "brevo-tracker.test.js": 7,
-  "consent.test.js": 58,
-  "error-log.test.js": 5,
-  "error-pages.test.js": 12,
-  "forms.test.js": 35,
-  "ga-collect-transport.test.js": 4,
-  "ga-measurement-id.test.js": 4,
-  "gtag-browser.test.js": 6,
-  "gtag-datalayer.test.js": 2,
-  "html-integrity.test.js": 4,
-  "html-validate.test.js": 11,
-  "humanize.test.js": 4,
-  "indexnow.test.js": 18,
-  "json-ld-injection.test.js": 17,
-  "jsonld.test.js": 2,
-  "legal-content-guard.test.js": 3,
-  "meta-pixel-privacy.test.js": 4,
-  "partners.test.js": 4,
-  "price-toggle.test.js": 3,
-  "pricing.test.js": 26,
-  "puppeteer-ga-intercept.test.js": 2,
-  "shortlinks-hit.test.js": 2,
-  "shortlinks.test.js": 24,
-  "sitemap.test.js": 7,
-  "stamp-asset-refs.test.js": 6,
-  "support-chat.test.js": 5,
-  "tracking-snippets.test.js": 7,
-  "tracking.test.js": 17,
-  "turnstile-gate.test.js": 3,
-  "unsubscribe-privacy.test.js": 5,
-};
-
 const DEFAULT_MIN_REGISTERED_TESTS = 1;
-
-const MIN_TOTAL_REGISTERED_TESTS = 353;
 
 /**
  * Ensure every tests/*.test.js file is non-empty and registers enough node:test cases.

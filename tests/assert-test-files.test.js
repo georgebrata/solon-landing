@@ -14,8 +14,10 @@ const { countDeclaredTests, countRegisteredTests } = require(scriptPath);
 const { parseTapPassCount } = require(cliPath);
 const {
   readOriginMainFloors,
-  parseFloorsFromAssertSource,
+  parseFloorsFromModuleSource,
+  parseFloorsFromAssertLegacySource,
 } = require("../scripts/lib/origin-main-test-floors");
+const floorsPath = path.join(__dirname, "..", "scripts", "lib", "test-guard-floors.js");
 
 test("assert-test-files rejects an empty tests/*.test.js", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
@@ -216,10 +218,10 @@ test("countRegisteredTests returns 0 when tests are only registered conditionall
 test("update-assert-test-floors fails when consent floor is below origin/main", () => {
   const { validateCommittedFloorsAgainstMain } = require(updateFloorsPath);
   const mainConsent = readOriginMainFloors().byFile["consent.test.js"];
-  const currentConsent = parseFloorsFromAssertSource(fs.readFileSync(scriptPath, "utf8")).byFile[
+  const currentConsent = parseFloorsFromModuleSource(fs.readFileSync(floorsPath, "utf8")).byFile[
     "consent.test.js"
   ];
-  let tampered = fs.readFileSync(scriptPath, "utf8");
+  let tampered = fs.readFileSync(floorsPath, "utf8");
   tampered = tampered.replace(
     `"consent.test.js": ${currentConsent},`,
     `"consent.test.js": ${mainConsent - 1},`,
@@ -227,10 +229,20 @@ test("update-assert-test-floors fails when consent floor is below origin/main", 
   assert.throws(() => validateCommittedFloorsAgainstMain(tampered), /committed floor for consent\.test\.js/i);
 });
 
-test("parseFloorsFromAssertSource throws when floors block is missing", () => {
+test("parseFloorsFromModuleSource throws when floors module is invalid", () => {
   assert.throws(
-    () => parseFloorsFromAssertSource('"use strict";'),
-    /could not parse MIN_REGISTERED_TESTS_BY_FILE/,
+    () => parseFloorsFromModuleSource('"use strict"; module.exports = {};'),
+    /MIN_REGISTERED_TESTS_BY_FILE/,
+  );
+});
+
+test("parseFloorsFromAssertLegacySource rejects zero floor entries", () => {
+  assert.throws(
+    () =>
+      parseFloorsFromAssertLegacySource(
+        'const MIN_REGISTERED_TESTS_BY_FILE = {};\nconst MIN_TOTAL_REGISTERED_TESTS = 1;',
+      ),
+    /zero entries/,
   );
 });
 
@@ -258,11 +270,11 @@ test("assert-test-files rejects a test file deleted relative to main", () => {
 
 test("update-assert-test-floors fails when floor anchor is missing", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "solon-test-guard-"));
-  const assertCopy = path.join(tmpDir, "assert-test-files.js");
-  fs.writeFileSync(assertCopy, '"use strict";\nmodule.exports = {};\n');
+  const floorsCopy = path.join(tmpDir, "test-guard-floors.js");
+  fs.writeFileSync(floorsCopy, '"use strict";\nmodule.exports = {};\n');
   const result = spawnSync(process.execPath, [updateFloorsPath], {
     encoding: "utf8",
-    env: { ...process.env, SOLON_ASSERT_TEST_FILES_PATH: assertCopy },
+    env: { ...process.env, SOLON_ASSERT_TEST_FLOORS_PATH: floorsCopy },
   });
   assert.notEqual(result.status, 0);
   assert.match(`${result.stderr}${result.stdout}`, /anchor missing/i);
