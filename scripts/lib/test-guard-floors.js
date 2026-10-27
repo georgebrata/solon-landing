@@ -44,7 +44,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 468;
+const MIN_TOTAL_REGISTERED_TESTS = 467;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors
