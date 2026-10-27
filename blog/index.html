@@ -34,12 +34,11 @@
   <link rel="mask-icon" href="../../assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
+  <!-- Self-hosted fonts (SIL OFL; see /assets/fonts/OFL.txt) -->
+  <link rel="preload" href="/assets/fonts/jost-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/open-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 
-    <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
 
   <!-- Vendor CSS Files -->
   <link href="../../assets/vendor/aos/aos.min.css?v=1271739290" rel="stylesheet">
@@ -47,7 +46,7 @@
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css?v=e8c36e8eb7" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="../../assets/css/style.min.css?v=a56d9fa608" rel="stylesheet">
+  <link href="../../assets/css/style.min.css?v=56aedbe02c" rel="stylesheet">
   <link href="../../assets/css/blog.css?v=28a02f720e" rel="stylesheet">
 
   <style>
@@ -58,7 +57,7 @@
   </style>
 
     <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
-  <script src="/assets/js/consent.min.js?v=36b7bfbc0b"></script>
+  <script src="/assets/js/consent.min.js?v=373fa87924"></script>
 
 <!-- counter.dev -->
   <script type="text/plain" data-consent-category="analytics" src="https://cdn.counter.dev/script.js" data-id="03bd5925-48e2-4d33-ae59-d66aaf6acba0"
@@ -81,6 +80,7 @@
   <!-- clarity -->
   <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
   <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
+  <script defer src="https://demoanaf.ro/verified.js"></script>
 </head>
 
 <body>
@@ -127,44 +127,13 @@
   </div>
 </section>
 
-<section class="blog-hub-featured section-bg" aria-labelledby="hub-featured-heading">
-  <div class="container" data-aos="fade-up">
-    <div class="row">
-      <div class="col-lg-6">
-        <h2 id="hub-featured-heading" class="blog-sidebar-title">Studii de caz SOLON</h2>
-        <ul class="blog-sidebar-list">
-          <li><a href="/studii-de-caz/tslaw/">Tănasa &amp; Sinescu - Cabinete grupate de avocatură (TSLaw)</a></li>
-          <li><a href="/studii-de-caz/avocat-sebastian-nagy/">Avocat Sebastian Nagy – Cluj-Napoca</a></li>
-          <li><a href="/studii-de-caz/avocat-cristian-guritanu/">Avocat Cristian Gurițanu</a></li>
-          <li><a href="/studii-de-caz/marinau-si-asociatii/">Marinău și Asociații</a></li>
-          <li><a href="/studii-de-caz/avocat-dumitrescu-alexandru/">Avocat Dumitrescu Alexandru – Turda</a></li>
-        </ul>
-        <p><a href="/studii-de-caz/" class="badge badge-tag"><span aria-hidden="true">→</span> Toate studiile de caz</a></p>
-      </div>
-      <div class="col-lg-6">
-        <h2 class="blog-sidebar-title">Articole recomandate</h2>
-        <ul class="blog-sidebar-list">
-          <li><a href="/blog/prevenirea-ransomware-in-cabinete-de-avocatura/">Prevenirea atacurilor Ransomware în cabinet</a></li>
-          <li><a href="/blog/cat-te-costa-de-fapt-un-cabinet-de-avocatura-nedigitalizat/">Cât te costă un cabinet nedigitalizat?</a></li>
-          <li><a href="/blog/cum-sa-folosesti-google-search-console-ca-avocat/">Google Search Console pentru avocați</a></li>
-          <li><a href="/blog/cum-sa-folosesti-linkedin-ca-avocat/">LinkedIn pentru avocați</a></li>
-          <li><a href="/blog/implementare-crm-juridic-pentru-avocati/">CRM juridic – ghid de implementare</a></li>
-          <li><a href="/blog/client-intake-automatizat-pentru-avocati/">Client intake automatizat</a></li>
-          <li><a href="/blog/digitalizarea-cabinetului-individual-de-avocat/">Digitalizare cabinet individual – ghid integral</a></li>
-          <li><a href="/blog/servicii-seo-profesionale-juridice/">Servicii SEO profesionale juridice</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="blog-list" class="blog blog-list portfolio pt-0">
   <div class="container" data-aos="fade-up">
     <div class="blog-search visually-hidden" role="search">
       <input type="text" id="blog-search-input" placeholder="Caută articole sau filtrează după tag..." class="form-control" aria-label="Caută articole sau filtrează după tag...">
     </div>
     <ul id="portfolio-flters" class="d-flex justify-content-center p-0 blog-filters" data-aos="fade-up" data-aos-delay="100">
-      <li data-tag="all" class="filter-active">Toate <span class="blog-filter-count">(70)</span></li>
+      <li data-tag="all" class="filter-active">Toate <span class="blog-filter-count">(71)</span></li>
 <li data-tag="avocați">avocați <span class="blog-filter-count">(57)</span></li>
 <li data-tag="legaltech">legaltech <span class="blog-filter-count">(20)</span></li>
 <li data-tag="productivitate">productivitate <span class="blog-filter-count">(19)</span></li>
@@ -203,6 +172,7 @@
 <li data-tag="termene">termene <span class="blog-filter-count">(2)</span></li>
 <li data-tag="unbr">unbr <span class="blog-filter-count">(2)</span></li>
 <li data-tag="vizibilitate online">vizibilitate online <span class="blog-filter-count">(2)</span></li>
+<li data-tag="website cabinet avocatură">website cabinet avocatură <span class="blog-filter-count">(2)</span></li>
 <li data-tag="accesibilitate web">accesibilitate web <span class="blog-filter-count">(1)</span></li>
 <li data-tag="accesibilitate website avocat">accesibilitate website avocat <span class="blog-filter-count">(1)</span></li>
 <li data-tag="agenti ai">agenti ai <span class="blog-filter-count">(1)</span></li>
@@ -231,6 +201,7 @@
 <li data-tag="consultanță juridică online">consultanță juridică online <span class="blog-filter-count">(1)</span></li>
 <li data-tag="conținut">conținut <span class="blog-filter-count">(1)</span></li>
 <li data-tag="copilot">copilot <span class="blog-filter-count">(1)</span></li>
+<li data-tag="core web vitals">core web vitals <span class="blog-filter-count">(1)</span></li>
 <li data-tag="cost oportunitate">cost oportunitate <span class="blog-filter-count">(1)</span></li>
 <li data-tag="costuri website">costuri website <span class="blog-filter-count">(1)</span></li>
 <li data-tag="criptare">criptare <span class="blog-filter-count">(1)</span></li>
@@ -279,6 +250,7 @@
 <li data-tag="inteligență artificială">inteligență artificială <span class="blog-filter-count">(1)</span></li>
 <li data-tag="intretinere site web">intretinere site web <span class="blog-filter-count">(1)</span></li>
 <li data-tag="knowledge management">knowledge management <span class="blog-filter-count">(1)</span></li>
+<li data-tag="lcp inp cls">lcp inp cls <span class="blog-filter-count">(1)</span></li>
 <li data-tag="legalit.ro">legalit.ro <span class="blog-filter-count">(1)</span></li>
 <li data-tag="legea 232/2022">legea 232/2022 <span class="blog-filter-count">(1)</span></li>
 <li data-tag="legea 51/1995">legea 51/1995 <span class="blog-filter-count">(1)</span></li>
@@ -303,6 +275,7 @@
 <li data-tag="organizare">organizare <span class="blog-filter-count">(1)</span></li>
 <li data-tag="outlook">outlook <span class="blog-filter-count">(1)</span></li>
 <li data-tag="pagespeed">pagespeed <span class="blog-filter-count">(1)</span></li>
+<li data-tag="pagespeed insights">pagespeed insights <span class="blog-filter-count">(1)</span></li>
 <li data-tag="portal clienti">portal clienti <span class="blog-filter-count">(1)</span></li>
 <li data-tag="portal just">portal just <span class="blog-filter-count">(1)</span></li>
 <li data-tag="portalul instanțelor">portalul instanțelor <span class="blog-filter-count">(1)</span></li>
@@ -344,10 +317,10 @@
 <li data-tag="trello">trello <span class="blog-filter-count">(1)</span></li>
 <li data-tag="verificare website cabinet avocatură">verificare website cabinet avocatură <span class="blog-filter-count">(1)</span></li>
 <li data-tag="viitor">viitor <span class="blog-filter-count">(1)</span></li>
+<li data-tag="viteza website avocat">viteza website avocat <span class="blog-filter-count">(1)</span></li>
 <li data-tag="vizibilitate">vizibilitate <span class="blog-filter-count">(1)</span></li>
 <li data-tag="wcag">wcag <span class="blog-filter-count">(1)</span></li>
 <li data-tag="website">website <span class="blog-filter-count">(1)</span></li>
-<li data-tag="website cabinet avocatură">website cabinet avocatură <span class="blog-filter-count">(1)</span></li>
 <li data-tag="website de prezentare">website de prezentare <span class="blog-filter-count">(1)</span></li>
 <li data-tag="whatsapp business">whatsapp business <span class="blog-filter-count">(1)</span></li>
 <li data-tag="zero-trust">zero-trust <span class="blog-filter-count">(1)</span></li>
@@ -365,6 +338,21 @@
                       <a href="../blog/?tag=b563%2F2026" class="badge badge-tag me-1">B563/2026</a>
                       <a href="../blog/?tag=legea%2051%2F1995" class="badge badge-tag me-1">legea 51/1995</a>
                       <a href="../blog/?tag=website%20avocat" class="badge badge-tag me-1">website avocat</a>
+                    </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 text-center mt-4 mb-4 post-card" data-tags="viteza website avocat,core web vitals,pagespeed insights,lcp inp cls,website cabinet avocatură" data-title="viteza website-ului de avocat: ce măsori și ce repari primul">
+        <div class="box featured">
+          <h3><a href="viteza-website-avocat/">Viteza website-ului de avocat: ce măsori și ce repari primul</a></h3>
+          <p class="blog-card-meta">2026-10-26 • 9 min</p>
+          <p>Ce înseamnă un website lent, cum măsori LCP, INP și CLS pe telefon cu instrumente gratuite și 10 reparații ordonate după efort, de la imagini la scripturi.</p>
+                    <div class="blog-tags mt-2 mb-2" role="group" aria-label="Taguri articol">
+                      <a href="../blog/?tag=viteza%20website%20avocat" class="badge badge-tag me-1">viteza website avocat</a>
+                      <a href="../blog/?tag=core%20web%20vitals" class="badge badge-tag me-1">core web vitals</a>
+                      <a href="../blog/?tag=pagespeed%20insights" class="badge badge-tag me-1">pagespeed insights</a>
+                      <a href="../blog/?tag=lcp%20inp%20cls" class="badge badge-tag me-1">LCP INP CLS</a>
+                      <a href="../blog/?tag=website%20cabinet%20avocatur%C4%83" class="badge badge-tag me-1">website cabinet avocatură</a>
                     </div>
         </div>
       </div>
@@ -1469,7 +1457,7 @@
                     <input type="email" class="required email"
                     value="" autocomplete="email" name="Email" required id="solon-newsletter-email">
                   </div>
-                  <p class="solon-form-note">Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
+                  <p class="solon-form-note">Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe website de adresa ta. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.</p>
                   <div class="clear"><button type="submit" id="solon-newsletter-submit"
                   class="button">Subscribe</button></div>
                 </form>
@@ -1535,6 +1523,7 @@
       <div class="copyright">
         <b>SOLON</b> &copy; <span data-current-year></span>
       </div>
+      <div data-demoanaf="49995463"></div>
       <div class="credits">
         Servicii digitale pentru mediul juridic
       </div>
@@ -1553,7 +1542,7 @@
   <script src="../../assets/vendor/waypoints/noframework.waypoints.min.js?v=2e619e0fde"></script>
 
   <!-- Template Main JS File -->
-  <script src="../../assets/js/error-log.min.js?v=a3055d3d93"></script>
+  <script src="../../assets/js/error-log.min.js?v=618121d080"></script>
   <script src="../../assets/js/main.min.js?v=a0a2a53b4b"></script>
   <script src="../../assets/js/dynamic-year.min.js?v=7b00e57578"></script>
   <script src="../assets/js/blog-search.js?v=1e719d4c4a"></script>

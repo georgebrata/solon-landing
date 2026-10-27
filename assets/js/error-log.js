@@ -12,6 +12,25 @@
   const REPORT_TIMEOUT_MS = 4000;
   const RETRY_DELAYS_MS = [0, 400, 1200];
 
+  /**
+   * Drop query string and hash from a location href for logging (no email-bearing URL parts).
+   * @param {string} href
+   * @returns {string}
+   */
+  const redactLocationHref = (href) => {
+    if (typeof href !== "string" || !href) {
+      return "";
+    }
+    try {
+      const url = new URL(href);
+      url.search = "";
+      url.hash = "";
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return "";
+    }
+  };
+
   /** Redact emails, IPs, and phone numbers from a log string. */
   const sanitize = (value) => {
     if (value == null) return "";
@@ -106,7 +125,7 @@
     const toPayload = (level, event) => {
       const source = event && typeof event === "object" ? event : { message: event };
       const href = typeof root?.location?.href === "string"
-        ? sanitize(root.location.href.split("?")[0])
+        ? sanitize(redactLocationHref(root.location.href))
         : "";
       return {
         ts: now(),
@@ -268,6 +287,7 @@
     module.exports = {
       createLogger,
       sanitize,
+      redactLocationHref,
       parseSentryDsn,
     };
   }

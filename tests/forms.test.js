@@ -569,7 +569,7 @@ const TELEFON_FORM_NOTICE =
 
 const walkHtmlFiles = (dir, acc = []) => {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (ent.name === "node_modules" || ent.name === ".git") continue;
+    if (ent.name === "node_modules" || ent.name === ".git" || ent.name === ".worktrees") continue;
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) walkHtmlFiles(full, acc);
     else if (ent.name.endsWith(".html")) acc.push(full);
@@ -601,9 +601,16 @@ test("contact and newsletter forms carry their privacy notice above submit", () 
   const contactNote = "Folosim datele tale ca să-ți răspundem la mesaj.";
   const contactOptIn = "Dacă bifezi abonarea, primești newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email.";
   const visitLink = "Brevo poate lega vizitele";
-  const newsletterNote = "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe site de adresa ta.";
+  const newsletterNoteBlog =
+    "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe website de adresa ta.";
+  const newsletterNoteStandalone =
+    "Te abonezi la newsletterul SOLON, trimis prin Brevo. Te poți dezabona oricând, din linkul din fiecare email. Dacă ai acceptat cookie-urile de Marketing, Brevo poate lega vizitele tale pe website de adresa ta.";
   const contactPages = ["index.html", "studii-de-caz/index.html"];
-  const newsletterPages = ["templates/layout.html", "newsletter.html", "index.html"];
+  const newsletterPages = [
+    { rel: "templates/layout.html", note: newsletterNoteBlog },
+    { rel: "newsletter.html", note: newsletterNoteStandalone },
+    { rel: "index.html", note: newsletterNoteStandalone },
+  ];
   for (const rel of contactPages) {
     const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
     const form = html.slice(html.indexOf('data-solon-form="Contact"'), html.indexOf("</form>", html.indexOf('data-solon-form="Contact"')));
@@ -617,11 +624,11 @@ test("contact and newsletter forms carry their privacy notice above submit", () 
     assert.ok(optIn.includes(contactOptIn), rel);
     assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
   }
-  for (const rel of newsletterPages) {
+  for (const { rel, note } of newsletterPages) {
     const html = fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
     const start = html.indexOf('data-solon-form="Newsletter"');
     const form = html.slice(start, html.indexOf("</form>", start));
-    assert.ok(form.includes(newsletterNote), rel);
+    assert.ok(form.includes(note), rel);
     assert.ok(form.indexOf("solon-form-note") < form.indexOf('type="submit"'), rel);
   }
 });

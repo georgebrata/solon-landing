@@ -2,6 +2,7 @@
 <html lang="ro">
 
 <head>
+    <meta name="referrer" content="no-referrer">
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
@@ -37,12 +38,11 @@
     <link rel="mask-icon" href="../assets/img/favicon/safari-pinned-tab.svg" color="var(--primary)">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
+  <!-- Self-hosted fonts (SIL OFL; see /assets/fonts/OFL.txt) -->
+  <link rel="preload" href="/assets/fonts/jost-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/open-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 
-      <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
 
     <!-- Vendor CSS Files -->
     <link href="../assets/vendor/aos/aos.min.css?v=1271739290" rel="stylesheet">
@@ -52,32 +52,135 @@
     <link href="../assets/vendor/swiper/swiper-bundle.min.css?v=322d15d99e" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="../assets/css/style.min.css?v=a56d9fa608" rel="stylesheet">
+    <link href="../assets/css/style.min.css?v=56aedbe02c" rel="stylesheet">
 
       <link href="/assets/css/consent.min.css?v=2332733667" rel="stylesheet">
-  <script src="/assets/js/consent.min.js?v=36b7bfbc0b"></script>
 
-<!-- counter.dev -->
-    <script type="text/plain" data-consent-category="analytics" src="https://cdn.counter.dev/script.js" data-id="03bd5925-48e2-4d33-ae59-d66aaf6acba0"
-        data-utcoffset="2"></script>
+  <script>
+    (function () {
+      "use strict";
+      if (!window.history || typeof window.history.replaceState !== "function" || !window.location) {
+        return;
+      }
+      function decodeEValue(encoded) {
+        if (!encoded) {
+          return "";
+        }
+        try {
+          return decodeURIComponent(String(encoded).replace(/\+/g, "%2B"));
+        } catch (err) {
+          void err;
+          return "";
+        }
+      }
+      function readEFromSegments(segments) {
+        if (!segments) {
+          return null;
+        }
+        var parts = segments.split("&");
+        for (var i = 0; i < parts.length; i += 1) {
+          var part = parts[i];
+          if (!part) {
+            continue;
+          }
+          var eq = part.indexOf("=");
+          var key = eq === -1 ? part : part.slice(0, eq);
+          if (key.toLowerCase() !== "e") {
+            continue;
+          }
+          var value = eq === -1 ? "" : part.slice(eq + 1);
+          return decodeEValue(value);
+        }
+        return null;
+      }
+      function stripEFromSegments(segments) {
+        if (!segments) {
+          return { encoded: "", stripped: false };
+        }
+        var parts = segments.split("&");
+        var kept = [];
+        var stripped = false;
+        for (var i = 0; i < parts.length; i += 1) {
+          var part = parts[i];
+          if (part === "") {
+            kept.push(part);
+            continue;
+          }
+          var eq = part.indexOf("=");
+          var key = eq === -1 ? part : part.slice(0, eq);
+          if (key.toLowerCase() === "e") {
+            stripped = true;
+            continue;
+          }
+          kept.push(part);
+        }
+        if (!stripped) {
+          return { encoded: segments, stripped: false };
+        }
+        return { encoded: kept.join("&"), stripped: true };
+      }
+      var capturedEmail = null;
+      try {
+        var url = new URL(window.location.href);
+        var qs = url.search.startsWith("?") ? url.search.slice(1) : url.search;
+        var hashInner = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
+        capturedEmail = readEFromSegments(hashInner);
+        if (capturedEmail === null) {
+          capturedEmail = readEFromSegments(qs);
+        }
+        var qStrip = stripEFromSegments(qs);
+        var hStrip = stripEFromSegments(hashInner);
+        if (qStrip.stripped || hStrip.stripped) {
+          var nextSearch = qStrip.stripped ? (qStrip.encoded ? "?" + qStrip.encoded : "") : url.search;
+          var nextHash = hStrip.stripped ? (hStrip.encoded ? "#" + hStrip.encoded : "") : url.hash;
+          window.history.replaceState(null, "", url.pathname + nextSearch + nextHash);
+        }
+      } catch (err) {
+        void err;
+      }
+      if (capturedEmail !== null && capturedEmail !== "") {
+        var snapshot = capturedEmail;
+        Object.defineProperty(window, "__solonFeedbackEmailTake", {
+          value: function () {
+            delete window.__solonFeedbackEmailTake;
+            return snapshot;
+          },
+          enumerable: false,
+          configurable: true,
+        });
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      "use strict";
+      function applyBaseIframeSrc() {
+        var frame = document.querySelector('iframe[title="Formular feedback SOLON (Google Forms)"]');
+        if (!frame || frame.getAttribute("src")) {
+          return;
+        }
+        var base = frame.getAttribute("data-src");
+        if (base) {
+          frame.setAttribute("src", base);
+        }
+      }
+      window.__solonFeedbackIframeFallback = function () {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", applyBaseIframeSrc);
+          return;
+        }
+        applyBaseIframeSrc();
+      };
+      window.setTimeout(function () {
+        if (!window.__solonFeedbackPrefillBooted) {
+          window.__solonFeedbackIframeFallback();
+        }
+      }, 3000);
+    })();
+  </script>
+  <script src="/assets/js/feedback-form-prefill.min.js?v=4d19461b69" onerror="window.__solonFeedbackIframeFallback&amp;&amp;window.__solonFeedbackIframeFallback()"></script>
+  <script src="/assets/js/consent.min.js?v=373fa87924"></script>
 
-    <!--metricool-->
-    <script type="text/plain" data-consent-category="analytics" src="/assets/js/metricool-init.min.js?v=18ff061002" data-metricool-hash="5eff58c72e852f80d27f8f1735299845"></script>
-
-        <!-- Meta Pixel Code -->
-    <script type="text/plain" data-consent-category="marketing" src="/assets/js/meta-pixel.min.js?v=85a6487992" defer></script>
-    <!-- End Meta Pixel Code -->
-
-    <!-- Google tag (gtag.js) -->
-    <script type="text/plain" data-consent-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-H41D7KCWHX"></script>
-    <script type="text/plain" data-consent-category="analytics" src="/assets/js/gtag-config.min.js?v=0924ff507d"></script>
-
-    <!-- ahrefs analytics tracking code for SOLON -->
-  <script type="text/plain" data-consent-category="analytics" src="https://analytics.ahrefs.com/analytics.js" data-key="z5PGzF2CC/ySPLo7wt8k5w" async></script>
-
-  <!-- clarity -->
-    <script type="text/plain" data-consent-category="analytics" src="/assets/js/clarity-init.min.js?v=e9dd1637d1"></script>
-    <script type="text/plain" data-consent-category="marketing" async src="/assets/js/brevo-tracker.min.js?v=ab5a12d535"></script>
   <style>
     #hero canvas {
       position: absolute !important;
@@ -132,8 +235,16 @@
                     </p>
                     <iframe
                         title="Formular feedback SOLON (Google Forms)"
-                        src="https://docs.google.com/forms/d/e/1FAIpQLScGk_sLoxOYV7O2dwqCaxgZ6lqlTe7NZagVa3zjj-Pk5PI9nw/viewform?embedded=true"
+                        data-src="https://docs.google.com/forms/d/e/1FAIpQLScGk_sLoxOYV7O2dwqCaxgZ6lqlTe7NZagVa3zjj-Pk5PI9nw/viewform?embedded=true"
+                        referrerpolicy="no-referrer"
                         class="border-0" width="800" height="7500">Loading…</iframe>
+                    <noscript>
+                        <iframe
+                            title="Formular feedback SOLON (Google Forms)"
+                            src="https://docs.google.com/forms/d/e/1FAIpQLScGk_sLoxOYV7O2dwqCaxgZ6lqlTe7NZagVa3zjj-Pk5PI9nw/viewform?embedded=true"
+                            referrerpolicy="no-referrer"
+                            class="border-0" width="800" height="7500">Loading…</iframe>
+                    </noscript>
                 </div>
             </div>
         </section>
@@ -198,8 +309,6 @@
                         <a href="https://anpc.ro/" aria-label="ANPC - Soluționarea alternativă a litigiilor (legătură externă)">
                             <img src="../assets/img/anpc-sal.png" alt="ANPC logo" width="500" height="124" decoding="async" />
                         </a>
-                        <script type="text/plain" data-consent-category="marketing" src="https://mny.ro/npId.js?p=143413" data-version="orizontal"
-                            data-contrast-color="#ffffff"></script>
                     </div>
                 </div>
 
@@ -233,18 +342,10 @@
     <script src="../assets/vendor/php-email-form/validate.min.js?v=ac28aadb8c"></script>
 
     <!-- Template Main JS File -->
-    <script src="../assets/js/error-log.min.js?v=a3055d3d93"></script>
+    <script src="../assets/js/error-log.min.js?v=618121d080"></script>
     <script src="../assets/js/main.min.js?v=a0a2a53b4b"></script>
     <script src="../assets/js/dynamic-year.min.js?v=7b00e57578"></script>
 
-    <!-- FIREWORKS.js -->
-    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
-    <script>
-        const container = document.querySelector('.fireworks')
-        const fireworks = new Fireworks.default(container)
-        // fireworks.start()
-    </script>
-  <script src="/assets/js/tracking.min.js?v=f8ea221068" defer></script>
 </body>
 
 </html>

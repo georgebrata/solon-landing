@@ -75,14 +75,15 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | Metricool | `tracker.metricool.com` (script + `c3po.jpg` beacon) | script, img, connect |
 | Ahrefs | `analytics.ahrefs.com` | script, connect |
 | counter.dev | `cdn.counter.dev`, `t.counter.dev` | script, connect |
-| Google Fonts | `fonts.googleapis.com`, `fonts.gstatic.com` | style, font |
-| Forms, FAQ Sheets, and the short-link click counter | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action. The counter POST uses `connect-src` only and sends no API key. |
+| Jost + Open Sans (self-hosted) | `/assets/fonts/*.woff2`, `assets/css/fonts.css` (merged into `style.min.css`) | font (`'self'`) |
+| Contact/newsletter/callback forms and the short-link click counter | `script.google.com`, `script.googleusercontent.com`, `*.script.googleusercontent.com` | connect, form-action (`assets/js/forms.js` POST to Apps Script; counter POST uses `connect-src` only and sends no API key). Homepage FAQ/testimonials are build-time only (`scripts/build-homepage-sheets.js`). |
 | IP lookup | `api64.ipify.org` | connect |
 | Support chat (disabled; re-enable per Trello jIwDAiCn) | `solon-agency.app.n8n.cloud` — omit from CSP while off | connect |
 | Stripe Payment Links | `buy.stripe.com` is a **top-level navigation** (not CSP). `js.stripe.com` / `hooks.stripe.com` reserved if Checkout is ever embedded | frame, script |
 | Cloudflare Turnstile (#31) | `challenges.cloudflare.com` | script, style, img, connect, frame, worker |
 | NETOPIA / ANPC widget | Script `mny.ro/npId.js` injects an SVG from `mny.ro`. `anpc.ro` is a text link; logos are first-party under `/assets/img/` | script, img, connect |
-| Fireworks (inner pages) | `cdn.jsdelivr.net` | script |
+| demoanaf.ro verified badge | `verified.js` + `GET /api/verified/badge/49995463` (`credentials: 'omit'`). Not consent-gated; see `docs/demoanaf-badge.md` if the API adds `features.consent.enabled`. | script, connect |
+| Fireworks (inner pages) | `'self'` (`assets/js/vendor/fireworks-js/`, incl. `LICENSE.txt`) | script |
 | Before/after slider (Marinău) | `unpkg.com` | script |
 | Case-study screenshots | `i.ibb.co` | img |
 | Google Calendar embed | `calendar.google.com` | frame |

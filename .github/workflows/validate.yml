@@ -26,6 +26,9 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
         run: npm ci
 
+      - name: Build homepage FAQ and testimonials (offline check)
+        run: node scripts/build-homepage-sheets.js --offline --check
+
       - name: Run minification
         run: npm run minify
 
