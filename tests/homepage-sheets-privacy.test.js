@@ -8,12 +8,16 @@ const {
   esc,
   render,
   renderFaqBlock,
+  renderTestimonialsBlock,
   validateSnapshot,
   resolveData,
   readCommittedSnapshot,
   buildRenderData,
+  pickFaqRows,
   pickTestimonialRows,
   ensureCarouselActive,
+  replaceBlock,
+  sanitizeFaqAnswer,
 } = require("../scripts/build-homepage-sheets");
 
 const ROOT = path.join(__dirname, "..");
@@ -116,4 +120,96 @@ test("resolveData offline uses committed snapshot without network", async () => 
   assert.equal(source, "snapshot");
   assert.ok(Array.isArray(data.Testimonials));
   assert.equal(data.Testimonials.filter((row) => row.Visible).length, 4);
+});
+
+test("replaceBlock does not expand $ special sequences in generated FAQ", () => {
+  const html = `<!DOCTYPE html>
+<!-- HOME-FAQ:START -->old<!-- HOME-FAQ:END -->
+<!-- TESTIMONIALS:START -->t<!-- TESTIMONIALS:END -->`;
+  const block = renderFaqBlock([
+    {
+      Intrebare: "Q",
+      Raspuns: '$$ $& $` $\' <script>x</script>',
+      Visible: true,
+    },
+  ]);
+  const out = replaceBlock(html, "HOME-FAQ", block);
+  assert.equal((out.match(/<!DOCTYPE html>/gu) || []).length, 1);
+  assert.match(out, /\$\$ \$&amp; \$` \$&#39;/u);
+  assert.doesNotMatch(out, /<script>x<\/script>/u);
+});
+
+test("sanitizeFaqAnswer keeps safe links and strips unsafe markup", () => {
+  const safe =
+    'See <a href="https://solon.agency/x" target="_blank">site</a> or <strong>bold</strong> and <script>no</script>';
+  const html = sanitizeFaqAnswer(safe);
+  assert.match(html, /<a href="https:\/\/solon\.agency\/x" target="_blank" rel="noopener">site<\/a>/u);
+  assert.match(html, /<strong>bold<\/strong>/u);
+  assert.doesNotMatch(html, /<script>/u);
+  assert.equal(sanitizeFaqAnswer('<a href="javascript:alert(1)">x</a>'), "x");
+});
+
+test("pickFaqRows keeps valid API rows when one row is malformed", () => {
+  const committed = readCommittedSnapshot();
+  const rows = pickFaqRows(
+    [{ Intrebare: "Ok?", Raspuns: "Yes", Visible: true }, { bad: true }],
+    committed.FAQ,
+  );
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].Intrebare, "Ok?");
+});
+
+test("malformed or empty FAQ API rows fall back to committed snapshot", () => {
+  const committed = readCommittedSnapshot();
+  assert.deepEqual(pickFaqRows(undefined, committed.FAQ), committed.FAQ);
+  assert.deepEqual(
+    pickFaqRows([{ Intrebare: "x", Raspuns: "y", Visible: false }], committed.FAQ),
+    committed.FAQ,
+  );
+});
+
+test("ensureCarouselActive keeps only the first Active slide when several are marked", () => {
+  const committed = readCommittedSnapshot();
+  const rows = committed.Testimonials.map((row, index) => ({
+    ...row,
+    Active: index < 2,
+  }));
+  const prepared = ensureCarouselActive(rows);
+  const active = prepared.filter((row) => row.Active);
+  assert.equal(active.length, 1);
+  assert.equal(active[0].id, committed.Testimonials[0].id);
+});
+
+test("empty baked FAQ block yields no list items for client hide logic", () => {
+  const block = renderFaqBlock([]);
+  assert.doesNotMatch(block, /<li\b/u);
+});
+
+test("testimonial render escapes sheet markup in visible fields", () => {
+  const payload = '<img src=x onerror=alert(1)>';
+  const block = renderTestimonialsBlock([
+    {
+      id: "x",
+      Nume: payload,
+      Subtitlu: payload,
+      Citat: payload,
+      Imagine: "/assets/img/solon-metaimage.png",
+      Alt: payload,
+      Width: "432",
+      Height: "426",
+      Visible: true,
+      Active: true,
+      QuoteClass: "",
+    },
+  ]);
+  assert.doesNotMatch(block, /<img src=x/u);
+  assert.match(block, /&lt;img src=x onerror=alert\(1\)&gt;/u);
+});
+
+test("pickTestimonialRows keeps valid API rows when one row is malformed", () => {
+  const committed = readCommittedSnapshot();
+  const good = committed.Testimonials[0];
+  const rows = pickTestimonialRows([good, { foo: "bar" }], committed.Testimonials);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].id, good.id);
 });

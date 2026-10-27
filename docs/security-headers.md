@@ -83,7 +83,7 @@ Verified from HTML/JS in this repo (non-vendor), plus the live script bodies for
 | Cloudflare Turnstile (#31) | `challenges.cloudflare.com` | script, style, img, connect, frame, worker |
 | NETOPIA / ANPC widget | Script `mny.ro/npId.js` injects an SVG from `mny.ro`. `anpc.ro` is a text link; logos are first-party under `/assets/img/` | script, img, connect |
 | demoanaf.ro verified badge | `verified.js` + `GET /api/verified/badge/49995463` (`credentials: 'omit'`). Not consent-gated; see `docs/demoanaf-badge.md` if the API adds `features.consent.enabled`. | script, connect |
-| Fireworks (inner pages) | `cdn.jsdelivr.net` | script |
+| Fireworks (inner pages) | `'self'` (`assets/js/vendor/fireworks-js/`) | script |
 | Before/after slider (Marinău) | `unpkg.com` | script |
 | Case-study screenshots | `i.ibb.co` | img |
 | Google Calendar embed | `calendar.google.com` | frame |

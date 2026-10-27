@@ -1,10 +1,9 @@
 "use strict";
 /**
  * Build-time homepage FAQ + testimonials from SOLON API (FAQ + Testimonials tabs)
- * or committed data/homepage-sheets.snapshot.json. Legacy public FAQ JSON is used
- * only when the API key is missing and the snapshot FAQ array is empty.
+ * or committed data/homepage-sheets.snapshot.json.
  *
- * The committed snapshot is never rewritten during deploy/CI; refresh it locally with
+ * The committed snapshot is never rewritten during deploy/CI; refresh locally with
  * --write-snapshot after verifying API output.
  *
  * Usage: node scripts/build-homepage-sheets.js [--offline] [--check] [--write-snapshot]
@@ -21,6 +20,7 @@
     "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
   const API_TABS = Object.freeze(["FAQ", "Testimonials"]);
   const REQUEST_TIMEOUT_MS = 30000;
+  const ALLOWED_FAQ_ANSWER_TAGS = /^(br|strong|em|a)$/iu;
 
   /** @param {string} text */
   const esc = (text) =>
@@ -34,7 +34,29 @@
   const replaceBlock = (html, name, block) => {
     const re = new RegExp(`<!-- ${name}:START[^>]*>[\\s\\S]*?<!-- ${name}:END -->`, "u");
     if (!re.test(html)) throw new Error(`build-homepage-sheets: ${name} markers missing in index.html`);
-    return html.replace(re, block);
+    return html.replace(re, () => block);
+  };
+
+  /** @param {string} raw */
+  const sanitizeFaqAnswer = (raw) => {
+    let text = String(raw).replace(/<script\b[^>]*>[\s\S]*?<\/script>/giu, "");
+    text = text.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/giu, (match, attrs, inner) => {
+      const hrefMatch = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/iu.exec(attrs);
+      const href = (hrefMatch?.[1] ?? hrefMatch?.[2] ?? "").trim();
+      if (!/^(https?:|mailto:|tel:)/iu.test(href)) return esc(inner);
+      const targetBlank = /\btarget\s*=\s*["']_blank["']/iu.test(attrs);
+      const rel = targetBlank ? ' rel="noopener"' : "";
+      const target = targetBlank ? ' target="_blank"' : "";
+      return `<a href="${esc(href)}"${target}${rel}>${esc(inner)}</a>`;
+    });
+    if (!/<[^>]+>/u.test(text)) return esc(text);
+    return text.replace(/<\/?([a-z0-9]+)\b[^>]*>/giu, (match, tagName) => {
+      const tag = String(tagName).toLowerCase();
+      if (tag === "br") return "<br>";
+      if (tag === "strong" || tag === "em") return match.startsWith("</") ? `</${tag}>` : `<${tag}>`;
+      if (tag === "a") return match;
+      return "";
+    });
   };
 
   /** @param {unknown} row */
@@ -50,6 +72,7 @@
    * @returns {Record<string, unknown> | null}
    */
   const normalizeFaqRow = (row) => {
+    if (!row || typeof row !== "object") return null;
     const intrebare = String(row.Intrebare ?? row.intrebare ?? row.Question ?? "").trim();
     const raspuns = String(row.Raspuns ?? row.raspuns ?? row.Answer ?? "").trim();
     if (!intrebare || !raspuns) return null;
@@ -61,6 +84,7 @@
    * @returns {Record<string, unknown> | null}
    */
   const normalizeTestimonialRow = (row) => {
+    if (!row || typeof row !== "object") return null;
     const nume = String(row.Nume ?? row.nume ?? row.Name ?? "").trim();
     const citat = String(row.Citat ?? row.citat ?? row.Quote ?? row.Text ?? "").trim();
     const imagine = String(row.Imagine ?? row.imagine ?? row.Image ?? "").trim();
@@ -97,16 +121,25 @@
   /**
    * @param {unknown} apiRows
    * @param {ReturnType<typeof validateSnapshot>["FAQ"]} committedFaq
+   * @param {string} label
    */
-  const pickFaqRows = (apiRows, committedFaq) => {
+  const pickFaqRows = (apiRows, committedFaq, label = "FAQ") => {
     if (!Array.isArray(apiRows)) {
-      console.warn("::warning::build-homepage-sheets: FAQ tab missing or not an array; using committed snapshot");
+      console.warn(`::warning::build-homepage-sheets: ${label} tab missing or not an array; using committed snapshot`);
       return committedFaq;
     }
-    const normalized = apiRows.map(normalizeFaqRow).filter(Boolean);
+    const normalized = [];
+    for (const row of apiRows) {
+      const next = normalizeFaqRow(row);
+      if (!next) {
+        console.warn(`::warning::build-homepage-sheets: skipped malformed ${label} row`);
+        continue;
+      }
+      normalized.push(next);
+    }
     const visible = normalized.filter((row) => row.Visible);
     if (visible.length === 0) {
-      console.warn("::warning::build-homepage-sheets: FAQ tab empty or no visible rows; using committed snapshot");
+      console.warn(`::warning::build-homepage-sheets: ${label} tab empty or no visible rows; using committed snapshot`);
       return committedFaq;
     }
     return normalized;
@@ -123,7 +156,15 @@
       );
       return committedTestimonials;
     }
-    const normalized = apiRows.map(normalizeTestimonialRow).filter(Boolean);
+    const normalized = [];
+    for (const row of apiRows) {
+      const next = normalizeTestimonialRow(row);
+      if (!next) {
+        console.warn("::warning::build-homepage-sheets: skipped malformed Testimonials row");
+        continue;
+      }
+      normalized.push(next);
+    }
     const visible = normalized.filter((row) => row.Visible);
     if (visible.length === 0) {
       console.warn(
@@ -139,12 +180,12 @@
    */
   const ensureCarouselActive = (items) => {
     const visible = items.filter((item) => item.Visible);
-    if (visible.length === 0) return items;
-    if (visible.some((item) => item.Active)) return items;
-    const firstVisibleId = visible[0].id;
+    if (visible.length === 0) return items.map((item) => ({ ...item, Active: false }));
+    let activeId = visible.find((item) => item.Active)?.id;
+    if (!activeId) activeId = visible[0].id;
     return items.map((item) => ({
       ...item,
-      Active: item.Visible && item.id === firstVisibleId,
+      Active: Boolean(item.Visible && item.id === activeId),
     }));
   };
 
@@ -178,7 +219,7 @@
     if (!response.ok) throw new Error(`legacy-faq: HTTP ${response.status}`);
     const body = await response.json();
     if (!Array.isArray(body)) throw new Error("legacy-faq: response is not an array");
-    return body.map(normalizeFaqRow).filter(Boolean);
+    return body;
   };
 
   /**
@@ -211,19 +252,18 @@
         );
         data = buildRenderData({ committed });
       }
-    } else if (!offline && data.FAQ.filter((row) => row.Visible).length === 0) {
+    } else if (data.FAQ.filter((row) => row.Visible).length === 0) {
       try {
         const legacy = await fetchLegacyFaq(fetchImpl);
-        if (legacy.some((row) => row.Visible)) {
-          data = buildRenderData({
-            faqRows: legacy,
-            testimonialRows: committed.Testimonials,
-            committed,
-          });
-          source = "legacy-faq";
-        }
+        data = buildRenderData({
+          faqRows: legacy,
+          testimonialRows: committed.Testimonials,
+          committed,
+        });
+        if (data.FAQ.some((row) => row.Visible)) source = "legacy-faq";
       } catch (error) {
         console.error(`::error::build-homepage-sheets: legacy FAQ fetch failed (${error.message}); using snapshot FAQ`);
+        data = buildRenderData({ committed });
       }
     }
 
@@ -243,7 +283,7 @@
             </button>
             <div id="faq-list-${index}" class="collapse" data-bs-parent=".faq-list">
             <p>
-                ${esc(item.Raspuns)}
+                ${sanitizeFaqAnswer(item.Raspuns)}
             </p>
             </div>
         </li>`;
@@ -288,9 +328,9 @@ ${rows}
 
   /** @param {ReturnType<typeof validateSnapshot>["Testimonials"]} items */
   const renderTestimonialsBlock = (items) => {
-    const slides = ensureCarouselActive(items.filter((item) => item.Visible)).map((item) =>
-      renderTestimonialSlide(item),
-    ).join("\n");
+    const slides = ensureCarouselActive(items.filter((item) => item.Visible))
+      .map((item) => renderTestimonialSlide(item))
+      .join("\n");
     return `<!-- TESTIMONIALS:START (generated by scripts/build-homepage-sheets.js; do not edit by hand) -->
 ${slides}
               <!-- TESTIMONIALS:END -->`;
@@ -343,6 +383,7 @@ ${slides}
 
   module.exports = {
     esc,
+    sanitizeFaqAnswer,
     validateSnapshot,
     render,
     renderFaqBlock,
@@ -351,9 +392,13 @@ ${slides}
     replaceBlock,
     readCommittedSnapshot,
     buildRenderData,
+    pickFaqRows,
     pickTestimonialRows,
     ensureCarouselActive,
+    normalizeFaqRow,
+    normalizeTestimonialRow,
     LEGACY_FAQ_URL,
     API_TABS,
+    ALLOWED_FAQ_ANSWER_TAGS,
   };
 })();

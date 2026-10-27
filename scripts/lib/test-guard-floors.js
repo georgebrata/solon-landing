@@ -18,7 +18,8 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "ga-measurement-id.test.js": 4,
   "gtag-browser.test.js": 13,
   "gtag-datalayer.test.js": 2,
-  "homepage-sheets-privacy.test.js": 9,
+  "homepage-sheets-privacy.test.js": 17,
+  "no-jsdelivr-cdn.test.js": 1,
   "html-integrity.test.js": 4,
   "html-validate.test.js": 11,
   "humanize.test.js": 24,
@@ -43,7 +44,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 454;
+const MIN_TOTAL_REGISTERED_TESTS = 463;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors
