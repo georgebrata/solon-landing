@@ -7,29 +7,37 @@ const test = require("node:test");
 
 const root = path.join(__dirname, "..");
 const JSDELIVR = /cdn\.jsdelivr\.net/iu;
-
-const skipDirs = new Set([".git", ".worktrees", "node_modules", "assets", "scripts", "tests", "docs", "r"]);
+const skipDirs = new Set([".git", ".worktrees", "node_modules", "tests", "docs", "scripts"]);
 
 /**
  * @param {string} dir
- * @param {string[]} files
+ * @param {(file: string) => void} visit
  */
-const walkHtml = (dir, files) => {
+const walkTree = (dir, visit) => {
   for (const name of fs.readdirSync(dir)) {
     if (skipDirs.has(name)) continue;
     const full = path.join(dir, name);
     const stat = fs.statSync(full);
-    if (stat.isDirectory()) walkHtml(full, files);
-    else if (name.endsWith(".html")) files.push(full);
+    if (stat.isDirectory()) walkTree(full, visit);
+    else visit(full);
   }
 };
 
-test("no committed HTML page or blog template references cdn.jsdelivr.net", () => {
-  const files = [];
-  walkHtml(root, files);
+test("no committed HTML, templates, r/, or assets HTML/JS references cdn.jsdelivr.net", () => {
+  const files = new Set();
+  walkTree(root, (file) => {
+    const rel = path.relative(root, file);
+    if (rel.startsWith(`r${path.sep}`) && file.endsWith(".html")) files.add(file);
+    if (!rel.startsWith(`assets${path.sep}`)) {
+      if (file.endsWith(".html")) files.add(file);
+      return;
+    }
+    if (file.endsWith(".html") || file.endsWith(".js")) files.add(file);
+  });
   for (const name of ["layout.html", "list.html", "post.html"]) {
-    files.push(path.join(root, "templates", name));
+    files.add(path.join(root, "templates", name));
   }
+
   const hits = [];
   for (const file of files) {
     const rel = path.relative(root, file);

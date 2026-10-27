@@ -1,5 +1,21 @@
 {
-  "FAQ": [],
+  "FAQ": [
+    {
+      "Intrebare": "In ce an s-a fondat Solon?",
+      "Raspuns": "Am pus bazele SOLON în 2023, după câteva proiecte finalizate cu succes și feedback deosebit din partea primilor clienți - care au devenit între timp parteneri de încredere.",
+      "Visible": true
+    },
+    {
+      "Intrebare": "Ce servicii oferiți mai exact?",
+      "Raspuns": "Oferim servicii digitale personalizate pentru avocați în categoriile Branding, Development, Marketing și Consultanță digitală. Aceste servicii se pot achiziționa individual sau sub formă de abonament lunar / anual.",
+      "Visible": true
+    },
+    {
+      "Intrebare": "Ce fel de abonamente oferiți?",
+      "Raspuns": "Oferta SOLON cuprinde 4 abonamente în lei: Bronze, Silver, Gold și Platinum. Le poți plăti lunar sau anual, iar la abonamentul anual plătești mai puțin decât 12 luni separate. Fiecare abonament include un număr de modificări pe website pe lună. O modificare este o singură schimbare, pe care o poți descrie într-o propoziție și care durează sub o oră. Serviciile individuale rămân disponibile și ca add-on.",
+      "Visible": true
+    }
+  ],
   "Testimonials": [
     {
       "id": "guritanu",

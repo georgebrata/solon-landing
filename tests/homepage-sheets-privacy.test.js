@@ -18,6 +18,9 @@ const {
   ensureCarouselActive,
   replaceBlock,
   sanitizeFaqAnswer,
+  sanitizeRichText,
+  truthyVisible,
+  normalizeFaqRow,
 } = require("../scripts/build-homepage-sheets");
 
 const ROOT = path.join(__dirname, "..");
@@ -120,6 +123,27 @@ test("resolveData offline uses committed snapshot without network", async () => 
   assert.equal(source, "snapshot");
   assert.ok(Array.isArray(data.Testimonials));
   assert.equal(data.Testimonials.filter((row) => row.Visible).length, 4);
+  assert.equal(data.FAQ.filter((row) => row.Visible).length, 3);
+});
+
+test("committed FAQ snapshot supplies visible items when API returns no visible rows", () => {
+  const committed = readCommittedSnapshot();
+  assert.equal(committed.FAQ.filter((row) => row.Visible).length, 3);
+  const merged = buildRenderData({
+    faqRows: [{ Intrebare: "Hidden?", Raspuns: "Nope", Visible: false }],
+    committed,
+  });
+  assert.equal(merged.FAQ.length, 3);
+  assert.match(renderFaqBlock(merged.FAQ), /In ce an s-a fondat Solon\?/u);
+});
+
+test("blank Visible column hides FAQ and testimonial rows", () => {
+  assert.equal(truthyVisible({ Visible: "" }), false);
+  assert.equal(truthyVisible({ Visible: "   " }), false);
+  const faq = normalizeFaqRow({ Intrebare: "Q?", Raspuns: "A.", Visible: "" });
+  assert.ok(faq);
+  assert.equal(faq.Visible, false);
+  assert.doesNotMatch(renderFaqBlock([faq]), /<li\b/u);
 });
 
 test("replaceBlock does not expand $ special sequences in generated FAQ", () => {
@@ -139,14 +163,56 @@ test("replaceBlock does not expand $ special sequences in generated FAQ", () => 
   assert.doesNotMatch(out, /<script>x<\/script>/u);
 });
 
-test("sanitizeFaqAnswer keeps safe links and strips unsafe markup", () => {
-  const safe =
-    'See <a href="https://solon.agency/x" target="_blank">site</a> or <strong>bold</strong> and <script>no</script>';
-  const html = sanitizeFaqAnswer(safe);
-  assert.match(html, /<a href="https:\/\/solon\.agency\/x" target="_blank" rel="noopener">site<\/a>/u);
-  assert.match(html, /<strong>bold<\/strong>/u);
-  assert.doesNotMatch(html, /<script>/u);
-  assert.equal(sanitizeFaqAnswer('<a href="javascript:alert(1)">x</a>'), "x");
+test("sanitizeRichText allows https anchors and br only after escaping", () => {
+  const safe = 'Line one<br>See <a href="https://solon.agency/x">site</a> end';
+  const html = sanitizeRichText(safe);
+  assert.match(html, /Line one<br>See <a href="https:\/\/solon\.agency\/x" rel="noopener">site<\/a> end/u);
+});
+
+test("sanitizeRichText blocks XSS vectors and keeps following https links", () => {
+  const assertNoLiveHandlers = (html) => {
+    assert.doesNotMatch(html, /<[^>]*\bon\w+\s*=/iu);
+    assert.doesNotMatch(html, /<a\s[^>]*href\s*=\s*["']javascript:/iu);
+    assert.doesNotMatch(html, /<a\s[^>]*href\s*=\s*["']data:/iu);
+  };
+  const unclosed = sanitizeRichText('bad <a href="https://evil.example">oops');
+  assert.match(unclosed, /&lt;a href=/u);
+  assertNoLiveHandlers(unclosed);
+
+  const handler = sanitizeRichText('<a href="https://ok.example" onmouseover="alert(1)">x</a>');
+  assert.match(handler, /&lt;a href=/u);
+  assertNoLiveHandlers(handler);
+
+  const jsProto = sanitizeRichText('<a href="javascript:alert(1)">x</a>');
+  assert.match(jsProto, /&lt;a href=&quot;javascript:alert\(1\)&quot;&gt;/u);
+  assertNoLiveHandlers(jsProto);
+
+  const dataUri = sanitizeRichText('<a href="data:text/html,1">x</a>');
+  assert.match(dataUri, /&lt;a href=/u);
+  assertNoLiveHandlers(dataUri);
+
+  const gtInAttr = sanitizeRichText('<a href="https://x.example?a=1>b=2">x</a>');
+  assert.match(gtInAttr, /&lt;a href=/u);
+  assertNoLiveHandlers(gtInAttr);
+
+  const closeInAttr = sanitizeRichText('<a href="https://x.example" title="</a>">x</a>');
+  assert.match(closeInAttr, /&lt;a href=/u);
+  assertNoLiveHandlers(closeInAttr);
+
+  const nested = sanitizeRichText('<a href="https://x.example"><strong>x</strong></a>');
+  assert.doesNotMatch(nested, /<a href="https:\/\/x\.example"/u);
+  assertNoLiveHandlers(nested);
+
+  const combo =
+    'bad <a onmouseover="alert(1)">x</a> then <a href="https://solon.agency/good">ok</a>';
+  const comboOut = sanitizeRichText(combo);
+  assert.match(comboOut, /<a href="https:\/\/solon\.agency\/good" rel="noopener">ok<\/a>/u);
+  assertNoLiveHandlers(comboOut);
+});
+
+test("sanitizeRichText does not double-escape entities or apostrophes", () => {
+  assert.equal(sanitizeRichText("Tom &amp; Jerry's"), "Tom &amp; Jerry&#39;s");
+  assert.equal(sanitizeRichText("A &amp; B"), "A &amp; B");
 });
 
 test("pickFaqRows keeps valid API rows when one row is malformed", () => {

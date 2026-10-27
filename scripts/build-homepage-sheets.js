@@ -20,11 +20,43 @@
     "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
   const API_TABS = Object.freeze(["FAQ", "Testimonials"]);
   const REQUEST_TIMEOUT_MS = 30000;
-  const ALLOWED_FAQ_ANSWER_TAGS = /^(br|strong|em|a)$/iu;
-
   /** @param {string} text */
   const esc = (text) =>
     String(text).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
+  /** @param {string} text */
+  const decodeHtmlEntities = (text) =>
+    String(text)
+      .replace(/&amp;/giu, "&")
+      .replace(/&lt;/giu, "<")
+      .replace(/&gt;/giu, ">")
+      .replace(/&quot;/giu, '"')
+      .replace(/&#39;/giu, "'")
+      .replace(/&#x27;/giu, "'");
+
+  const HTTPS_ANCHOR_ON_ESCAPED =
+    /&lt;a href=&quot;(https:\/\/(?:[^&]|&amp;)*?)&quot;&gt;((?:(?!&lt;|&gt;|&quot;).)*?)&lt;\/a&gt;/giu;
+
+  /**
+   * Escape all markup, then re-allow only &lt;br&gt; and exact https anchors with plain link text.
+   * @param {string} raw
+   */
+  const sanitizeRichText = (raw) => {
+    const stripped = decodeHtmlEntities(String(raw)).replace(/<script\b[^>]*>[\s\S]*?<\/script>/giu, "");
+    let text = esc(stripped);
+    text = text.replace(/&lt;br\s*\/?&gt;/giu, "<br>");
+    text = text.replace(HTTPS_ANCHOR_ON_ESCAPED, (match, escapedHref, linkText) => {
+      const href = decodeHtmlEntities(escapedHref);
+      if (!/^https:\/\//iu.test(href) || /[\s<>"']/u.test(href)) return match;
+      if (/^(javascript|data|vbscript):/iu.test(href)) return match;
+      if (/&lt;|&gt;|&quot;|&#39;/u.test(linkText)) return match;
+      if (/\bon\w+\s*=/iu.test(match)) return match;
+      return `<a href="${esc(href)}" rel="noopener">${linkText}</a>`;
+    });
+    return text;
+  };
+
+  const sanitizeFaqAnswer = sanitizeRichText;
 
   /**
    * @param {string} html
@@ -37,34 +69,26 @@
     return html.replace(re, () => block);
   };
 
-  /** @param {string} raw */
-  const sanitizeFaqAnswer = (raw) => {
-    let text = String(raw).replace(/<script\b[^>]*>[\s\S]*?<\/script>/giu, "");
-    text = text.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/giu, (match, attrs, inner) => {
-      const hrefMatch = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/iu.exec(attrs);
-      const href = (hrefMatch?.[1] ?? hrefMatch?.[2] ?? "").trim();
-      if (!/^(https?:|mailto:|tel:)/iu.test(href)) return esc(inner);
-      const targetBlank = /\btarget\s*=\s*["']_blank["']/iu.test(attrs);
-      const rel = targetBlank ? ' rel="noopener"' : "";
-      const target = targetBlank ? ' target="_blank"' : "";
-      return `<a href="${esc(href)}"${target}${rel}>${esc(inner)}</a>`;
-    });
-    if (!/<[^>]+>/u.test(text)) return esc(text);
-    return text.replace(/<\/?([a-z0-9]+)\b[^>]*>/giu, (match, tagName) => {
-      const tag = String(tagName).toLowerCase();
-      if (tag === "br") return "<br>";
-      if (tag === "strong" || tag === "em") return match.startsWith("</") ? `</${tag}>` : `<${tag}>`;
-      if (tag === "a") return match;
-      return "";
-    });
+  /** @param {unknown} value */
+  const isExplicitVisible = (value) => {
+    if (value === undefined || value === null) return false;
+    if (typeof value === "string" && value.trim() === "") return false;
+    if (value === false || value === "FALSE" || value === "false" || value === 0 || value === "0") return false;
+    if (value === true || value === "TRUE" || value === "true" || value === 1 || value === "1") return true;
+    return false;
   };
 
   /** @param {unknown} row */
   const truthyVisible = (row) => {
     if (!row || typeof row !== "object") return false;
-    const visible = row.Visible ?? row.visible ?? row.Activ ?? row.activ;
-    if (visible === false || visible === "FALSE" || visible === "false" || visible === 0 || visible === "0") return false;
-    return true;
+    const keys = ["Visible", "visible", "Activ", "activ"];
+    let sawKey = false;
+    for (const key of keys) {
+      if (!(key in row)) continue;
+      sawKey = true;
+      if (isExplicitVisible(row[key])) return true;
+    }
+    return sawKey ? false : false;
   };
 
   /**
@@ -316,7 +340,7 @@ ${rows}
                         <span>${esc(item.Subtitlu)}</span>
                         <blockquote class="blockquote mb-4">
                           <p${quoteClass}>
-                            <i class="bi bi-chat-right-quote-fill"></i> ${esc(item.Citat)}
+                            <i class="bi bi-chat-right-quote-fill"></i> ${sanitizeRichText(item.Citat)}
                           </p>
                         </blockquote>
                       </div>
@@ -383,6 +407,7 @@ ${slides}
 
   module.exports = {
     esc,
+    sanitizeRichText,
     sanitizeFaqAnswer,
     validateSnapshot,
     render,
@@ -397,8 +422,8 @@ ${slides}
     ensureCarouselActive,
     normalizeFaqRow,
     normalizeTestimonialRow,
+    truthyVisible,
     LEGACY_FAQ_URL,
     API_TABS,
-    ALLOWED_FAQ_ANSWER_TAGS,
   };
 })();
