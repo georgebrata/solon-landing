@@ -1,7 +1,10 @@
 /* global Fireworks */
-const container = document.querySelector('.fireworks')
-const fireworks = new Fireworks.default(container)
-fireworks.start()
+"use strict";
+const container = document.querySelector(".fireworks");
+if (container && typeof Fireworks !== "undefined" && Fireworks.default) {
+  const fireworks = new Fireworks.default(container);
+  fireworks.start();
+}
 function scrollToElement(elementId, seconds) {
     // Wait for 5 seconds
     setTimeout(function () {
