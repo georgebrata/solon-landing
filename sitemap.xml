@@ -57,7 +57,7 @@
     </url>
     <url>
         <loc>https://solon.agency/blog/</loc>
-        <lastmod>2026-10-26</lastmod>
+        <lastmod>2026-10-27</lastmod>
         <priority>0.90</priority>
     </url>
     <url>
@@ -408,6 +408,11 @@
     <url>
         <loc>https://solon.agency/blog/viteza-website-avocat/</loc>
         <lastmod>2026-10-26</lastmod>
+        <priority>0.50</priority>
+    </url>
+    <url>
+        <loc>https://solon.agency/blog/proiect-modificare-legea-51-1995-website-avocat/</loc>
+        <lastmod>2026-10-27</lastmod>
         <priority>0.50</priority>
     </url>
 </urlset>
