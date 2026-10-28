@@ -114,6 +114,7 @@ const harness = (types, options = {}) => {
         },
       },
       documentElement: { appendChild(node) { return node; } },
+      cookie: options.cookies || "",
       querySelectorAll() { return forms; },
       createElement(tag) {
         return {
@@ -165,6 +166,7 @@ const harness = (types, options = {}) => {
     clearTimeout: options.clearTimeout || clearTimeout,
     encodeURIComponent,
     Error,
+    crypto: options.crypto !== undefined ? options.crypto : globalThis.crypto,
     turnstile: options.turnstile,
     location: options.location || { href: "https://solon.agency/contact/#formular" },
     SolonBrevo:
@@ -177,6 +179,11 @@ const harness = (types, options = {}) => {
             },
           },
     solonTrack: options.solonTrack,
+    SolonConsent: options.SolonConsent !== undefined
+      ? options.SolonConsent
+      : { hasConsent: () => false },
+    RegExp,
+    decodeURIComponent,
   };
   context.window = context;
   context.globalThis = context;
@@ -206,8 +213,8 @@ test("maps Contact, Telefon, and Newsletter to their sheet payloads", async () =
   }));
   assert.deepEqual(parsed.map((item) => item.sheet), ["Contact", "Telefon", "Newsletter"]);
   assert.deepEqual(parsed.map((item) => Object.keys(item.body.data)), [
-    ["Data", "IP", "Email", "Nume", "Mesaj", "formLoadedAt"],
-    ["Data", "IP", "Telefon", "formLoadedAt"],
+    ["Data", "IP", "Email", "Nume", "Mesaj", "formLoadedAt", "meta_event_id", "page_url", "marketing_consent"],
+    ["Data", "IP", "Telefon", "formLoadedAt", "meta_event_id", "page_url", "marketing_consent"],
     ["Data", "IP", "Email", "formLoadedAt"],
   ]);
   assert.equal(typeof parsed[0].body.data.formLoadedAt, "number");
