@@ -700,8 +700,8 @@ function sendCapiLead_(sheetName, parsed) {
     var payload = buildCapiLeadPayload_(sheetName, parsed);
     if (!payload) return;
 
-    var url = META_CAPI_URL + '?access_token=' + encodeURIComponent(token);
-    var res = UrlFetchApp.fetch(url, {
+    payload.access_token = token;
+    var res = UrlFetchApp.fetch(META_CAPI_URL, {
       method: 'post',
       contentType: 'application/json',
       payload: JSON.stringify(payload),
@@ -712,7 +712,7 @@ function sendCapiLead_(sheetName, parsed) {
       Logger.log('CAPI error: HTTP ' + code);
     }
   } catch (err) {
-    Logger.log('CAPI exception: ' + err.message);
+    Logger.log('CAPI exception: ' + err.name);
   }
 }
 

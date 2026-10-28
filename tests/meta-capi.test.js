@@ -373,15 +373,37 @@ test("CAPI failure does not affect the form save response", () => {
   assert.equal(capiCalls.length, 1);
 });
 
-test("sendCapiLead_ does not log the CAPI token", () => {
+test("fetched URL has no access_token query param; token is in JSON body", () => {
+  const { doPost, fetchCalls } = loadAppsScript({
+    scriptProps: { META_CAPI_TOKEN: "tok_body_only" },
+  });
+  doPost(capiPost("Contact", { meta_event_id: validUuid, user_agent: "UA" }));
+  const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
+  assert.equal(capiCalls.length, 1);
+  // URL must be exactly META_CAPI_URL — no query string at all.
+  assert.doesNotMatch(capiCalls[0].url, /access_token/);
+  assert.doesNotMatch(capiCalls[0].url, /\?/);
+  // Token must be in the JSON payload body.
+  const body = JSON.parse(capiCalls[0].opts.payload);
+  assert.equal(body.access_token, "tok_body_only");
+});
+
+test("sendCapiLead_ does not log the CAPI token even when exception message contains it", () => {
+  const SECRET = "VERY_SECRET_TOKEN_DO_NOT_LOG";
+  // Simulate UrlFetchApp embedding the request URL (with token) in the error message.
   const { doPost, loggerLines } = loadAppsScript({
-    scriptProps: { META_CAPI_TOKEN: "VERY_SECRET_TOKEN_DO_NOT_LOG" },
-    fetchImpl: () => { throw new Error("network down"); },
+    scriptProps: { META_CAPI_TOKEN: SECRET },
+    fetchImpl: () => {
+      throw new Error("Request to https://graph.facebook.com/v26.0/400022442507673/events failed: " + SECRET);
+    },
   });
   doPost(capiPost("Contact", { meta_event_id: validUuid, user_agent: "UA" }));
   for (const line of loggerLines) {
-    assert.doesNotMatch(line, /VERY_SECRET_TOKEN_DO_NOT_LOG/);
+    assert.doesNotMatch(line, new RegExp(SECRET), "token must not appear in any log line");
   }
+  // err.name should be logged instead of err.message.
+  assert.ok(loggerLines.some((l) => l.includes("CAPI exception")), "must log CAPI exception");
+  assert.ok(loggerLines.some((l) => l.includes("Error")), "must log err.name");
 });
 
 test("sendCapiLead_ only fires for Contact and Telefon, not Newsletter", () => {

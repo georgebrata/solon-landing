@@ -26,7 +26,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "json-ld-injection.test.js": 17,
   "jsonld.test.js": 2,
   "legal-content-guard.test.js": 3,
-  "meta-capi.test.js": 23,
+  "meta-capi.test.js": 24,
   "meta-pixel-privacy.test.js": 4,
   "no-jsdelivr-cdn.test.js": 1,
   "partners.test.js": 4,
@@ -45,7 +45,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 490;
+const MIN_TOTAL_REGISTERED_TESTS = 491;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors
