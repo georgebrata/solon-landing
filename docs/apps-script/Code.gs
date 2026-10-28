@@ -660,20 +660,24 @@ function buildCapiLeadPayload_(sheetName, parsed) {
   };
 
   var pageUrl = data.page_url;
-  if (typeof pageUrl === 'string' && META_CAPI_ALLOWED_URL_RE.test(pageUrl)) {
-    event.event_source_url = pageUrl;
+  if (typeof pageUrl === 'string') {
+    var qIdx = pageUrl.indexOf('?');
+    if (qIdx >= 0) pageUrl = pageUrl.slice(0, qIdx);
+    var hIdx = pageUrl.indexOf('#');
+    if (hIdx >= 0) pageUrl = pageUrl.slice(0, hIdx);
+    if (META_CAPI_ALLOWED_URL_RE.test(pageUrl)) {
+      event.event_source_url = pageUrl;
+    }
   }
 
   var userData = {};
-  if (data.marketing_consent === true) {
-    var fbp = data.fbp;
-    var fbc = data.fbc;
-    if (typeof fbp === 'string' && fbp) userData.fbp = fbp;
-    if (typeof fbc === 'string' && fbc) userData.fbc = fbc;
-  }
-  if (Object.keys(userData).length > 0) {
-    event.user_data = userData;
-  }
+  var ua = data.user_agent;
+  if (typeof ua === 'string' && ua) userData.client_user_agent = ua;
+  var fbp = data.fbp;
+  var fbc = data.fbc;
+  if (typeof fbp === 'string' && fbp) userData.fbp = fbp;
+  if (typeof fbc === 'string' && fbc) userData.fbc = fbc;
+  event.user_data = userData;
 
   event.custom_data = { content_name: sheetName };
 
@@ -687,6 +691,9 @@ function buildCapiLeadPayload_(sheetName, parsed) {
 
 function sendCapiLead_(sheetName, parsed) {
   try {
+    var data = (parsed && parsed.data) || {};
+    if (data.marketing_consent !== true) return;
+
     var token = PropertiesService.getScriptProperties().getProperty('META_CAPI_TOKEN');
     if (!token) return;
 

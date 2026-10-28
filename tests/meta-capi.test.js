@@ -14,9 +14,9 @@ const SOURCE = fs.readFileSync(CODE_PATH, "utf8");
 const formsSource = fs.readFileSync(FORMS_PATH, "utf8");
 const privacyHtml = fs.readFileSync(PRIVACY_PATH, "utf8");
 
-// Exact Romanian sentence with proper Unicode diacritics (U+0219 = ș, U+0103 = ă).
+// Exact approved sentence — no quotation marks, exact Romanian diacritics.
 const CAPI_SENTENCE =
-  "\u201ePentru unele conversii (solicitare trimis\u0103, plat\u0103 finalizat\u0103), putem transmite evenimentul c\u0103tre Meta \u0219i de pe serverul nostru (Conversions API), cu acelea\u0219i date \u0219i doar dac\u0103 ai acceptat Marketing.\u201d";
+  "Pentru unele conversii (solicitare trimis\u0103, plat\u0103 finalizat\u0103), putem transmite evenimentul c\u0103tre Meta \u0219i de pe serverul nostru (Conversions API), cu acelea\u0219i date \u0219i doar dac\u0103 ai acceptat Marketing.";
 
 // ---------------------------------------------------------------------------
 // Apps Script harness (minimal, focused on CAPI)
@@ -146,7 +146,9 @@ const loadAppsScript = (options = {}) => {
 const validUuid = "123e4567-e89b-12d3-a456-426614174000";
 const GRAPH_API_HOST = "graph.facebook.com";
 
-const capiPost = (sheet, extraData = {}) => ({
+// capiPost builds a form POST body; marketingConsent defaults to true so most
+// tests that expect CAPI to fire work without repeating the flag.
+const capiPost = (sheet, extraData = {}, { marketingConsent = true } = {}) => ({
   postData: {
     contents: JSON.stringify({
       action: "append",
@@ -157,6 +159,7 @@ const capiPost = (sheet, extraData = {}) => ({
         Mesaj: "hello",
         IP: "203.0.113.1",
         formLoadedAt: Date.now() - 5000,
+        marketing_consent: marketingConsent,
         ...extraData,
       },
     }),
@@ -168,7 +171,7 @@ const capiPost = (sheet, extraData = {}) => ({
 // CAPI payload builder tests
 // ---------------------------------------------------------------------------
 
-test("buildCapiLeadPayload_ returns null when meta_event_id is absent", () => {
+test("buildCapiLeadPayload_ returns null when meta_event_id is absent or invalid", () => {
   const { buildCapiLeadPayload_ } = loadAppsScript({
     scriptProps: { META_CAPI_TOKEN: "tok123" },
   });
@@ -186,7 +189,7 @@ test("buildCapiLeadPayload_ returns a payload with the valid UUID as event_id", 
     data: {
       meta_event_id: validUuid,
       page_url: "https://solon.agency/contact/",
-      marketing_consent: false,
+      user_agent: "Mozilla/5.0 TestBrowser",
     },
   };
   const payload = buildCapiLeadPayload_("Contact", parsed);
@@ -200,46 +203,59 @@ test("buildCapiLeadPayload_ returns a payload with the valid UUID as event_id", 
   assert.ok(event.event_time > 0);
 });
 
-test("buildCapiLeadPayload_ includes event_source_url only for solon.agency URLs", () => {
+test("buildCapiLeadPayload_ includes event_source_url only for solon.agency URLs, stripped of query and hash", () => {
   const { buildCapiLeadPayload_ } = loadAppsScript({
     scriptProps: { META_CAPI_TOKEN: "tok123" },
   });
   const withGoodUrl = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, page_url: "https://solon.agency/contact/", marketing_consent: false },
+    data: { meta_event_id: validUuid, page_url: "https://solon.agency/contact/", user_agent: "UA" },
   });
   assert.equal(withGoodUrl.data[0].event_source_url, "https://solon.agency/contact/");
 
+  const withQueryHash = buildCapiLeadPayload_("Contact", {
+    data: { meta_event_id: validUuid, page_url: "https://solon.agency/contact/?utm=x#form", user_agent: "UA" },
+  });
+  assert.equal(withQueryHash.data[0].event_source_url, "https://solon.agency/contact/");
+
   const withBadUrl = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, page_url: "https://evil.example/", marketing_consent: false },
+    data: { meta_event_id: validUuid, page_url: "https://evil.example/", user_agent: "UA" },
   });
   assert.equal("event_source_url" in withBadUrl.data[0], false);
 
   const withNoUrl = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, marketing_consent: false },
+    data: { meta_event_id: validUuid, user_agent: "UA" },
   });
   assert.equal("event_source_url" in withNoUrl.data[0], false);
 });
 
-test("buildCapiLeadPayload_ includes fbp/fbc only when marketing_consent is true", () => {
+test("buildCapiLeadPayload_ includes client_user_agent and fbp/fbc in user_data when provided", () => {
   const { buildCapiLeadPayload_ } = loadAppsScript({
     scriptProps: { META_CAPI_TOKEN: "tok123" },
   });
-  const noConsent = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, marketing_consent: false, fbp: "fb.1.1.abc", fbc: "fb.1.1.xyz" },
+  const withAll = buildCapiLeadPayload_("Contact", {
+    data: {
+      meta_event_id: validUuid,
+      user_agent: "Mozilla/5.0 TestBrowser",
+      fbp: "fb.1.1.abc123",
+      fbc: "fb.1.1.def456",
+    },
   });
-  assert.equal("user_data" in noConsent.data[0], false);
+  assert.equal(withAll.data[0].user_data.client_user_agent, "Mozilla/5.0 TestBrowser");
+  assert.equal(withAll.data[0].user_data.fbp, "fb.1.1.abc123");
+  assert.equal(withAll.data[0].user_data.fbc, "fb.1.1.def456");
 
-  const withConsent = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, marketing_consent: true, fbp: "fb.1.1.abc", fbc: "fb.1.1.xyz" },
+  const noOptional = buildCapiLeadPayload_("Contact", {
+    data: { meta_event_id: validUuid, user_agent: "UA only" },
   });
-  assert.ok(withConsent.data[0].user_data, "user_data must be present with consent");
-  assert.equal(withConsent.data[0].user_data.fbp, "fb.1.1.abc");
-  assert.equal(withConsent.data[0].user_data.fbc, "fb.1.1.xyz");
+  assert.equal(noOptional.data[0].user_data.client_user_agent, "UA only");
+  assert.equal("fbp" in noOptional.data[0].user_data, false);
+  assert.equal("fbc" in noOptional.data[0].user_data, false);
 
-  const consentNoCookies = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, marketing_consent: true, fbp: "", fbc: "" },
+  const noUserAgent = buildCapiLeadPayload_("Contact", {
+    data: { meta_event_id: validUuid, fbp: "fb.1.1.x" },
   });
-  assert.equal("user_data" in consentNoCookies.data[0], false);
+  assert.equal("client_user_agent" in noUserAgent.data[0].user_data, false);
+  assert.equal(noUserAgent.data[0].user_data.fbp, "fb.1.1.x");
 });
 
 test("buildCapiLeadPayload_ never contains PII keys (email, phone, name, IP)", () => {
@@ -249,7 +265,7 @@ test("buildCapiLeadPayload_ never contains PII keys (email, phone, name, IP)", (
   const payload = buildCapiLeadPayload_("Contact", {
     data: {
       meta_event_id: validUuid,
-      marketing_consent: true,
+      user_agent: "UA",
       fbp: "fb.1.1.abc",
       Email: "user@example.com",
       Telefon: "0712345678",
@@ -269,7 +285,7 @@ test("buildCapiLeadPayload_ includes test_event_code when META_CAPI_TEST_EVENT_C
     scriptProps: { META_CAPI_TOKEN: "tok123", META_CAPI_TEST_EVENT_CODE: "TEST12345" },
   });
   const payload = buildCapiLeadPayload_("Contact", {
-    data: { meta_event_id: validUuid, marketing_consent: false },
+    data: { meta_event_id: validUuid, user_agent: "UA" },
   });
   assert.equal(payload.test_event_code, "TEST12345");
 
@@ -277,14 +293,68 @@ test("buildCapiLeadPayload_ includes test_event_code when META_CAPI_TEST_EVENT_C
     scriptProps: { META_CAPI_TOKEN: "tok123" },
   });
   const payloadNoCode = noCode("Contact", {
-    data: { meta_event_id: validUuid, marketing_consent: false },
+    data: { meta_event_id: validUuid, user_agent: "UA" },
   });
   assert.equal("test_event_code" in payloadNoCode, false);
 });
 
+// ---------------------------------------------------------------------------
+// Consent gate tests (Fix 1)
+// ---------------------------------------------------------------------------
+
+test("sendCapiLead_ skips entirely when marketing_consent is not strict true", () => {
+  const nonConsentValues = [false, undefined, null, "true", 1, 0, ""];
+  for (const consent of nonConsentValues) {
+    const extraData = { meta_event_id: validUuid, user_agent: "UA" };
+    if (consent !== undefined) extraData.marketing_consent = consent;
+    const { doPost, fetchCalls } = loadAppsScript({
+      scriptProps: { META_CAPI_TOKEN: "tok123" },
+    });
+    doPost(capiPost("Contact", extraData, { marketingConsent: false }));
+    // Override marketing_consent with the test value
+    const { doPost: doPost2, fetchCalls: fc2 } = loadAppsScript({
+      scriptProps: { META_CAPI_TOKEN: "tok123" },
+    });
+    doPost2({
+      postData: {
+        contents: JSON.stringify({
+          action: "append",
+          data: {
+            Data: "2026-10-28",
+            Email: "test@example.com",
+            formLoadedAt: Date.now() - 5000,
+            meta_event_id: validUuid,
+            marketing_consent: consent,
+          },
+        }),
+      },
+      parameter: { sheet: "Contact" },
+    });
+    const capiCalls = fc2.filter(({ url }) => url.includes(GRAPH_API_HOST));
+    assert.equal(
+      capiCalls.length,
+      0,
+      `CAPI must be skipped when marketing_consent=${JSON.stringify(consent)}`
+    );
+  }
+});
+
+test("sendCapiLead_ fires when marketing_consent is strict true", () => {
+  const { doPost, fetchCalls } = loadAppsScript({
+    scriptProps: { META_CAPI_TOKEN: "tok123" },
+  });
+  doPost(capiPost("Contact", { meta_event_id: validUuid, user_agent: "UA" }));
+  const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
+  assert.equal(capiCalls.length, 1);
+});
+
+// ---------------------------------------------------------------------------
+// Token / failure tests
+// ---------------------------------------------------------------------------
+
 test("sendCapiLead_ skips silently when META_CAPI_TOKEN is missing", () => {
   const { doPost, fetchCalls } = loadAppsScript({ scriptProps: {} });
-  const result = doPost(capiPost("Contact", { meta_event_id: validUuid, marketing_consent: false }));
+  const result = doPost(capiPost("Contact", { meta_event_id: validUuid, user_agent: "UA" }));
   const json = JSON.parse(result._text);
   assert.equal(json.ok, true);
   const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
@@ -297,7 +367,7 @@ test("CAPI failure does not affect the form save response", () => {
     capiHttpCode: 500,
     capiBody: '{"error":"fail"}',
   });
-  const result = doPost(capiPost("Contact", { meta_event_id: validUuid, marketing_consent: false }));
+  const result = doPost(capiPost("Contact", { meta_event_id: validUuid, user_agent: "UA" }));
   assert.equal(JSON.parse(result._text).ok, true);
   const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
   assert.equal(capiCalls.length, 1);
@@ -308,7 +378,7 @@ test("sendCapiLead_ does not log the CAPI token", () => {
     scriptProps: { META_CAPI_TOKEN: "VERY_SECRET_TOKEN_DO_NOT_LOG" },
     fetchImpl: () => { throw new Error("network down"); },
   });
-  doPost(capiPost("Contact", { meta_event_id: validUuid, marketing_consent: false }));
+  doPost(capiPost("Contact", { meta_event_id: validUuid, user_agent: "UA" }));
   for (const line of loggerLines) {
     assert.doesNotMatch(line, /VERY_SECRET_TOKEN_DO_NOT_LOG/);
   }
@@ -318,7 +388,7 @@ test("sendCapiLead_ only fires for Contact and Telefon, not Newsletter", () => {
   const { doPost, fetchCalls } = loadAppsScript({
     scriptProps: { META_CAPI_TOKEN: "tok123" },
   });
-  doPost(capiPost("Newsletter", { meta_event_id: validUuid }));
+  doPost(capiPost("Newsletter", { meta_event_id: validUuid, user_agent: "UA" }));
   const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
   assert.equal(capiCalls.length, 0);
 });
@@ -328,20 +398,40 @@ test("sendCapiLead_ fires CAPI for Contact and Telefon with valid event_id", () 
     const { doPost, fetchCalls } = loadAppsScript({
       scriptProps: { META_CAPI_TOKEN: "tok123" },
     });
-    doPost(capiPost(sheet, { meta_event_id: validUuid, marketing_consent: false }));
+    doPost(capiPost(sheet, { meta_event_id: validUuid, user_agent: "UA/1.0" }));
     const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
     assert.equal(capiCalls.length, 1, `CAPI should fire for ${sheet}`);
     const body = JSON.parse(capiCalls[0].opts.payload);
     assert.equal(body.data[0].event_id, validUuid);
     assert.equal(body.data[0].event_name, "Lead");
+    assert.equal(body.data[0].user_data.client_user_agent, "UA/1.0");
   }
+});
+
+// ---------------------------------------------------------------------------
+// event_source_url stripping (server-side, Fix 4)
+// ---------------------------------------------------------------------------
+
+test("event_source_url is stripped of query string and hash before sending to Meta", () => {
+  const { doPost, fetchCalls } = loadAppsScript({
+    scriptProps: { META_CAPI_TOKEN: "tok123" },
+  });
+  doPost(capiPost("Contact", {
+    meta_event_id: validUuid,
+    user_agent: "UA",
+    page_url: "https://solon.agency/contact/?utm_source=google&utm_medium=cpc#formular",
+  }));
+  const capiCalls = fetchCalls.filter(({ url }) => url.includes(GRAPH_API_HOST));
+  assert.equal(capiCalls.length, 1);
+  const body = JSON.parse(capiCalls[0].opts.payload);
+  assert.equal(body.data[0].event_source_url, "https://solon.agency/contact/");
 });
 
 // ---------------------------------------------------------------------------
 // Privacy page tests
 // ---------------------------------------------------------------------------
 
-test("privacy page A2: CAPI sentence present verbatim in #meta-pixel Ce date paragraph area", () => {
+test("privacy page A2: CAPI sentence present verbatim in #meta-pixel section", () => {
   const metaPixelStart = privacyHtml.indexOf('id="meta-pixel"');
   assert.ok(metaPixelStart >= 0, "#meta-pixel section must exist");
   const prospStart = privacyHtml.indexOf('id="prospectare-b2b"');
@@ -352,18 +442,26 @@ test("privacy page A2: CAPI sentence present verbatim in #meta-pixel Ce date par
     metaPixelSection.includes(CAPI_SENTENCE),
     "CAPI sentence must appear in the #meta-pixel section"
   );
+  assert.ok(
+    !metaPixelSection.includes("\u201e" + CAPI_SENTENCE),
+    "CAPI sentence must not be wrapped in „ quotation marks in A2"
+  );
 });
 
-test("privacy page B2: CAPI sentence present verbatim in Dezvăluiri (destinatari) section", () => {
-  const dezvStart = privacyHtml.indexOf("Dezvăluirea datelor cu caracter personal");
-  assert.ok(dezvStart >= 0, "Dezvăluiri section must exist");
+test("privacy page B2: CAPI sentence present verbatim in Dezv\u0103luiri section", () => {
+  const dezvStart = privacyHtml.indexOf("Dezv\u0103luirea datelor cu caracter personal");
+  assert.ok(dezvStart >= 0, "Dezv\u0103luiri section must exist");
   const dreptStart = privacyHtml.indexOf("Drepturile tale", dezvStart);
   const dezvSection = dreptStart > 0
     ? privacyHtml.slice(dezvStart, dreptStart)
     : privacyHtml.slice(dezvStart, dezvStart + 3000);
   assert.ok(
     dezvSection.includes(CAPI_SENTENCE),
-    "CAPI sentence must appear in the Dezvăluiri section"
+    "CAPI sentence must appear in the Dezv\u0103luiri section"
+  );
+  assert.ok(
+    !dezvSection.includes("\u201e" + CAPI_SENTENCE),
+    "CAPI sentence must not be wrapped in \u201e quotation marks in B2"
   );
 });
 
@@ -373,7 +471,7 @@ test("privacy page 'Ultima actualizare' is 28.10.2026", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Frontend forms: CAPI fields in POST body
+// Frontend forms: CAPI fields in POST body (Fix 2, Fix 4)
 // ---------------------------------------------------------------------------
 
 const formsHarness = (types, options = {}) => {
@@ -401,7 +499,11 @@ const formsHarness = (types, options = {}) => {
     const submitCls = new Set();
     const submit = {
       disabled: false, innerHTML: "Trimite", textContent: "Trimite",
-      classList: { add(c) { submitCls.add(c); }, remove(c) { submitCls.delete(c); }, contains(c) { return submitCls.has(c); } },
+      classList: {
+        add(c) { submitCls.add(c); },
+        remove(c) { submitCls.delete(c); },
+        contains(c) { return submitCls.has(c); },
+      },
     };
     const form = {
       dataset: { solonForm: type },
@@ -435,6 +537,7 @@ const formsHarness = (types, options = {}) => {
 
   const cookies = options.cookies || "";
   const marketingConsent = options.marketingConsent === true;
+  const userAgent = options.userAgent !== undefined ? options.userAgent : "TestBrowser/1.0";
 
   const context = {
     window: undefined,
@@ -468,6 +571,7 @@ const formsHarness = (types, options = {}) => {
     encodeURIComponent,
     Error,
     crypto: globalThis.crypto,
+    navigator: { userAgent },
     console: { info: () => undefined, warn: () => undefined, error: () => undefined, log: () => undefined },
     SolonLog: { info: () => undefined, warn: () => undefined, error: () => undefined },
     setTimeout: (fn, ms) => { if (ms > 0 && ms <= 1000) return setTimeout(fn, 0); return setTimeout(fn, ms); },
@@ -506,23 +610,37 @@ test("Newsletter form does not include meta_event_id in POST body", async () => 
   assert.equal("meta_event_id" in body.data, false);
 });
 
-test("forms include page_url and marketing_consent in Contact/Telefon POST body", async () => {
-  const { forms, requests } = formsHarness(["Contact"]);
+test("forms include page_url without query string or hash in Contact/Telefon POST body", async () => {
+  const { forms, requests } = formsHarness(["Contact"], {
+    location: { href: "https://solon.agency/contact/?utm_source=google&fbclid=abc#formular" },
+  });
   await forms[0].dispatch();
   const body = JSON.parse(dataRequests(requests)[0].init.body);
-  assert.equal(typeof body.data.page_url, "string");
-  assert.equal(body.data.marketing_consent, false);
+  assert.equal(body.data.page_url, "https://solon.agency/contact/");
 });
 
-test("forms include fbp/fbc only when marketing consent is granted", async () => {
+test("forms include marketing_consent false when consent not granted", async () => {
+  const { forms, requests } = formsHarness(["Contact"], { marketingConsent: false });
+  await forms[0].dispatch();
+  const body = JSON.parse(dataRequests(requests)[0].init.body);
+  assert.equal(body.data.marketing_consent, false);
+  assert.equal("fbp" in body.data, false);
+  assert.equal("fbc" in body.data, false);
+  assert.equal("user_agent" in body.data, false);
+});
+
+test("forms include fbp, fbc and user_agent only when marketing consent is granted", async () => {
   const withConsent = formsHarness(["Contact"], {
     cookies: "_fbp=fb.1.1.abc123; _fbc=fb.1.1.def456",
     marketingConsent: true,
+    userAgent: "Mozilla/5.0 TestBot",
   });
   await withConsent.forms[0].dispatch();
   const bodyWith = JSON.parse(dataRequests(withConsent.requests)[0].init.body);
   assert.equal(bodyWith.data.fbp, "fb.1.1.abc123");
   assert.equal(bodyWith.data.fbc, "fb.1.1.def456");
+  assert.equal(bodyWith.data.user_agent, "Mozilla/5.0 TestBot");
+  assert.equal(bodyWith.data.marketing_consent, true);
 
   const noConsent = formsHarness(["Contact"], {
     cookies: "_fbp=fb.1.1.abc123; _fbc=fb.1.1.def456",
@@ -532,6 +650,7 @@ test("forms include fbp/fbc only when marketing consent is granted", async () =>
   const bodyNo = JSON.parse(dataRequests(noConsent.requests)[0].init.body);
   assert.equal("fbp" in bodyNo.data, false);
   assert.equal("fbc" in bodyNo.data, false);
+  assert.equal("user_agent" in bodyNo.data, false);
 });
 
 test("solonTrack for Lead is called with the same event_id sent in POST body", async () => {

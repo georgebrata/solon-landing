@@ -367,22 +367,40 @@
     }
   };
 
+  /** Strip query string and hash from a URL string. */
+  const stripUrlQueryAndHash = (href) => {
+    try {
+      const qIdx = href.indexOf("?");
+      const hIdx = href.indexOf("#");
+      let end = href.length;
+      if (qIdx >= 0 && qIdx < end) end = qIdx;
+      if (hIdx >= 0 && hIdx < end) end = hIdx;
+      return href.slice(0, end);
+    } catch {
+      return href;
+    }
+  };
+
   /**
    * Build CAPI supplement fields for Contact / Telefon forms.
    * @param {string} metaEventId
    * @returns {Record<string, unknown>}
    */
   const buildCapiFields = (metaEventId) => {
+    const rawHref = (typeof window !== "undefined" && typeof window.location?.href === "string")
+      ? window.location.href
+      : "";
     const fields = {
       meta_event_id: metaEventId,
-      page_url: (typeof window !== "undefined" && typeof window.location?.href === "string")
-        ? window.location.href
-        : "",
+      page_url: stripUrlQueryAndHash(rawHref),
       marketing_consent: hasMarketingConsent(),
     };
     if (fields.marketing_consent) {
       fields.fbp = readCookie("_fbp");
       fields.fbc = readCookie("_fbc");
+      fields.user_agent = (typeof navigator !== "undefined" && typeof navigator.userAgent === "string")
+        ? navigator.userAgent
+        : "";
     }
     return fields;
   };
