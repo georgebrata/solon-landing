@@ -715,3 +715,44 @@ test("doPost does not enqueue Brevo for Newsletter", () => {
   assert.deepEqual(ctx.responseJson(out), { ok: true });
   assert.equal(ctx.brevoQueue.rows.length, 1);
 });
+
+test("CAPI fields are never written to the sheet even when headers include them", () => {
+  // Build a Contact sheet whose headers include every CAPI/internal field.
+  const capiHeaders = [
+    "Data", "Email", "Nume", "Mesaj", "IP",
+    "meta_event_id", "page_url", "marketing_consent", "user_agent", "fbp", "fbc",
+  ];
+  const rows = [capiHeaders.slice()];
+  const contactSheet = {
+    getLastColumn: () => capiHeaders.length,
+    getLastRow: () => rows.length,
+    getRange: require("./apps-script-brevo-get-range").createSheetGetRange(rows),
+    appendRow(row) { rows.push(row); },
+    _rows: rows,
+  };
+  const ctx = loadAppsScript({ contactSheet });
+  ctx.doPost(validPost("Contact", {
+    Data: "2026-10-28",
+    Email: "test@example.com",
+    Nume: "Ion",
+    Mesaj: "Hello",
+    IP: "203.0.113.1",
+    formLoadedAt: Date.now() - 5000,
+    meta_event_id: "123e4567-e89b-12d3-a456-426614174000",
+    page_url: "https://solon.agency/contact/",
+    marketing_consent: true,
+    user_agent: "Mozilla/5.0",
+    fbp: "fb.1.1.abc",
+    fbc: "fb.1.1.def",
+  }));
+  assert.equal(rows.length, 2, "one data row must be appended");
+  const written = rows[1];
+  const headerMap = Object.fromEntries(capiHeaders.map((h, i) => [h, written[i]]));
+  // Regular fields are written.
+  assert.equal(headerMap.Email, "test@example.com");
+  assert.equal(headerMap.Nume, "Ion");
+  // CAPI fields must all be blank.
+  for (const key of ["meta_event_id", "page_url", "marketing_consent", "user_agent", "fbp", "fbc"]) {
+    assert.equal(headerMap[key], "", `${key} must not be written to the sheet`);
+  }
+});

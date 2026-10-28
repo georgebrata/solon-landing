@@ -36,7 +36,13 @@ var SKIP_SHEET_FIELDS = {
   website: true,
   turnstileToken: true,
   formLoadedAt: true,
-  'cf-turnstile-response': true
+  'cf-turnstile-response': true,
+  meta_event_id: true,
+  page_url: true,
+  marketing_consent: true,
+  user_agent: true,
+  fbp: true,
+  fbc: true
 };
 var ALLOWED_SHEETS = {
   Contact: ['Data', 'Email', 'Nume', 'Mesaj', 'IP'],

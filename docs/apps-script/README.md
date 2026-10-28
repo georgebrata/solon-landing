@@ -73,7 +73,7 @@ After a successful sheet append for **Contact** or **Telefon**, `doPost` calls `
 - `event_id`: the UUID from `meta_event_id` in the form POST body — matches the browser Pixel event for deduplication.
 - `action_source`: `website`
 - `event_source_url`: the `page_url` field from the form POST, validated as `https://solon.agency/...`; omitted otherwise.
-- `user_data.fbp` / `user_data.fbc`: included **only** when the client sends `marketing_consent: true` (user accepted Marketing cookies). No personal data (no email, phone, name, IP, user agent) is ever sent.
+- `user_data`: sent **only** when the client sends `marketing_consent: true` (user accepted Marketing cookies); otherwise CAPI is skipped entirely and nothing is sent to Meta. When consent is true, `user_data` contains: `client_user_agent` (from `navigator.userAgent`, required for website events), and `fbp` / `fbc` from the corresponding cookies when present. No email, phone, name or IP is ever sent — hashed or otherwise.
 - `custom_data.content_name`: `Contact` or `Telefon`.
 
 ### Failure handling

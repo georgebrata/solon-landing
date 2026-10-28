@@ -3,7 +3,7 @@
 /** Minimum passed tests per file (raise via scripts/update-assert-test-floors.js only). */
 const MIN_REGISTERED_TESTS_BY_FILE = {
   "append-blog-google-sheets.test.js": 8,
-  "apps-script-brevo.test.js": 21,
+  "apps-script-brevo.test.js": 22,
   "assert-test-files.test.js": 16,
   "blog-schema.test.js": 3,
   "brevo-tracker.test.js": 7,
@@ -45,7 +45,7 @@ const MIN_REGISTERED_TESTS_BY_FILE = {
   "unsubscribe-privacy.test.js": 5,
 };
 
-const MIN_TOTAL_REGISTERED_TESTS = 491;
+const MIN_TOTAL_REGISTERED_TESTS = 492;
 
 /**
  * @param {{ MIN_REGISTERED_TESTS_BY_FILE?: unknown, MIN_TOTAL_REGISTERED_TESTS?: unknown }} floors

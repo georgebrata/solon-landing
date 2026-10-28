@@ -41,7 +41,7 @@ POST https://graph.facebook.com/v26.0/<PIXEL_ID>/events
 ```
 
 - `event_time`: Unix seconds (UTC).
-- `user_data`: omit hashed email/phone (Advanced Matching stays off). Include `fbp` / `fbc` only when the server can read them and the submission is tied to a session that had marketing consent (or pass consent flag from client with the form POST for server-side gating).
+- `user_data`: sent only when `marketing_consent === true`; otherwise CAPI is skipped entirely. When consent is true: `client_user_agent` (required for website events), `fbp` / `fbc` from cookies when present. No email, phone, name or IP is ever sent — hashed or otherwise (Advanced Matching stays off).
 - `custom_data`: mirror non-PII fields from `solonTrack` params (`content_name`, `value`, `currency`, `method`, etc.).
 
 ## When to send (server)
