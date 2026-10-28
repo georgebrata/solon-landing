@@ -6,9 +6,11 @@
  * Script editor (see README.md in this folder) and redeploy the web app.
  *
  * Script Properties (Project Settings → Script properties):
- *   TURNSTILE_SECRET = <Cloudflare Turnstile secret key>
- *   BREVO_API_KEY = <Brevo v3 API key> (SMTP & API → API keys)
- *   BREVO_NEWSLETTER_LIST_ID = <newsletter list id> (required for retention purge)
+ *   TURNSTILE_SECRET          = <Cloudflare Turnstile secret key>
+ *   BREVO_API_KEY             = <Brevo v3 API key> (SMTP & API → API keys)
+ *   BREVO_NEWSLETTER_LIST_ID  = <newsletter list id> (required for retention purge)
+ *   META_CAPI_TOKEN           = <Meta Conversions API access token> (never commit)
+ *   META_CAPI_TEST_EVENT_CODE = <optional test_event_code from Events Manager>
  *
  * Enforce Turnstile only when BOTH this secret and a client token are present.
  * The live forms.js sends a token only after TURNSTILE_SITE_KEY is replaced.
@@ -25,12 +27,22 @@ var CLOCK_SKEW_MS = 2000;
 var RATE_LIMIT_MAX = 5;
 var RATE_LIMIT_SECONDS = 600;
 var HONEYPOT_FIELDS = ['company_url', 'website'];
+var META_CAPI_SHEETS = { Contact: true, Telefon: true };
+var META_CAPI_URL = 'https://graph.facebook.com/v26.0/400022442507673/events';
+var META_CAPI_UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+var META_CAPI_ALLOWED_URL_RE = /^https:\/\/solon\.agency\//;
 var SKIP_SHEET_FIELDS = {
   company_url: true,
   website: true,
   turnstileToken: true,
   formLoadedAt: true,
-  'cf-turnstile-response': true
+  'cf-turnstile-response': true,
+  meta_event_id: true,
+  page_url: true,
+  marketing_consent: true,
+  user_agent: true,
+  fbp: true,
+  fbc: true
 };
 var ALLOWED_SHEETS = {
   Contact: ['Data', 'Email', 'Nume', 'Mesaj', 'IP'],
@@ -636,6 +648,80 @@ function enqueueBrevoContactList_(sheetName, data) {
   }
 }
 
+function isValidCapiUuid_(value) {
+  return typeof value === 'string' && META_CAPI_UUID_RE.test(value);
+}
+
+function buildCapiLeadPayload_(sheetName, parsed) {
+  var data = parsed.data || {};
+  var eventId = data.meta_event_id;
+  if (!isValidCapiUuid_(eventId)) return null;
+
+  var eventTime = Math.floor(Date.now() / 1000);
+  var event = {
+    event_name: 'Lead',
+    event_time: eventTime,
+    event_id: eventId,
+    action_source: 'website'
+  };
+
+  var pageUrl = data.page_url;
+  if (typeof pageUrl === 'string') {
+    var qIdx = pageUrl.indexOf('?');
+    if (qIdx >= 0) pageUrl = pageUrl.slice(0, qIdx);
+    var hIdx = pageUrl.indexOf('#');
+    if (hIdx >= 0) pageUrl = pageUrl.slice(0, hIdx);
+    if (META_CAPI_ALLOWED_URL_RE.test(pageUrl)) {
+      event.event_source_url = pageUrl;
+    }
+  }
+
+  var userData = {};
+  var ua = data.user_agent;
+  if (typeof ua === 'string' && ua) userData.client_user_agent = ua;
+  var fbp = data.fbp;
+  var fbc = data.fbc;
+  if (typeof fbp === 'string' && fbp) userData.fbp = fbp;
+  if (typeof fbc === 'string' && fbc) userData.fbc = fbc;
+  event.user_data = userData;
+
+  event.custom_data = { content_name: sheetName };
+
+  var payload = { data: [event] };
+
+  var testCode = PropertiesService.getScriptProperties().getProperty('META_CAPI_TEST_EVENT_CODE');
+  if (testCode) payload.test_event_code = testCode;
+
+  return payload;
+}
+
+function sendCapiLead_(sheetName, parsed) {
+  try {
+    var data = (parsed && parsed.data) || {};
+    if (data.marketing_consent !== true) return;
+
+    var token = PropertiesService.getScriptProperties().getProperty('META_CAPI_TOKEN');
+    if (!token) return;
+
+    var payload = buildCapiLeadPayload_(sheetName, parsed);
+    if (!payload) return;
+
+    payload.access_token = token;
+    var res = UrlFetchApp.fetch(META_CAPI_URL, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+    var code = res.getResponseCode();
+    if (code < 200 || code >= 300) {
+      Logger.log('CAPI error: HTTP ' + code);
+    }
+  } catch (err) {
+    Logger.log('CAPI exception: ' + err.name);
+  }
+}
+
 function doPost(e) {
   try {
     var parsed = parseBody_(e);
@@ -669,6 +755,9 @@ function doPost(e) {
 
     appendLead_(sheet, data);
     enqueueBrevoContactList_(sheet, data);
+    if (META_CAPI_SHEETS[sheet]) {
+      sendCapiLead_(sheet, parsed);
+    }
     return jsonOutput_({ ok: true });
   } catch (err) {
     return jsonOutput_({ ok: false, error: 'server' });

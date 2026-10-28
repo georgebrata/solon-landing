@@ -184,12 +184,12 @@
    * @param {string} metaEvent
    * @param {string} ga4Event
    * @param {Record<string, unknown>} [params]
-   * @param {{ pageMetaKey?: string, transportType?: string, eventCallback?: () => void }} [options]
+   * @param {{ pageMetaKey?: string, transportType?: string, eventCallback?: () => void, eventId?: string }} [options]
    * @returns {string}
    */
   const solonTrack = (metaEvent, ga4Event, params, options) => {
     const opts = options || {};
-    const eventId = generateEventId();
+    const eventId = (typeof opts.eventId === "string" && opts.eventId) ? opts.eventId : generateEventId();
     if (BLOCKED_META_EVENTS.has(metaEvent) || ga4Event === "purchase") {
       return eventId;
     }

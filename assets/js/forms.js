@@ -290,17 +290,52 @@
     return "";
   };
 
+  /** Read a cookie value by name; returns empty string when unavailable. */
+  const readCookie = (name) => {
+    try {
+      const match = document.cookie.match(
+        new RegExp("(?:^|; )" + name.replace(/([.*+?^=!:${}()|[\]/\\])/g, "\\$1") + "=([^;]*)")
+      );
+      return match ? decodeURIComponent(match[1]) : "";
+    } catch {
+      return "";
+    }
+  };
+
+  /** True when the visitor has granted Marketing consent. */
+  const hasMarketingConsent = () => {
+    try {
+      return globalThis?.SolonConsent?.hasConsent?.("marketing") === true;
+    } catch {
+      return false;
+    }
+  };
+
+  /** Generate a UUID for CAPI event deduplication. */
+  const generateCapiEventId = () => {
+    try {
+      if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+      }
+    } catch {
+      return "";
+    }
+    return "";
+  };
+
   /**
    * Consent-gated conversion events after a confirmed save (no PII in params).
    * @param {"Contact"|"Telefon"|"Newsletter"} type
+   * @param {string} [metaEventId] Pre-generated UUID for CAPI deduplication.
    * @returns {void}
    */
-  const trackFormConversion = (type) => {
+  const trackFormConversion = (type, metaEventId) => {
     try {
       if (type === "Contact" || type === "Telefon") {
         const track = globalThis.solonTrack;
         if (typeof track === "function") {
-          track("Lead", "generate_lead", { content_name: type });
+          const opts = metaEventId ? { eventId: metaEventId } : undefined;
+          track("Lead", "generate_lead", { content_name: type }, opts);
         }
       }
     } catch {
@@ -332,12 +367,53 @@
     }
   };
 
+  /** Strip query string and hash from a URL string. */
+  const stripUrlQueryAndHash = (href) => {
+    try {
+      const qIdx = href.indexOf("?");
+      const hIdx = href.indexOf("#");
+      let end = href.length;
+      if (qIdx >= 0 && qIdx < end) end = qIdx;
+      if (hIdx >= 0 && hIdx < end) end = hIdx;
+      return href.slice(0, end);
+    } catch {
+      return href;
+    }
+  };
+
+  /**
+   * Build CAPI supplement fields for Contact / Telefon forms.
+   * @param {string} metaEventId
+   * @returns {Record<string, unknown>}
+   */
+  const buildCapiFields = (metaEventId) => {
+    const rawHref = (typeof window !== "undefined" && typeof window.location?.href === "string")
+      ? window.location.href
+      : "";
+    const fields = {
+      meta_event_id: metaEventId,
+      page_url: stripUrlQueryAndHash(rawHref),
+      marketing_consent: hasMarketingConsent(),
+    };
+    if (fields.marketing_consent) {
+      fields.fbp = readCookie("_fbp");
+      fields.fbc = readCookie("_fbc");
+      fields.user_agent = (typeof navigator !== "undefined" && typeof navigator.userAgent === "string")
+        ? navigator.userAgent
+        : "";
+    }
+    return fields;
+  };
+
   /** POST one form payload to Apps Script and require `{ ok: true }`. */
-  const postForm = async (type, values, form) => {
+  const postForm = async (type, values, form, metaEventId) => {
     const data = {
       ...values,
       formLoadedAt: Number(form?.dataset.formLoadedAt) || 0,
     };
+    if (metaEventId !== undefined && (type === "Contact" || type === "Telefon")) {
+      Object.assign(data, buildCapiFields(metaEventId));
+    }
     if (isTurnstileConfigured()) {
       data.turnstileToken = await getTurnstileToken(form);
     }
@@ -459,7 +535,8 @@
       const date = today();
       const ip = await getIP();
       const values = valuesFor(form, type, ip, date);
-      await postForm(type, values, form);
+      const metaEventId = (type === "Contact" || type === "Telefon") ? generateCapiEventId() : undefined;
+      await postForm(type, values, form, metaEventId);
 
       if (type === "Contact" && form.elements.namedItem("NewsletterOptIn")?.checked) {
         try {
@@ -484,7 +561,7 @@
         }
       }
 
-      trackFormConversion(type);
+      trackFormConversion(type, metaEventId);
       form.reset();
       showStatus(form, MESSAGES[type], false);
       logEvent("info", { type: "form_submit_ok", form: type });

@@ -122,7 +122,7 @@ test("privacy page includes DemoANAF disclosure paragraph verbatim in Dezvăluir
     paragraphMatch[0],
     /<a href="https:\/\/demoanaf\.ro\/confidentialitate" rel="noopener noreferrer" target="_blank">politici de confidențialitate DemoANAF<\/a>/u,
   );
-  assert.match(html, /Ultima actualizare: 26\.10\.2026/u);
+  assert.match(html, /Ultima actualizare: 28\.10\.2026/u);
 });
 
 test("redirect stubs and error pages without badge policy omit demoanaf markup", () => {

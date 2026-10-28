@@ -56,6 +56,30 @@ Full step-by-step “what happens to live leads” is in `docs/forms.md` (Turnst
 6. Deploy → **Manage deployments** → pencil → **New version** → Deploy. Use a test deployment / test sheet first.
 7. Confirm the `/exec` URL still matches `API_URL` in `assets/js/forms.js` (rotating the URL is optional; if you rotate, update the client constant and redeploy the site).
 
+## Meta CAPI (Conversions API)
+
+After a successful sheet append for **Contact** or **Telefon**, `doPost` calls `sendCapiLead_()` which posts a `Lead` event to the Meta Graph API — only when `META_CAPI_TOKEN` is set.
+
+### Setup
+
+1. In **Project Settings → Script properties**, add `META_CAPI_TOKEN` = the System User access token from Meta Business Manager → Events Manager → Settings → Conversions API. **Never commit this value.**
+2. Paste the new `Code.gs` and **Deploy → Manage deployments → pencil → New version → Deploy** at the **same deployment URL** (do not rotate the `/exec` URL).
+3. To verify with test events before going live, add `META_CAPI_TEST_EVENT_CODE` = the code shown in Events Manager → Test Events. Remove the property when done.
+
+### What is sent
+
+- `event_name`: `Lead`
+- `event_time`: Unix seconds (UTC) at the moment of the Apps Script call.
+- `event_id`: the UUID from `meta_event_id` in the form POST body — matches the browser Pixel event for deduplication.
+- `action_source`: `website`
+- `event_source_url`: the `page_url` field from the form POST, validated as `https://solon.agency/...`; omitted otherwise.
+- `user_data`: sent **only** when the client sends `marketing_consent: true` (user accepted Marketing cookies); otherwise CAPI is skipped entirely and nothing is sent to Meta. When consent is true, `user_data` contains: `client_user_agent` (from `navigator.userAgent`, required for website events), and `fbp` / `fbc` from the corresponding cookies when present. No email, phone, name or IP is ever sent — hashed or otherwise.
+- `custom_data.content_name`: `Contact` or `Telefon`.
+
+### Failure handling
+
+`sendCapiLead_()` is wrapped in `try/catch` with `muteHttpExceptions: true`. CAPI errors are logged via `Logger.log` without the token or any PII. The form save response (`{ ok: true }`) is never affected by CAPI failures.
+
 ## Test sheet checklist
 
 - Empty honeypot + waited 3s + valid Turnstile (both key and secret live) → new row.
