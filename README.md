@@ -1,7 +1,7 @@
 # solon-landing
 Lightweight &amp; fast lading page for a digital agency from Cluj-Napoca.
 
-<img width="1453" alt="Screenshot 2024-07-09 at 17 04 30" src="https://github.com/georgebrata/solon-landing/assets/15268479/33366e4a-c0bf-4a60-add6-5043ee7bec76">
+<img width="1453" alt="Screenshot 2024-07-09 at 17 04 30" src="https://github.com/SOLON-Agency/solon-landing/assets/15268479/33366e4a-c0bf-4a60-add6-5043ee7bec76">
 
 Demo: https://solon.agency/
 

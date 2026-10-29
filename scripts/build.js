@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { stampHtml } = require('./stamp-asset-refs');
-const { applyPostJsonLd } = require('./json-ld');
+const { applyPostJsonLd, calendarDay } = require('./json-ld');
 
 /**
  * Substitute a {{token}} without expanding $&, $1, or other replacement patterns.
@@ -148,6 +148,22 @@ ${items}
 };
 
 /**
+ * Open Graph article tags for a post page. Dates use the same calendarDay
+ * normalization as the JSON-LD Article, so article:published_time equals
+ * datePublished and article:modified_time equals dateModified.
+ * @param {object} frontmatter Post front-matter (`date`, optional `date_modified`).
+ * @returns {string} Meta tags to place right after og:type, or "".
+ */
+const articleMetaTags = (frontmatter) => {
+  const published = calendarDay(frontmatter.date);
+  const modified = calendarDay(frontmatter.date_modified);
+  let tags = '';
+  if (published) tags += `\n  <meta property="article:published_time" content="${escapeAttr(published)}" />`;
+  if (modified) tags += `\n  <meta property="article:modified_time" content="${escapeAttr(modified)}" />`;
+  return tags;
+};
+
+/**
  * Render one post page from the layout and post templates.
  * @param {object} post Parsed post (`frontmatter` and markdown `content`).
  * @param {object[]} posts All parsed posts, used for the sidebar and related links.
@@ -187,6 +203,8 @@ const generatePostHTML = (post, posts, marked) => {
   page = replaceToken(page, 'description', frontmatter.description);
   page = replaceToken(page, 'slug', frontmatter.slug);
   page = replaceToken(page, 'slugWithTrailingSlash', `${frontmatter.slug}/`);
+  page = replaceToken(page, 'og_type', 'article');
+  page = replaceToken(page, 'article_meta', articleMetaTags(frontmatter));
   page = replaceToken(page, 'json_ld', headJsonLd);
   page = replaceToken(page, 'body', postHtml);
   page = replaceToken(page, 'scripts', '<script src="../../assets/js/blog-sidebar.js"></script>\n  <script src="../../assets/js/forms.min.js"></script>');
@@ -275,6 +293,8 @@ ${tagsBlock}
   page = replaceToken(page, 'description', 'SOLON Blog LegalTech - digitalizare juridică, unelte digitale și productivitate pentru practica avocaturii moderne');
   page = replaceToken(page, 'slug', '');
   page = replaceToken(page, 'slugWithTrailingSlash', '');
+  page = replaceToken(page, 'og_type', 'website');
+  page = replaceToken(page, 'article_meta', '');
   page = replaceToken(page, 'json_ld', '');
   page = replaceToken(page, 'body', listBody);
   page = replaceToken(page, 'scripts', '<script src="../assets/js/blog-search.js"></script>\n  <script src="../assets/js/forms.min.js"></script>');
