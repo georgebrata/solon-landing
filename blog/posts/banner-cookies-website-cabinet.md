@@ -1,6 +1,6 @@
 ---
 title: "Bannerul de cookies pe website-ul cabinetului: ce reguli se aplică azi și ce propune Digital Omnibus"
-seo_title: "Banner cookies și politica de cookies site: ce se aplică"
+seo_title: "Banner și politica de cookies pe website: ce se aplică"
 date: "2026-10-29"
 date_modified: "2026-10-29"
 slug: "banner-cookies-website-cabinet"
@@ -48,7 +48,7 @@ json_ld: |-
             "name": "Cum arată un banner de cookies conform?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Un banner conform prezintă clar ce categorii de cookie-uri folosești și de ce, oferă opțiunea de a accepta sau de a refuza, cu butoane echivalente ca vizibilitate, nu are căsuțe bifate în avans pentru cookie-urile non-esențiale și explică cum poți retrage consimțământul ulterior. Ghidurile EDPB (05/2020) cer ca refuzul să fie la fel de simplu ca acceptul."
+              "text": "Un banner conform prezintă clar ce categorii de cookie-uri folosești și de ce, oferă opțiunea de a accepta sau de a refuza, cu butoane echivalente ca vizibilitate, nu are căsuțe bifate în avans pentru cookie-urile non-esențiale și explică cum poți retrage consimțământul ulterior. Potrivit art. 7 alin. (3) GDPR și Ghidurilor EDPB 05/2020, retragerea consimțământului trebuie să fie la fel de ușoară ca acordarea lui, iar raportul EDPB Cookie Banner Taskforce (2023) arată că majoritatea autorităților cer o opțiune de refuz alături de cea de acceptare."
             }
           },
           {
@@ -56,7 +56,7 @@ json_ld: |-
             "name": "Digital Omnibus schimbă ceva acum pentru website-ul meu?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Nu. Pe 21 octombrie 2026, Consiliul UE a convenit o poziție de negociere, nu o lege. Parlamentul European nu și-a adoptat încă poziția; negocierile (trilogurile) nu au început. Chiar și după adoptare, regulile propuse ar trebui transpuse în legislația națională în 24 de luni. Azi pe website-ul tău nu se schimbă nimic."
+              "text": "Nu. Pe 21 octombrie 2026, Consiliul UE a convenit o poziție de negociere, nu o lege. Parlamentul European nu și-a adoptat încă poziția; negocierile (trilogurile) nu au început. Chiar și după adoptare, în varianta Consiliului regulile despre cookies ar trebui transpuse în legislația națională în cel mult 24 de luni; textul final poate fi diferit. Azi pe website-ul tău nu se schimbă nimic."
             }
           },
           {
@@ -72,7 +72,7 @@ json_ld: |-
             "name": "Ce amenzi riscă un cabinet dacă nu are banner de cookies pe website?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Încălcarea art. 4 alin. (5) din Legea 506/2004 este contravenție: amendă de la 5.000 la 100.000 lei, iar pentru firmele cu cifra de afaceri de peste 5.000.000 lei, până la 2% din cifra de afaceri (art. 13 alin. (2) din Legea 506/2004). Constatarea și sancționarea revin ANSPDCP."
+              "text": "Încălcarea art. 4 alin. (5) din Legea 506/2004 este contravenție (art. 13 alin. (1) lit. i)) și se sancționează cu amendă de la 5.000 la 100.000 lei; pentru societățile comerciale cu o cifră de afaceri de peste 5.000.000 lei, amenda poate ajunge până la 2% din cifra de afaceri (art. 13 alin. (2)). Constatarea și sancționarea revin ANSPDCP (art. 13 alin. (5))."
             }
           }
         ]
@@ -83,7 +83,7 @@ json_ld: |-
 
 # Bannerul de cookies pe website-ul cabinetului: ce reguli se aplică azi și ce propune Digital Omnibus
 
-Dacă pe website-ul cabinetului tău rulează Google Analytics, un pixel de marketing sau orice alt instrument care plasează cookie-uri, ai nevoie de un banner de cookies și de acordul vizitatorului înainte ca acele cookie-uri să se activeze. Regulile actuale sunt clare și se aplică deja. Săptămâna trecută, Consiliul UE a adoptat o poziție privind Digital Omnibus - un pachet de simplificare a regulilor digitale - și despre el circulă interpretări exagerate sau greșite. Ghidul de mai jos explică ce se aplică astăzi pe website-ul tău și ce rămâne deocamdată doar o propunere.
+Dacă pe website-ul cabinetului tău rulează Google Analytics, un pixel de marketing sau orice alt instrument care plasează cookie-uri, ai nevoie de un banner de cookies și de acordul vizitatorului înainte ca acele cookie-uri să se activeze. Regulile actuale sunt clare și se aplică deja. Pe 21 octombrie 2026, statele membre, reunite în Consiliul UE, au convenit mandatul de negociere privind Digital Omnibus - un pachet de simplificare a regulilor digitale - și despre el circulă interpretări exagerate sau greșite. Ghidul de mai jos explică ce se aplică astăzi pe website-ul tău și ce rămâne deocamdată doar o propunere.
 
 <div class="row justify-content-center my-4">
   <div class="col-md-8">
@@ -109,7 +109,7 @@ Vizitatorul trebuie să știe, înainte de a alege, cel puțin: ce categorii de 
 
 ## Ce înseamnă un acord valabil: ghidurile EDPB și jurisprudența CJUE
 
-Un banner care există pe website nu înseamnă automat că acordul colectat este valabil. **Ghidurile EDPB recomandă ca refuzul să fie la fel de simplu ca acceptul; căsuțele bifate în avans nu sunt consimțământ valabil (CJUE, Planet49).** Această regulă nu este o recomandare EDPB fără forță juridică - Curtea de Justiție a UE a stabilit-o explicit în cauza C-673/17 (Planet49): un câmp pre-bifat nu echivalează cu un acord activ.
+Un banner care există pe website nu înseamnă automat că acordul colectat este valabil. **Retragerea consimțământului trebuie să fie la fel de ușoară ca acordarea lui (art. 7 alin. (3) GDPR; Ghidurile EDPB 05/2020, pct. 114), iar majoritatea autorităților europene consideră că un banner fără opțiune de refuz alături de cea de acceptare încalcă regulile (Raportul EDPB Cookie Banner Taskforce, 17.01.2023).** Căsuțele bifate în avans nu reprezintă consimțământ valabil: Curtea de Justiție a UE a stabilit explicit acest lucru în cauza C-673/17 (Planet49), unde un câmp pre-bifat nu echivalează cu un acord activ.
 
 Practic, un banner valid arată astfel:
 
@@ -126,13 +126,15 @@ Există în Legea 506/2004 un art. 4 alin. (5¹) care menționează setările br
 
 Nerespectarea regulilor privind consimțământul pentru cookie-uri nu este o chestiune de bune practici - este o contravenție sancționată de lege.
 
-**Încălcarea art. 4 alin. (5) este contravenție: amendă de la 5.000 la 100.000 lei, iar pentru firmele cu cifra de afaceri de peste 5.000.000 lei, până la 2% din cifra de afaceri (art. 13 alin. (2) din Legea 506/2004). Constatarea și sancționarea revin ANSPDCP.**
+**Încălcarea art. 4 alin. (5) din Legea 506/2004 este contravenție (art. 13 alin. (1) lit. i)) și se sancționează cu amendă de la 5.000 la 100.000 lei; pentru societățile comerciale cu o cifră de afaceri de peste 5.000.000 lei, amenda poate ajunge până la 2% din cifra de afaceri (art. 13 alin. (2)). Constatarea și sancționarea revin ANSPDCP (art. 13 alin. (5)).**
 
-ANSPDCP a aplicat sancțiuni concrete pentru nerespectarea regulilor privind cookie-urile, inclusiv în 2026 (exemplu: comunicatul de presă din 26.06.2026). Sancțiunile nu se limitează la operatori mari sau la scenarii de vătămare dovedită - și website-urile de prezentare ale unor cabinete mici pot intra în vizorul autorității.
+ANSPDCP aplică aceste reguli în practică. De exemplu, potrivit comunicatului din 26.06.2026, autoritatea a amendat cu 5.000 lei o societate al cărei website plasa cookie-uri care nu erau necesare tehnic, fără informare completă și fără consimțământul prealabil al vizitatorilor; investigația a pornit de la sesizarea unei persoane fizice. Regulile se aplică oricărui website, indiferent de dimensiunea cabinetului.
 
 ## Ce propune Digital Omnibus: o propunere, nu o lege
 
-Pe 21 octombrie 2026, statele membre (Consiliul) au convenit poziția de negociere privind Digital Omnibus. **Nu este lege: Parlamentul European nu a votat încă, urmează negocieri între instituții, iar textul final poate fi diferit. Chiar și după adoptare, regulile despre cookies ar trebui transpuse în legislația națională într-un termen propus de 24 de luni. Pentru website-ul tău, azi nu se schimbă nimic.**
+Pe 21 octombrie 2026, statele membre (Consiliul) au convenit poziția de negociere privind Digital Omnibus. **Nu este lege: Parlamentul European nu a votat încă, urmează negocieri între instituții, iar textul final poate fi diferit. Chiar și după adoptare, regulile nu s-ar aplica imediat: în textul Consiliului, regulile despre cookies rămân în Directiva ePrivacy (2002/58/CE), iar statele membre ar avea 24 de luni de la adoptare ca să le transpună în legislația națională.**
+
+**Propunerea inițială a Comisiei (COM(2025) 837) le muta în GDPR, unde s-ar fi aplicat direct, fără transpunere, la 6 luni de la intrarea în vigoare. Textul final se stabilește abia în negocierile cu Parlamentul European. Pentru website-ul tău, azi nu se schimbă nimic.**
 
 **Parlamentul European nu și-a adoptat încă poziția; negocierile (trilogurile) încep abia după aceea, iar calendarul nu este stabilit.** Procedura legislativă este încă la început.
 
@@ -140,8 +142,8 @@ Pe 21 octombrie 2026, statele membre (Consiliul) au convenit poziția de negocie
 
 Textul Consiliului (ST 14756/26) propune câteva modificări față de regimul actual:
 
-- **Măsurarea audienței**: propunerea ar permite, în anumite condiții, o excepție pentru cookie-urile de analiză a audienței care produc date anonime și agregate. **Nu presupune că Google Analytics sau pixelii de marketing ar deveni automat scutiți; excepția propusă e restrânsă la măsurarea anonimă și agregată a audienței.** Google Analytics, în configurația standard, poate transmite date individuale - nu se încadrează automat în excepția propusă.
-- **Refuzul cu un singur clic**: textul Consiliului propune ca refuzul consimțământului să poată fi exprimat printr-un singur clic și că re-solicitarea consimțământului ar trebui să nu fie posibilă mai devreme de șase luni după un refuz (art. 88a(4) din textul propus). Este o propunere, nu o regulă în vigoare.
+- **Măsurarea audienței**: propunerea ar permite, în anumite condiții, o excepție pentru cookie-urile de analiză a audienței care produc date anonime și agregate. **Nu presupune că Google Analytics sau pixelii de marketing ar deveni automat scutiți; excepția propusă e restrânsă la măsurarea anonimă și agregată a audienței (art. 5 alin. (3) lit. c) din Directiva 2002/58/CE, în forma propusă de Consiliu).** Google Analytics, în configurația standard, poate transmite date individuale - nu se încadrează automat în excepția propusă.
+- **Refuzul cu un singur clic**: textul Consiliului propune ca vizitatorul să poată refuza consimțământul ușor, printr-un singur clic sau un mijloc echivalent, iar după un refuz cererea de consimțământ pentru același scop să nu poată fi reluată timp de cel puțin patru luni (art. 5 alin. (3) din Directiva 2002/58/CE, în forma propusă de Consiliu). Propunerea inițială a Comisiei prevedea șase luni, într-un nou art. 88a din GDPR, pe care Consiliul l-a eliminat. Este o propunere, nu o regulă în vigoare.
 
 ### Ce nu trebuie să faci acum
 
@@ -159,7 +161,7 @@ Dincolo de banner, un website de cabinet are nevoie de documente care explică v
 - **cum poate vizitatorul să retragă sau să modifice consimțământul** oricând, fără dificultăți;
 - **dreptul de a depune o plângere** la ANSPDCP.
 
-Nu ofer și nu prezint niciun model ca „conform”. Politica trebuie să reflecte prelucrările reale de pe website-ul tău și merită să fie redactată sau verificată de un specialist în protecția datelor.
+Acest ghid nu oferă și nu prezintă niciun model drept „conform”. Politica trebuie să reflecte prelucrările reale de pe website-ul tău și merită să fie redactată sau verificată de un specialist în protecția datelor.
 
 ## Ce verifici pe website-ul tău săptămâna aceasta
 
@@ -182,11 +184,11 @@ Da. Google Analytics plasează cookie-uri de analiză care nu sunt strict necesa
 
 ### Cum arată un banner de cookies conform?
 
-Un banner conform prezintă clar ce categorii de cookie-uri folosești și de ce, oferă opțiunea de a accepta sau de a refuza, cu butoane echivalente ca vizibilitate, nu are căsuțe bifate în avans pentru cookie-urile non-esențiale și explică cum poți retrage consimțământul ulterior. Ghidurile EDPB (05/2020) cer ca refuzul să fie la fel de simplu ca acceptul.
+Un banner conform prezintă clar ce categorii de cookie-uri folosești și de ce, oferă opțiunea de a accepta sau de a refuza, cu butoane echivalente ca vizibilitate, nu are căsuțe bifate în avans pentru cookie-urile non-esențiale și explică cum poți retrage consimțământul ulterior. Potrivit art. 7 alin. (3) GDPR și Ghidurilor EDPB 05/2020, retragerea consimțământului trebuie să fie la fel de ușoară ca acordarea lui, iar raportul EDPB Cookie Banner Taskforce (2023) arată că majoritatea autorităților cer o opțiune de refuz alături de cea de acceptare.
 
 ### Digital Omnibus schimbă ceva acum pentru website-ul meu?
 
-Nu. Pe 21 octombrie 2026, Consiliul UE a convenit o poziție de negociere, nu o lege. Parlamentul European nu și-a adoptat încă poziția; negocierile (trilogurile) nu au început. Chiar și după adoptare, regulile propuse ar trebui transpuse în legislația națională în 24 de luni. Azi pe website-ul tău nu se schimbă nimic.
+Nu. Pe 21 octombrie 2026, Consiliul UE a convenit o poziție de negociere, nu o lege. Parlamentul European nu și-a adoptat încă poziția; negocierile (trilogurile) nu au început. Chiar și după adoptare, în varianta Consiliului regulile despre cookies ar trebui transpuse în legislația națională în cel mult 24 de luni; textul final poate fi diferit. Azi pe website-ul tău nu se schimbă nimic.
 
 ### Ce verific pe website-ul meu săptămâna aceasta în privința cookie-urilor?
 
@@ -194,7 +196,7 @@ Verifică dacă bannerul apare înainte ca orice cookie non-esențial să se în
 
 ### Ce amenzi riscă un cabinet dacă nu are banner de cookies pe website?
 
-Încălcarea art. 4 alin. (5) din Legea 506/2004 este contravenție: amendă de la 5.000 la 100.000 lei, iar pentru firmele cu cifra de afaceri de peste 5.000.000 lei, până la 2% din cifra de afaceri (art. 13 alin. (2) din Legea 506/2004). Constatarea și sancționarea revin ANSPDCP.
+Încălcarea art. 4 alin. (5) din Legea 506/2004 este contravenție (art. 13 alin. (1) lit. i)) și se sancționează cu amendă de la 5.000 la 100.000 lei; pentru societățile comerciale cu o cifră de afaceri de peste 5.000.000 lei, amenda poate ajunge până la 2% din cifra de afaceri (art. 13 alin. (2)). Constatarea și sancționarea revin ANSPDCP (art. 13 alin. (5)).
 
 ## Pași următori
 
@@ -206,12 +208,13 @@ Alte resurse găsești pe [solon.agency](https://solon.agency/).
 
 ## Surse
 
-- [Legea 506/2004, art. 4 alin. (5)–(6), art. 13 alin. (2)](https://legislatie.just.ro/Public/DetaliiDocumentAfis/288598) - Portalul legislativ, accesat 29.10.2026
+- [Legea 506/2004, art. 4 alin. (5)–(6), art. 13 alin. (2)](https://legislatie.just.ro/Public/DetaliiDocument/56973) - Portalul legislativ, accesat 29.10.2026
 - [Consiliul UE, ST 14756/26, poziția Consiliului privind Digital Omnibus](https://data.consilium.europa.eu/doc/document/ST-14756-2026-INIT/en/pdf) - accesat 29.10.2026
 - [Comunicat Consiliul UE, 21.10.2026: Digital Rulebook – Council agrees position to simplify data protection, privacy and cyber reporting rules](https://www.consilium.europa.eu/en/press/press-releases/2026/10/21/digital-rulebook-council-agrees-position-to-simplify-data-protection-privacy-and-cyber-reporting-rules/) - accesat 29.10.2026
 - [Parlamentul European, procedura 2025/0360(COD)](https://oeil.secure.europarl.europa.eu/oeil/en/procedure-file?reference=2025/0360(COD)) - stadiu: în comisie, poziția PE neadoptată la 29.10.2026, accesat 29.10.2026
 - [EDPB, Ghidurile 05/2020 privind consimțământul conform Regulamentului 2016/679](https://www.edpb.europa.eu/our-work-tools/our-documents/guidelines/guidelines-052020-consent-under-regulation-2016679_en) - accesat 29.10.2026
-- [ANSPDCP, comunicat de presă, 26.06.2026 (exemplu de sancțiune aplicată; operatorul nu este menționat)](https://www.dataprotection.ro/?page=Comunicat_Presa_26.06.2026&lang=ro) - accesat 29.10.2026
+- [EDPB, Raportul Cookie Banner Taskforce, 17.01.2023](https://www.edpb.europa.eu/system/files/documents/2023-01/edpb_20230118_report_cookie_banner_taskforce_en.pdf) - accesat 29.10.2026
+- [ANSPDCP, comunicat de presă, 26.06.2026: amendă de 5.000 lei pentru încălcarea art. 4 alin. (5) lit. a) și b) din Legea 506/2004](https://www.dataprotection.ro/?page=Comunicat_Presa_26.06.2026&lang=ro) - accesat 29.10.2026
 - CJUE, C-673/17, Planet49, hotărârea din 1 octombrie 2019 (câmpul pre-bifat nu constituie consimțământ valabil)
 
 ---

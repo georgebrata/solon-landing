@@ -55,6 +55,7 @@ const PROTECTED_TOKEN = "__HUMANIZE_PROTECTED_";
  * this list when a cleared article is renamed, or protection is dropped silently.
  */
 const LEGAL_CLEARED_HUMANIZE_SKIP_FILENAMES = [
+  "banner-cookies-website-cabinet.md",
   "proiect-modificare-legea-51-1995-website-avocat.md",
   "viteza-website-avocat.md",
 ];
