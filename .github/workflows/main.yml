@@ -19,7 +19,7 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-  # Rebuild when the "Abonamente" sheet changes: POST /repos/georgebrata/solon-landing/dispatches
+  # Rebuild when the "Abonamente" sheet changes: POST /repos/SOLON-Agency/solon-landing/dispatches
   # with {"event_type":"abonamente-updated"} (token needs to be set up by George; see PR).
   repository_dispatch:
     types: [abonamente-updated]
