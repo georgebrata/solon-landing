@@ -43,7 +43,6 @@ const vendorJsFiles = [
 
 const jsFiles = [
   "error-log.js",
-  "dynamic-year.js",
   "meta-pixel.js",
   "consent.js",
   "gtag-config.js",
