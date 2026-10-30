@@ -1,8 +1,8 @@
 ---
 title: "Bannerul de cookies pe website-ul cabinetului: ce reguli se aplică azi și ce propune Digital Omnibus"
 seo_title: "Banner și politica de cookies pe website: ce se aplică"
-date: "2026-10-29"
-date_modified: "2026-10-29"
+date: "2026-10-30"
+date_modified: "2026-10-30"
 slug: "banner-cookies-website-cabinet"
 description: "Ce reguli se aplică azi bannerului de cookies pe website-ul cabinetului, ce amenzi prevede Legea 506/2004, ce cer ghidurile EDPB și ce propune Digital Omnibus."
 categories: ["digitalizare", "legislație", "securitate"]
@@ -20,8 +20,8 @@ json_ld: |-
         "inLanguage": "ro-RO",
         "url": "https://solon.agency/blog/banner-cookies-website-cabinet/",
         "mainEntityOfPage": "https://solon.agency/blog/banner-cookies-website-cabinet/",
-        "datePublished": "2026-10-29",
-        "dateModified": "2026-10-29",
+        "datePublished": "2026-10-30",
+        "dateModified": "2026-10-30",
         "author": {
           "@id": "https://solon.agency/#organization"
         },
@@ -91,7 +91,7 @@ Dacă pe website-ul cabinetului tău rulează Google Analytics, un pixel de mark
   </div>
 </div>
 
-*Actualizat: 29 octombrie 2026.*
+*Actualizat: 30 octombrie 2026.*
 
 ## Ce spune legea azi: cookie-urile non-esențiale cer acordul vizitatorului
 
