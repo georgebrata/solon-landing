@@ -12,6 +12,7 @@
   const fs = require("fs");
   const path = require("path");
   const { fetchTab } = require("./build-pricing");
+  const { buildJsonLdTag } = require("./json-ld");
 
   const root = path.join(__dirname, "..");
   const SNAPSHOT = path.join(root, "data", "homepage-sheets.snapshot.json");
@@ -140,11 +141,25 @@
   const readCommittedSnapshot = () => validateSnapshot(JSON.parse(fs.readFileSync(SNAPSHOT, "utf8")));
 
   /**
+   * @param {ReturnType<typeof validateSnapshot>["FAQ"]} items
+   */
+  const visibleFaqItems = (items) => items.filter((item) => item.Visible);
+
+  /** @param {string} raw */
+  const faqAnswerPlainText = (raw) =>
+    decodeHtmlEntities(String(raw))
+      .replace(/<br\s*\/?>/giu, " ")
+      .replace(/<[^>]+>/gu, " ")
+      .replace(/\s+/gu, " ")
+      .trim();
+
+  /**
    * @param {unknown} apiRows
    * @param {ReturnType<typeof validateSnapshot>["FAQ"]} committedFaq
-   * @param {string} label
+   * @param {{ snapshotFallback?: boolean, label?: string }} [options]
    */
-  const pickFaqRows = (apiRows, committedFaq, label = "FAQ") => {
+  const pickFaqRows = (apiRows, committedFaq, options = {}) => {
+    const { snapshotFallback = false, label = "FAQ" } = options;
     if (!Array.isArray(apiRows)) {
       console.warn(`::warning::build-homepage-sheets: ${label} tab missing or not an array; using committed snapshot`);
       return committedFaq;
@@ -158,9 +173,10 @@
       }
       normalized.push(next);
     }
-    const visible = normalized.filter((row) => row.Visible);
-    if (visible.length === 0) {
-      console.warn(`::warning::build-homepage-sheets: ${label} tab empty or no visible rows; using committed snapshot`);
+    if (snapshotFallback && visibleFaqItems(normalized).length === 0) {
+      console.warn(
+        `::warning::build-homepage-sheets: ${label} tab empty or no visible rows; using committed snapshot`,
+      );
       return committedFaq;
     }
     return normalized;
@@ -213,52 +229,91 @@
   /**
    * @param {{ faqRows?: unknown, testimonialRows?: unknown, committed: ReturnType<typeof validateSnapshot> }} input
    */
+  /**
+   * @param {unknown} faqRows
+   * @param {ReturnType<typeof validateSnapshot>["FAQ"]} committedFaq
+   */
+  const resolveFaqRows = (faqRows, committedFaq) => {
+    if (faqRows === undefined) {
+      return { FAQ: committedFaq, source: /** @type {const} */ ("snapshot") };
+    }
+    if (!Array.isArray(faqRows)) {
+      return { FAQ: pickFaqRows(faqRows, committedFaq), source: "snapshot" };
+    }
+    return {
+      FAQ: pickFaqRows(faqRows, committedFaq, { snapshotFallback: false }),
+      source: "api",
+    };
+  };
+
   const buildRenderData = (input) => {
-    const faq =
-      input.faqRows === undefined
-        ? input.committed.FAQ
-        : pickFaqRows(input.faqRows, input.committed.FAQ);
-    const testimonials = ensureCarouselActive(
+    const faqResolved = resolveFaqRows(input.faqRows, input.committed.FAQ);
+    const testimonialPicked =
       input.testimonialRows === undefined
         ? input.committed.Testimonials
-        : pickTestimonialRows(input.testimonialRows, input.committed.Testimonials),
-    );
-    return { FAQ: faq, Testimonials: testimonials };
+        : pickTestimonialRows(input.testimonialRows, input.committed.Testimonials);
+    const testimonials = ensureCarouselActive(testimonialPicked);
+    const sources = {
+      FAQ: faqResolved.source,
+      Testimonials:
+        input.testimonialRows === undefined || testimonialPicked === input.committed.Testimonials
+          ? "snapshot"
+          : "api",
+    };
+    return { FAQ: faqResolved.FAQ, Testimonials: testimonials, sources };
   };
 
   /**
    * @param {{ offline?: boolean, fetchImpl?: typeof fetch }} [options]
    */
+  /** @param {{ FAQ: "api" | "snapshot", Testimonials: "api" | "snapshot" }} sources */
+  const aggregateSource = (sources) => {
+    if (sources.FAQ === "api" && sources.Testimonials === "api") return "api";
+    if (sources.FAQ === "snapshot" && sources.Testimonials === "snapshot") return "snapshot";
+    return "mixed";
+  };
+
   const resolveData = async (options = {}) => {
     const offline = Boolean(options.offline);
     const fetchImpl = options.fetchImpl || fetch;
     const committed = readCommittedSnapshot();
-    let source = "snapshot";
-    let data = buildRenderData({ committed });
+    /** @type {{ FAQ: "api" | "snapshot", Testimonials: "api" | "snapshot" }} */
+    let sources = { FAQ: "snapshot", Testimonials: "snapshot" };
+    let built = buildRenderData({ committed });
+    let data = { FAQ: built.FAQ, Testimonials: built.Testimonials };
+    sources = built.sources;
+    let source = aggregateSource(sources);
 
     if (offline) {
-      return { data, source, committed };
+      return { data, source, sources, committed };
     }
 
     if (process.env.SHEETS_API_KEY) {
+      /** @type {unknown} */
+      let faqRows;
+      /** @type {unknown} */
+      let testimonialRows;
       try {
-        const raw = {};
-        for (const tab of API_TABS) raw[tab] = await fetchTab(tab, { fetchImpl });
-        data = buildRenderData({
-          faqRows: raw.FAQ,
-          testimonialRows: raw.Testimonials,
-          committed,
-        });
-        source = "api";
+        faqRows = await fetchTab("FAQ", { fetchImpl });
       } catch (error) {
         console.error(
-          `::error::build-homepage-sheets: SOLON API failed (${error.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`,
+          `::error::build-homepage-sheets: FAQ tab failed (${error.message}); using committed snapshot for FAQ`,
         );
-        data = buildRenderData({ committed });
       }
+      try {
+        testimonialRows = await fetchTab("Testimonials", { fetchImpl });
+      } catch (error) {
+        console.error(
+          `::error::build-homepage-sheets: Testimonials tab failed (${error.message}); using committed snapshot for Testimonials`,
+        );
+      }
+      built = buildRenderData({ faqRows, testimonialRows, committed });
+      data = { FAQ: built.FAQ, Testimonials: built.Testimonials };
+      sources = built.sources;
+      source = aggregateSource(sources);
     }
 
-    return { data, source, committed };
+    return { data, source, sources, committed };
   };
 
   /**
@@ -282,11 +337,82 @@
 
   /** @param {ReturnType<typeof validateSnapshot>["FAQ"]} items */
   const renderFaqBlock = (items) => {
-    const visible = items.filter((item) => item.Visible);
+    const visible = visibleFaqItems(items);
     const rows = visible.map((item, index) => renderFaqItem(item, index)).join("\n\n");
     return `<!-- HOME-FAQ:START (generated by scripts/build-homepage-sheets.js; do not edit by hand) -->
 ${rows}
           <!-- HOME-FAQ:END -->`;
+  };
+
+  /** @param {string} name @param {string} inner */
+  const markerBlock = (name, inner) =>
+    `<!-- ${name}:START (generated by scripts/build-homepage-sheets.js; do not edit by hand) -->${inner}<!-- ${name}:END -->`;
+
+  /** @param {ReturnType<typeof validateSnapshot>["FAQ"]} items */
+  const renderHomeFaqNav = (items) => {
+    if (visibleFaqItems(items).length === 0) return markerBlock("HOME-FAQ-NAV", "");
+    return markerBlock(
+      "HOME-FAQ-NAV",
+      `
+          <li><a class="nav-link scrollto" href="#faq">Întrebări frecvente</a></li>
+          `,
+    );
+  };
+
+  /** @param {ReturnType<typeof validateSnapshot>["FAQ"]} items */
+  const renderHomeFaqJsonLd = (items) => {
+    const visible = visibleFaqItems(items);
+    if (visible.length === 0) return markerBlock("HOME-FAQ-JSONLD", "");
+    const payload = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": "https://solon.agency/#faq",
+      mainEntity: visible.map((item) => ({
+        "@type": "Question",
+        name: item.Intrebare,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faqAnswerPlainText(item.Raspuns),
+        },
+      })),
+    };
+    const tag = buildJsonLdTag(payload, "https://solon.agency/");
+    return markerBlock("HOME-FAQ-JSONLD", `
+  ${tag}
+  `);
+  };
+
+  /** @param {ReturnType<typeof validateSnapshot>["FAQ"]} items */
+  const renderHomeFaqSection = (items) => {
+    if (visibleFaqItems(items).length === 0) return markerBlock("HOME-FAQ-SECTION", "");
+    return markerBlock(
+      "HOME-FAQ-SECTION",
+      `
+    <!-- ======= Frequently Asked Questions Section ======= -->
+    <section id="faq" class="faq section-bg">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Intrebări frecvente</h2>
+          <p>Ajutorul nostru e mereu la îndemână. </p>
+          <p>Mai jos găseşti răspunsuri la cele mai frecvente întrebari ale clienților noştri.</p>
+        </div>
+
+        <div class="faq-list">
+          <ul id="faq-list">
+          ${renderFaqBlock(items)}
+          </ul>
+          <div id="loading" class="lds-ripple">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <!-- End Frequently Asked Questions Section -->
+    `,
+    );
   };
 
   /** @param {ReturnType<typeof validateSnapshot>["Testimonials"][number]} item */
@@ -336,7 +462,9 @@ ${slides}
       FAQ: data.FAQ,
       Testimonials: ensureCarouselActive(data.Testimonials),
     };
-    let out = replaceBlock(html, "HOME-FAQ", renderFaqBlock(prepared.FAQ));
+    let out = replaceBlock(html, "HOME-FAQ-SECTION", renderHomeFaqSection(prepared.FAQ));
+    out = replaceBlock(out, "HOME-FAQ-NAV", renderHomeFaqNav(prepared.FAQ));
+    out = replaceBlock(out, "HOME-FAQ-JSONLD", renderHomeFaqJsonLd(prepared.FAQ));
     out = replaceBlock(out, "TESTIMONIALS", renderTestimonialsBlock(prepared.Testimonials));
     return out;
   };
@@ -345,7 +473,7 @@ ${slides}
     const offline = process.argv.includes("--offline");
     const check = process.argv.includes("--check");
     const writeSnapshot = process.argv.includes("--write-snapshot");
-    const { data, source } = await resolveData({ offline });
+    const { data, source, sources } = await resolveData({ offline });
     if (writeSnapshot && !offline && source === "api") {
       fs.writeFileSync(SNAPSHOT, `${JSON.stringify(data, null, 2)}\n`);
       console.log(`build-homepage-sheets: wrote ${path.relative(root, SNAPSHOT)} from API render data`);
@@ -361,7 +489,7 @@ ${slides}
     }
     if (after !== before) fs.writeFileSync(INDEX, after);
     console.log(
-      `build-homepage-sheets: rendered ${data.FAQ.filter((r) => r.Visible).length} FAQ, ${data.Testimonials.filter((r) => r.Visible).length} testimonials (source: ${source})`,
+      `build-homepage-sheets: rendered ${data.FAQ.filter((r) => r.Visible).length} FAQ, ${data.Testimonials.filter((r) => r.Visible).length} testimonials (FAQ: ${sources.FAQ}, Testimonials: ${sources.Testimonials})`,
     );
   };
 
@@ -379,11 +507,18 @@ ${slides}
     validateSnapshot,
     render,
     renderFaqBlock,
+    renderHomeFaqSection,
+    renderHomeFaqNav,
+    renderHomeFaqJsonLd,
+    visibleFaqItems,
+    faqAnswerPlainText,
+    resolveFaqRows,
     renderTestimonialsBlock,
     resolveData,
     replaceBlock,
     readCommittedSnapshot,
     buildRenderData,
+    aggregateSource,
     pickFaqRows,
     pickTestimonialRows,
     ensureCarouselActive,
