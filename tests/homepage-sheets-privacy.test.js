@@ -4,10 +4,14 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const buildHomepageSheets = require("../scripts/build-homepage-sheets");
 const {
   esc,
   render,
   renderFaqBlock,
+  renderHomeFaqSection,
+  renderHomeFaqNav,
+  renderHomeFaqJsonLd,
   renderTestimonialsBlock,
   validateSnapshot,
   resolveData,
@@ -21,7 +25,8 @@ const {
   sanitizeRichText,
   truthyVisible,
   normalizeFaqRow,
-} = require("../scripts/build-homepage-sheets");
+  visibleFaqItems,
+} = buildHomepageSheets;
 
 const ROOT = path.join(__dirname, "..");
 const snapshot = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "homepage-sheets.snapshot.json"), "utf8"));
@@ -32,6 +37,75 @@ const FORBIDDEN = [
   /script\.googleusercontent\.com/iu,
   /cdn\.jsdelivr\.net/iu,
 ];
+
+const MARKER_FIXTURE = `<!DOCTYPE html>
+<head>
+<!-- HOME-FAQ-JSONLD:START -->old-json<!-- HOME-FAQ-JSONLD:END -->
+</head>
+<body>
+<nav><!-- HOME-FAQ-NAV:START -->old-nav<!-- HOME-FAQ-NAV:END --></nav>
+<!-- HOME-FAQ-SECTION:START -->old-section<!-- HOME-FAQ-SECTION:END -->
+<!-- TESTIMONIALS:START -->t<!-- TESTIMONIALS:END -->
+</body>`;
+
+/** @param {ReturnType<typeof validateSnapshot>} data */
+const assertHomeFaqAbsent = (html) => {
+  assert.doesNotMatch(html, /id="faq"/u);
+  assert.doesNotMatch(html, /href="#faq"/u);
+  assert.doesNotMatch(html, /"@type":\s*"FAQPage"/u);
+};
+
+/** @param {ReturnType<typeof validateSnapshot>} data */
+const assertHomeFaqPresent = (html) => {
+  assert.match(html, /id="faq"/u);
+  assert.match(html, /href="#faq"/u);
+  assert.match(html, /"@type":\s*"FAQPage"/u);
+};
+
+/** @param {Record<string, unknown[]>} tabs @param {{ envelope?: Record<string, unknown> }} [options] */
+const fakeHomepageApi = (tabs, { envelope } = {}) => {
+  const calls = [];
+  const fetchImpl = (url, init) => {
+    const requestUrl = new URL(url);
+    calls.push({ url: requestUrl, init });
+    if (envelope) return { ok: true, json: () => Promise.resolve(envelope) };
+    const sheet = requestUrl.searchParams.get("sheet");
+    const rows = tabs[sheet];
+    if (!rows) {
+      return {
+        ok: true,
+        json: () => Promise.resolve({ success: false, error: { code: "NOT_FOUND", message: "Sheet not found." } }),
+      };
+    }
+    return {
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          success: true,
+          sheet,
+          data: rows,
+          pagination: { total: rows.length, offset: 0, limit: rows.length, hasMore: false },
+        }),
+    };
+  };
+  return { fetchImpl, calls };
+};
+
+/** @param {() => void} fn */
+const withSheetsApiEnv = async (fn) => {
+  const origKey = process.env.SHEETS_API_KEY;
+  const origUrl = process.env.SHEETS_API_URL;
+  process.env.SHEETS_API_KEY = "test-key-not-real";
+  process.env.SHEETS_API_URL = "https://example.test/exec";
+  try {
+    await fn();
+  } finally {
+    if (origKey === undefined) delete process.env.SHEETS_API_KEY;
+    else process.env.SHEETS_API_KEY = origKey;
+    if (origUrl === undefined) delete process.env.SHEETS_API_URL;
+    else process.env.SHEETS_API_URL = origUrl;
+  }
+};
 
 /** @param {string} label */
 const read = (label) => {
@@ -123,18 +197,45 @@ test("resolveData offline uses committed snapshot without network", async () => 
   assert.equal(source, "snapshot");
   assert.ok(Array.isArray(data.Testimonials));
   assert.equal(data.Testimonials.filter((row) => row.Visible).length, 4);
-  assert.equal(data.FAQ.filter((row) => row.Visible).length, 3);
+  assert.equal(data.FAQ.filter((row) => row.Visible).length, 0);
 });
 
-test("committed FAQ snapshot supplies visible items when API returns no visible rows", () => {
+test("API FAQ with zero visible rows does not fall back to snapshot", () => {
   const committed = readCommittedSnapshot();
-  assert.equal(committed.FAQ.filter((row) => row.Visible).length, 3);
   const merged = buildRenderData({
-    faqRows: [{ Intrebare: "Hidden?", Raspuns: "Nope", Visible: false }],
+    faqRows: committed.FAQ.map((row) => ({ ...row, Visible: false })),
     committed,
   });
-  assert.equal(merged.FAQ.length, 3);
-  assert.match(renderFaqBlock(merged.FAQ), /In ce an s-a fondat Solon\?/u);
+  assert.equal(merged.sources.FAQ, "api");
+  assert.equal(visibleFaqItems(merged.FAQ).length, 0);
+  assertHomeFaqAbsent(render(MARKER_FIXTURE, merged));
+});
+
+test("successful API FAQ with visible rows renders section, nav, and FAQPage JSON-LD", () => {
+  const committed = readCommittedSnapshot();
+  const merged = buildRenderData({
+    faqRows: [{ Intrebare: "Live?", Raspuns: "Yes.", Visible: true }],
+    committed,
+  });
+  const html = render(MARKER_FIXTURE, merged);
+  assertHomeFaqPresent(html);
+  assert.match(html, /Live\?/u);
+});
+
+test("FAQ fetch failure uses snapshot rows for render data", async () => {
+  await withSheetsApiEnv(async () => {
+    const { fetchImpl } = fakeHomepageApi({});
+    const { data, sources } = await resolveData({ fetchImpl });
+    assert.equal(sources.FAQ, "snapshot");
+    assert.equal(data.FAQ.length, 3);
+    assert.equal(visibleFaqItems(data.FAQ).length, 0);
+  });
+});
+
+test("committed FAQ snapshot keeps rows hidden until sheet ids are refreshed", () => {
+  const committed = readCommittedSnapshot();
+  assert.equal(committed.FAQ.length, 3);
+  assert.equal(visibleFaqItems(committed.FAQ).length, 0);
 });
 
 test("blank Visible column hides FAQ and testimonial rows", () => {
@@ -225,13 +326,24 @@ test("pickFaqRows keeps valid API rows when one row is malformed", () => {
   assert.equal(rows[0].Intrebare, "Ok?");
 });
 
-test("malformed or empty FAQ API rows fall back to committed snapshot", () => {
+test("malformed or empty FAQ API rows fall back to committed snapshot when snapshotFallback is enabled", () => {
   const committed = readCommittedSnapshot();
   assert.deepEqual(pickFaqRows(undefined, committed.FAQ), committed.FAQ);
   assert.deepEqual(
-    pickFaqRows([{ Intrebare: "x", Raspuns: "y", Visible: false }], committed.FAQ),
+    pickFaqRows([{ Intrebare: "x", Raspuns: "y", Visible: false }], committed.FAQ, { snapshotFallback: true }),
     committed.FAQ,
   );
+});
+
+test("pickFaqRows from API keeps empty visible set without snapshot fallback", () => {
+  const committed = readCommittedSnapshot();
+  const rows = pickFaqRows(
+    [{ Intrebare: "Hidden?", Raspuns: "Nope", Visible: false }],
+    committed.FAQ,
+    { snapshotFallback: false },
+  );
+  assert.equal(rows.length, 1);
+  assert.equal(visibleFaqItems(rows).length, 0);
 });
 
 test("ensureCarouselActive keeps only the first Active slide when several are marked", () => {
@@ -278,4 +390,61 @@ test("pickTestimonialRows keeps valid API rows when one row is malformed", () =>
   const rows = pickTestimonialRows([good, { foo: "bar" }], committed.Testimonials);
   assert.equal(rows.length, 1);
   assert.equal(rows[0].id, good.id);
+});
+
+test("LEGACY_FAQ_URL is not exported (legacy fallback removed)", () => {
+  assert.ok(!("LEGACY_FAQ_URL" in buildHomepageSheets), "LEGACY_FAQ_URL must not be exported after legacy removal");
+});
+
+test("resolveData without SHEETS_API_KEY uses snapshot directly, no network call", async () => {
+  const origKey = process.env.SHEETS_API_KEY;
+  delete process.env.SHEETS_API_KEY;
+  try {
+    let networkCalled = false;
+    const fakeFetch = () => { networkCalled = true; return Promise.reject(new Error("should not fetch")); };
+    const { data, source, sources } = await resolveData({ fetchImpl: fakeFetch });
+    assert.equal(source, "snapshot", "should be snapshot when no API key");
+    assert.equal(sources.FAQ, "snapshot");
+    assert.equal(sources.Testimonials, "snapshot");
+    assert.equal(networkCalled, false, "must not make any network call without SHEETS_API_KEY");
+    assert.equal(data.FAQ.filter((r) => r.Visible).length, 0, "snapshot FAQ has no visible rows");
+  } finally {
+    if (origKey !== undefined) process.env.SHEETS_API_KEY = origKey;
+  }
+});
+
+test("resolveData uses API FAQ when Testimonials tab is NOT_FOUND", async () => {
+  await withSheetsApiEnv(async () => {
+    const apiFaq = [{ Intrebare: "API-only FAQ?", Raspuns: "From live tab.", Visible: true }];
+    const { fetchImpl, calls } = fakeHomepageApi({ FAQ: apiFaq });
+    const { data, sources } = await resolveData({ fetchImpl });
+    assert.equal(sources.FAQ, "api");
+    assert.equal(sources.Testimonials, "snapshot");
+    assert.equal(data.FAQ.filter((row) => row.Visible).length, 1);
+    assert.equal(data.FAQ[0].Intrebare, "API-only FAQ?");
+    assert.equal(data.Testimonials.filter((row) => row.Visible).length, 4);
+    assert.deepEqual([...new Set(calls.map((call) => call.url.searchParams.get("sheet")))], ["FAQ", "Testimonials"]);
+    assert.ok(calls.every((call) => call.url.searchParams.get("apiKey") === "test-key-not-real"));
+  });
+});
+
+test("resolveData uses API Testimonials when FAQ tab is NOT_FOUND", async () => {
+  await withSheetsApiEnv(async () => {
+    const committed = readCommittedSnapshot();
+    const apiTestimonial = {
+      ...committed.Testimonials[0],
+      id: "api-only-testimonial",
+      Nume: "API-only Client",
+      Visible: true,
+      Active: true,
+    };
+    const { fetchImpl, calls } = fakeHomepageApi({ Testimonials: [apiTestimonial] });
+    const { data, sources } = await resolveData({ fetchImpl });
+    assert.equal(sources.FAQ, "snapshot");
+    assert.equal(sources.Testimonials, "api");
+    assert.equal(visibleFaqItems(data.FAQ).length, 0);
+    assert.equal(data.Testimonials.filter((row) => row.Visible).length, 1);
+    assert.equal(data.Testimonials.find((row) => row.Visible)?.Nume, "API-only Client");
+    assert.deepEqual([...new Set(calls.map((call) => call.url.searchParams.get("sheet")))], ["FAQ", "Testimonials"]);
+  });
 });

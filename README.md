@@ -87,7 +87,7 @@ See [docs/forms.md](docs/forms.md) for form-specific error states.
 - Contact, callback, and newsletter forms submit directly to Google Apps Script using vanilla JavaScript. See [form integration documentation](docs/forms.md).
 - Stripe Integration
 - Wordpress Blog support (but different domain)
-- FAQ section with build-time content from the SOLON API snapshot (`scripts/build-homepage-sheets.js`)
+- Homepage FAQ and testimonials are baked at build time from the SOLON API **FAQ** and **Testimonials** tabs (`scripts/build-homepage-sheets.js`). Each tab is fetched independently; the build log reports `FAQ: api|snapshot` and `Testimonials: api|snapshot` per section. The committed `data/homepage-sheets.snapshot.json` is used for a section when `SHEETS_API_KEY` is unset, `--offline` is passed, or that tab’s API request fails (HTTP error, timeout, `success: false`, invalid JSON, missing/non-array tab, or every row malformed). **FAQ only:** a successful API read with zero visible rows is kept as-is (no snapshot fallback); the homepage FAQ block, nav link, and FAQPage JSON-LD are omitted when there are no visible FAQ rows. **Testimonials** still fall back to the snapshot when the tab has no visible rows after normalization
 - **Lightweight Static Blog System**: Write in Markdown, build to static HTML.
 
 ## Blog System
