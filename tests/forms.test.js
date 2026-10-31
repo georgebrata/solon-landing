@@ -571,8 +571,7 @@ test("maps rate_limited from the API without an immediate retry control", async 
   assert.equal(dataRequests(requests).length, 1);
 });
 
-const TELEFON_FORM_NOTICE =
-  'Folosim numărul tău doar ca să te sunăm în legătură cu solicitarea ta și îl păstrăm (în Google Sheets și Brevo) cel mult 24 de luni de la ultima interacțiune. Nu îți trimitem mesaje de marketing. Detalii în <a href="/privacy/">Politica de confidențialitate</a>.';
+const REMOVED_PHONE_NOTICE_FRAGMENT = "Folosim numărul tău doar ca să te sunăm";
 
 const walkHtmlFiles = (dir, acc = []) => {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -584,23 +583,15 @@ const walkHtmlFiles = (dir, acc = []) => {
   return acc;
 };
 
-test("every HTML page with a Telefon form includes the legal phone notice after the form", () => {
+test("no HTML page contains the removed phone-form notice", () => {
   const root = path.join(__dirname, "..");
-  const telefonPages = walkHtmlFiles(root).filter((file) =>
-    fs.readFileSync(file, "utf8").includes('data-solon-form="Telefon"')
-  );
-  assert.equal(telefonPages.length, 10);
-  for (const file of telefonPages) {
+  const allPages = walkHtmlFiles(root);
+  for (const file of allPages) {
     const html = fs.readFileSync(file, "utf8");
-    const start = html.indexOf('data-solon-form="Telefon"');
-    const formEnd = html.indexOf("</form>", start);
-    assert.ok(formEnd > start, path.relative(root, file));
-    const afterForm = html.slice(formEnd, formEnd + 700);
-    assert.ok(afterForm.includes(TELEFON_FORM_NOTICE), path.relative(root, file));
-    const noticeAt = afterForm.indexOf("Folosim numărul");
-    const statusAt = afterForm.indexOf("data-form-status");
-    assert.ok(noticeAt >= 0 && statusAt > noticeAt, path.relative(root, file));
-    assert.ok(afterForm.includes('<p class="solon-form-note">'), path.relative(root, file));
+    assert.ok(
+      !html.includes(REMOVED_PHONE_NOTICE_FRAGMENT),
+      `${path.relative(root, file)} still contains the removed phone-form notice`
+    );
   }
 });
 
