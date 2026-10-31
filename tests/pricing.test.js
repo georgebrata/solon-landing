@@ -283,6 +283,24 @@ test("no rendered pricing bullet stays English or repeats '/ lună' (sheet 31.10
   const faq = out.match(/<!-- PRICING-FAQ:START[\s\S]*?<!-- PRICING-FAQ:END -->/u)[0];
   assert.ok(!/un număr de modificări pe website pe lună/u.test(faq));
   assert.match(faq, /<b>Platinum<\/b> include modificări nelimitate pe website/u);
+  assert.match(
+    faq,
+    /Numărul de modificări pe website și de postări social media din fiecare abonament se aplică pentru fiecare lună, atât la plata lunară, cât și la plata anuală\./u,
+  );
+  assert.ok(faq.includes(PLATINUM_UNLIMITED_FAQ_SENTENCE), "Platinum unlimited FAQ sentence missing");
+  const dataAllLimited = validateSnapshot(JSON.parse(JSON.stringify(snapshot)));
+  for (const row of dataAllLimited.Abonamente) {
+    if (SHEET_SERVICII_20261031[row["Nume abonament"]]) {
+      row.Servicii = SHEET_SERVICII_20261031[row["Nume abonament"]].replace(
+        /- unlimited website updates;\n/u,
+        "- 5 website updates;\n",
+      );
+    }
+  }
+  const faqAllLimited = render(html, model(validate(dataAllLimited))).match(
+    /<!-- PRICING-FAQ:START[\s\S]*?<!-- PRICING-FAQ:END -->/u,
+  )[0];
+  assert.ok(!faqAllLimited.includes(PLATINUM_UNLIMITED_FAQ_SENTENCE));
 });
 
 /** Fake SOLON API: serves rows in pages and records requested URLs. */
