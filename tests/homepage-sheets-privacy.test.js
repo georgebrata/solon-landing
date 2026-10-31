@@ -4,6 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const buildHomepageSheets = require("../scripts/build-homepage-sheets");
 const {
   esc,
   render,
@@ -21,7 +22,7 @@ const {
   sanitizeRichText,
   truthyVisible,
   normalizeFaqRow,
-} = require("../scripts/build-homepage-sheets");
+} = buildHomepageSheets;
 
 const ROOT = path.join(__dirname, "..");
 const snapshot = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "homepage-sheets.snapshot.json"), "utf8"));
@@ -278,4 +279,23 @@ test("pickTestimonialRows keeps valid API rows when one row is malformed", () =>
   const rows = pickTestimonialRows([good, { foo: "bar" }], committed.Testimonials);
   assert.equal(rows.length, 1);
   assert.equal(rows[0].id, good.id);
+});
+
+test("LEGACY_FAQ_URL is not exported (legacy fallback removed)", () => {
+  assert.ok(!("LEGACY_FAQ_URL" in buildHomepageSheets), "LEGACY_FAQ_URL must not be exported after legacy removal");
+});
+
+test("resolveData without SHEETS_API_KEY uses snapshot directly, no network call", async () => {
+  const origKey = process.env.SHEETS_API_KEY;
+  delete process.env.SHEETS_API_KEY;
+  try {
+    let networkCalled = false;
+    const fakeFetch = () => { networkCalled = true; return Promise.reject(new Error("should not fetch")); };
+    const { data, source } = await resolveData({ fetchImpl: fakeFetch });
+    assert.equal(source, "snapshot", "should be snapshot when no API key");
+    assert.equal(networkCalled, false, "must not make any network call without SHEETS_API_KEY");
+    assert.ok(data.FAQ.filter((r) => r.Visible).length >= 1, "snapshot FAQ must have visible rows");
+  } finally {
+    if (origKey !== undefined) process.env.SHEETS_API_KEY = origKey;
+  }
 });

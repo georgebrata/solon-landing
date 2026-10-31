@@ -87,7 +87,7 @@ See [docs/forms.md](docs/forms.md) for form-specific error states.
 - Contact, callback, and newsletter forms submit directly to Google Apps Script using vanilla JavaScript. See [form integration documentation](docs/forms.md).
 - Stripe Integration
 - Wordpress Blog support (but different domain)
-- FAQ section with build-time content from the SOLON API snapshot (`scripts/build-homepage-sheets.js`)
+- FAQ section with build-time content from the SOLON API **FAQ** tab (`scripts/build-homepage-sheets.js`); the committed `data/homepage-sheets.snapshot.json` is used as the offline fallback when `SHEETS_API_KEY` is not set
 - **Lightweight Static Blog System**: Write in Markdown, build to static HTML.
 
 ## Blog System

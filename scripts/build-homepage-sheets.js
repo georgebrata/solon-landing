@@ -1,25 +1,22 @@
 "use strict";
 /**
- * Build-time homepage FAQ + testimonials from SOLON API (FAQ + Testimonials tabs)
- * or committed data/homepage-sheets.snapshot.json.
+ * Build-time homepage FAQ + testimonials from SOLON API (FAQ + Testimonials tabs).
+ * When SHEETS_API_KEY is not set, falls back to data/homepage-sheets.snapshot.json.
  *
  * The committed snapshot is never rewritten during deploy/CI; refresh locally with
- * --write-snapshot after verifying API output.
+ * --write-snapshot after verifying live API output.
  *
  * Usage: node scripts/build-homepage-sheets.js [--offline] [--check] [--write-snapshot]
  */
 (() => {
   const fs = require("fs");
   const path = require("path");
-  const { fetchTab, fetchWithSafeRedirect } = require("./build-pricing");
+  const { fetchTab } = require("./build-pricing");
 
   const root = path.join(__dirname, "..");
   const SNAPSHOT = path.join(root, "data", "homepage-sheets.snapshot.json");
   const INDEX = path.join(root, "index.html");
-  const LEGACY_FAQ_URL =
-    "https://script.google.com/macros/s/AKfycbyjMcA6j9Yz3_RGZn7jAL_rAPDDDgCPeIDUj5c50aXICq6jUFg1bzGqo9wxC-Dzh6w/exec?path=items";
   const API_TABS = Object.freeze(["FAQ", "Testimonials"]);
-  const REQUEST_TIMEOUT_MS = 30000;
   /** @param {string} text */
   const esc = (text) =>
     String(text).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -229,23 +226,6 @@
     return { FAQ: faq, Testimonials: testimonials };
   };
 
-  /** @param {typeof fetch} fetchImpl */
-  const fetchLegacyFaq = async (fetchImpl) => {
-    const requestUrl = new URL(LEGACY_FAQ_URL);
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
-    let response;
-    try {
-      response = await fetchWithSafeRedirect(fetchImpl, requestUrl, { signal: ctrl.signal }, "legacy-faq");
-    } finally {
-      clearTimeout(timer);
-    }
-    if (!response.ok) throw new Error(`legacy-faq: HTTP ${response.status}`);
-    const body = await response.json();
-    if (!Array.isArray(body)) throw new Error("legacy-faq: response is not an array");
-    return body;
-  };
-
   /**
    * @param {{ offline?: boolean, fetchImpl?: typeof fetch }} [options]
    */
@@ -274,19 +254,6 @@
         console.error(
           `::error::build-homepage-sheets: SOLON API failed (${error.message}); using committed snapshot ${path.relative(root, SNAPSHOT)}`,
         );
-        data = buildRenderData({ committed });
-      }
-    } else if (data.FAQ.filter((row) => row.Visible).length === 0) {
-      try {
-        const legacy = await fetchLegacyFaq(fetchImpl);
-        data = buildRenderData({
-          faqRows: legacy,
-          testimonialRows: committed.Testimonials,
-          committed,
-        });
-        if (data.FAQ.some((row) => row.Visible)) source = "legacy-faq";
-      } catch (error) {
-        console.error(`::error::build-homepage-sheets: legacy FAQ fetch failed (${error.message}); using snapshot FAQ`);
         data = buildRenderData({ committed });
       }
     }
@@ -423,7 +390,6 @@ ${slides}
     normalizeFaqRow,
     normalizeTestimonialRow,
     truthyVisible,
-    LEGACY_FAQ_URL,
     API_TABS,
   };
 })();
