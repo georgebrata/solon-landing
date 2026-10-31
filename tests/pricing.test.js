@@ -209,8 +209,101 @@ test("model renders canonical package names regardless of sheet casing", () => {
 });
 
 test("known English sheet phrases become Romanian", () => {
-  assert.strictEqual(roInclusion("- 2 website updates / month;"), "2 modificări pe website / lună");
+  assert.strictEqual(roInclusion("- 2 website updates / month;"), "2 modificări pe website");
   assert.strictEqual(roInclusion("- GoogleMyBusines maintenance, "), "Mentenanță Google My Business");
+});
+
+test("current sheet inclusion phrases map to Romanian without '/ lună'", () => {
+  const cases = [
+    ["- website implementation;", "Implementare website"],
+    ["- 1 website update;", "1 modificare pe website"],
+    ["- 5 website updates;", "5 modificări pe website"],
+    ["- 1 website update / month;", "1 modificare pe website"],
+    ["- unlimited website updates;", "Modificări nelimitate pe website"],
+    ["- 1 social media post / month;", "1 postare social media"],
+    ["- 2 social media posts;", "2 postări social media"],
+    ["- unlimited social media posts;", "Postări social media nelimitate"],
+    ["- Google Busines management;", "Management Google Business Profile"],
+    ["- Google Business management;", "Management Google Business Profile"],
+    ["- Google Bussines management;", "Management Google Business Profile"],
+    ["- GoogleBusines management", "Management Google Business Profile"],
+    ["- Google My Business management;", "Management Google Business Profile"],
+    ["- Social Media management;", "Management social media"],
+    ["- sync up to 3 social media profiles;", "Sincronizare până la 3 profile social media"],
+    ["- 1 technical consulting session;", "1 sesiune de consultanță tehnică"],
+    ["- 2 technical consulting sessions;", "2 sesiuni de consultanță tehnică"],
+  ];
+  for (const [raw, expected] of cases) assert.strictEqual(roInclusion(raw), expected, raw);
+});
+
+/** Servicii cells exactly as in sheet "SOLON API" tab Abonamente on 31.10.2026. */
+const SHEET_SERVICII_20261031 = {
+  Bronze: "- website implementation;\n- 1 website update;\n- 1 social media post / month;",
+  Silver: "- website implementation;\n- 2 website updates;\n- Google Busines management;\n- 2 social media posts;",
+  Gold: "- website implementation;\n- 5 website updates;\n- Google Busines management;\n- Social Media management;\n- sync up to 3 social media profiles;\n- 5 social media posts;",
+  Platinum:
+    "- website implementation;\n- unlimited website updates;\n- Google Busines management;\n- Social Media management;\n- sync up to 6 social media profiles;\n- unlimited social media posts;\n- 1 technical consulting session;",
+};
+
+const PLATINUM_UNLIMITED_FAQ_SENTENCE =
+  "La abonamentul Platinum nu există o limită lunară a numărului de modificări pe website sau a numărului de postări social media. Lucrările care nu se încadrează în definiția unei modificări, de exemplu pagini noi, redesign sau funcționalități noi, nu sunt incluse în abonament și îți facem pentru ele o ofertă separată înainte să începem lucrul.";
+
+test("no rendered pricing bullet stays English or repeats '/ lună' (sheet 31.10.2026)", () => {
+  const data = validateSnapshot(JSON.parse(JSON.stringify(snapshot)));
+  for (const row of data.Abonamente) {
+    if (SHEET_SERVICII_20261031[row["Nume abonament"]]) row.Servicii = SHEET_SERVICII_20261031[row["Nume abonament"]];
+  }
+  const warnings = [];
+  const originalWarn = console.warn;
+  console.warn = (message) => warnings.push(String(message));
+  let out;
+  try {
+    out = render(html, model(validate(data)));
+  } finally {
+    console.warn = originalWarn;
+  }
+  assert.deepStrictEqual(warnings.filter((w) => /no Romanian mapping/u.test(w)), []);
+  const block = out.match(/<!-- PRICING:START[\s\S]*?<!-- PRICING:END -->/u)[0];
+  const bullets = [...block.matchAll(/<li><i class="bi bi-check"><\/i> ([^<]*)<\/li>/gu)].map((m) => m[1]);
+  assert.strictEqual(bullets.length, 3 + 4 + 6 + 7);
+  const english =
+    /(?<!\p{L})(?:implementation|updates?|posts?|unlimited|sessions?|consulting|technical|sync|month|domain|included|annual|maintenance|busines)(?!\p{L})/iu;
+  for (const line of bullets) {
+    assert.ok(!english.test(line), `English left in pricing bullet: "${line}"`);
+    assert.ok(!/\/\s*lună/u.test(line), `'/ lună' in pricing bullet: "${line}"`);
+  }
+  for (const expected of [
+    "Implementare website",
+    "1 modificare pe website",
+    "Modificări nelimitate pe website",
+    "Postări social media nelimitate",
+    "Management Google Business Profile",
+    "Management social media",
+    "1 sesiune de consultanță tehnică",
+  ]) {
+    assert.ok(bullets.includes(expected), `missing bullet "${expected}"`);
+  }
+  const faq = out.match(/<!-- PRICING-FAQ:START[\s\S]*?<!-- PRICING-FAQ:END -->/u)[0];
+  assert.ok(!/un număr de modificări pe website pe lună/u.test(faq));
+  assert.match(faq, /<b>Platinum<\/b> include modificări nelimitate pe website/u);
+  assert.match(
+    faq,
+    /Numărul de modificări pe website și de postări social media din fiecare abonament se aplică pentru fiecare lună, atât la plata lunară, cât și la plata anuală\./u,
+  );
+  assert.ok(faq.includes(PLATINUM_UNLIMITED_FAQ_SENTENCE), "Platinum unlimited FAQ sentence missing");
+  const dataAllLimited = validateSnapshot(JSON.parse(JSON.stringify(snapshot)));
+  for (const row of dataAllLimited.Abonamente) {
+    if (SHEET_SERVICII_20261031[row["Nume abonament"]]) {
+      row.Servicii = SHEET_SERVICII_20261031[row["Nume abonament"]].replace(
+        /- unlimited website updates;\n/u,
+        "- 5 website updates;\n",
+      );
+    }
+  }
+  const faqAllLimited = render(html, model(validate(dataAllLimited))).match(
+    /<!-- PRICING-FAQ:START[\s\S]*?<!-- PRICING-FAQ:END -->/u,
+  )[0];
+  assert.ok(!faqAllLimited.includes(PLATINUM_UNLIMITED_FAQ_SENTENCE));
 });
 
 /** Fake SOLON API: serves rows in pages and records requested URLs. */
