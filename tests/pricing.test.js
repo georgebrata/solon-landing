@@ -245,6 +245,9 @@ const SHEET_SERVICII_20261031 = {
     "- website implementation;\n- unlimited website updates;\n- Google Busines management;\n- Social Media management;\n- sync up to 6 social media profiles;\n- unlimited social media posts;\n- 1 technical consulting session;",
 };
 
+const PLATINUM_UNLIMITED_FAQ_SENTENCE =
+  "La abonamentul Platinum nu există o limită lunară a numărului de modificări pe website sau a numărului de postări social media. Lucrările care nu se încadrează în definiția unei modificări, de exemplu pagini noi, redesign sau funcționalități noi, nu sunt incluse în abonament și îți facem pentru ele o ofertă separată înainte să începem lucrul.";
+
 test("no rendered pricing bullet stays English or repeats '/ lună' (sheet 31.10.2026)", () => {
   const data = validateSnapshot(JSON.parse(JSON.stringify(snapshot)));
   for (const row of data.Abonamente) {
